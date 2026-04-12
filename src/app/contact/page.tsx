@@ -137,7 +137,7 @@ export default function ContactPage() {
                     <input
                       id="website"
                       name="website"
-                      type="url"
+                      type="text"
                       required
                       autoComplete="url"
                       className="w-full bg-brand-offwhite border border-black/10 rounded-sm px-4 py-3 text-sm text-brand-ink placeholder:text-brand-ink/30 focus:outline-none focus:border-brand-ink/30 min-h-[44px]"
