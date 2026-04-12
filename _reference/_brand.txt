@@ -1,0 +1,57 @@
+DUHA MEDIA — BRAND TOKENS FOR CLAUDE CODE
+==========================================
+
+Font: IBM Plex Sans (headings, body) + IBM Plex Mono (labels, metadata, tags)
+Load via: import { IBM_Plex_Sans, IBM_Plex_Mono } from 'next/font/google'
+
+COLORS (add to tailwind.config.js under theme.extend.colors.brand):
+  ink:      #0F172A   -- text, dark backgrounds, nav
+  crimson:  #c20e59   -- primary accent, hover states
+  magenta:  #e82561   -- CTAs, buttons, active links
+  gold:     #f5c842   -- callouts, badges (sparingly)
+  cream:    #fce588   -- newsletter tint, warm accents (sparingly)
+  offwhite: #F8F8F6   -- page backgrounds, content sections
+
+TAILWIND CONFIG EXTENSION:
+  colors: {
+    brand: {
+      ink:      '#0F172A',
+      crimson:  '#c20e59',
+      magenta:  '#e82561',
+      gold:     '#f5c842',
+      cream:    '#fce588',
+      offwhite: '#F8F8F6',
+    }
+  }
+  fontFamily: {
+    sans: ['IBM Plex Sans', 'sans-serif'],
+    mono: ['IBM Plex Mono', 'monospace'],
+  }
+
+TYPOGRAPHY RULES:
+  Display:  text-5xl font-bold tracking-tight   (-0.02em)
+  H1:       text-4xl font-bold tracking-tight   (-0.015em)
+  H2:       text-2xl font-bold tracking-tight   (-0.01em)
+  H3:       text-xl  font-medium
+  Body:     text-base font-normal leading-relaxed
+  Label:    text-xs font-medium uppercase tracking-widest font-mono
+  Metadata: text-xs font-mono text-brand-ink/40
+
+SECTION BACKGROUNDS (alternating pattern):
+  Dark hero:    bg-brand-ink
+  Content alt:  bg-brand-offwhite
+  Content:      bg-white
+  CTA section:  bg-brand-ink
+
+BUTTON HIERARCHY:
+  Primary:   bg-brand-magenta text-white font-bold text-sm rounded-sm px-5 py-2.5
+  Secondary: border border-brand-ink text-brand-ink text-sm rounded-sm px-5 py-2.5
+  Ghost:     font-mono text-xs text-brand-crimson underline uppercase tracking-wider
+
+BRAND RULES:
+  - Max border-radius on cards/buttons: 3–4px (rounded-sm). Sharp corners signal precision.
+  - No stock photography of people
+  - One primary CTA per section maximum
+  - IBM Plex Mono for all labels, metadata, tier identifiers, tags
+  - Four-band logo mark accent colors (top to bottom): cream, gold, magenta, crimson
+  - No gradients — flat color only

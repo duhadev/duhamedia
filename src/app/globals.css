@@ -1,0 +1,113 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* Brand Colors */
+  --color-brand-ink:      #0F172A;
+  --color-brand-crimson:  #c20e59;
+  --color-brand-magenta:  #e82561;
+  --color-brand-gold:     #f5c842;
+  --color-brand-cream:    #fce588;
+  --color-brand-offwhite: #F8F8F6;
+
+  /* Neutral */
+  --color-neutral-white:        #FFFFFF;
+  --color-neutral-border:       #E4E4DC;
+  --color-neutral-border-hover: #D0D0C4;
+
+  /* Dark card background */
+  --color-dark-card: #1C1C18;
+
+  /* Text */
+  --color-text-primary:   #0D0D0B;
+  --color-text-secondary: #5C5C52;
+  --color-text-muted:     #8A8A7A;
+
+  /* Fonts */
+  --font-sans: var(--font-ibm-plex-sans), "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: var(--font-ibm-plex-mono), "IBM Plex Mono", monospace;
+
+  /* Typography scale */
+  --text-display: 2.25rem;
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.03em;
+
+  --text-h1: 2rem;
+  --text-h1--line-height: 1.15;
+  --text-h1--letter-spacing: -0.02em;
+
+  --text-h2: 1.5rem;
+  --text-h2--line-height: 1.2;
+  --text-h2--letter-spacing: -0.01em;
+
+  --text-h3: 1.25rem;
+  --text-h3--line-height: 1.3;
+
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.6;
+
+  --text-body: 1rem;
+  --text-body--line-height: 1.6;
+
+  --text-body-sm: 0.875rem;
+  --text-body-sm--line-height: 1.5;
+
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.4;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --text-display: 3rem;
+    --text-h1: 2.25rem;
+    --text-h2: 1.875rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --text-display: 3.75rem;
+    --text-h1: 2.75rem;
+    --text-h2: 2.25rem;
+    --text-h3: 1.5rem;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-brand-offwhite);
+  color: var(--color-text-primary);
+}
+
+*:focus-visible {
+  outline: 2px solid var(--color-brand-magenta);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.skip-to-content {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 9999;
+  padding: 12px 24px;
+  background: var(--color-brand-magenta);
+  color: white;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.skip-to-content:focus {
+  left: 0;
+}
