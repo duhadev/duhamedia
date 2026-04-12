@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sanitizeEmail, sanitizeText, isValidEmail } from "@/lib/sanitize";
+import { sql } from "@/lib/db";
 
 const VALID_TIERS = ["Class A", "Class B", "Class C"];
 
@@ -25,9 +26,10 @@ export async function POST(request: NextRequest) {
 
     const payload = { email, url: url || null, tier: tier || null };
 
-    // TODO: insert into DB using process.env.DATABASE_URL
-    // Example: await db.from("pdf_leads").insert(payload);
-    console.log("[pdf-lead]", JSON.stringify(payload, null, 2));
+    await sql`
+      INSERT INTO pdf_leads (email, url, tier)
+      VALUES (${payload.email}, ${payload.url}, ${payload.tier})
+    `;
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch {

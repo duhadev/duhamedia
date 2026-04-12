@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sanitizeEmail, sanitizeText, sanitizeLong, isValidEmail } from "@/lib/sanitize";
+import { sql } from "@/lib/db";
 
 const VALID_REVENUE = ["under-300k", "300k-750k", "750k-2m", "2m-5m", "over-5m"];
 const VALID_SESSIONS = ["under-500", "500-2000", "2000-10000", "10000-plus"];
@@ -48,9 +49,10 @@ export async function POST(request: NextRequest) {
       ...(email ? { email } : {}),
     };
 
-    // TODO: insert into DB using process.env.DATABASE_URL
-    // Example: await db.from("founding_client_applications").insert(payload);
-    console.log("[founding-client-apply]", JSON.stringify(payload, null, 2));
+    await sql`
+      INSERT INTO founding_client_applications (store, revenue, sessions, ads, problem, other, email)
+      VALUES (${payload.store}, ${payload.revenue}, ${payload.sessions}, ${payload.ads}, ${payload.problem}, ${payload.other}, ${payload.email ?? null})
+    `;
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch {

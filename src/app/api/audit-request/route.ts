@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sanitizeEmail, sanitizeText, isValidEmail } from "@/lib/sanitize";
+import { sql } from "@/lib/db";
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,9 +21,10 @@ export async function POST(request: NextRequest) {
 
     const payload = { storeUrl, name, email, phone: phone || null };
 
-    // TODO: insert into DB using process.env.DATABASE_URL
-    // Example: await db.from("audit_requests").insert(payload);
-    console.log("[audit-request]", JSON.stringify(payload, null, 2));
+    await sql`
+      INSERT INTO audit_requests (store_url, name, email, phone)
+      VALUES (${payload.storeUrl}, ${payload.name}, ${payload.email}, ${payload.phone})
+    `;
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch {

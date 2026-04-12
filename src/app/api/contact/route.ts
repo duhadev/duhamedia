@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sanitizeEmail, sanitizeText, sanitizeLong, isValidEmail } from "@/lib/sanitize";
+import { sql } from "@/lib/db";
 
 const VALID_REASONS = [
   "Book a discovery call",
@@ -38,9 +39,10 @@ export async function POST(request: NextRequest) {
       message: message || null,
     };
 
-    // TODO: insert into DB using process.env.DATABASE_URL
-    // Example: await db.from("contact_submissions").insert(payload);
-    console.log("[contact]", JSON.stringify(payload, null, 2));
+    await sql`
+      INSERT INTO contact_submissions (name, email, website, reason, message)
+      VALUES (${payload.name}, ${payload.email}, ${payload.website}, ${payload.reason}, ${payload.message})
+    `;
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch {

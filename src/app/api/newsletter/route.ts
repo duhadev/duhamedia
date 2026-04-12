@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sanitizeEmail, sanitizeText, isValidEmail } from "@/lib/sanitize";
+import { sql } from "@/lib/db";
 
 // All newsletter and notify-me forms funnel here — differentiated by source.
 const VALID_SOURCES = [
@@ -33,9 +34,11 @@ export async function POST(request: NextRequest) {
 
     const payload = { email, source };
 
-    // TODO: insert into DB using process.env.DATABASE_URL
-    // Example: await db.from("newsletter_subscribers").insert(payload);
-    console.log("[newsletter]", JSON.stringify(payload, null, 2));
+    await sql`
+      INSERT INTO newsletter_subscribers (email, source)
+      VALUES (${payload.email}, ${payload.source})
+      ON CONFLICT (email) DO UPDATE SET source = EXCLUDED.source, updated_at = now()
+    `;
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch {
