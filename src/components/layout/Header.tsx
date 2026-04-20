@@ -19,59 +19,10 @@ interface NavLink {
 }
 
 const NAV_LINKS: NavLink[] = [
-  {
-    label: "Services",
-    href: "/services",
-    mega: true,
-    children: [
-      {
-        label: "Overview",
-        href: "/services",
-        desc: "See all three engagement tiers and find the right fit for your store.",
-      },
-      {
-        label: "Class A",
-        href: "/services/class-a",
-        desc: "Full ad + CRO programme. Marketing audit, funnel rebuild, and ongoing optimisation.",
-      },
-      {
-        label: "Class B",
-        href: "/services/class-b",
-        desc: "Focused CRO sprint. GA4 setup, site audit, A/B testing, and landing page redesigns.",
-        featured: true,
-      },
-      {
-        label: "Class C",
-        href: "/services/class-c",
-        desc: "Foundation audit. Identify exactly what's breaking conversion before investing further.",
-      },
-    ],
-  },
+  { label: "Services", href: "/services" },
   { label: "How it works", href: "/how-it-works" },
   { label: "Results", href: "/results" },
-  {
-    label: "Insights",
-    href: "/insights",
-    mega: true,
-    children: [
-      {
-        label: "Overview",
-        href: "/insights",
-        desc: "The full hub — teardowns, blog posts, and the monthly newsletter in one place.",
-      },
-      {
-        label: "Teardowns",
-        href: "/insights/teardowns",
-        desc: "Documented CRO reviews of real Shopify stores. Specific findings, specific recommendations.",
-        featured: true,
-      },
-      {
-        label: "Blog",
-        href: "/insights/blog",
-        desc: "CRO concepts, A/B testing frameworks, and Shopify-specific guidance. Written plainly.",
-      },
-    ],
-  },
+  { label: "Insights", href: "/insights" },
   { label: "About", href: "/about" },
 ];
 
@@ -244,8 +195,8 @@ export default function Header({ activePage }: HeaderProps) {
           className="flex items-center gap-2"
           aria-label="Duha Media — Home"
         >
-          <LogoMark size={24} />
-          <span className="font-bold text-brand-ink text-base">duha media</span>
+          <LogoMark size={32} />
+          <span className="font-bold text-brand-ink text-lg">duha media</span>
         </Link>
 
         {/* Desktop nav */}

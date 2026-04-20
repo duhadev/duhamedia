@@ -20,6 +20,10 @@ export default function ContactPage() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!reason) {
+      setError("Please select a reason for reaching out.");
+      return;
+    }
     setIsSubmitting(true);
     setError(null);
 

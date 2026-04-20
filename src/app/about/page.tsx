@@ -55,21 +55,25 @@ const comparisons = [
 const tools = [
   {
     name: "Microsoft Clarity",
+    accent: "border-brand-crimson",
     rationale:
       "Free, privacy-compliant, and integrates directly with Convert.com for combined heatmap and experiment analysis. There's no better tool at this price point for behavioural data on Shopify stores.",
   },
   {
     name: "GA4",
+    accent: "border-brand-crimson",
     rationale:
       "The baseline for all traffic and conversion data. Every engagement starts with a verified GA4 configuration — goals, events, and funnels — before any change is made.",
   },
   {
     name: "Convert.com",
+    accent: "border-brand-crimson",
     rationale:
       "VWO and AB Tasty have moved upmarket — both now price at $10,000+/year for the features Shopify brands actually need. Convert.com is purpose-built for SMB conversion testing at a price that makes sense. It's billed directly to the client, no markup.",
   },
   {
     name: "Slack + Loom",
+    accent: "border-brand-ink",
     rationale:
       "Async-first communication. Updates when they're ready, not on a schedule. Short Loom walkthroughs replace status calls — you see the screen and hear the rationale without needing to be available at a fixed time.",
   },
@@ -168,20 +172,20 @@ export default function AboutPage() {
             <div className="border border-black/10 rounded-sm overflow-hidden">
               {/* Headers */}
               <div className="grid grid-cols-2">
-                <div className="bg-black/5 px-5 py-3 border-r border-black/10">
-                  <p className="font-mono text-[10px] text-brand-ink/40 uppercase tracking-widest">Most agencies</p>
+                <div className="bg-black/[0.06] px-5 py-3 border-r border-black/10">
+                  <p className="font-mono text-[11px] text-brand-ink/40 uppercase tracking-widest">Most agencies</p>
                 </div>
-                <div className="bg-white px-5 py-3">
-                  <p className="font-mono text-[10px] text-brand-crimson uppercase tracking-widest">Duha Media</p>
+                <div className="bg-white px-5 py-3 border-l-2 border-brand-crimson">
+                  <p className="font-mono text-[11px] text-brand-crimson uppercase tracking-widest">Duha Media</p>
                 </div>
               </div>
               {/* Rows */}
               {comparisons.map((row, i) => (
                 <div key={i} className="grid grid-cols-2 border-t border-black/10">
-                  <div className="bg-black/5 px-5 py-4 border-r border-black/10">
+                  <div className="bg-black/[0.06] px-5 py-3 border-r border-black/10">
                     <p className="text-sm text-brand-ink/55 leading-relaxed">{row.left}</p>
                   </div>
-                  <div className="bg-white px-5 py-4">
+                  <div className="bg-white px-5 py-3 border-l-2 border-brand-crimson">
                     <p className="text-sm text-brand-ink/80 leading-relaxed">{row.right}</p>
                   </div>
                 </div>
@@ -202,11 +206,12 @@ export default function AboutPage() {
             </p>
             <div className="divide-y divide-black/10">
               {tools.map((tool) => (
-                <div key={tool.name} className="py-5 flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
-                  <p className="font-mono font-medium text-sm text-brand-ink flex-shrink-0 sm:w-44">
-                    {tool.name}
-                  </p>
-                  <p className="text-sm text-brand-ink/60 leading-relaxed">{tool.rationale}</p>
+                <div key={tool.name} className="py-6">
+                  <p className="font-mono text-[13px] font-medium text-brand-ink mb-3">{tool.name}</p>
+                  <div className="w-full h-px bg-black/10 mb-3" />
+                  <div className={`pl-4 border-l-[3px] ${tool.accent}`}>
+                    <p className="text-sm text-brand-ink/60 leading-relaxed">{tool.rationale}</p>
+                  </div>
                 </div>
               ))}
             </div>

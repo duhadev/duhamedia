@@ -1,6 +1,3 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -103,8 +100,6 @@ const channels = [
 
 
 export default function HowItWorksPage() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-
   return (
     <>
       <Header activePage="How it works" />
@@ -183,30 +178,9 @@ export default function HowItWorksPage() {
             </h2>
             <div className="border border-black/10 rounded-sm overflow-hidden divide-y divide-black/10">
               {neverAskItems.map((item, i) => (
-                <div key={i}>
-                  <button
-                    onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                    className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left hover:bg-brand-offwhite transition-colors min-h-[52px]"
-                    aria-expanded={openIndex === i}
-                  >
-                    <p className="font-bold text-brand-ink text-sm leading-snug">{item.q}</p>
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 16 16"
-                      fill="none"
-                      aria-hidden="true"
-                      className="flex-shrink-0 transition-transform"
-                      style={{ transform: openIndex === i ? "rotate(180deg)" : "rotate(0deg)" }}
-                    >
-                      <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-brand-crimson" />
-                    </svg>
-                  </button>
-                  {openIndex === i && (
-                    <div className="px-5 pb-5 bg-brand-offwhite border-t border-black/10">
-                      <p className="text-base text-brand-ink/60 leading-relaxed pt-4">{item.a}</p>
-                    </div>
-                  )}
+                <div key={i} className="px-5 py-5">
+                  <p className="font-bold text-brand-ink text-sm leading-snug mb-3">{item.q}</p>
+                  <p className="text-base text-brand-ink/60 leading-relaxed">{item.a}</p>
                 </div>
               ))}
             </div>

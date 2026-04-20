@@ -320,9 +320,9 @@ export default function ClassCPage() {
         <section className="bg-white px-6 py-16">
           <div className="max-w-3xl mx-auto">
             <ScrollReveal>
-              <p className="font-mono text-xs text-brand-ink/40 uppercase tracking-widest mb-3">Mandatory add-on</p>
+              <p className="font-mono text-xs text-brand-ink/40 uppercase tracking-widest mb-3">Optional add-on</p>
               <h2 className="text-2xl font-bold text-brand-ink mb-3" style={{ letterSpacing: "-0.01em" }}>
-                Stay connected after launch. $450/mo.
+                Stay connected after launch. $500/mo.
               </h2>
               <p className="text-base text-brand-ink/60 leading-relaxed mb-8">
                 Not ready for Class B yet? The retainer keeps the relationship active and the upgrade conversation on your terms.

@@ -56,7 +56,7 @@ export default function FifteenMinuteAuditPage() {
           label="Free offer"
           heading="15-Minute Shopify Conversion Leak Audit"
           headingColor="magenta"
-          subhead="Submit your store URL. We'll review your highest-traffic landing page, identify the one or two conversion leaks costing you the most revenue, and specify one concrete fix to test first — delivered as a Loom walkthrough or PDF one-pager. No pitch. No pricing. No commitment."
+          subhead="Four fields. Two minutes. Zero commitment. We'll review your highest-traffic landing page, identify the one or two conversion leaks costing you the most revenue, and specify one concrete fix to test first — delivered as a Loom walkthrough or PDF one-pager. No pitch. No pricing. No commitment."
         />
 
         {/* Who this is for + Form */}
@@ -98,9 +98,9 @@ export default function FifteenMinuteAuditPage() {
                 </p>
                 <div className="flex flex-col divide-y divide-black/8">
                   {[
-                    { step: "01", text: "We review your highest-traffic page using your site data." },
-                    { step: "02", text: "You get the finding — a Loom or PDF — within 2 business days." },
-                    { step: "03", text: "We send a link to book a short call to walk through the results together." },
+                    { step: "01", text: "We review your highest-traffic page." },
+                    { step: "02", text: "You receive the finding within 2 business days." },
+                    { step: "03", text: "We send a link to book a walkthrough call." },
                   ].map((s) => (
                     <div key={s.step} className="flex gap-4 py-3">
                       <p className="font-mono text-xs font-medium text-brand-crimson flex-shrink-0 w-5 mt-0.5">{s.step}</p>

@@ -19,8 +19,8 @@ const pains = [
     num: "03",
     title: "Leaky sales funnels",
     body: "Ad spend landing on pages that lose people at the same point every time. The leak never gets fixed.",
-    stat: "$$",
-    statLabel: "spent on ads to a broken page",
+    stat: "Every month",
+    statLabel: "the leak compounds",
     accent: "#f5c842",
   },
 ];
@@ -55,8 +55,17 @@ export default function TrustSignals() {
               <h3 className="font-bold text-brand-ink text-base mb-3 leading-snug">{p.title}</h3>
               <p className="text-base text-brand-ink/55 leading-relaxed flex-1">{p.body}</p>
               <div className="border-t border-black/10 pt-4 mt-6 h-16">
-                <p className="font-mono text-xl font-bold leading-none mb-1" style={{ color: p.accent }}>{p.stat}</p>
-                <p className="font-mono text-xs text-brand-ink/40 leading-snug">{p.statLabel}</p>
+                {p.num === "03" ? (
+                  <>
+                    <p className="font-mono text-xs font-medium leading-snug mb-0.5" style={{ color: p.accent }}>{p.stat}</p>
+                    <p className="font-mono text-xs text-brand-ink/40 leading-snug">{p.statLabel}</p>
+                  </>
+                ) : (
+                  <>
+                    <p className="font-mono text-xl font-bold leading-none mb-1" style={{ color: p.accent }}>{p.stat}</p>
+                    <p className="font-mono text-xs text-brand-ink/40 leading-snug">{p.statLabel}</p>
+                  </>
+                )}
               </div>
             </div>
           ))}
