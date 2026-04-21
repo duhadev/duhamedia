@@ -25,15 +25,20 @@ const NAV_LINKS: NavLink[] = [
     mega: true,
     children: [
       {
-        label: "Class B — Optimization",
-        href: "/services/class-b",
-        desc: "Monthly CRO retainer — ongoing split tests, heatmaps, and conversion improvements.",
-        featured: true,
+        label: "Overview",
+        href: "/services",
+        desc: "All services at a glance — find the right fit for your store.",
       },
       {
         label: "Class A — Design & Build",
         href: "/services/class-a",
         desc: "Full Shopify store design and development from scratch.",
+      },
+      {
+        label: "Class B — Optimization",
+        href: "/services/class-b",
+        desc: "Monthly CRO retainer — ongoing split tests, heatmaps, and conversion improvements.",
+        featured: true,
       },
       {
         label: "Class C — Audit",
