@@ -28,7 +28,7 @@ export async function generateOGImage(title: string): Promise<ImageResponse> {
     loadIBMPlexSans(400),
   ]);
 
-  const fonts: ConstructorParameters<typeof ImageResponse>[1]["fonts"] = [];
+  const fonts: NonNullable<ConstructorParameters<typeof ImageResponse>[1]>["fonts"] = [];
   if (bold) fonts.push({ name: "IBM Plex Sans", data: bold, weight: 700, style: "normal" });
   if (regular) fonts.push({ name: "IBM Plex Sans", data: regular, weight: 400, style: "normal" });
 
