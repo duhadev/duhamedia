@@ -20,9 +20,9 @@ const tiers = [
     badge: "Most common",
     tagline: "Continuous optimisation against a documented baseline.",
     who: "You have traffic — 500+ sessions per month — but conversion rate is flat or unknown. You want to know what's actually stopping people from buying.",
-    what: "Monthly A/B testing via Convert.com. Clarity data reviewed every cycle. A 90-day rolling roadmap updated each month. Every test documented before it runs, every result recorded when it closes.",
+    what: "Monthly A/B testing via GrowthBook. Clarity data reviewed every cycle. A 90-day rolling roadmap updated each month. Every test documented before it runs, every result recorded when it closes.",
     outcome: "A compounding CVR improvement — measured against your baseline every single month.",
-    model: "Setup + $1,500/mo retainer",
+    model: "One-time setup + ongoing retainer",
     href: "/services/class-b",
   },
   {
@@ -34,7 +34,7 @@ const tiers = [
     who: "You're spending on paid ads but your campaigns aren't connected to conversion data. Your media buyer and your site operate in separate silos.",
     what: "A 12-week intensive covering a full marketing audit, UTM taxonomy rebuild, site CRO overhaul, and a campaign playbook your team can run independently. From week 13, a retainer runs and optimises the full system.",
     outcome: "Every ad dollar traceable to on-site behaviour. A documented system that works whether or not we're involved.",
-    model: "$25,000 intensive + $3–5K/mo retainer",
+    model: "12-week intensive + ongoing retainer",
     href: "/services/class-a",
   },
 ];

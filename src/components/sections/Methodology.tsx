@@ -20,7 +20,7 @@ const steps = [
     num: "03",
     color: "#f5c842",
     title: "Optimise",
-    body: "A/B tests run via Convert.com against real traffic. Only statistically significant winners get shipped.",
+    body: "A/B tests run via GrowthBook against real traffic. Only statistically significant winners get shipped.",
   },
   {
     num: "04",

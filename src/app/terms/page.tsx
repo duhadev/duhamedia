@@ -133,7 +133,7 @@ export default function TermsPage() {
                 <section id="third-party" className="border-t border-black/10 pt-8 mt-8">
                   <h2 className="font-bold text-brand-ink text-base mb-3">6. Third-Party Links and Tools</h2>
                   <p>
-                    This Site may reference or link to third-party websites, tools, or services — including Microsoft Clarity, Google Analytics, Resend, and Convert.com. These are provided for reference only. Duha Media has no control over third-party content or practices and accepts no responsibility for them. Your use of any third-party service is governed by that service&apos;s own terms and privacy policy.
+                    This Site may reference or link to third-party websites, tools, or services — including Microsoft Clarity, Google Analytics, Resend, and GrowthBook. These are provided for reference only. Duha Media has no control over third-party content or practices and accepts no responsibility for them. Your use of any third-party service is governed by that service&apos;s own terms and privacy policy.
                   </p>
                 </section>
 

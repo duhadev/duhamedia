@@ -35,7 +35,7 @@ const phase1Deliverables = [
 const phase2Deliverables = [
   {
     title: "Full site CRO overhaul",
-    body: "UX/UI redesign, landing page rebuilds, and Convert.com A/B testing framework — all live and running by the end of Phase 2. Every design decision tied to a specific audit finding.",
+    body: "UX/UI redesign, landing page rebuilds, and GrowthBook A/B testing framework — all live and running by the end of Phase 2. Every design decision tied to a specific audit finding.",
   },
   {
     title: "Conversion funnel map",
@@ -93,14 +93,14 @@ const retainerCards = [
   { title: "Cross-channel funnel analysis", body: "Segmented by UTM/source — paid vs organic vs social visitor behaviour.", unique: true },
   { title: "Continuous CRO optimisation", body: "Live traffic data drives all changes — no scheduled sprints.", unique: false },
   { title: "Strategic marketing recommendations", body: "Budget allocation, creative direction, targeting decisions — monthly.", unique: false },
-  { title: "Weekly calls + async updates", body: "Slack + Loom between calls. Quarterly strategic review + refreshed roadmap.", unique: false },
+  { title: "Weekly calls + async updates", body: "RocketChat + Loom between calls. Quarterly strategic review + refreshed roadmap.", unique: false },
   { title: "Full documentation updates", body: "Every change logged with rationale — dashboard stays live and current.", unique: false },
 ];
 
 const pricingRows = [
   {
     label: "Intensive",
-    value: "$25,000 fixed scope. The three phases as defined. Any changes are quoted separately and agreed in writing before work begins.",
+    value: "Fixed scope. The three phases as defined. Any changes are quoted separately and agreed in writing before work begins.",
   },
   {
     label: "Retainer start",
@@ -108,7 +108,7 @@ const pricingRows = [
   },
   {
     label: "Retainer rate",
-    value: "$3,000–$5,000/mo. Final rate agreed at the end of Phase 1 when channel complexity, ad spend, and team size are fully known. Never exceeds the quoted range without written agreement.",
+    value: "Final rate agreed at the end of Phase 1 when channel complexity, ad spend, and team size are fully known. Agreed in writing before the retainer begins.",
   },
   {
     label: "Opt-out window",
@@ -134,7 +134,7 @@ const faqs = [
   },
   {
     q: "How is the retainer rate finalised?",
-    a: "The range is $3,000–$5,000/mo. The final rate is agreed at the end of Phase 1 when channel complexity, ad spend volume, and team size are fully understood. It never exceeds the quoted range without written agreement before the retainer begins.",
+    a: "The final rate is agreed at the end of Phase 1 when channel complexity, ad spend volume, and team size are fully understood. The rate is confirmed in writing before the retainer begins.",
   },
   {
     q: "What happens if our priorities shift mid-engagement?",
@@ -146,15 +146,15 @@ const faqs = [
   },
   {
     q: "What if we opt out of the retainer after the intensive?",
-    a: "Written opt-out by week 10. You keep everything — the dashboard, playbook, funnel map, audit findings, change log, and 90-day roadmap. The Convert.com account is client-billed and stays with you. No clawback on completed work.",
+    a: "Written opt-out by week 10. You keep everything — the dashboard, playbook, funnel map, audit findings, change log, and 90-day roadmap. The GrowthBook account is client-billed and stays with you. No clawback on completed work.",
   },
   {
     q: "What does \"fixed scope\" actually mean when things come up?",
-    a: "The $25,000 covers the three phases as defined. If new channels need to be added, the rebuild scope expands, or additional deliverables are requested mid-engagement, those are quoted separately and agreed in writing. Nothing is added to scope without your sign-off.",
+    a: "The intensive covers the three phases as defined. If new channels need to be added, the rebuild scope expands, or additional deliverables are requested mid-engagement, those are quoted separately and agreed in writing. Nothing is added to scope without your sign-off.",
   },
   {
     q: "Who owns the work when the engagement ends?",
-    a: "You own everything. Dashboard access, the campaign playbook, funnel map, all design files, and the change log. The Convert.com account is client-billed in your name. If the retainer ends, you have a fully operational system your team can run — or hand to any other partner.",
+    a: "You own everything. Dashboard access, the campaign playbook, funnel map, all design files, and the change log. The GrowthBook account is client-billed in your name. If the retainer ends, you have a fully operational system your team can run — or hand to any other partner.",
   },
 ];
 
@@ -169,7 +169,7 @@ export default function ClassAPage() {
           heading={"\u201CA 12-week transformation that builds your growth system from the ground up \u2014 then we run it with you.\u201D"}
           headingSize="sm"
           subhead="For scaling Shopify brands with active paid campaigns who want to stop running CRO and marketing in separate silos."
-          meta="$25,000 intensive (12 weeks) + $3,000–$5,000/mo retainer · Begins week 13"
+          meta="12-week intensive + ongoing retainer · Retainer begins week 13"
         />
 
         {/* Who it's for */}
@@ -608,7 +608,7 @@ export default function ClassAPage() {
           <div className="max-w-3xl mx-auto">
             <ScrollReveal>
               <p className="font-mono text-xs text-brand-ink/40 uppercase tracking-widest mb-3">Retainer — begins week 13</p>
-              <h2 className="text-2xl font-bold text-brand-ink mb-3" style={{ letterSpacing: "-0.01em" }}>$3,000–$5,000/mo. Continuous optimisation built on the intensive.</h2>
+              <h2 className="text-2xl font-bold text-brand-ink mb-3" style={{ letterSpacing: "-0.01em" }}>Continuous optimisation built on the intensive.</h2>
               <p className="text-base text-brand-ink/60 leading-relaxed mb-8">
                 The intensive feeds directly into the retainer. By week 13 the system is live, the first 90 days are planned, and the retainer starts with a full queue — not a blank slate.
               </p>
@@ -643,8 +643,8 @@ export default function ClassAPage() {
         <section className="bg-white px-6 py-16">
           <div className="max-w-3xl mx-auto">
             <ScrollReveal>
-              <p className="font-mono text-xs text-brand-ink/40 uppercase tracking-widest mb-3">Pricing + terms</p>
-              <h2 className="text-2xl font-bold text-brand-ink mb-8" style={{ letterSpacing: "-0.01em" }}>Fixed scope. No surprises.</h2>
+              <p className="font-mono text-xs text-brand-ink/40 uppercase tracking-widest mb-3">Terms</p>
+              <h2 className="text-2xl font-bold text-brand-ink mb-8" style={{ letterSpacing: "-0.01em" }}>Fixed scope. Written terms. No surprises.</h2>
               <div className="flex items-end gap-0 overflow-x-auto py-8">
                 {/* Node 01: Kickoff */}
                 <div className="flex-shrink-0 flex flex-col items-center">
@@ -652,7 +652,7 @@ export default function ClassAPage() {
                     <div className="w-2 h-2 rounded-full bg-white" />
                   </div>
                   <p className="font-mono text-[11px] font-bold text-brand-ink mt-3 text-center">Kickoff</p>
-                  <p className="font-mono text-[12px] text-brand-crimson text-center">$25,000</p>
+                  <p className="font-mono text-[11px] text-brand-ink/40 text-center">Fixed scope agreed</p>
                 </div>
                 {/* Connector 1 */}
                 <div className="flex-1 min-w-[60px] flex flex-col items-center gap-1 pb-10">
@@ -691,7 +691,7 @@ export default function ClassAPage() {
                     <div className="w-2 h-2 rounded-full bg-white" />
                   </div>
                   <p className="font-mono text-[11px] font-bold text-brand-ink mt-3 text-center">Week 13</p>
-                  <p className="font-mono text-[12px] text-brand-magenta text-center">$3K–$5K/mo</p>
+                  <p className="font-mono text-[11px] text-brand-ink/40 text-center">Retainer begins</p>
                 </div>
               </div>
             </ScrollReveal>

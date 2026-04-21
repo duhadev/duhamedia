@@ -57,7 +57,7 @@ const tools = [
     name: "Microsoft Clarity",
     accent: "border-brand-crimson",
     rationale:
-      "Free, privacy-compliant, and integrates directly with Convert.com for combined heatmap and experiment analysis. There's no better tool at this price point for behavioural data on Shopify stores.",
+      "Free, privacy-compliant, and integrates directly with GrowthBook for combined heatmap and experiment analysis. There's no better tool at this price point for behavioural data on Shopify stores.",
   },
   {
     name: "GA4",
@@ -66,13 +66,13 @@ const tools = [
       "The baseline for all traffic and conversion data. Every engagement starts with a verified GA4 configuration — goals, events, and funnels — before any change is made.",
   },
   {
-    name: "Convert.com",
+    name: "GrowthBook",
     accent: "border-brand-crimson",
     rationale:
-      "VWO and AB Tasty have moved upmarket — both now price at $10,000+/year for the features Shopify brands actually need. Convert.com is purpose-built for SMB conversion testing at a price that makes sense. It's billed directly to the client, no markup.",
+      "Open-source, privacy-focused, and warehouse-native — clients own their data entirely and the methodology is fully auditable. VWO and AB Tasty have merged into enterprise-tier platforms; GrowthBook offers a free self-hosted tier and a cloud plan that is dramatically more cost-effective, with full statistical transparency and no vendor lock-in. It integrates directly with Microsoft Clarity for combined experiment and session analysis.",
   },
   {
-    name: "Slack + Loom",
+    name: "RocketChat + Loom",
     accent: "border-brand-ink",
     rationale:
       "Async-first communication. Updates when they're ready, not on a schedule. Short Loom walkthroughs replace status calls — you see the screen and hear the rationale without needing to be available at a fixed time.",

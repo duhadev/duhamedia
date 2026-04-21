@@ -24,7 +24,7 @@ const tiers = [
   {
     label: "Class B",
     name: "CRO Core",
-    meta: "Setup + $1,500/mo retainer",
+    meta: "One-time setup + ongoing retainer",
     accent: "brand-magenta" as const,
     watermark: "B",
     inclusion: { text: "Includes Class C", color: "brand-crimson" as const },
@@ -32,7 +32,7 @@ const tiers = [
       "Continuous optimisation on the foundation already built. A/B testing, monthly reporting, and a live roadmap — no ramp-up needed.",
     includes: [
       "Full CRO audit",
-      "A/B testing via Convert.com",
+      "A/B testing via GrowthBook",
       "Landing page redesigns",
       "Monthly performance reports",
       "Full change log",
@@ -44,7 +44,7 @@ const tiers = [
   {
     label: "Class A",
     name: "Growth Intensive",
-    meta: "Fixed 12-week + $3–5K/mo retainer",
+    meta: "Fixed 12-week intensive + ongoing retainer",
     accent: "brand-gold" as const,
     watermark: "A",
     inclusion: { text: "Includes Class B", color: "brand-magenta" as const },

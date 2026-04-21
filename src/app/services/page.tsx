@@ -28,10 +28,10 @@ const tiers = [
     name: "Class B",
     tagline: '"Data-driven CRO — turning your existing traffic into measurable revenue."',
     who: "Shopify stores with 500+ monthly sessions running or planning paid social ads.",
-    meta: "Setup fee + $1,500/mo retainer",
+    meta: "One-time setup + ongoing retainer",
     includes: [
       "Full CRO audit",
-      "A/B testing via Convert.com",
+      "A/B testing via GrowthBook",
       "Landing page redesigns",
       "Monthly performance reports",
       "Full change log",
@@ -44,7 +44,7 @@ const tiers = [
     name: "Class A",
     tagline: '"A 12-week transformation that builds your growth system from the ground up."',
     who: "Scaling brands ($500K–$5M) with active paid campaigns across multiple channels.",
-    meta: "Fixed 12-week + $3–5K/mo retainer",
+    meta: "Fixed 12-week intensive + ongoing retainer",
     includes: [
       "Full marketing audit",
       "Conversion funnel map",
@@ -60,7 +60,7 @@ const tiers = [
 const steps = [
   { bar: "#c20e59", title: "Audit", body: "Clarity heatmaps, GA4 data, session recordings. We find the drop-offs before we touch anything." },
   { bar: "#e82561", title: "Build", body: "UX and UI designed around conversion architecture — not aesthetics first." },
-  { bar: "#f5c842", title: "Optimize", body: "A/B tests via Convert.com. Every variant documented. Every winner shipped." },
+  { bar: "#f5c842", title: "Optimize", body: "A/B tests via GrowthBook. Every variant documented. Every winner shipped." },
   { bar: "#0F172A", title: "Report", body: "Monthly performance reports. Full change log. You always know what changed and why." },
 ];
 

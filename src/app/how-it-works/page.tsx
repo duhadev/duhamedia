@@ -35,23 +35,13 @@ const neverAskItems = [
 
 const channels = [
   {
-    name: "Slack",
+    name: "RocketChat",
     freq: "Day-to-day",
     desc: "Dedicated channel. Quick questions, test updates, early findings.",
     logo: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-label="Slack" role="img">
-        {/* top-left arm (green) */}
-        <rect x="5" y="5" width="3.5" height="7" rx="1.75" fill="#36C5F0" transform="rotate(-90 8.5 8.5)" />
-        <circle cx="6.75" cy="8.5" r="1.75" fill="#36C5F0" />
-        {/* top-right arm (blue) */}
-        <rect x="15.5" y="5" width="3.5" height="7" rx="1.75" transform="rotate(0 15.5 5)" fill="#2EB67D" />
-        <circle cx="15.5" cy="6.75" r="1.75" fill="#2EB67D" />
-        {/* bottom-right arm (yellow) */}
-        <rect x="15.5" y="12" width="3.5" height="7" rx="1.75" transform="rotate(90 15.5 15.5)" fill="#ECB22E" />
-        <circle cx="17.25" cy="15.5" r="1.75" fill="#ECB22E" />
-        {/* bottom-left arm (red) */}
-        <rect x="5" y="12" width="3.5" height="7" rx="1.75" transform="rotate(180 8.5 15.5)" fill="#E01E5A" />
-        <circle cx="8.5" cy="17.25" r="1.75" fill="#E01E5A" />
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-label="RocketChat" role="img">
+        <path d="M12 3C7.03 3 3 6.58 3 11c0 2.1.9 4 2.38 5.42L4 21l4.72-1.52A9.7 9.7 0 0012 20c4.97 0 9-3.58 9-9s-4.03-8-9-8z" fill="#e82561" fillOpacity="0.15" stroke="#e82561" strokeWidth="1.5" strokeLinejoin="round"/>
+        <path d="M8.5 13.5l2-4 2 3 2-2" stroke="#e82561" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
     ),
   },

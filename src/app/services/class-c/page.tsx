@@ -54,7 +54,7 @@ const includedGroups = [
 ];
 
 const retainerItems = [
-  { title: "Monthly Slack + Loom update", desc: "Check-in on site performance and any quick wins." },
+  { title: "Monthly RocketChat + Loom update", desc: "Check-in on site performance and any quick wins." },
   { title: "Clarity data review", desc: "Monthly heatmap review — flagging early behavioral insights." },
   { title: "Content guidance", desc: "Advice on copy updates and site maintenance." },
   { title: "Upgrade trigger monitoring", desc: "We tell you when the data says you're ready for Class B." },
@@ -81,7 +81,7 @@ export default function ClassCPage() {
           headingSize="sm"
           subhead="A conversion-informed website for Shopify brands whose digital presence doesn't reflect the quality of their product."
           subheadSize="sm"
-          meta="One-time project · ~3 months · Starting at $5,000"
+          meta="One-time project · ~3 months"
         />
 
         {/* Who it's for */}
@@ -322,7 +322,7 @@ export default function ClassCPage() {
             <ScrollReveal>
               <p className="font-mono text-xs text-brand-ink/40 uppercase tracking-widest mb-3">Optional add-on</p>
               <h2 className="text-2xl font-bold text-brand-ink mb-3" style={{ letterSpacing: "-0.01em" }}>
-                Stay connected after launch. $500/mo.
+                Stay connected after launch.
               </h2>
               <p className="text-base text-brand-ink/60 leading-relaxed mb-8">
                 Not ready for Class B yet? The retainer keeps the relationship active and the upgrade conversation on your terms.
@@ -332,19 +332,12 @@ export default function ClassCPage() {
               {/* Left column */}
               <div className="flex flex-col gap-3 flex-1">
                 <div className="bg-brand-offwhite border border-black/10 rounded-sm p-2.5">
-                  <p className="font-mono text-[11px] font-bold text-brand-ink">Monthly Slack + Loom</p>
+                  <p className="font-mono text-[11px] font-bold text-brand-ink">Monthly RocketChat + Loom</p>
                   <p className="font-mono text-[11px] text-brand-ink/50 mt-1">Check-in on site performance and any quick wins.</p>
                 </div>
                 <div className="bg-brand-offwhite border border-black/10 rounded-sm p-2.5">
                   <p className="font-mono text-[11px] font-bold text-brand-ink">Clarity data review</p>
                   <p className="font-mono text-[11px] text-brand-ink/50 mt-1">Monthly heatmap review — flagging early behavioral insights.</p>
-                </div>
-              </div>
-              {/* Center: price circle */}
-              <div className="flex flex-col items-center justify-center px-4 flex-shrink-0">
-                <div className="w-20 h-20 rounded-full border border-brand-crimson bg-white flex flex-col items-center justify-center">
-                  <p className="font-mono text-lg font-bold text-brand-crimson leading-none">$500</p>
-                  <p className="font-mono text-[11px] text-brand-ink/40 leading-none mt-0.5">/mo</p>
                 </div>
               </div>
               {/* Right column */}

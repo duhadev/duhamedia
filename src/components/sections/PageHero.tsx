@@ -10,6 +10,8 @@ interface PageHeroProps {
   subheadSize?: "sm" | "base";
   /** Single line of mono metadata shown below the subhead (e.g. pricing). */
   meta?: string;
+  /** Optional second mono line shown below meta (e.g. guarantee callout). */
+  subNote?: string;
   /** Flex-wrapped tag spans shown below the subhead (e.g. qualifying criteria). */
   tags?: string[];
 }
@@ -22,6 +24,7 @@ export default function PageHero({
   subhead,
   subheadSize = "base",
   meta,
+  subNote,
   tags,
 }: PageHeroProps) {
   const headingColorClass = headingColor === "magenta" ? "text-brand-magenta" : "text-white";
@@ -46,6 +49,7 @@ export default function PageHero({
         </h1>
         {subhead && <p className={subheadClasses}>{subhead}</p>}
         {meta && <p className="font-mono text-xs text-white/35">{meta}</p>}
+        {subNote && <p className="font-mono text-xs text-brand-magenta mt-1">{subNote}</p>}
         {tags && tags.length > 0 && (
           <p className="font-mono text-xs text-white/35 flex flex-wrap gap-x-6 gap-y-1">
             {tags.map((tag) => (

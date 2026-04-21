@@ -5,6 +5,7 @@ const metrics = [
   { name: "Form abandonment", desc: "Last drop-off before the sale." },
   { name: "Core Web Vitals", desc: "Speed and stability affect conversion." },
   { name: "Mobile CVR", desc: "Most paid traffic is mobile." },
+  { name: "Micro-conversions", desc: "Add-to-cart, wishlist, and other leading indicators before the final sale." },
 ];
 
 export default function WhatWeTrack() {

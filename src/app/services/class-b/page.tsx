@@ -26,7 +26,7 @@ const setupDeliverables = [
   { num: "01", title: "GA4 conversion tracking configuration", body: "Goals, events, and funnels set up from scratch or rebuilt on your existing install. No optimisation is possible without a reliable baseline — this is the first thing we fix." },
   { num: "02", title: "Full site CRO audit", body: "A complete review of where your traffic drops off — using Clarity heatmaps, session recordings, and GA4 funnel data. Every finding is documented with a hypothesis before a single change is made." },
   { num: "03", title: "UX/UI refinements", body: "CTA placement, form structure, page hierarchy, and mobile experience updated to reflect what the data says, not what looks good." },
-  { num: "04", title: "Convert.com A/B testing framework", body: "Platform configured, integrated with Clarity, and first test launched. Every test has a documented hypothesis, a target metric, and a minimum sample size before it's called." },
+  { num: "04", title: "GrowthBook A/B testing framework", body: "Platform configured, integrated with Clarity, and first test launched. Every test has a documented hypothesis, a target metric, and a minimum sample size before it's called." },
   { num: "05", title: "Landing page redesigns", body: "Key pages rebuilt around conversion architecture — especially those receiving paid traffic where the cost of leaking visitors is highest." },
   { num: "06", title: "Heatmap + session recording analysis", body: "Baseline established from Clarity data. Behavioural patterns identified and ranked into a hypothesis backlog — the fuel for every A/B test that follows." },
 ];
@@ -36,7 +36,7 @@ const retainerItems = [
   { title: "Monthly performance report", desc: "CVR, CTR, scroll depth, form abandonment, Core Web Vitals vs. baseline." },
   { title: "A/B test results + next-test recommendations", desc: "Winners documented, losers analysed, next hypothesis queued." },
   { title: "Full change log", desc: "Every update logged with its rationale and measured outcome." },
-  { title: "Bi-weekly check-in calls", desc: "Async Slack + Loom updates between calls." },
+  { title: "Bi-weekly check-in calls", desc: "Async RocketChat + Loom updates between calls." },
   { title: "Inter-departmental docs", desc: "Documentation your marketing and product teams can actually use." },
 ];
 
@@ -45,13 +45,13 @@ const tools = [
     name: "Microsoft Clarity",
     cost: "Free",
     desc: "Session recording, heatmaps, UTM campaign filtering. Installed at Class C — data collecting before Class B begins.",
-    why: "Free, privacy-compliant, integrates directly with Convert.com for combined experiment + session analysis.",
+    why: "Free, privacy-compliant, integrates directly with GrowthBook for combined experiment + session analysis.",
   },
   {
-    name: "Convert.com",
-    cost: "~$349/mo (client-billed)",
-    desc: "Dedicated A/B testing platform. SMB-priced, privacy-focused, purpose-built for conversion testing.",
-    why: "VWO and AB Tasty merged into enterprise-tier platforms at $10K+/yr. Convert is the right fit for brands under $5M.",
+    name: "GrowthBook",
+    cost: "Free (self-hosted) or low-cost cloud (client-billed)",
+    desc: "Dedicated A/B testing and feature flagging platform. Open-source, privacy-focused, warehouse-native — full statistical transparency, no vendor lock-in, and clients own their data entirely.",
+    why: "Integrates directly with Microsoft Clarity for combined experiment and session analysis.",
   },
 ];
 
@@ -67,10 +67,10 @@ const keyMetrics = [
 
 const faqs = [
   { q: "How long before we see results?", a: "The setup phase typically takes 4–6 weeks. First A/B test results come in 3–6 weeks after that, depending on traffic volume. Meaningful CVR movement is usually visible within 90 days — though the change log starts from day one, so you're never waiting to see what's happening." },
-  { q: "How do we know the changes you make actually caused the improvement?", a: "Everything runs through Convert.com — a dedicated A/B testing platform that isolates variables and measures statistical significance before a test is called. Every result is documented with the test parameters, sample size, and confidence level. You see the methodology, not just the number." },
+  { q: "How do we know the changes you make actually caused the improvement?", a: "Everything runs through GrowthBook — a dedicated A/B testing platform that isolates variables and measures statistical significance before a test is called. Every result is documented with the test parameters, sample size, and confidence level. You see the methodology, not just the number." },
   { q: "What if our traffic drops mid-engagement?", a: "If traffic drops below the 500-session threshold, A/B testing pauses — running tests on insufficient data produces misleading results and we won't do it. The retainer shifts to audit, analysis, and preparation work until traffic recovers. You're not paying for noise." },
-  { q: "Who owns the work when the retainer ends?", a: "You do. All design files, documentation, and change logs are yours. The Convert.com account is client-billed and stays with you. There's no lock-in on assets or data." },
-  { q: "How much of our team's time does this require?", a: "Minimal. We work in a dedicated Slack channel and deliver async Loom updates. Bi-weekly check-ins are 30 minutes. Monthly report reviews are optional. Most clients spend under 2 hours a month on active involvement." },
+  { q: "Who owns the work when the retainer ends?", a: "You do. All design files, documentation, and change logs are yours. The GrowthBook account is client-billed and stays with you. There's no lock-in on assets or data." },
+  { q: "How much of our team's time does this require?", a: "Minimal. We work in a dedicated RocketChat channel and deliver async Loom updates. Bi-weekly check-ins are 30 minutes. Monthly report reviews are optional. Most clients spend under 2 hours a month on active involvement." },
   { q: "What does the first 30 days actually look like?", a: "Week 1: GA4 audit and tracking fix. Week 2: Clarity and heatmap baseline review. Weeks 3–4: CRO audit delivered with prioritised hypothesis backlog. By day 30 you have a complete picture of what's broken and a ranked list of what to fix first." },
   { q: "Can we pause the retainer?", a: "Pauses can be arranged with 30 days written notice for circumstances outside your control. Standard retainers don't include pause terms by default. This is discussed and agreed during onboarding." },
   { q: "How is this different from hiring a CRO consultant?", a: "A consultant gives you a report. We give you a documented, running system — tested changes, a live change log, and a hypothesis backlog that keeps producing results after the initial work is done. The retainer is designed to compound, not repeat itself each month." },
@@ -87,7 +87,8 @@ export default function ClassBPage() {
           heading={"\u201CData-driven conversion rate optimisation \u2014 turning your existing traffic into measurable revenue.\u201D"}
           headingSize="sm"
           subhead="For Shopify stores with existing traffic and paid campaigns. We systematically improve what happens after the click."
-          meta="Setup fee + $1,500/mo retainer · Min. 500 monthly sessions to qualify"
+          meta="One-time setup + ongoing retainer · Min. 500 monthly sessions to qualify"
+          subNote="Backed by the Duha Media Conversion Guarantee."
         />
 
         {/* Prerequisites */}
@@ -158,7 +159,7 @@ export default function ClassBPage() {
         <section className="bg-brand-offwhite px-6 py-16">
           <div className="max-w-3xl mx-auto">
             <ScrollReveal>
-              <p className="font-mono text-xs text-brand-ink/40 uppercase tracking-widest mb-3">Retainer — $1,500/mo ongoing</p>
+              <p className="font-mono text-xs text-brand-ink/40 uppercase tracking-widest mb-3">Retainer — ongoing</p>
               <h2 className="text-2xl font-bold text-brand-ink mb-8" style={{ letterSpacing: "-0.01em" }}>What you get every month.</h2>
             </ScrollReveal>
             <div className="grid grid-cols-4 gap-3">
@@ -181,7 +182,7 @@ export default function ClassBPage() {
                 <div className="bg-brand-offwhite text-brand-ink rounded-sm px-2 py-1 font-mono text-[11px] text-center border border-black/20">Roadmap update</div>
               </div>
             </div>
-            <p className="font-mono text-[11px] text-brand-ink/40 mt-4">Cadence repeats every month. Slack + Loom async between calls.</p>
+            <p className="font-mono text-[11px] text-brand-ink/40 mt-4">Cadence repeats every month. RocketChat + Loom async between calls.</p>
           </div>
         </section>
 
@@ -272,45 +273,20 @@ export default function ClassBPage() {
                   <p className="font-mono text-sm font-medium text-brand-ink mb-1">Microsoft Clarity</p>
                   <p className="font-mono text-xs text-brand-ink/40 mb-3">Free</p>
                   <p className="text-sm text-brand-ink/60 leading-relaxed mb-3">Session recording, heatmaps, UTM campaign filtering. Installed at Class C — data collecting before Class B begins.</p>
-                  <p className="text-[11px] italic text-brand-ink/50 leading-relaxed border-l-[3px] pl-3 mt-3" style={{ borderColor: "#c20e59" }}>Free, privacy-compliant, integrates directly with Convert.com for combined experiment + session analysis.</p>
+                  <p className="text-[11px] italic text-brand-ink/50 leading-relaxed border-l-[3px] pl-3 mt-3" style={{ borderColor: "#c20e59" }}>Free, privacy-compliant, integrates directly with GrowthBook for combined experiment + session analysis.</p>
                 </div>
               </ScrollReveal>
               <ScrollReveal delay={80}>
                 <div className="border border-black/10 rounded-sm p-5">
-                  <p className="font-mono text-sm font-medium text-brand-ink mb-1">Convert.com</p>
-                  <p className="font-mono text-xs text-brand-ink/40 mb-3">~$349/mo (client-billed)</p>
-                  <p className="text-sm text-brand-ink/60 leading-relaxed mb-3">Dedicated A/B testing platform. SMB-priced, privacy-focused, purpose-built for conversion testing.</p>
-                  <p className="text-[11px] italic text-brand-ink/50 leading-relaxed border-l-[3px] pl-3 mt-3" style={{ borderColor: "#e82561" }}>VWO and AB Tasty merged into enterprise-tier platforms at $10K+/yr. Convert is the right fit for brands under $5M.</p>
+                  <p className="font-mono text-sm font-medium text-brand-ink mb-1">GrowthBook</p>
+                  <p className="font-mono text-xs text-brand-ink/40 mb-3">Free (self-hosted) or low-cost cloud (client-billed)</p>
+                  <p className="text-sm text-brand-ink/60 leading-relaxed mb-3">Dedicated A/B testing and feature flagging platform. Open-source, privacy-focused, warehouse-native — full statistical transparency, no vendor lock-in, and clients own their data entirely.</p>
+                  <p className="text-[11px] italic text-brand-ink/50 leading-relaxed border-l-[3px] pl-3 mt-3" style={{ borderColor: "#e82561" }}>Integrates directly with Microsoft Clarity for combined experiment and session analysis.</p>
                 </div>
               </ScrollReveal>
             </div>
-            <div className="mt-6 border-t border-black/10 pt-6">
-              <p className="font-mono text-[10px] text-brand-ink/40 mb-3">Platform comparison</p>
-              <div className="flex items-center gap-3 py-2 border-b border-black/10">
-                <p className="font-mono text-[11px] text-brand-ink min-w-[120px]">VWO / AB Tasty</p>
-                <div className="flex-1 h-2 rounded-full bg-brand-ink/12" />
-                <p className="font-mono text-[11px] text-brand-ink/60">$10,000+/yr</p>
-                <p className="font-mono text-[10px] text-brand-ink/40 min-w-[80px] text-right">Enterprise tier</p>
-              </div>
-              <div className="flex items-center gap-3 py-2 border-b border-black/10">
-                <p className="font-mono text-[11px] text-brand-ink min-w-[120px]">Convert.com</p>
-                <div className="flex-1 h-2 rounded-full relative">
-                  <div className="w-[42%] h-2 bg-brand-crimson/20 rounded-full" />
-                </div>
-                <p className="font-mono text-[11px] text-brand-crimson">~$4,188/yr</p>
-                <p className="font-mono text-[10px] text-brand-crimson min-w-[80px] text-right">Right fit</p>
-              </div>
-              <div className="flex items-center gap-3 py-2">
-                <p className="font-mono text-[11px] text-brand-ink min-w-[120px]">Clarity</p>
-                <div className="flex-1 flex items-center">
-                  <div className="w-2 h-2 rounded-full bg-brand-ink/40" />
-                </div>
-                <p className="font-mono text-[11px] text-brand-ink/60">Free</p>
-                <p className="font-mono text-[10px] text-brand-ink/40 min-w-[80px] text-right">Included</p>
-              </div>
-            </div>
-            <p className="font-mono text-xs text-brand-ink/40 border-t border-black/10 pt-4 mt-2">
-              Convert.com is billed directly to the client — separate from the Duha Media retainer. No markup.
+            <p className="font-mono text-xs text-brand-ink/40 border-t border-black/10 pt-4 mt-6">
+              GrowthBook is available as a free self-hosted tier or a low-cost cloud plan — billed directly to the client, no markup.
             </p>
           </div>
         </section>
@@ -348,6 +324,34 @@ export default function ClassBPage() {
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Conversion Guarantee */}
+        <section className="bg-brand-ink px-6 py-16">
+          <div className="max-w-3xl mx-auto">
+            <p className="font-mono text-xs text-white/30 uppercase tracking-widest mb-4">The Duha Media Conversion Guarantee</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-6 leading-tight" style={{ letterSpacing: "-0.01em" }}>
+              If your conversion rate doesn&apos;t improve within 90 days, we keep working at no additional cost until it does.
+            </h2>
+            <p className="text-base text-white/60 leading-relaxed mb-6">
+              You will always be able to see exactly what we have tested, what moved, and what did not — so the answer is always in the data, not in our word. We back our work because the documentation makes it impossible to hide.
+            </p>
+            <div className="border border-white/10 rounded-sm p-5">
+              <p className="font-mono text-xs text-white/30 uppercase tracking-widest mb-3">Eligibility</p>
+              <ul className="space-y-2">
+                {[
+                  "Minimum 500 monthly sessions",
+                  "GA4 and Clarity installed prior to start",
+                  "Client approves changes within 7 days of delivery",
+                  "Traffic levels remain broadly consistent throughout the engagement",
+                ].map((item) => (
+                  <li key={item} className="flex gap-2 text-sm text-white/50">
+                    <span className="text-white/25 flex-shrink-0">·</span>{item}
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </section>
