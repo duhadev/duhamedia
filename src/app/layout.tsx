@@ -20,6 +20,22 @@ export const metadata: Metadata = {
   title: "Duha Media — CRO & Web Design for Shopify Brands",
   description:
     "Conversion rate optimisation and web design for Shopify brands that have traffic but aren't converting it. Documented. Measured. Proven.",
+  icons: {
+    icon: "/icon.svg",
+  },
+  openGraph: {
+    title: "Duha Media — CRO & Web Design for Shopify Brands",
+    description:
+      "Conversion rate optimisation and web design for Shopify brands that have traffic but aren't converting it. Documented. Measured. Proven.",
+    type: "website",
+    locale: "en_GB",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Duha Media — CRO & Web Design for Shopify Brands",
+    description:
+      "Conversion rate optimisation and web design for Shopify brands that have traffic but aren't converting it. Documented. Measured. Proven.",
+  },
 };
 
 export default function RootLayout({
