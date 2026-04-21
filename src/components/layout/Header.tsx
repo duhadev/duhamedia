@@ -19,10 +19,54 @@ interface NavLink {
 }
 
 const NAV_LINKS: NavLink[] = [
-  { label: "Services", href: "/services" },
+  {
+    label: "Services",
+    href: "/services",
+    mega: true,
+    children: [
+      {
+        label: "Class B — Optimization",
+        href: "/services/class-b",
+        desc: "Monthly CRO retainer — ongoing split tests, heatmaps, and conversion improvements.",
+        featured: true,
+      },
+      {
+        label: "Class A — Design & Build",
+        href: "/services/class-a",
+        desc: "Full Shopify store design and development from scratch.",
+      },
+      {
+        label: "Class C — Audit",
+        href: "/services/class-c",
+        desc: "One-time conversion audit with a prioritized fix list.",
+      },
+    ],
+  },
   { label: "How it works", href: "/how-it-works" },
-  { label: "Results", href: "/results" },
-  { label: "Insights", href: "/insights" },
+  {
+    label: "Results",
+    href: "/results",
+    children: [
+      { label: "Case Studies", href: "/results/case-studies" },
+    ],
+  },
+  {
+    label: "Insights",
+    href: "/insights",
+    mega: true,
+    children: [
+      {
+        label: "Blog",
+        href: "/insights/blog",
+        desc: "Practitioner-level CRO articles from people running tests every week.",
+      },
+      {
+        label: "Teardowns",
+        href: "/insights/teardowns",
+        desc: "Page-by-page breakdowns of real Shopify stores with actionable fixes.",
+      },
+    ],
+  },
   { label: "About", href: "/about" },
 ];
 
