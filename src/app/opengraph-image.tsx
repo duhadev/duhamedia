@@ -5,7 +5,28 @@ export const alt = "Duha Media — CRO & Web Design for Shopify Brands";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export default function OGImage() {
+async function loadIBMPlexSans(weight: 400 | 700): Promise<ArrayBuffer> {
+  const css = await fetch(
+    `https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@${weight}&display=swap`,
+    {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      },
+    }
+  ).then((r) => r.text());
+
+  const fontUrl = css.match(/src: url\(([^)]+)\) format\('woff2'\)/)?.[1];
+  if (!fontUrl) throw new Error("IBM Plex Sans font URL not found");
+  return fetch(fontUrl).then((r) => r.arrayBuffer());
+}
+
+export default async function OGImage() {
+  const [bold, regular] = await Promise.all([
+    loadIBMPlexSans(700),
+    loadIBMPlexSans(400),
+  ]);
+
   return new ImageResponse(
     (
       <div
@@ -17,7 +38,7 @@ export default function OGImage() {
           alignItems: "center",
           justifyContent: "space-between",
           padding: "72px 80px",
-          fontFamily: "sans-serif",
+          fontFamily: "'IBM Plex Sans', sans-serif",
           position: "relative",
         }}
       >
@@ -32,12 +53,12 @@ export default function OGImage() {
           }}
         >
           {/* Logo mark + wordmark */}
-          <div style={{ display: "flex", alignItems: "center", gap: 28 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
             {/* Four-band circle */}
             <div
               style={{
-                width: 72,
-                height: 72,
+                width: 56,
+                height: 56,
                 borderRadius: "50%",
                 overflow: "hidden",
                 display: "flex",
@@ -53,13 +74,14 @@ export default function OGImage() {
             <span
               style={{
                 color: "#FFFFFF",
-                fontSize: 42,
+                fontSize: 38,
                 fontWeight: 700,
                 letterSpacing: "-0.02em",
                 lineHeight: 1,
+                fontFamily: "'IBM Plex Sans', sans-serif",
               }}
             >
-              Duha Media
+              duha media
             </span>
           </div>
 
@@ -80,6 +102,7 @@ export default function OGImage() {
                 lineHeight: 1.2,
                 margin: 0,
                 maxWidth: 680,
+                fontFamily: "'IBM Plex Sans', sans-serif",
               }}
             >
               CRO & Web Design for Shopify Brands
@@ -91,6 +114,7 @@ export default function OGImage() {
                 fontWeight: 400,
                 margin: 0,
                 letterSpacing: "0.01em",
+                fontFamily: "'IBM Plex Sans', sans-serif",
               }}
             >
               Documented. Measured. Proven.
@@ -102,10 +126,11 @@ export default function OGImage() {
             style={{
               color: "rgba(255,255,255,0.3)",
               fontSize: 16,
-              fontWeight: 500,
+              fontWeight: 400,
               letterSpacing: "0.12em",
               textTransform: "uppercase",
               margin: 0,
+              fontFamily: "'IBM Plex Sans', sans-serif",
             }}
           >
             duhamedia.com
@@ -120,8 +145,6 @@ export default function OGImage() {
             gap: 10,
             height: "100%",
             alignItems: "stretch",
-            paddingTop: 0,
-            paddingBottom: 0,
           }}
         >
           {(
@@ -146,6 +169,12 @@ export default function OGImage() {
         </div>
       </div>
     ),
-    size
+    {
+      ...size,
+      fonts: [
+        { name: "IBM Plex Sans", data: bold, weight: 700, style: "normal" },
+        { name: "IBM Plex Sans", data: regular, weight: 400, style: "normal" },
+      ],
+    }
   );
 }
