@@ -1,5 +1,4 @@
-import { cookies } from 'next/headers';
-import { createRemoteJWKSet, jwtVerify } from 'jose';
+import { headers } from 'next/headers';
 import { sql } from '@/lib/db';
 import { redirect } from 'next/navigation';
 
@@ -11,26 +10,37 @@ export type AppUser = {
   clientId: string | null;
 };
 
-// Verify the Neon Auth session JWT directly from the cookie.
-// This avoids calling neonAuth() which tries to set cookies from a Server Component — not allowed in Next.js.
+// Fetch the session from Neon Auth directly, forwarding only the neon-auth cookies.
+// We deliberately skip the set-cookie step — the middleware already handles cookie
+// refresh, and Server Components cannot write cookies anyway.
 async function getSessionUser(): Promise<{ id: string; email: string; name?: string | null } | null> {
-  const SESSION_COOKIE = '__Secure-neon-auth.session_token';
-  const JWKS_URL = `${process.env.NEON_AUTH_BASE_URL}/.well-known/jwks.json`;
+  const baseUrl = process.env.NEON_AUTH_BASE_URL;
+  if (!baseUrl) return null;
 
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get(SESSION_COOKIE)?.value;
-    if (!token) return null;
+    const headerStore = await headers();
+    const allCookies = headerStore.get('cookie') ?? '';
+    const neonCookies = allCookies
+      .split(';')
+      .map(c => c.trim())
+      .filter(c => c.startsWith('__Secure-neon-auth') || c.startsWith('neon-auth'))
+      .join('; ');
 
-    const JWKS = createRemoteJWKSet(new URL(JWKS_URL));
-    const { payload } = await jwtVerify(token, JWKS);
+    const res = await fetch(`${baseUrl}/get-session`, {
+      method: 'GET',
+      headers: { Cookie: neonCookies },
+      cache: 'no-store',
+    });
 
-    const sub = payload.sub as string | undefined;
-    const email = (payload.email ?? payload['https://auth.neon.tech/email']) as string | undefined;
-    const name = (payload.name ?? payload['https://auth.neon.tech/name']) as string | null | undefined;
-    if (!sub || !email) return null;
+    if (!res.ok) return null;
+    const body = await res.json();
+    if (!body?.user) return null;
 
-    return { id: sub, email, name: name ?? null };
+    return {
+      id: body.user.id as string,
+      email: body.user.email as string,
+      name: (body.user.name as string | null) ?? null,
+    };
   } catch {
     return null;
   }
