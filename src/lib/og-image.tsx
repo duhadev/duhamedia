@@ -1,19 +1,25 @@
 import { ImageResponse } from "next/og";
 
-async function loadIBMPlexSans(weight: 400 | 700): Promise<ArrayBuffer> {
-  const css = await fetch(
-    `https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@${weight}&display=swap`,
-    {
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-      },
-    }
-  ).then((r) => r.text());
+async function loadIBMPlexSans(
+  weight: 400 | 700
+): Promise<ArrayBuffer | null> {
+  try {
+    const css = await fetch(
+      `https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@${weight}&display=swap`,
+      {
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        },
+      }
+    ).then((r) => r.text());
 
-  const fontUrl = css.match(/src: url\(([^)]+)\) format\('woff2'\)/)?.[1];
-  if (!fontUrl) throw new Error("IBM Plex Sans font URL not found");
-  return fetch(fontUrl).then((r) => r.arrayBuffer());
+    const fontUrl = css.match(/src: url\(([^)]+)\) format\('woff2'\)/)?.[1];
+    if (!fontUrl) return null;
+    return fetch(fontUrl).then((r) => r.arrayBuffer());
+  } catch {
+    return null;
+  }
 }
 
 export async function generateOGImage(title: string): Promise<ImageResponse> {
@@ -21,6 +27,10 @@ export async function generateOGImage(title: string): Promise<ImageResponse> {
     loadIBMPlexSans(700),
     loadIBMPlexSans(400),
   ]);
+
+  const fonts: ConstructorParameters<typeof ImageResponse>[1]["fonts"] = [];
+  if (bold) fonts.push({ name: "IBM Plex Sans", data: bold, weight: 700, style: "normal" });
+  if (regular) fonts.push({ name: "IBM Plex Sans", data: regular, weight: 400, style: "normal" });
 
   return new ImageResponse(
     (
@@ -155,10 +165,7 @@ export async function generateOGImage(title: string): Promise<ImageResponse> {
     {
       width: 1200,
       height: 630,
-      fonts: [
-        { name: "IBM Plex Sans", data: bold, weight: 700, style: "normal" },
-        { name: "IBM Plex Sans", data: regular, weight: 400, style: "normal" },
-      ],
+      fonts,
     }
   );
 }

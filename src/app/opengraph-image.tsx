@@ -5,6 +5,6 @@ export const alt = "Duha Media — CRO & Web Design for Shopify Brands";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-export default function OGImage() {
+export default async function OGImage() {
   return generateOGImage("CRO & Web Design for Shopify Brands");
 }
