@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { authClient } from '@/lib/auth/client';
+import { checkEmailAllowed } from '@/app/auth/actions';
 import LogoMark from '@/components/ui/LogoMark';
 
 export default function SignInPage() {
@@ -16,6 +17,11 @@ export default function SignInPage() {
     setError('');
     setLoading(true);
     try {
+      const allowed = await checkEmailAllowed(email.trim().toLowerCase());
+      if (!allowed) {
+        setError("This email hasn't been invited. Contact us to request access.");
+        return;
+      }
       const { error: err } = await authClient.emailOtp.sendVerificationOtp({
         email: email.trim().toLowerCase(),
         type: 'sign-in',

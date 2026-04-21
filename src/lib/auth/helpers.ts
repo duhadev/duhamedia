@@ -25,13 +25,12 @@ export async function getCurrentUser(): Promise<AppUser | null> {
     let clientId: string | null = null;
 
     if (!isOwner) {
-      // Check if this email has a pending invite
       const inviteRows = await sql`
         SELECT client_id FROM public.client_invites WHERE email = ${user.email}
       `;
-      if (inviteRows.length > 0) {
-        clientId = inviteRows[0].client_id as string;
-      }
+      // No invite — not allowed in
+      if (inviteRows.length === 0) return null;
+      clientId = inviteRows[0].client_id as string;
     }
 
     await sql`
