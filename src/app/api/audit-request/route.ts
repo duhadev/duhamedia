@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sanitizeEmail, sanitizeText, isValidEmail } from "@/lib/sanitize";
 import { sql } from "@/lib/db";
+import { sendAuditNotifications } from "@/lib/email";
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,6 +26,8 @@ export async function POST(request: NextRequest) {
       INSERT INTO audit_requests (store_url, name, email, phone)
       VALUES (${payload.storeUrl}, ${payload.name}, ${payload.email}, ${payload.phone})
     `;
+
+    sendAuditNotifications(payload).catch(console.error);
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch {

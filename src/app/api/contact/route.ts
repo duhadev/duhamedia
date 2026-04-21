@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sanitizeEmail, sanitizeText, sanitizeLong, isValidEmail } from "@/lib/sanitize";
 import { sql } from "@/lib/db";
+import { sendContactNotification } from "@/lib/email";
 
 const VALID_REASONS = [
   "Book a discovery call",
@@ -43,6 +44,8 @@ export async function POST(request: NextRequest) {
       INSERT INTO contact_submissions (name, email, website, reason, message)
       VALUES (${payload.name}, ${payload.email}, ${payload.website}, ${payload.reason}, ${payload.message})
     `;
+
+    sendContactNotification(payload).catch(console.error);
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch {
