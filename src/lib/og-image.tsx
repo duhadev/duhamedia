@@ -37,7 +37,7 @@ export async function generateOGImage(title: string): Promise<ImageResponse> {
       <div
         style={{
           width: 1200,
-          height: 630,
+          height: 628,
           background: "#0F172A",
           display: "flex",
           alignItems: "center",
@@ -164,7 +164,7 @@ export async function generateOGImage(title: string): Promise<ImageResponse> {
     ),
     {
       width: 1200,
-      height: 630,
+      height: 628,
       fonts,
     }
   );

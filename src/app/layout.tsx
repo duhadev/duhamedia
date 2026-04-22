@@ -17,6 +17,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://duhamedia.com"),
   title: "Duha Media — CRO & Web Design for Shopify Brands",
   description:
     "Conversion rate optimisation and web design for Shopify brands that have traffic but aren't converting it. Documented. Measured. Proven.",
