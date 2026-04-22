@@ -25,11 +25,15 @@ CREATE TABLE IF NOT EXISTS public.posts (
   id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   slug       TEXT UNIQUE NOT NULL,
   title      TEXT NOT NULL,
+  excerpt    TEXT,
   content    TEXT NOT NULL,
   published  BOOLEAN DEFAULT false,
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now()
 );
+
+-- Migration: add excerpt column if the table already exists
+ALTER TABLE public.posts ADD COLUMN IF NOT EXISTS excerpt TEXT;
 
 CREATE TABLE IF NOT EXISTS public.form_submissions (
   id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),

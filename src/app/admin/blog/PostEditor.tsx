@@ -6,6 +6,7 @@ type Props = {
   action: (formData: FormData) => Promise<void>;
   defaultTitle?: string;
   defaultContent?: string;
+  defaultExcerpt?: string;
   defaultPublished?: boolean;
   submitLabel?: string;
 };
@@ -14,6 +15,7 @@ export default function PostEditor({
   action,
   defaultTitle = '',
   defaultContent = '',
+  defaultExcerpt = '',
   defaultPublished = false,
   submitLabel = 'Save',
 }: Props) {
@@ -71,22 +73,37 @@ export default function PostEditor({
         {preview && <input type="hidden" name="content" value={content} />}
       </div>
 
+      <div>
+        <label htmlFor="excerpt" className="font-mono text-xs text-brand-ink/40 uppercase tracking-widest block mb-1.5">
+          Excerpt <span className="normal-case tracking-normal font-sans font-normal text-brand-ink/30">(optional — leave blank to auto-generate)</span>
+        </label>
+        <textarea
+          id="excerpt"
+          name="excerpt"
+          defaultValue={defaultExcerpt}
+          rows={2}
+          maxLength={300}
+          className="w-full border border-neutral-200 rounded-sm px-4 py-3 text-sm text-brand-ink bg-white focus:outline-none focus:border-brand-magenta resize-none"
+          placeholder="1–2 sentence preview shown on listing and hub pages."
+        />
+      </div>
+
       <div className="flex items-center gap-3">
         <label className="font-mono text-xs text-brand-ink/40 uppercase tracking-widest">
           Status
         </label>
         <label className="flex items-center gap-2 cursor-pointer select-none">
           <input
-            type="hidden"
-            name="published"
-            value="false"
-          />
-          <input
             type="checkbox"
             name="published"
             value="true"
             defaultChecked={defaultPublished}
             className="w-4 h-4 accent-brand-magenta"
+          />
+          <input
+            type="hidden"
+            name="published"
+            value="false"
           />
           <span className="text-sm text-brand-ink">Publish</span>
         </label>

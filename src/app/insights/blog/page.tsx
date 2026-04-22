@@ -7,13 +7,24 @@ import PageHero from "@/components/sections/PageHero";
 import { sql } from "@/lib/db";
 import Link from "next/link";
 
-type Post = { slug: string; title: string; created_at: string };
+type Post = { slug: string; title: string; excerpt: string | null; content: string; created_at: string };
+
+function autoExcerpt(content: string): string {
+  const stripped = content
+    .replace(/^#{1,6}\s+.+$/gm, '')
+    .replace(/!\[.*?\]\(.*?\)/g, '')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/[*_`~>#-]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return stripped.length > 160 ? stripped.slice(0, 157) + '…' : stripped;
+}
 
 export const dynamic = 'force-dynamic';
 
 export default async function BlogPage() {
   const posts = (await sql`
-    SELECT slug, title, created_at
+    SELECT slug, title, excerpt, content, created_at
     FROM public.posts
     WHERE published = true
     ORDER BY created_at DESC
@@ -42,24 +53,30 @@ export default async function BlogPage() {
               />
             ) : (
               <div className="flex flex-col gap-6">
-                {posts.map((post) => (
-                  <Link
-                    key={post.slug}
-                    href={`/insights/blog/${post.slug}`}
-                    className="group border-b border-neutral-100 pb-6 last:border-none last:pb-0"
-                  >
-                    <p className="font-mono text-xs text-brand-ink/40 uppercase tracking-widest mb-2">
-                      {new Date(post.created_at).toLocaleDateString('en-GB', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric',
-                      })}
-                    </p>
-                    <h2 className="text-xl font-bold text-brand-ink group-hover:text-brand-magenta transition-colors leading-snug">
-                      {post.title}
-                    </h2>
-                  </Link>
-                ))}
+                {posts.map((post) => {
+                  const preview = post.excerpt || autoExcerpt(post.content);
+                  return (
+                    <Link
+                      key={post.slug}
+                      href={`/insights/blog/${post.slug}`}
+                      className="group border-b border-neutral-100 pb-6 last:border-none last:pb-0"
+                    >
+                      <p className="font-mono text-xs text-brand-ink/40 uppercase tracking-widest mb-2">
+                        {new Date(post.created_at).toLocaleDateString('en-GB', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric',
+                        })}
+                      </p>
+                      <h2 className="text-xl font-bold text-brand-ink group-hover:text-brand-magenta transition-colors leading-snug mb-1.5">
+                        {post.title}
+                      </h2>
+                      {preview && (
+                        <p className="text-sm text-brand-ink/55 leading-relaxed line-clamp-2">{preview}</p>
+                      )}
+                    </Link>
+                  );
+                })}
               </div>
             )}
           </div>
