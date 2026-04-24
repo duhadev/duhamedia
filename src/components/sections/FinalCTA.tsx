@@ -25,7 +25,7 @@ export default function FinalCTA() {
             className="bg-white/10 border border-white/20 rounded-sm px-4 py-2.5 font-mono text-xs text-white/40 placeholder:text-white/30 min-w-52 focus:outline-none focus:border-white/40 h-[44px]"
           />
           <Link
-            href="/15-minute-audit"
+            href="/free-audit"
             className="bg-brand-magenta text-white font-bold text-xs px-5 py-2.5 rounded-sm hover:bg-brand-crimson transition-colors h-[44px] flex items-center whitespace-nowrap"
           >
             Claim your free audit

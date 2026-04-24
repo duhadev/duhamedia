@@ -40,8 +40,8 @@ When implementing a page, read the corresponding `pages/page-*.tsx` file as a de
 | `/insights` | — |
 | `/insights/blog` | — |
 | `/insights/teardowns` | — |
-| `/15-minute-audit` | — (lead magnet landing page) |
-| `/free-audit` | — (redirects to `/15-minute-audit`) |
+| `/free-audit` | — (lead magnet landing page) |
+| `/15-minute-audit` | — (redirects to `/free-audit`) |
 
 ## Design System Architecture
 
@@ -185,15 +185,15 @@ All implementations must meet:
 - **Mobile**: 64px height, hamburger menu (full-screen slide-in)
 - **Logo**: 40–48px height (desktop), 32–36px (mobile)
 - **Links**: `text-base font-semibold`, active page has bottom border
-- **CTA**: Single "Get free audit" button → `/15-minute-audit`
+- **CTA**: Single "Get free audit" button → `/free-audit`
 
 ### Primary CTA Destination
-All site-wide CTAs (header button, hero button, `FinalCTA` section) link to **`/15-minute-audit`** — the dedicated lead magnet landing page for the "15-Minute Shopify Conversion Leak Audit". Do not route these CTAs to `/contact`. The `/contact` page is for general enquiries. The exception is `DualCTA`, which currently links to `/contact`.
+All site-wide CTAs (header button, hero button, `FinalCTA` section) link to **`/free-audit`** — the dedicated lead magnet landing page for the "15-Minute Shopify Conversion Leak Audit". The legacy `/15-minute-audit` URL redirects to `/free-audit`. Do not route these CTAs to `/contact`. The `/contact` page is for general enquiries. The exception is `DualCTA`, which currently links to `/contact`.
 
 ### Shared Section Components
 - **`DualCTA`** (`src/components/sections/DualCTA.tsx`) — reusable dark CTA section used at the bottom of service pages. Accepts a `heading` prop.
 - **`ConversionGuarantee`** (`src/components/sections/ConversionGuarantee.tsx`) — Class B guarantee section, placed on the homepage between `Results` and `FinalCTA`.
-- **`FinalCTA`** (`src/components/sections/FinalCTA.tsx`) — homepage-specific CTA with URL input field, links to `/15-minute-audit`.
+- **`FinalCTA`** (`src/components/sections/FinalCTA.tsx`) — homepage-specific CTA with URL input field, links to `/free-audit`.
 
 ### Logo Mark
 - Four-band SVG (top to bottom): `brand-cream`, `brand-gold`, `brand-magenta`, `brand-crimson`
@@ -282,8 +282,8 @@ All pages follow this structure:
     layout.tsx           # Root layout — fonts loaded here (IBM Plex Sans + Mono)
     globals.css          # Tailwind v4 @theme inline — all design tokens live here
     page.tsx             # Homepage (/)
-    /15-minute-audit/    # Lead magnet landing page (primary CTA destination)
-    /free-audit/         # Redirects → /15-minute-audit
+    /free-audit/         # Lead magnet landing page (primary CTA destination)
+    /15-minute-audit/    # Redirects → /free-audit
     /about/
     /contact/
     /how-it-works/
@@ -319,7 +319,7 @@ All places in the codebase where user input is captured. Most forms show a local
 
 | File | Fields | Purpose | API route |
 |---|---|---|---|
-| `src/app/15-minute-audit/page.tsx` | storeUrl, name, email, phone (optional) | Claim free 15-min audit | `POST /api/audit-request` |
+| `src/app/free-audit/page.tsx` | storeUrl, name, email, phone (optional) | Claim free 15-min audit | `POST /api/audit-request` |
 | `src/app/contact/page.tsx` | name, email, website, reason (radio), message (optional) | General contact enquiry | `POST /api/contact` |
 | `src/app/founding-client/apply/page.tsx` | store, revenue, sessions, ads, problem, other (optional) | Founding client application | `POST /api/founding-client-apply` |
 | `src/components/ui/PDFLeadCapture.tsx` | email, url (optional), tier | Download service brief PDF | `POST /api/pdf-lead` |
@@ -327,7 +327,7 @@ All places in the codebase where user input is captured. Most forms show a local
 | `src/components/ui/CaseStudiesComingSoon.tsx` | email | Notify me (accepts a `source` prop) | `POST /api/newsletter` |
 | `src/app/insights/page.tsx` (inline newsletter) | email | CRO insights newsletter | `POST /api/newsletter` (source: `insights-newsletter`) |
 | `src/app/about/page.tsx` (inline newsletter) | email | Insights newsletter | `POST /api/newsletter` (source: `about-newsletter`) |
-| `src/components/sections/FinalCTA.tsx` | store URL (uncontrolled) | Quick entry — navigates to `/15-minute-audit` | Navigation only |
+| `src/components/sections/FinalCTA.tsx` | store URL (uncontrolled) | Quick entry — navigates to `/free-audit` | Navigation only |
 
 **CaseStudiesComingSoon source values in use:**
 - `notify-teardowns` (insights teardowns section)

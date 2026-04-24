@@ -1,4 +1,3 @@
-import Link from "next/link";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import DualCTA from "@/components/sections/DualCTA";
@@ -64,7 +63,7 @@ const channels = [
   },
   {
     name: "Check-in calls",
-    freq: "Bi-weekly (B/A)",
+    freq: "Monthly (B) · Weekly or bi-weekly (A)",
     desc: "30 minutes. Focused on decisions — status lives in the dashboard.",
     logo: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-label="Video call" role="img">
@@ -136,14 +135,18 @@ export default function HowItWorksPage() {
                 </ul>
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-black/10 pt-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 border-t border-black/10 pt-8">
               <div className="flex items-start gap-4">
-                <p className="font-mono text-3xl font-bold text-brand-crimson flex-shrink-0">1%</p>
-                <p className="text-sm text-brand-ink/60 leading-relaxed">CVR lift on $500K revenue = $5K–$15K additional annual revenue from traffic you already have</p>
+                <p className="font-mono text-3xl font-bold text-brand-crimson flex-shrink-0">+25%</p>
+                <p className="text-sm text-brand-ink/60 leading-relaxed">Relative CVR lift on a $500K Shopify store ≈ $125K additional annual revenue from traffic you already have</p>
               </div>
               <div className="flex items-start gap-4">
-                <p className="font-mono text-3xl font-bold text-brand-crimson flex-shrink-0">500+</p>
-                <p className="text-sm text-brand-ink/60 leading-relaxed">Monthly sessions needed before A/B tests produce statistically meaningful results</p>
+                <p className="font-mono text-3xl font-bold text-brand-crimson flex-shrink-0">10,000+</p>
+                <p className="text-sm text-brand-ink/60 leading-relaxed">Monthly sessions — the floor where heuristic CRO from Clarity + Shopify Analytics starts paying off (Class B)</p>
+              </div>
+              <div className="flex items-start gap-4">
+                <p className="font-mono text-3xl font-bold text-brand-crimson flex-shrink-0">25,000+</p>
+                <p className="text-sm text-brand-ink/60 leading-relaxed">Monthly sessions — the threshold where structured A/B testing via GrowthBook produces statistical significance (Class A)</p>
               </div>
             </div>
           </div>

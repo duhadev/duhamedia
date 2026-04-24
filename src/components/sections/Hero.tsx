@@ -91,7 +91,7 @@ export default function Hero() {
           aren&apos;t converting it.
         </p>
         <Link
-          href="/15-minute-audit"
+          href="/free-audit"
           className="inline-flex items-center bg-brand-magenta text-white font-bold text-sm px-6 py-3 rounded-sm hover:bg-brand-crimson transition-colors mb-3 min-h-[44px]"
         >
           Show us your site. We&apos;ll find the leak.

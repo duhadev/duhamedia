@@ -23,16 +23,16 @@ export default function CROBridge() {
           what works.
         </p>
         <p className="text-base text-white/60 leading-relaxed mb-8">
-          For a Shopify brand doing $500K a year, a 1% improvement in conversion
-          rate isn&apos;t a rounding error. It&apos;s tens of thousands in additional
-          revenue from traffic you&apos;re already paying for.
+          For a Shopify brand doing $500K a year, lifting conversion from 2% to
+          2.5% — a 25% relative improvement — is roughly $125,000 in additional
+          annual revenue. From traffic you&apos;re already paying for.
         </p>
         <div className="flex items-start gap-4 border-t border-white/10 pt-6">
           <div>
-            <p className="font-mono text-3xl font-bold text-brand-magenta">1%</p>
+            <p className="font-mono text-3xl font-bold text-brand-magenta">+25%</p>
           </div>
           <p className="text-xs text-white/50 leading-relaxed">
-            CVR improvement on $500K revenue = $5,000–$15,000 in additional
+            Relative CVR lift on a $500K Shopify store ≈ $125K in additional
             annual revenue — from traffic you&apos;re already paying for.
           </p>
         </div>

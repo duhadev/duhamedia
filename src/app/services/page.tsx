@@ -1,10 +1,17 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import DualCTA from "@/components/sections/DualCTA";
 import PageHero from "@/components/sections/PageHero";
 import TierProgression from "@/components/sections/TierProgression";
 import ScrollReveal from "@/components/ui/ScrollReveal";
+
+export const metadata: Metadata = {
+  title: "Services — Class A, B, and C engagements | Duha Media",
+  description:
+    "Three ways to work together. Class C builds the conversion-ready foundation. Class B runs continuous heuristic CRO. Class A connects paid spend, attribution, and structured A/B testing.",
+};
 
 const tiers = [
   {
@@ -27,14 +34,15 @@ const tiers = [
     super: "CRO Core",
     name: "Class B",
     tagline: '"Data-driven CRO — turning your existing traffic into measurable revenue."',
-    who: "Shopify stores with 500+ monthly sessions running or planning paid social ads.",
-    meta: "One-time setup + ongoing retainer",
+    who: "Shopify stores with 10,000+ monthly sessions running or planning paid social ads.",
+    meta: "From $5,000 setup + from $500/mo retainer",
     includes: [
       "Full CRO audit",
-      "A/B testing via GrowthBook",
-      "Landing page redesigns",
+      "Heuristic CRO from Clarity + Shopify Analytics",
       "Monthly performance reports",
-      "Full change log",
+      "Monthly strategy call",
+      "Live client dashboard",
+      "Backed by the Conversion Guarantee",
     ],
     href: "/services/class-b",
     featured: true,
@@ -43,14 +51,15 @@ const tiers = [
     super: "Growth Intensive",
     name: "Class A",
     tagline: '"A 12-week transformation that builds your growth system from the ground up."',
-    who: "Scaling brands ($500K–$5M) with active paid campaigns across multiple channels.",
-    meta: "Fixed 12-week intensive + ongoing retainer",
+    who: "Scaling brands ($300K–$1M+ revenue, 25,000+ monthly sessions) with active paid campaigns across multiple channels.",
+    meta: "From $15,000 intensive + from $1,500/mo retainer",
     includes: [
       "Full marketing audit",
       "Conversion funnel map",
       "Campaign playbook",
       "90-day strategic roadmap",
-      "Full client dashboard handoff",
+      "GrowthBook A/B testing framework",
+      "Live client dashboard — always on",
     ],
     href: "/services/class-a",
     featured: false,
@@ -58,10 +67,10 @@ const tiers = [
 ];
 
 const steps = [
-  { bar: "#c20e59", title: "Audit", body: "Clarity heatmaps, GA4 data, session recordings. We find the drop-offs before we touch anything." },
+  { bar: "#c20e59", title: "Audit", body: "Shopify Analytics, GA4, Clarity heatmaps, and session recordings. We find the drop-offs before we touch anything." },
   { bar: "#e82561", title: "Build", body: "UX and UI designed around conversion architecture — not aesthetics first." },
-  { bar: "#f5c842", title: "Optimize", body: "A/B tests via GrowthBook. Every variant documented. Every winner shipped." },
-  { bar: "#0F172A", title: "Report", body: "Monthly performance reports. Full change log. You always know what changed and why." },
+  { bar: "#f5c842", title: "Optimize", body: "Fixes deployed against real behavioural data. Class A clients also run structured GrowthBook A/B tests once traffic crosses 25,000 monthly sessions." },
+  { bar: "#0F172A", title: "Report", body: "Monthly performance reports plus a live client dashboard. Full change log with rationale for every update." },
 ];
 
 export default function ServicesPage() {

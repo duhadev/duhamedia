@@ -151,7 +151,7 @@ export default function FoundingClientApplyPage() {
                           ))}
                         </select>
                         <p className="font-mono text-xs text-brand-ink/30 mt-1.5">
-                          We work best with stores in the $300K–$5M range.
+                          We work best with stores in the $150K–$1M range.
                         </p>
                       </div>
 
@@ -177,7 +177,7 @@ export default function FoundingClientApplyPage() {
                           ))}
                         </select>
                         <p className="font-mono text-xs text-brand-ink/30 mt-1.5">
-                          We need at least 500 monthly sessions for A/B testing to produce meaningful results.
+                          We need at least 10,000 monthly sessions for heuristic CRO to produce meaningful results.
                         </p>
                       </div>
 

@@ -1,13 +1,14 @@
 const eligibilityItems = [
-  "Minimum 500 monthly sessions to your store",
-  "GA4 and Clarity installed before the engagement starts",
-  "Changes approved within 7 days of delivery each cycle",
-  "Traffic levels broadly consistent throughout the 90 days",
+  "Minimum 10,000 monthly sessions to your store",
+  "GA4, Clarity, and Shopify Analytics installed before the engagement starts",
+  "Fixes approved within 7 business days of delivery each cycle",
+  "Traffic remains within ±25% of the engagement-start baseline",
+  "No client-side UX changes to pages in scope without coordination",
 ];
 
 export default function ConversionGuarantee() {
   return (
-    <section className="bg-brand-offwhite px-6 py-16">
+    <section id="conversion-guarantee" className="bg-brand-offwhite px-6 py-16 scroll-mt-20">
       <div className="max-w-4xl mx-auto">
 
         {/* Header */}
@@ -30,12 +31,12 @@ export default function ConversionGuarantee() {
             The Duha Media Conversion Guarantee
           </p>
           <blockquote className="text-base md:text-lg text-white leading-relaxed font-medium">
-            &ldquo;If your conversion rate does not improve within 90 days of
-            beginning the Class B engagement, we will continue working at no
-            additional cost until it does. You will always be able to see exactly
-            what we have tested, what moved, and what did not — so the answer is
-            always in the data, not in our word. We back our work because the
-            documentation makes it impossible to hide.&rdquo;
+            &ldquo;If your conversion rate does not measurably improve within 90
+            days of the first deployed fix — measured against the 60-day baseline
+            captured before that fix went live — we keep working at no additional
+            cost for up to 90 more days, until it does. You will always be able to
+            see exactly what we changed, what moved, and what did not. The answer
+            is always in the data, not in our word.&rdquo;
           </blockquote>
         </div>
 

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import DualCTA from "@/components/sections/DualCTA";
@@ -7,6 +8,13 @@ import CommonQuestions from "@/components/sections/CommonQuestions";
 import PDFLeadCapture from "@/components/ui/PDFLeadCapture";
 import PageHero from "@/components/sections/PageHero";
 import ScrollReveal from "@/components/ui/ScrollReveal";
+import { serviceSchema, faqSchema, breadcrumbSchema, jsonLd } from "@/lib/schema";
+
+export const metadata: Metadata = {
+  title: "Class C — Foundation | Duha Media",
+  description:
+    "A conversion-informed website for Shopify brands whose digital presence doesn't reflect the quality of their product. CMS, CRM, Clarity, GA4, and a live client dashboard from launch day.",
+};
 
 const qualifiers = [
   "Your website doesn't reflect the quality of your product",
@@ -70,8 +78,27 @@ const faqs = [
 ];
 
 export default function ClassCPage() {
+  const schemas = [
+    serviceSchema({
+      name: "Class C — Foundation",
+      description:
+        "A conversion-informed website for Shopify brands. Engineered UX, CMS and CRM integration, Microsoft Clarity and GA4 from launch day, and the Duha Media Client Dashboard.",
+      path: "/services/class-c",
+      tier: "C",
+      priceDescription: "One-time project (~3 months) · Dashboard retainer from $500/mo",
+    }),
+    faqSchema(faqs),
+    breadcrumbSchema([
+      { name: "Home", path: "/" },
+      { name: "Services", path: "/services" },
+      { name: "Class C — Foundation", path: "/services/class-c" },
+    ]),
+  ];
   return (
     <>
+      {schemas.map((s, i) => (
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={jsonLd(s)} />
+      ))}
       <Header activePage="Services" />
       <main id="main-content">
         {/* Hero */}
@@ -216,7 +243,9 @@ export default function ClassCPage() {
                   <p className="font-mono text-[11px] font-bold text-brand-ink">Launch</p>
                 </div>
               </div>
-              <p className="font-mono text-[11px] text-brand-ink/40 italic mt-4">Clarity + GA4 collecting from launch day →</p>
+              <p className="font-mono text-[11px] text-brand-ink/40 italic mt-4">
+                Clarity + GA4 collecting from launch day. Every Class C client also gets a Duha Media Client Dashboard login at launch — data flows in from day one. →
+              </p>
             </div>
           </div>
         </section>
@@ -301,7 +330,7 @@ export default function ClassCPage() {
             <ScrollReveal>
               <p className="font-mono text-xs text-brand-ink/40 uppercase tracking-widest mb-5">Not included</p>
               <div className="bg-black/5 border border-black/10 rounded-sm p-5 space-y-3">
-                {["CRM development or custom CRM builds", "A/B testing and active CRO — that's where Class B begins."].map((item) => (
+                {["CRM development or custom CRM builds", "Active CRO fixes — that's where Class B begins.", "A/B testing — that's Class A (requires 25,000+ monthly sessions)."].map((item) => (
                   <p key={item} className="text-sm text-brand-ink/50 line-through">{item}</p>
                 ))}
               </div>

@@ -56,8 +56,8 @@ const exchange = [
 
 const qualifiers = [
   "Shopify store, actively trading",
-  "$300K–$5M in annual revenue",
-  "500 or more monthly sessions",
+  "$150K–$1M in annual revenue",
+  "10,000 or more monthly sessions",
   "Running or planning paid social ads — Facebook, Instagram, or Google",
   "Owner or decision-maker is engaged and available for reviews",
   "Willing to give feedback within agreed timelines — a founding client who goes dark kills the case study",
@@ -99,8 +99,8 @@ export default function FoundingClientPage() {
         <PageHero
           label="Limited offer · One spot"
           heading="We're looking for one Shopify store to work with for free."
-          subhead="One founding client. Full Class B engagement — audit, UX improvements, A/B testing, monthly report, full change log. No cost. In exchange for a case study, a written testimonial, and permission to document the results."
-          tags={["One spot only", "Shopify stores", "$300K–$5M revenue", "500+ monthly sessions"]}
+          subhead="One founding client. Full Class B engagement — audit, heuristic CRO, monthly report, live client dashboard, full change log. No cost. In exchange for a case study, a written testimonial, and permission to document the results."
+          tags={["One spot only", "Shopify stores", "$150K–$1M revenue", "10,000+ monthly sessions"]}
         />
 
         {/* What's included */}

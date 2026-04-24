@@ -95,7 +95,7 @@ export async function getCurrentUser(): Promise<AppUser | null> {
 export async function requireOwner(): Promise<AppUser> {
   const user = await getCurrentUser();
   if (!user) redirect('/auth/sign-in');
-  if (user.role !== 'owner') redirect('/dashboard');
+  if (user.role !== 'owner') redirect('/dashboard/overview');
   return user;
 }
 

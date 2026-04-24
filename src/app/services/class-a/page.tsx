@@ -1,4 +1,4 @@
-import Link from "next/link";
+import type { Metadata } from "next";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import DualCTA from "@/components/sections/DualCTA";
@@ -8,9 +8,17 @@ import PDFLeadCapture from "@/components/ui/PDFLeadCapture";
 import CaseStudiesComingSoon from "@/components/ui/CaseStudiesComingSoon";
 import PageHero from "@/components/sections/PageHero";
 import ScrollReveal from "@/components/ui/ScrollReveal";
+import { serviceSchema, faqSchema, breadcrumbSchema, jsonLd } from "@/lib/schema";
+
+export const metadata: Metadata = {
+  title: "Class A — Growth Intensive | Duha Media",
+  description:
+    "A 12-week intensive plus retainer for scaling Shopify brands ($300K–$1M+ revenue, 25,000+ monthly sessions). GrowthBook A/B testing, attribution, campaign playbook, and a live client dashboard.",
+};
 
 const qualifiers = [
-  "Revenue in the $500K–$5M range",
+  "Revenue in the $300K–$1M+ range",
+  "25,000+ monthly sessions — the threshold where A/B testing becomes statistically productive",
   "Active paid ad spend across Facebook, Instagram, or Google",
   "Campaigns not connected to conversion data on-site",
   "A team that needs a documented playbook — not just monthly reports",
@@ -27,8 +35,8 @@ const phase1Deliverables = [
     body: "Current conversion rates, funnel drop-offs, Core Web Vitals, and a ranked list of prioritised quick wins — each with a documented hypothesis before any test begins.",
   },
   {
-    title: "UTM taxonomy + tracking setup",
-    body: "Clarity, GA4, and campaign attribution configured and verified across every active source. Without a clean UTM structure, you can't connect ad spend to on-site outcomes — this is the infrastructure everything else runs on.",
+    title: "UTM taxonomy + three-layer tracking setup",
+    body: "Shopify Analytics, GA4, Microsoft Clarity, and campaign attribution configured and verified across every active source. Without a clean UTM structure and reconciled measurement, you can't connect ad spend to on-site outcomes — this is the infrastructure everything else runs on.",
   },
 ];
 
@@ -100,7 +108,7 @@ const retainerCards = [
 const pricingRows = [
   {
     label: "Intensive",
-    value: "Fixed scope. The three phases as defined. Any changes are quoted separately and agreed in writing before work begins.",
+    value: "From $15,000 — three tiers based on traffic volume, ad spend, and team size. Fixed scope, the three phases as defined. Any changes are quoted separately and agreed in writing before work begins.",
   },
   {
     label: "Retainer start",
@@ -108,7 +116,7 @@ const pricingRows = [
   },
   {
     label: "Retainer rate",
-    value: "Final rate agreed at the end of Phase 1 when channel complexity, ad spend, and team size are fully known. Agreed in writing before the retainer begins.",
+    value: "From $1,500/mo (sliding scale). Final rate agreed at the end of Phase 1 when channel complexity, ad spend, and team size are fully known. Agreed in writing before the retainer begins.",
   },
   {
     label: "Opt-out window",
@@ -159,8 +167,27 @@ const faqs = [
 ];
 
 export default function ClassAPage() {
+  const schemas = [
+    serviceSchema({
+      name: "Class A — Growth Intensive",
+      description:
+        "A 12-week transformation plus retainer for scaling Shopify brands ($300K–$1M+ revenue, 25,000+ monthly sessions). GrowthBook A/B testing, attribution, and a live client dashboard.",
+      path: "/services/class-a",
+      tier: "A",
+      priceDescription: "From $15,000 intensive + from $1,500/mo retainer",
+    }),
+    faqSchema(faqs),
+    breadcrumbSchema([
+      { name: "Home", path: "/" },
+      { name: "Services", path: "/services" },
+      { name: "Class A — Growth Intensive", path: "/services/class-a" },
+    ]),
+  ];
   return (
     <>
+      {schemas.map((s, i) => (
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={jsonLd(s)} />
+      ))}
       <Header activePage="Services" />
       <main id="main-content">
         {/* Hero */}
@@ -168,8 +195,8 @@ export default function ClassAPage() {
           label="Class A · Growth Intensive"
           heading={"\u201CA 12-week transformation that builds your growth system from the ground up \u2014 then we run it with you.\u201D"}
           headingSize="sm"
-          subhead="For scaling Shopify brands with active paid campaigns who want to stop running CRO and marketing in separate silos."
-          meta="12-week intensive + ongoing retainer · Retainer begins week 13"
+          subhead="For scaling Shopify brands with 25,000+ monthly sessions and active paid campaigns who want to stop running CRO and marketing in separate silos."
+          meta="From $15,000 intensive + from $1,500/mo retainer · Min. 25,000 monthly sessions · Retainer begins week 13"
         />
 
         {/* Who it's for */}
@@ -488,11 +515,14 @@ export default function ClassAPage() {
                 <div className="bg-brand-ink px-5 py-4 flex items-center gap-3">
                   <div className="w-2 h-2 rounded-full bg-brand-magenta" />
                   <p className="font-bold text-white text-base">Duha Media Client Dashboard</p>
-                  <span className="ml-auto font-mono text-xs bg-brand-magenta text-white px-2 py-0.5 rounded-sm">Coming soon</span>
+                  <span className="ml-auto font-mono text-xs bg-brand-magenta text-white px-2 py-0.5 rounded-sm">Live</span>
                 </div>
                 <div className="p-5">
-                  <p className="text-base text-brand-ink/60 leading-relaxed mb-5">
+                  <p className="text-base text-brand-ink/60 leading-relaxed mb-2">
                     Every client gets a live dashboard with full access to their documentation, reports, change log, and roadmap — viewable at any time, not just when a report lands in your inbox.
+                  </p>
+                  <p className="text-sm text-brand-ink/50 leading-relaxed mb-5">
+                    Included with every Class A, B, and C engagement. <a href="/dashboard" className="text-brand-crimson underline underline-offset-2">See the full dashboard tour →</a>
                   </p>
                   <div className="grid grid-cols-3 gap-3">
                     {/* Column 1: crimson accent */}

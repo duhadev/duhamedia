@@ -12,12 +12,12 @@ const beliefs = [
     body: "Most agencies produce documentation at the end of an engagement — a final report, a handoff deck, something to mark the close of a project. We document continuously. Every change to your site is logged before any traffic sees it, with the audit finding that triggered it, the hypothesis it's testing, and the outcome it's targeting. The paper trail isn't a byproduct of the work. It is the work.",
   },
   {
-    title: "A test without a hypothesis is just a guess.",
-    body: "We don't run A/B tests because a change feels right. Every test has a documented hypothesis, a specific target metric, and a minimum sample size agreed before the test begins. Statistical significance is not negotiable — a test that hasn't reached it isn't finished, regardless of what the numbers look like. Losing tests are documented and archived with the same rigour as winning ones. A failed test that's properly recorded is as valuable as a successful one.",
+    title: "A change without a hypothesis is just a guess.",
+    body: "We don't deploy changes because they feel right. Every fix has a documented hypothesis, a specific target metric, and a measurement window agreed before it ships. For Class A engagements running structured A/B tests, statistical significance is not negotiable — a test that hasn't reached it isn't finished, regardless of what the numbers look like. Losing tests are documented and archived with the same rigour as winning ones. A failed test that's properly recorded is as valuable as a successful one.",
   },
   {
     title: "We won't take on an engagement that can't produce results.",
-    body: "CRO doesn't work below a certain traffic threshold. Below 500 monthly sessions, A/B tests produce noise, not signal. We decline engagements where the conditions for meaningful results don't exist — not because we're selective for its own sake, but because taking on the wrong engagement produces bad outcomes for everyone. If you don't qualify yet, we'll tell you what needs to be in place before we can work together.",
+    body: "CRO methodology depends on traffic volume. Below 10,000 monthly sessions, even heuristic CRO can't separate behavioural patterns from noise — that's why Class B requires it. A/B testing requires more: 25,000+ monthly sessions to reach statistical significance within a useful test window, which is why it's exclusive to Class A. We decline engagements where the conditions for meaningful results don't exist — not because we're selective for its own sake, but because taking on the wrong engagement produces bad outcomes for everyone. If you don't qualify yet, we'll tell you what needs to be in place before we can work together.",
   },
   {
     title: "The work should make you less dependent on us, not more.",
@@ -32,7 +32,7 @@ const comparisons = [
   },
   {
     left: "A/B tests run until the client asks for results",
-    right: "Tests run to pre-agreed sample sizes. Significance required before a call is made",
+    right: "Tests run to pre-agreed sample sizes with documented significance requirements (Class A only — where traffic supports it)",
   },
   {
     left: "Monthly report delivered as a PDF summary",
@@ -57,30 +57,48 @@ const tools = [
     name: "Microsoft Clarity",
     accent: "border-brand-crimson",
     rationale:
-      "Free, privacy-compliant, and integrates directly with GrowthBook for combined heatmap and experiment analysis. There's no better tool at this price point for behavioural data on Shopify stores.",
+      "Free, privacy-compliant, and the fastest way to see what visitors are actually trying to do on your site. Heatmaps, session recordings, dead-click and rage-click detection. The behavioural layer of our three-layer measurement stack.",
   },
   {
     name: "GA4",
     accent: "border-brand-crimson",
     rationale:
-      "The baseline for all traffic and conversion data. Every engagement starts with a verified GA4 configuration — goals, events, and funnels — before any change is made.",
+      "The traffic layer. Every engagement starts with a verified GA4 configuration — goals, events, and funnels — before any change is made. Configured properly so the data is actually trustworthy.",
   },
   {
-    name: "GrowthBook",
+    name: "Shopify Analytics",
     accent: "border-brand-crimson",
     rationale:
-      "Open-source, privacy-focused, and warehouse-native — clients own their data entirely and the methodology is fully auditable. VWO and AB Tasty have merged into enterprise-tier platforms; GrowthBook offers a free self-hosted tier and a cloud plan that is dramatically more cost-effective, with full statistical transparency and no vendor lock-in. It integrates directly with Microsoft Clarity for combined experiment and session analysis.",
+      "The commerce layer — straight from the platform. Native funnel data, product-level conversion, repeat-purchase reporting. We reconcile GA4 and Shopify so the numbers actually agree before we start optimising anything.",
   },
   {
-    name: "RocketChat + Loom",
+    name: "GrowthBook (Class A only)",
+    accent: "border-brand-crimson",
+    rationale:
+      "Open-source, privacy-focused, and warehouse-native — clients own their data entirely and the methodology is fully auditable. Used exclusively on Class A engagements, where traffic crosses 25,000 monthly sessions and structured A/B testing becomes statistically productive. Below that threshold, we run heuristic CRO instead — and don't pretend otherwise.",
+  },
+  {
+    name: "Slack + Loom",
     accent: "border-brand-ink",
     rationale:
       "Async-first communication. Updates when they're ready, not on a schedule. Short Loom walkthroughs replace status calls — you see the screen and hear the rationale without needing to be available at a fixed time.",
   },
+  {
+    name: "Duha Media Client Dashboard",
+    accent: "border-brand-magenta",
+    rationale:
+      "Self-hosted, built in-house, no third-party tool. Real-time CVR, the full change log, monthly reports, and the original audit findings — all in one place, accessible any time, kept forever. The portal you check instead of waiting for a PDF. Included with every Class A, B, and C engagement.",
+  },
+  {
+    name: "n8n",
+    accent: "border-brand-ink",
+    rationale:
+      "Open-source workflow automation. Pulls Shopify Analytics, GA4, and Clarity data into the Client Dashboard in real time. Self-hosted so the integration is auditable and the data stays under client control — not relayed through a vendor's pipeline.",
+  },
 ];
 
 const goodFit = [
-  "Shopify brands doing $300K–$5M in annual revenue",
+  "Shopify brands doing $150K–$1M in annual revenue",
   "Founders and operators who are still close to the numbers",
   "Teams running paid traffic on Facebook, Instagram, or Google",
   "Brands that want evidence, not assurances",

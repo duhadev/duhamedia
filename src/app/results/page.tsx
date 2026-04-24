@@ -4,19 +4,25 @@ import DualCTA from "@/components/sections/DualCTA";
 import CaseStudiesComingSoon from "@/components/ui/CaseStudiesComingSoon";
 import PageHero from "@/components/sections/PageHero";
 
-const metrics = [
+const primaryMetrics = [
   { abbr: "CVR", name: "Conversion rate" },
-  { abbr: "CTR", name: "Click-through rate" },
+  { abbr: "RPV", name: "Revenue per session" },
+  { abbr: "AOV", name: "Average order value" },
+];
+
+const diagnosticMetrics = [
+  { abbr: "FNL", name: "Funnel drop-off" },
   { abbr: "FAR", name: "Form abandonment" },
-  { abbr: "CWV", name: "Core Web Vitals" },
   { abbr: "MOB", name: "Mobile vs desktop CVR" },
-  { abbr: "μCV", name: "Micro-conversions" },
+  { abbr: "SCR", name: "Scroll depth" },
+  { abbr: "CTR", name: "Click-through rate" },
+  { abbr: "CWV", name: "Core Web Vitals" },
 ];
 
 const methodology = [
   { title: "Baseline first", desc: "Every metric is measured before any change is made — no result without a starting point." },
-  { title: "Statistical significance", desc: "No A/B test is called until statistical significance is reached. Sample size is set before each test begins." },
-  { title: "Documented outcomes", desc: "Win or lose — every test result is recorded with the decision made and the rationale." },
+  { title: "Statistical significance", desc: "For Class A A/B tests, no variant is called until statistical significance is reached. Sample size is set before each test begins." },
+  { title: "Documented outcomes", desc: "Win or lose — every change and every test result is recorded with the decision made and the rationale." },
   { title: "Revenue impact", desc: "CVR improvements are translated into estimated revenue impact at actual traffic and AOV." },
 ];
 
@@ -43,9 +49,19 @@ export default function ResultsPage() {
         <section className="bg-brand-offwhite px-6 py-16">
           <div className="max-w-4xl mx-auto">
             <p className="font-mono text-xs text-brand-ink/40 uppercase tracking-widest mb-3">What we track</p>
-            <h2 className="text-2xl font-bold text-brand-ink mb-8" style={{ letterSpacing: "-0.01em" }}>Seven metrics. All tied to revenue.</h2>
+            <h2 className="text-2xl font-bold text-brand-ink mb-8" style={{ letterSpacing: "-0.01em" }}>Primary metrics. Diagnostic signals. All tied to revenue.</h2>
+            <p className="font-mono text-xs text-brand-ink/40 uppercase tracking-wide mb-3">Primary</p>
+            <div className="grid grid-cols-3 gap-3 mb-6">
+              {primaryMetrics.map((m) => (
+                <div key={m.abbr} className="bg-white border-2 border-brand-magenta rounded-sm p-4 text-center">
+                  <p className="font-mono text-sm font-bold text-brand-magenta mb-1">{m.abbr}</p>
+                  <p className="font-mono text-xs text-brand-ink/60 uppercase tracking-wide leading-tight">{m.name}</p>
+                </div>
+              ))}
+            </div>
+            <p className="font-mono text-xs text-brand-ink/40 uppercase tracking-wide mb-3">Diagnostic</p>
             <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mb-8">
-              {metrics.map((m) => (
+              {diagnosticMetrics.map((m) => (
                 <div key={m.abbr} className="bg-white border border-black/10 rounded-sm p-4 text-center">
                   <p className="font-mono text-sm font-bold text-brand-crimson mb-1">{m.abbr}</p>
                   <p className="font-mono text-xs text-brand-ink/60 uppercase tracking-wide leading-tight">{m.name}</p>

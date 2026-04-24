@@ -4,7 +4,10 @@ import Hero from "@/components/sections/Hero";
 import TrustSignals from "@/components/sections/TrustSignals";
 import CROBridge from "@/components/sections/CROBridge";
 import Methodology from "@/components/sections/Methodology";
+import DashboardShowcase from "@/components/sections/DashboardShowcase";
 import ServicesOverview from "@/components/sections/ServicesOverview";
+import ToolStackStrip from "@/components/sections/ToolStackStrip";
+import ConversionGuarantee from "@/components/sections/ConversionGuarantee";
 import Results from "@/components/sections/Results";
 import FinalCTA from "@/components/sections/FinalCTA";
 
@@ -17,6 +20,7 @@ export default function HomePage() {
         <TrustSignals />
         <CROBridge />
         <Methodology />
+        <DashboardShowcase />
         <div className="bg-brand-ink px-6 py-12">
           <div className="max-w-3xl mx-auto text-center">
             <p className="font-mono text-xs text-white/30 uppercase tracking-widest mb-4">Core principle</p>
@@ -26,6 +30,8 @@ export default function HomePage() {
           </div>
         </div>
         <ServicesOverview />
+        <ToolStackStrip />
+        <ConversionGuarantee />
         <Results />
         <FinalCTA />
       </main>

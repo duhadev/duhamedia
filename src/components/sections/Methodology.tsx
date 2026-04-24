@@ -8,7 +8,7 @@ const steps = [
     num: "01",
     color: "#c20e59",
     title: "Audit",
-    body: "Clarity heatmaps, GA4 data, and session recordings surface exactly where visitors drop off — before anything changes.",
+    body: "Shopify Analytics, GA4, Clarity heatmaps, and session recordings surface exactly where visitors drop off — before anything changes.",
   },
   {
     num: "02",
@@ -20,13 +20,13 @@ const steps = [
     num: "03",
     color: "#f5c842",
     title: "Optimise",
-    body: "A/B tests run via GrowthBook against real traffic. Only statistically significant winners get shipped.",
+    body: "Fixes deployed against real behavioural data, with before/after measurement on every change. Class A clients also run structured A/B tests via GrowthBook once traffic supports significance (25,000+ monthly sessions).",
   },
   {
     num: "04",
     color: "#0F172A",
     title: "Report",
-    body: "Monthly performance reports against baseline. Full change log with rationale for every update.",
+    body: "Monthly performance reports against baseline, plus a live client dashboard with the full change log and the rationale behind every update.",
   },
 ];
 

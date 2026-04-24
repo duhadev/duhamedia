@@ -1,6 +1,22 @@
 import Link from "next/link";
 
-const tiers = [
+type AccentKey = "brand-crimson" | "brand-magenta" | "brand-gold";
+
+interface Tier {
+  label: string;
+  name: string;
+  meta: string;
+  accent: AccentKey;
+  watermark: string;
+  inclusion: { text: string; color: AccentKey } | null;
+  description: string;
+  includes: string[];
+  href: string;
+  linkLabel: string;
+  stackBars: readonly (AccentKey | "dim")[];
+}
+
+const tiers: Tier[] = [
   {
     label: "Class C",
     name: "Foundation",
@@ -24,18 +40,18 @@ const tiers = [
   {
     label: "Class B",
     name: "CRO Core",
-    meta: "One-time setup + ongoing retainer",
+    meta: "From $5,000 setup + from $500/mo retainer",
     accent: "brand-magenta" as const,
     watermark: "B",
-    inclusion: { text: "Includes Class C", color: "brand-crimson" as const },
+    inclusion: null,
     description:
-      "Continuous optimisation on the foundation already built. A/B testing, monthly reporting, and a live roadmap — no ramp-up needed.",
+      "Continuous heuristic CRO on a site that already has traffic. Builds on the Class C foundation when clients graduate — but it's also the entry point for stores already running on Shopify.",
     includes: [
       "Full CRO audit",
-      "A/B testing via GrowthBook",
-      "Landing page redesigns",
+      "Heuristic CRO (Clarity + Shopify Analytics)",
       "Monthly performance reports",
-      "Full change log",
+      "Live client dashboard",
+      "Backed by the Conversion Guarantee",
     ],
     href: "/services/class-b",
     linkLabel: "Class B details",
@@ -44,18 +60,18 @@ const tiers = [
   {
     label: "Class A",
     name: "Growth Intensive",
-    meta: "Fixed 12-week intensive + ongoing retainer",
+    meta: "From $15,000 intensive + from $1,500/mo retainer",
     accent: "brand-gold" as const,
     watermark: "A",
-    inclusion: { text: "Includes Class B", color: "brand-magenta" as const },
+    inclusion: null,
     description:
-      "Connects the full growth system — paid channels, attribution, and CRO working together on a site already optimised to receive traffic.",
+      "The full growth system — paid channels, attribution, and structured A/B testing once traffic crosses 25,000 monthly sessions. For brands that have outgrown heuristic optimisation alone.",
     includes: [
       "Full marketing audit",
       "Conversion funnel map",
       "Campaign playbook",
       "90-day strategic roadmap",
-      "Full client dashboard handoff",
+      "GrowthBook A/B testing framework",
     ],
     href: "/services/class-a",
     linkLabel: "Class A details",
@@ -64,8 +80,8 @@ const tiers = [
 ];
 
 const connectors = [
-  { label: ["builds", "into"] },
-  { label: ["scales", "into"] },
+  { label: ["graduates", "to"] },
+  { label: ["graduates", "to"] },
 ];
 
 const accentClasses = {
@@ -113,7 +129,7 @@ interface TierProgressionProps {
 export default function TierProgression({
   label = "How the tiers connect",
   heading = "\u201cThese aren\u2019t just options. They\u2019re a system.\u201d",
-  description = "A client who starts at Class C and grows into Class B has a compounding advantage \u2014 the UX is already built for optimisation, and Clarity is already collecting data. No teardown. Just the next layer added on top.",
+  description = "Each tier is a complete engagement, and clients who begin at Class C graduate into Class B with a compounding advantage \u2014 the UX is already built for optimisation, Clarity is already collecting data, and the dashboard is already live.",
 }: TierProgressionProps) {
   return (
     <section className="bg-brand-ink px-6 py-20">

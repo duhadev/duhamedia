@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
+import { organizationSchema, jsonLd } from "@/lib/schema";
 import "./globals.css";
 
 const ibmPlexSans = IBM_Plex_Sans({
@@ -53,6 +54,10 @@ export default function RootLayout({
         <a href="#main-content" className="skip-to-content">
           Skip to main content
         </a>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={jsonLd(organizationSchema())}
+        />
         {children}
       </body>
     </html>
