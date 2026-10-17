@@ -782,6 +782,8 @@ Order = the final design's `data-screen-label` order, with CLAUDE.md-required se
 
 ## 10. Hooks inventory
 
+*Erratum 2026-10-17 (C7 rework): publish-time rules (e.g. case-studies `figuresApproved`) are implemented as field `validate` functions plus an `afterChange` backstop, not `beforeChange` throws — same behaviour, all errors reported together.*
+
 | Where | Hook | Purpose |
 |---|---|---|
 | `users` | `beforeChange` | First user → `role: admin`; API key allowed only for `pipeline`; `role` field access admin-only |

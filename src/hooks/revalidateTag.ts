@@ -1,4 +1,4 @@
-import { revalidateTag } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import type {
   CollectionAfterChangeHook,
   CollectionAfterDeleteHook,
@@ -24,39 +24,66 @@ import type {
  * no cache to purge there, so that case is logged and swallowed: an
  * afterChange throw would fail the save. Any other error is logged at error
  * level and also swallowed, for the same reason.
+ *
+ * Optional `paths` (C7, SCHEMA §10 revalidation map, e.g. case-studies →
+ * `/work`, `/work/<slug>`): `revalidatePath` goes through the same Next
+ * `revalidate()` (next@16.3.8 server/web/spec-extension/revalidate.js), so it
+ * gets the same guard. Paths of both the new and the previous doc are purged,
+ * so a slug change also refreshes the old URL.
  */
 
 type Published = TypeWithID & { _status?: 'draft' | 'published' | null }
 
-const safeRevalidate = (tag: string, req: PayloadRequest): void => {
+const guarded = (what: string, run: () => void, req: PayloadRequest): void => {
   try {
-    revalidateTag(tag, 'max')
-    req.payload.logger.info(`revalidateTag ${tag}`)
+    run()
+    req.payload.logger.info(what)
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err)
     if (message.includes('static generation store missing')) {
-      req.payload.logger.debug(`revalidateTag ${tag} skipped (outside a Next request)`)
+      req.payload.logger.debug(`${what} skipped (outside a Next request)`)
       return
     }
-    req.payload.logger.error({ err, msg: `revalidateTag ${tag} failed` })
+    req.payload.logger.error({ err, msg: `${what} failed` })
   }
 }
 
-export const revalidateTagHooks = (
+const safeRevalidate = (tag: string, req: PayloadRequest): void =>
+  guarded(`revalidateTag ${tag}`, () => revalidateTag(tag, 'max'), req)
+
+const safeRevalidatePath = (path: string, req: PayloadRequest): void =>
+  guarded(`revalidatePath ${path}`, () => revalidatePath(path), req)
+
+type PathsFor<T> = (doc: T | null | undefined) => (string | null | undefined)[]
+
+export const revalidateTagHooks = <T extends Published = Published>(
   tag: string,
+  options: { paths?: PathsFor<T> } = {},
 ): {
-  afterChange: CollectionAfterChangeHook<Published>
-  afterDelete: CollectionAfterDeleteHook<Published>
-} => ({
-  afterChange: ({ doc, previousDoc, req, context }) => {
-    if (context.disableRevalidate) return doc
-    const isPublished = doc?._status === 'published'
-    const wasPublished = previousDoc?._status === 'published'
-    if (isPublished || wasPublished) safeRevalidate(tag, req)
-    return doc
-  },
-  afterDelete: ({ doc, req, context }) => {
-    if (!context.disableRevalidate) safeRevalidate(tag, req)
-    return doc
-  },
-})
+  afterChange: CollectionAfterChangeHook<T>
+  afterDelete: CollectionAfterDeleteHook<T>
+} => {
+  const purgePaths = (req: PayloadRequest, ...docs: (T | null | undefined)[]): void => {
+    if (!options.paths) return
+    const unique = new Set(docs.flatMap((d) => options.paths!(d)).filter((p): p is string => !!p))
+    unique.forEach((p) => safeRevalidatePath(p, req))
+  }
+  return {
+    afterChange: ({ doc, previousDoc, req, context }) => {
+      if (context.disableRevalidate) return doc
+      const isPublished = doc?._status === 'published'
+      const wasPublished = previousDoc?._status === 'published'
+      if (isPublished || wasPublished) {
+        safeRevalidate(tag, req)
+        purgePaths(req, doc, previousDoc)
+      }
+      return doc
+    },
+    afterDelete: ({ doc, req, context }) => {
+      if (context.disableRevalidate) return doc
+      safeRevalidate(tag, req)
+      purgePaths(req, doc)
+      return doc
+    },
+  }
+}

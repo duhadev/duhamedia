@@ -229,9 +229,16 @@ export const Testimonials: CollectionConfig = {
         },
       ],
     },
-    // TODO(C7): add `caseStudy` relationship → case-studies (maxDepth 1) per
-    // SCHEMA §6.4 — p7 "Read the full case study" deep link, rendered only
-    // when that study is published (R3). Added with the case-studies unit.
+    {
+      // SCHEMA §6.4: p7 "Read the full case study" deep link. Rendered only
+      // when the study is published (R3): for public reads a draft study is
+      // not populated (read access), so components treat a non-object as absent.
+      name: 'caseStudy',
+      type: 'relationship',
+      relationTo: 'case-studies',
+      maxDepth: 1,
+      admin: { description: 'Optional. Links "Read the full case study" once that study is published.' },
+    },
     {
       name: 'reviewDate',
       type: 'date',

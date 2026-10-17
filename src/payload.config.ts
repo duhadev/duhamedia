@@ -6,6 +6,7 @@ import { buildConfig } from 'payload'
 import sharp from 'sharp'
 import { fileURLToPath } from 'url'
 
+import { CaseStudies } from './collections/CaseStudies'
 import { Clients } from './collections/Clients'
 import { Downloads } from './collections/Downloads'
 import { Faqs } from './collections/Faqs'
@@ -27,7 +28,7 @@ export default buildConfig({
     },
   },
   serverURL: process.env.SITE_URL || '',
-  collections: [Users, Media, Downloads, Clients, TeamMembers, Testimonials, Faqs],
+  collections: [Users, Media, Downloads, Clients, TeamMembers, Testimonials, Faqs, CaseStudies],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

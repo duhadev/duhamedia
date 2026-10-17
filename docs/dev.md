@@ -38,6 +38,7 @@ Entry format for every unit: **Files** / **Fields & schema** / **Wiring** (regis
     - [`team-members` (C4)](#team-members-unit-c4)
     - [`testimonials` (C5)](#testimonials-unit-c5)
     - [`faqs` (C6)](#faqs-unit-c6)
+    - [`case-studies` (C7)](#case-studies-unit-c7)
 - [Block showcase sandbox (`/_showcase`)](#block-showcase-sandbox-_showcase)
 - [Deploy](#deploy)
 - [Integrations](#integrations)
@@ -53,7 +54,7 @@ Locked section order: Hero → Scarcity strip → Client logo strip → Featured
 
 ## 2. Case Study template
 
-*No units documented yet.*
+Data source: the [`case-studies` collection (C7)](#case-studies-unit-c7) (site-wide section). No blocks documented yet.
 
 ## 3. Work hub
 
@@ -181,7 +182,7 @@ Entries are in build order (C1, C2, C3 …), not `SCHEMA.md` §6 order (PM decis
 - Pipeline authentication: header `Authorization: users API-Key <key>` only.
 
 **Wiring**
-- Registration: `src/payload.config.ts` → `collections` array (see C2 for the current list), `admin.user: Users.slug`.
+- Registration: `src/payload.config.ts` → `collections` array (the latest collection entry, currently [C7](#case-studies-unit-c7), lists it), `admin.user: Users.slug`.
 - Pages using it: none (not publicly rendered).
 - Revalidation: n/a.
 - Migration: `20261017_193341_c1_users_role`. Up: creates `enum_users_role`, adds `name`, `role` (default `marketing`, not null), `enable_a_p_i_key`, `api_key`, `api_key_index`; data step sets `role = 'admin'` for every user holding `admin` in `users_roles`; drops `users_roles` and `enum_users_roles`. Down (best-effort): restores one `users_roles` row per admin/marketing user; pipeline users get no row and lose their key; a user who held both roles comes back admin only; `name` values are lost.
@@ -364,6 +365,7 @@ Drafts on (`contentVersions`); `useAsTitle: 'authorName'`; `defaultSort: 'sortOr
 | `format` | select `text` / `video`, required, default `text`, sidebar | Named `format`, not `type` (X14) |
 | `video` | group, shown when `format` = `video` | `url` (custom validate: required, then `validateYouTubeUrl`); `poster` upload → `media`, `maxDepth: 1` (custom validate: required, then `upload()`); `durationLabel` text, optional |
 | `metric` | group | `value` text, `label` text; both optional. Value is a result, never a price |
+| `caseStudy` | relationship → `case-studies`, `maxDepth: 1` | Optional; "Read the full case study" deep link once that study is published. Added in C7 |
 | `reviewDate` | date, `dayOnly`, sidebar | Optional |
 | `sortOrder` | `sortOrderField` | Order in feed and review wall |
 
@@ -375,11 +377,12 @@ Drafts on (`contentVersions`); `useAsTitle: 'authorName'`; `defaultSort: 'sortOr
 - Pages using it (per `SCHEMA.md`): p1 testimonials, p2 client voice, p3 proof pull, p4 featured proof, p5 proof fallback, p7 testimonial feed, p9 social proof, p15 testimonial, p16 social proof, p19 review wall.
 - Revalidation: tag `testimonials`.
 - Migration: shared C3–C6 migration. Tables `testimonials`, `_testimonials_v`; enums `enum_testimonials_source`, `enum_testimonials_format`, `enum_testimonials_status` and the `_v` equivalents; FKs `client_id` → `clients`, `video_poster_id` → `media` (both ON DELETE set null). Group fields are flattened columns (`video_url`, `video_poster_id`, `video_duration_label`, `metric_value`, `metric_label`).
+- Migration (C7): `20261017_210942_c7_case_studies` adds `testimonials.case_study_id` and `_testimonials_v.version_case_study_id` (FKs → `case_studies`, ON DELETE set null) + indexes. See the [C7 entry](#case-studies-unit-c7).
 
 **Notes**
 - Google-Business-Profile-style reviews are merged into this collection via `source` (Gate S §2.2), so p7 and p19 feeds are one query.
 - Video = unlisted YouTube; poster stored locally in `media` (Gate S Q5).
-- Deferred: `caseStudy` relationship → `case-studies` (`maxDepth: 1`, SCHEMA §6.4) is added in C7 with its own migration (`TODO(C7)` in the file).
+- `caseStudy` relationship (SCHEMA §6.4) was added in C7 with the C7 migration (the former `TODO(C7)` is resolved).
 - All reviewers, quotes and metrics are placeholders at launch.
 
 #### `faqs` (unit C6)
@@ -414,6 +417,119 @@ Drafts on (`contentVersions`); `useAsTitle: 'question'`; `defaultSort: ['categor
 - The restricted editor excludes headings, uploads and relationship features (the default editor's Relationship/Upload features could reference any collection, including `users`).
 - Links are external/relative URLs only for now. Deferred to C10: internal links to `pages` via `LinkFeature({ enabledCollections: ['pages'] })` (`TODO(C10)` in the file).
 - Post FAQs (p13/p14) are an inline array on `posts` (X11), not documents here.
+
+#### `case-studies` (unit C7)
+
+**Files**
+- `src/collections/CaseStudies.ts`: the `case-studies` collection, its access, hooks and two Lexical editor configs.
+- `src/collections/Testimonials.ts`: adds `caseStudy` (see [C5](#testimonials-unit-c5)).
+- `src/fields/index.ts` (new shared factories, reused by later units):
+  - `metricFields()`: `Field[]` to spread inside a named group. Row `value` (text, required) + `label` (text, required); `sub` (text); `accent` (checkbox, default `false`). No default numbers (R5); value is a result, never a price (R13).
+  - `validateAccentPhrase(headingField)`: text validator; runs `text()` first; empty passes; otherwise the value must be a case-insensitive substring of the sibling field `headingField`.
+  - `linkField({ name, label?, description?, required? })`: group `{ type, newTab, reference, url, label }`.
+    - `type` select `internal` / `custom` (required, default `internal`); `newTab` checkbox (default `false`).
+    - `reference`: polymorphic relationship, `relationTo: ['case-studies']` (`LINK_TARGETS`), `maxDepth: 1`, shown when `type` = `internal`.
+    - `url`: text, shown when `type` = `custom`; accepts `https://…`, `mailto:…` or a site path starting with a single `/`.
+    - `label`: text ("Link text").
+    - `required: true` → must be filled to publish. Optional links (default) may be left fully empty; once any of `label` / `url` / `reference` is filled, label and destination are both required.
+    - `validateReference` awaits `relationship()` from `payload/shared`: the built-in relationship validator is async in payload@3.91.0 and must be awaited.
+- `src/hooks/revalidateTag.ts`: `revalidateTagHooks(tag, { paths? })` gained the optional `paths(doc)` option (see Wiring).
+- `src/hooks/publishedAt.ts`: `setPublishedAtOnPublish`, a collection `beforeChange` hook. When the effective status (`data._status ?? originalDoc._status`) is `published` and neither `data.publishedAt` nor `originalDoc.publishedAt` is set, sets `publishedAt` to now. An editor-entered date is never overwritten. SCHEMA §10 lists it for pages, case-studies, posts, lead-magnets; attached to case-studies only so far.
+- `src/lib/lexicalText.ts`: `lexicalWordCount(value)` (counts words of every `text` node in Lexical JSON; never throws on malformed input), `WORDS_PER_MINUTE = 225`, `readTimeMinutes(words)` (`null` for 0 words, else `max(1, round(words / 225))`).
+- `src/components/admin/ResultRowLabel.tsx`: `'use client'` array RowLabel (`useRowLabel`) for `resultsTable.rows`: "`measure` — `change`" (falls back to `after`), else "Result 01".
+- `src/app/(payload)/admin/importMap.js`: regenerated; adds `ResultRowLabel` and the Lexical `FixedToolbarFeatureClient`, `UploadFeatureClient`, `BlockquoteFeatureClient`.
+- `src/payload.config.ts`: `CaseStudies` registered.
+- `src/payload-types.ts`: regenerated.
+- `src/migrations/20261017_210942_c7_case_studies.ts` (+ `.json` snapshot), registered in `src/migrations/index.ts`.
+
+**Fields & schema**
+
+Drafts on (`contentVersions`); labels "Case study" / "Case studies"; `useAsTitle: 'title'`; `defaultSort: '-publishedAt'`; default columns `title`, `client`, `track`, `featured`, `figuresApproved`, `_status`, `updatedAt`.
+
+Tab **Summary**:
+
+| Field | Type | Notes |
+|---|---|---|
+| `title` | text, required | Study headline (H1) |
+| `accentPhrase` | text, `validateAccentPhrase('title')` | Optional accent-coloured phrase from the headline |
+| `client` | relationship → `clients`, `maxDepth: 1`, required | |
+| `track` | select `build` / `growth` / `build-and-growth` / `handover`, required | Decides which service pages pull the study |
+| `studyNumber` | number, `min: 1`, step 1 | "Study 01" / "№ 01" |
+| `engagementLine` | text | |
+| `headlineMetric` | group, `metricFields()` | Oversized result on the study and on cards |
+| `cardSummary` | textarea, required, `maxLength: 160` | Cards and the Work ledger |
+| `inShort` | textarea, required | "In short" box |
+| `heroMedia` | upload → `media`, `maxDepth: 1`, required | Browser-framed visual |
+
+Tab **Story**: `narrative` group with three sub-groups `before`, `strategy`, `results` (labels "01 — The before", "02 — The strategy", "03 — The results"), each `title` (text, required) + `body` (richText, required, `narrativeEditor`).
+
+- `narrativeEditor`: `ParagraphFeature`, `BoldFeature`, `ItalicFeature`, `UnorderedListFeature`, `OrderedListFeature`, `BlockquoteFeature`, `LinkFeature({ enabledCollections: [] })`, `UploadFeature({ enabledCollections: ['media'], maxDepth: 1, collections: { media: { fields: [caption (text)] } } })`, `FixedToolbarFeature`, `InlineToolbarFeature`.
+
+Tab **Results**: `resultsTable` group:
+
+| Field | Type | Notes |
+|---|---|---|
+| `eyebrow` | text | |
+| `columns` | group ("Column headings"): `measure`, `baseline`, `after`, `change` (text) | Table header labels |
+| `rows` | array, required, `minRows: 1`, RowLabel `ResultRowLabel` | Per row: `measure` (text, required), `baseline` (text), `after` (text, required), `change` (text). Reorderable |
+| `method` | textarea | How the numbers were measured |
+
+Tab **Client voice & closing**:
+
+| Field | Type | Notes |
+|---|---|---|
+| `clientVoice.testimonial` | relationship → `testimonials`, `maxDepth: 2` | Video plays first; text shows as a quote |
+| `clientVoice.doDifferently` | richText (`asideEditor`: paragraph, bold, italic, lists, `LinkFeature({ enabledCollections: [] })`, inline toolbar) | "What we'd do differently" |
+| `clientVoice.phaseMapping` | textarea | "How this maps to our phases" |
+| `clientVoice.link` | `linkField` (optional) | |
+| `closing.newsletterHeading`, `closing.finalCtaHeading` | text | Empty = site-wide defaults |
+
+Outside the tabs:
+
+| Field | Type | Notes |
+|---|---|---|
+| `slugField()` | `generateSlug` checkbox (default `true`) + `slug` text | Unique index on `slug`. `slugField` is marked `@experimental` in payload@3.91.0; used because SCHEMA requires it |
+| `featured` | checkbox, default `false`, indexed, sidebar | Homepage, Services, Review Hub featured spots |
+| `figuresApproved` | checkbox ("Client approved the figures"), default `false`, sidebar | Required to publish (hook below) |
+| `readTime` | number, `min: 1`, step 1, sidebar | Minutes; empty = filled on publish |
+| `publishedAt` | date, `dayOnly`, indexed, sidebar | Set on first publish; orders Work and "Next study" |
+
+- `defaultPopulate` (card fields only, used when another doc populates a case study): `title`, `slug`, `client`, `track`, `headlineMetric`, `cardSummary`, `heroMedia`, `publishedAt`.
+- Access:
+
+| Who | read | readVersions | create | update | delete |
+|---|---|---|---|---|---|
+| admin | all | yes | yes | yes | any |
+| marketing | all | yes | yes | yes | only where `_status` ≠ `published` |
+| pipeline, public | published only (`publishedOrStaff`) | no | no | no | no |
+
+- Hooks, `beforeChange` in this order:
+  1. `requireFiguresApproved`: if the effective status is `published` and `figuresApproved` (data, else originalDoc) is not `true`, throws `ValidationError` on path `figuresApproved`. Collection `beforeChange` also runs on restore-version, so publishing by restore is blocked too.
+  2. `setPublishedAtOnPublish` (above).
+  3. `fillReadTime`: on publish only, when `readTime` is empty (not a positive number), sets it from `readTimeMinutes` over the word count of `narrative.before/strategy/results.body`. A set value is kept; clear the field to recalculate on the next publish. 0 words leaves it empty.
+
+**Wiring**
+- Registration: `src/payload.config.ts` → `collections: [Users, Media, Downloads, Clients, TeamMembers, Testimonials, Faqs, CaseStudies]`.
+- Pages using it (per PM dispatch / `SCHEMA.md` §5): template for p2 (`/work/<slug>`); surfaces on p3 (Work hub); pulls on p1, p4, p5, p6, p8, p13, p14, p15, p17, p19. Also the target of `testimonials.caseStudy` and `linkField` internal links. Linked from block entries as they land.
+- Revalidation: `revalidateTagHooks('case-studies', { paths: (doc) => ['/work', doc.slug ? `/work/${doc.slug}` : null] })`.
+  - `afterChange`, when the doc is published or was published: `revalidateTag('case-studies', 'max')`, then `revalidatePath` for the de-duplicated paths of both `doc` and `previousDoc` (a slug change purges the old and new URL).
+  - `afterDelete`: tag + the deleted doc's paths.
+  - `context.disableRevalidate` skips both. `revalidatePath` uses the same guard as `revalidateTag` (outside a Next request it is logged at debug and swallowed; other errors logged and swallowed).
+  - Proven in a real Next request on 2026-10-17 (PM): dev log showed the tag, `/work` and the old/new slug paths on publish, slug change and delete.
+  - Blocks and pages that query case studies must use the `case-studies` tag in their queries for the tag purge to reach them.
+- Migration: `20261017_210942_c7_case_studies`. Additive only.
+  - Up: creates enums `enum_case_studies_track`, `enum_case_studies_client_voice_link_type`, `enum_case_studies_status` and the three `_v` equivalents; tables `case_studies`, `case_studies_results_table_rows`, `case_studies_rels` (polymorphic `linkField.reference`), `_case_studies_v`, `_case_studies_v_version_results_table_rows`, `_case_studies_v_rels`; FKs `client_id` → `clients`, `hero_media_id` → `media`, `client_voice_testimonial_id` → `testimonials` (all ON DELETE set null), rows/rels parent FKs ON DELETE cascade; unique `case_studies_slug_idx`, indexes on `featured`, `published_at`, `_status` and the relationship columns. Adds `testimonials.case_study_id`, `_testimonials_v.version_case_study_id` (FKs set null) and `payload_locked_documents_rels.case_studies_id` (FK cascade), each indexed.
+  - Down: hand-fixed to drop the `testimonials`, `_testimonials_v` and `payload_locked_documents_rels` FKs on `case_studies` before the `DROP TABLE … CASCADE` statements, then drops the added indexes, columns and enums.
+  - The generated FK name `_case_studies_v_version_client_voice_testimonial_id_testimonials_id_fk` exceeds Postgres's 63-character identifier limit and is truncated by Postgres; any command naming it is truncated identically, so it has no effect.
+
+**Notes**
+- Launch state: all case studies are drafts at launch; every surface derives its fallback from an empty published set. There is no "live" toggle field.
+- Deferred:
+  - `linkField` targets `posts` (C8), `lead-magnets` (C9), `pages` (C10) (`TODO` in `src/fields/index.ts`); adding them is additive (new `*_id` columns in the `_rels` tables).
+  - Rich-text internal links in `narrativeEditor` / `asideEditor` (C10).
+  - SEO `meta` tab (plugin-seo unit, `collections: ['case-studies']`).
+  - Live preview URL and draft mode for `/work/<slug>` (when the route lands).
+- Reading progress on p2 is a template behaviour of `/work/<slug>`, not a field (R10).
 
 ## Block showcase sandbox (`/_showcase`)
 
@@ -487,6 +603,7 @@ Every lead, signup and site error is sent to the OpenClaw secretary as a signed 
   - `migrate:create` is interactive on enum/column renames (drizzle create-vs-rename prompts). Run it under a pty and answer each prompt explicitly.
   - Hand-edited data steps (e.g. the C1 admin-preserving `UPDATE`) must be applied to the dev DB by running the migration's SQL before the next push, because push cannot run them.
   - Whenever a migration adds a collection, Payload's generated `down()` emits `DROP TABLE … CASCADE` before the `DROP CONSTRAINT` for the new `payload_locked_documents_rels_*_fk`, so `down` fails (the CASCADE already removed the FK). Hand-reorder `down()` to drop those FKs first (done in C2 and C3–C6).
+- Browser-based proofs (anything needing the human's admin session) are run by the PM or `qa-reviewer`, not by the integrator or schema agents.
 - Script safety: throwaway users created by scripts or tests must use a unique `test+gate-<purpose>@duhamedia.com` address and be deleted by the returned id only.
 - Local image test: `docker build .` then `docker run --network host --env-file .env …`.
 - `next.config.ts` sets `agentRules: false`: Next 16.3 otherwise appends an agent-rules block to `CLAUDE.md` on `next dev`.

@@ -19,8 +19,8 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 | collection | C4 `team-members` | 1, 8, posts | documented | Gate 1 approved 2026-10-17; Gate 2 n/a; dev + marketing docs done |
 | collection | C5 `testimonials` (+GBP source) | 1, 7, 9, 15, 19 | documented | Gate 1 approved 2026-10-17; Gate 2 n/a; dev + marketing docs done |
 | collection | C6 `faqs` | 4, 5, 6, 11, 13, 14 | documented | Gate 1 approved 2026-10-17; Gate 2 n/a; dev + marketing docs done |
-| collection | C7 `case-studies` | 2, 3 + pulls | coding | drafts at launch; figuresApproved gate; **+ add `testimonials.caseStudy` rel (own migration)** |
-| collection | C8 `posts` | 13, 14, 16 | queued | pipeline user drafts only |
+| collection | C7 `case-studies` | 2, 3 + pulls | cleared | Gate 1 approved 2026-10-17; marketing-docs next; coded 43/43; migration c7 proven; reworks verified (errors together, labels, "1 Result", day-only date); awaiting human Gate 1; revalidation of /work + /work/<old|new slug> proven in a real request (PM); QA next; testimonials.caseStudy added; drafts at launch; figuresApproved gate; **+ add `testimonials.caseStudy` rel (own migration)** |
+| collection | C8 `posts` | 13, 14, 16 | coding | pipeline user drafts only; **slug must auto-generate server-side for REST creates** (slugField only fills in the admin UI; REST create without slug fails) |
 | collection | C9 `lead-magnets` | 18 | queued | |
 | collection | C10 `pages` (shell; layout grows per block) | all | queued | **+ enable FAQ answer internal links to pages** (editor config) |
 | global | G1 `site-settings` · G2 `scarcity` · G3 `navigation` · G4 `seo-defaults` | all | queued | one unit each |
@@ -35,6 +35,7 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 ## Migrations log
 | Date | Migration file | What it changes | Applied in dev / staging / prod |
 |---|---|---|---|
+| 2026-10-17 | `src/migrations/20261017_210942_c7_case_studies.ts` | + case_studies (+rels, results rows) and `_v` tables, enums; testimonials.case_study_id; locked rels col (down hand-fixed). One FK name auto-truncated to 63 chars (harmless) | scratch proofs; dev via push / no / no |
 | 2026-10-17 | `src/migrations/20261017_202453_c3_c6_clients_team_testimonials_faqs.ts` | + clients, team_members(+socials), testimonials, faqs and their `_v` version tables, enums, FKs; locked_documents_rels cols (down hand-fixed: FKs before tables) | scratch proofs; dev via push / no / no |
 | 2026-10-17 | `src/migrations/20261017_195538_c2_media_downloads.ts` | + downloads table; media + caption, sizes browser/og; locked_documents_rels + downloads_id (down hand-fixed: drop FK before table) | scratch proofs (from-zero, down/up); dev via push / no / no |
 | 2026-10-17 | `src/migrations/20261017_193341_c1_users_role.ts` | users: + name, role (enum admin/marketing/pipeline), API-key cols; data step keeps admins; drops users_roles | scratch proofs (up/down/from-zero); dev DB via same SQL / no / no |
@@ -98,6 +99,15 @@ Append-only. New sessions: read this before asking the human anything.
 | 2026-10-17 | **Incident (local dev only):** integrator's script deleted dev admin (id 1) by email collision; recreated as id 7 from `.env` DEV_ADMIN_*. Rule for all agents: throwaway users use unique `test+gate-<purpose>@duhamedia.com` addresses and are deleted by returned id only, never by email | PM |
 | 2026-10-17 | C3–C6 Gate 1 QA: all 9 checks pass ×4. Fixing D8 (socials row labels). Accepted: D1 no asterisk on conditional-required (descriptions say so), D2/D3/D4/D9 stock layout/autosave (Create New makes a blank draft; edit right before failed publish may not autosave), D5 Lexical console warning, D10 single link type until C10. D6 frontend CSS preloaded in admin + D7 favicon → fix with frontend layout | PM |
 | 2026-10-17 | **Gate 1 approved: C3 clients, C4 team-members, C5 testimonials, C6 faqs** (Gate 2 n/a; D8 row-label fix verified in browser by PM) | Human: "approve" |
+| 2026-10-17 | Case studies: `readTime` auto-filled at publish only when empty (clear to recalculate); `slugField()` used though marked experimental in 3.91.0 (SCHEMA requires); optional links require text+destination only once partly filled | schema-architect C7 |
+| 2026-10-17 | Shared helpers added: `metricFields`, `linkField` (polymorphic; more targets as C8–C10 land), `validateAccentPhrase`, `setPublishedAtOnPublish`, `lexicalText` (word count/read time), `revalidateTagHooks(tag,{paths})` | schema-architect C7 |
+| 2026-10-17 | Integrator/schema agents can't reach the human's Playwright session → browser-based proofs are run by the PM (or qa-reviewer) | PM |
+| 2026-10-17 | C7 Gate 1 QA: core checks pass. Rework: figures check as field validation (all errors in one attempt) + short tooltip, Published At column/sort, explicit labels. Accepted stock: array-level and row-cell errors show no inline text (toast names the field); story image caption reachable only via Edit Relationship (document in marketing guide); 390px admin overflow/tab height | PM |
+| 2026-10-17 | **Convention:** publish rules are field `validate` functions (reported with all other errors); collection `beforeChange` hooks must not throw validation errors; any backstop goes in `afterChange` (runs in the transaction, rolls back). Applies to posts, pages, lead-magnets | C7 rework |
+| 2026-10-17 | Smoke scripts pass a fresh `context` object per Local API call (`restoreVersion` mutates context) | C7 rework |
+| 2026-10-17 | Admin list for case studies: `defaultSort ['-_status','-publishedAt']` (no nulls-last in Drizzle) → published first, then drafts | C7 rework |
+| 2026-10-17 | C7 re-check: error flow + labels pass. Accepted: admin list honours a user's saved sort over `defaultSort` (fresh users get published-first); Payload's "shorter than the max length of 160" wording; approval column shows true/false chips; possible autosave overwrite at automation speed only (unconfirmed for humans). Fixing: rows labels ("Results"), publishedAt day-only display | PM |
+| 2026-10-17 | **Gate 1 approved: C7 case-studies (+ testimonials.caseStudy)** (Gate 2 deferred to template/blocks) | Human: "approve" |
 | 2026-10-17 | Local Postgres image provisional `postgres:17-alpine` until server major is known; local port 5433 | OPS #6 open |
 
 ## Session handoff

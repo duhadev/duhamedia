@@ -1,15 +1,24 @@
-import type { CollectionConfig, NumberField, TextFieldSingleValidation } from 'payload'
-import { text } from 'payload/shared'
+import type {
+  CollectionConfig,
+  CollectionSlug,
+  Condition,
+  Field,
+  GroupField,
+  NumberField,
+  RelationshipFieldSingleValidation,
+  TextFieldSingleValidation,
+} from 'payload'
+import { relationship, text } from 'payload/shared'
 
 import { youtubeVideoId } from '../lib/youtube'
 
 /**
  * Shared schema pieces reused across collections (SCHEMA.md §3, §5).
  *
- * Only what C3–C6 need lives here today. The §3 block-facing factories
- * (`linkField`, `pricingNote`, `metricFields`, `scarcityRef`, `headlineFields`,
- * `eyebrowField`) are added with the first unit that uses them: none of
- * clients / team-members / testimonials / faqs does (SCHEMA §6.4–6.7).
+ * §3 factories are added with the first unit that uses them. C7
+ * (case-studies) added `metricFields`, `linkField` and `validateAccentPhrase`
+ * (the substring rule `headlineFields()` will reuse). Still to come with their
+ * first block: `pricingNote`, `scarcityRef`, `headlineFields`, `eyebrowField`.
  *
  * Verified against payload@3.91.0 (installed `payload/dist`):
  * - versions options: versions/types.d.ts (`drafts.autosave.interval`,
@@ -75,4 +84,212 @@ export const validateYouTubeUrl: TextFieldSingleValidation = (value, options) =>
   return youtubeVideoId(value)
     ? true
     : 'Paste the YouTube link of the video (https://youtu.be/… or https://www.youtube.com/watch?v=…). Unlisted videos work.'
+}
+
+/* -------------------------------------------------------------------------- */
+/* §3 factories (C7)                                                          */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * SCHEMA §3 `metricFields()`: a typographic metric, structured (never prose).
+ * DS `Metric` = value / label / sub / accent (MERGED §4.1). R13: never a price.
+ * R5: no defaults; every number is entered (and seeded as placeholder).
+ * Spread inside a named group, e.g. `{ name: 'headlineMetric', type: 'group', fields: metricFields() }`.
+ */
+export const metricFields = (): Field[] => [
+  {
+    type: 'row',
+    fields: [
+      {
+        name: 'value',
+        type: 'text',
+        required: true,
+        admin: { width: '40%', description: 'A result or count, never a price. e.g. "+212%".' },
+      },
+      {
+        name: 'label',
+        type: 'text',
+        required: true,
+        admin: { width: '60%', description: 'What the number measures, e.g. "Revenue, 12 months".' },
+      },
+    ],
+  },
+  {
+    name: 'sub',
+    type: 'text',
+    label: 'Sub-line',
+    admin: { description: 'Optional quiet line under the metric.' },
+  },
+  {
+    name: 'accent',
+    type: 'checkbox',
+    label: 'Accent colour',
+    defaultValue: false,
+    admin: { description: 'Show the number in the accent colour.' },
+  },
+]
+
+/**
+ * `accentPhrase` must be a substring (case-insensitive) of the sibling heading
+ * field (SCHEMA §3 `headlineFields()`, DS `AccentHeadline`: one accent phrase
+ * per headline). Empty is allowed.
+ */
+export const validateAccentPhrase =
+  (headingField: string): TextFieldSingleValidation =>
+  (value, options) => {
+    const base = text(value, options)
+    if (base !== true) return base
+    if (typeof value !== 'string' || value.trim() === '') return true
+    const heading = (options.siblingData as Record<string, unknown> | undefined)?.[headingField]
+    if (typeof heading === 'string' && heading.toLowerCase().includes(value.trim().toLowerCase())) {
+      return true
+    }
+    return 'The accent phrase must be copied exactly from the headline (same words, any capitals).'
+  }
+
+/**
+ * Collections an internal link may point at. SCHEMA §3 lists `pages`,
+ * `case-studies`, `posts`, `lead-magnets`; only `case-studies` exists today.
+ * The relationship is polymorphic from day one so adding the others later is
+ * additive (new `*_id` columns in the `_rels` table, same value shape).
+ * TODO(C8): add 'posts' · TODO(C9): add 'lead-magnets' · TODO(C10): add 'pages'.
+ */
+const LINK_TARGETS = ['case-studies'] as const satisfies CollectionSlug[]
+
+const isInternal: Condition = (_data, siblingData) => (siblingData?.type ?? 'internal') === 'internal'
+const isCustom: Condition = (_data, siblingData) => siblingData?.type === 'custom'
+
+/** https://…, mailto:… or a site-relative path starting with a single `/`. */
+const LINK_URL_OK = (value: string): boolean => {
+  if (/^\/(?!\/)/.test(value)) return true
+  if (/^mailto:[^\s@]+@[^\s@]+$/i.test(value)) return true
+  try {
+    return new URL(value).protocol === 'https:'
+  } catch {
+    return false
+  }
+}
+
+type LinkSiblings = {
+  type?: 'internal' | 'custom' | null
+  reference?: unknown
+  url?: string | null
+  label?: string | null
+}
+
+const filled = (v: unknown): boolean =>
+  v !== null && v !== undefined && !(typeof v === 'string' && v.trim() === '')
+
+/** A link counts as "in use" once any of its parts is filled. */
+const linkInUse = (s: LinkSiblings | undefined): boolean =>
+  filled(s?.label) || filled(s?.url) || filled(s?.reference)
+
+/**
+ * SCHEMA §3 `linkField({ name })`: group `{ type, reference, url, label, newTab }`.
+ * `required: true` → the link must be filled in to publish. Optional links
+ * (default) may be left completely empty; once any part is filled, the label
+ * and the destination are both required (no half-links on the site).
+ * Validation runs on publish only (`drafts.validate: false`).
+ */
+export const linkField = ({
+  name,
+  label,
+  description,
+  required = false,
+}: {
+  name: string
+  label?: string
+  description?: string
+  required?: boolean
+}): GroupField => {
+  const mustFill = (siblings: unknown): boolean => required || linkInUse(siblings as LinkSiblings)
+
+  const validateLabel: TextFieldSingleValidation = (value, options) => {
+    const base = text(value, options)
+    if (base !== true) return base
+    if (!mustFill(options.siblingData)) return true
+    return filled(value) ? true : 'Add the link text.'
+  }
+
+  // `relationship()` is async in payload@3.91.0 (fields/validations.js): await it.
+  const validateReference: RelationshipFieldSingleValidation = async (value, options) => {
+    const base = await relationship(value, options)
+    if (base !== true) return base
+    if (!mustFill(options.siblingData)) return true
+    return filled(value) ? true : 'Choose the page this link goes to.'
+  }
+
+  const validateUrl: TextFieldSingleValidation = (value, options) => {
+    const base = text(value, options)
+    if (base !== true) return base
+    if (!filled(value)) return mustFill(options.siblingData) ? 'Add the address this link goes to.' : true
+    return LINK_URL_OK((value as string).trim())
+      ? true
+      : 'Use a full https:// address, a mailto: address, or a site path starting with "/".'
+  }
+
+  return {
+    name,
+    type: 'group',
+    label,
+    admin: { description },
+    fields: [
+      {
+        type: 'row',
+        fields: [
+          {
+            name: 'type',
+            type: 'select',
+            label: 'Link type',
+            required: true,
+            defaultValue: 'internal',
+            options: [
+              { label: 'Page on this site', value: 'internal' },
+              { label: 'Custom address', value: 'custom' },
+            ],
+            admin: { width: '50%' },
+          },
+          {
+            name: 'newTab',
+            type: 'checkbox',
+            label: 'Open in a new tab',
+            defaultValue: false,
+            admin: { width: '50%' },
+          },
+        ],
+      },
+      {
+        type: 'row',
+        fields: [
+          {
+            name: 'reference',
+            type: 'relationship',
+            label: 'Page',
+            relationTo: [...LINK_TARGETS],
+            maxDepth: 1,
+            validate: validateReference,
+            admin: { condition: isInternal, width: '50%' },
+          },
+          {
+            name: 'url',
+            type: 'text',
+            label: 'Address',
+            validate: validateUrl,
+            admin: {
+              condition: isCustom,
+              width: '50%',
+              description: 'https://…, mailto:…, or a site path like /book-a-call.',
+            },
+          },
+          {
+            name: 'label',
+            type: 'text',
+            label: 'Link text',
+            validate: validateLabel,
+            admin: { width: '50%' },
+          },
+        ],
+      },
+    ],
+  }
 }

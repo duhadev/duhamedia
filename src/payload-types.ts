@@ -74,6 +74,7 @@ export interface Config {
     'team-members': TeamMember;
     testimonials: Testimonial;
     faqs: Faq;
+    'case-studies': CaseStudy;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -88,6 +89,7 @@ export interface Config {
     'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
     testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
     faqs: FaqsSelect<false> | FaqsSelect<true>;
+    'case-studies': CaseStudiesSelect<false> | CaseStudiesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -395,6 +397,10 @@ export interface Testimonial {
     label?: string | null;
   };
   /**
+   * Optional. Links "Read the full case study" once that study is published.
+   */
+  caseStudy?: (number | null) | CaseStudy;
+  /**
    * When the review or quote was given.
    */
   reviewDate?: string | null;
@@ -402,6 +408,265 @@ export interface Testimonial {
    * Order in the feed and review wall. Lower numbers come first.
    */
   sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Client case studies (/work). All are drafts at launch; a study publishes only with client-approved figures.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "case-studies".
+ */
+export interface CaseStudy {
+  id: number;
+  /**
+   * The study headline (H1), e.g. "The demand was already there. The store was leaking it."
+   */
+  title: string;
+  /**
+   * Optional: one word or phrase from the headline to show in the accent colour.
+   */
+  accentPhrase?: string | null;
+  /**
+   * The client this study is about.
+   */
+  client: number | Client;
+  /**
+   * Engagement type. Decides which service pages show this study as proof.
+   */
+  track: 'build' | 'growth' | 'build-and-growth' | 'handover';
+  /**
+   * Shown as "Study 01" / "№ 01".
+   */
+  studyNumber?: number | null;
+  /**
+   * e.g. "Build + engine, 12 months · Hardgoods retail, 3 locations".
+   */
+  engagementLine?: string | null;
+  /**
+   * The oversized result on the study and on every study card, e.g. "+212%" / "Revenue, 12 months".
+   */
+  headlineMetric: {
+    /**
+     * A result or count, never a price. e.g. "+212%".
+     */
+    value: string;
+    /**
+     * What the number measures, e.g. "Revenue, 12 months".
+     */
+    label: string;
+    /**
+     * Optional quiet line under the metric.
+     */
+    sub?: string | null;
+    /**
+     * Show the number in the accent colour.
+     */
+    accent?: boolean | null;
+  };
+  /**
+   * One or two lines for cards and the Work ledger (max 160 characters).
+   */
+  cardSummary: string;
+  /**
+   * The "In short" box under the headline.
+   */
+  inShort: string;
+  /**
+   * Main visual, shown in a browser frame (e.g. a screenshot of the store).
+   */
+  heroMedia: number | Media;
+  /**
+   * The three numbered sections of the study, always in this order.
+   */
+  narrative: {
+    before: {
+      /**
+       * Section heading, e.g. "What we found".
+       */
+      title: string;
+      /**
+       * Type "/" or use the toolbar to add an image with a caption.
+       */
+      body: {
+        root: {
+          type: string;
+          children: {
+            type: any;
+            version: number;
+            [k: string]: unknown;
+          }[];
+          direction: ('ltr' | 'rtl') | null;
+          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+          indent: number;
+          version: number;
+        };
+        [k: string]: unknown;
+      };
+    };
+    strategy: {
+      /**
+       * Section heading, e.g. "The order of work, and why".
+       */
+      title: string;
+      /**
+       * Type "/" or use the toolbar to add an image with a caption.
+       */
+      body: {
+        root: {
+          type: string;
+          children: {
+            type: any;
+            version: number;
+            [k: string]: unknown;
+          }[];
+          direction: ('ltr' | 'rtl') | null;
+          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+          indent: number;
+          version: number;
+        };
+        [k: string]: unknown;
+      };
+    };
+    results: {
+      /**
+       * Section heading, e.g. "What changed, month by month".
+       */
+      title: string;
+      /**
+       * Type "/" or use the toolbar to add an image with a caption.
+       */
+      body: {
+        root: {
+          type: string;
+          children: {
+            type: any;
+            version: number;
+            [k: string]: unknown;
+          }[];
+          direction: ('ltr' | 'rtl') | null;
+          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+          indent: number;
+          version: number;
+        };
+        [k: string]: unknown;
+      };
+    };
+  };
+  resultsTable: {
+    /**
+     * e.g. "Results — 12 months, client-reported".
+     */
+    eyebrow?: string | null;
+    columns?: {
+      /**
+       * e.g. "Measure".
+       */
+      measure?: string | null;
+      /**
+       * e.g. "Before".
+       */
+      baseline?: string | null;
+      /**
+       * e.g. "After 12 mo".
+       */
+      after?: string | null;
+      /**
+       * e.g. "Change".
+       */
+      change?: string | null;
+    };
+    /**
+     * One row per measured result. Drag to reorder.
+     */
+    rows: {
+      /**
+       * e.g. "Online revenue".
+       */
+      measure: string;
+      baseline?: string | null;
+      after: string;
+      /**
+       * e.g. "+212%".
+       */
+      change?: string | null;
+      id?: string | null;
+    }[];
+    /**
+     * How the numbers were measured and who reported them.
+     */
+    method?: string | null;
+  };
+  clientVoice: {
+    /**
+     * The client's testimonial. A video testimonial plays first; a text one shows as a quote.
+     */
+    testimonial?: (number | null) | Testimonial;
+    doDifferently?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    phaseMapping?: string | null;
+    /**
+     * Optional link under this section, e.g. "See the two tracks".
+     */
+    link: {
+      type: 'internal' | 'custom';
+      newTab?: boolean | null;
+      reference?: {
+        relationTo: 'case-studies';
+        value: number | CaseStudy;
+      } | null;
+      /**
+       * https://…, mailto:…, or a site path like /book-a-call.
+       */
+      url?: string | null;
+      label?: string | null;
+    };
+  };
+  /**
+   * Optional per-study headings. Empty = the site-wide defaults.
+   */
+  closing?: {
+    /**
+     * e.g. "Want this written about your store?"
+     */
+    newsletterHeading?: string | null;
+    finalCtaHeading?: string | null;
+  };
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  /**
+   * Show on the homepage, Services and Review Hub "featured" spots.
+   */
+  featured?: boolean | null;
+  /**
+   * Required to publish: studies go live only with client-approved numbers. Tick once the client has signed off every figure.
+   */
+  figuresApproved?: boolean | null;
+  /**
+   * Minutes. Leave empty to calculate from the story when publishing.
+   */
+  readTime?: number | null;
+  /**
+   * Set automatically on first publish. Orders the Work page and "Next study".
+   */
+  publishedAt?: string | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -500,6 +765,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'faqs';
         value: number | Faq;
+      } | null)
+    | ({
+        relationTo: 'case-studies';
+        value: number | CaseStudy;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -722,6 +991,7 @@ export interface TestimonialsSelect<T extends boolean = true> {
         value?: T;
         label?: T;
       };
+  caseStudy?: T;
   reviewDate?: T;
   sortOrder?: T;
   updatedAt?: T;
@@ -738,6 +1008,105 @@ export interface FaqsSelect<T extends boolean = true> {
   category?: T;
   listOnFaqPage?: T;
   sortOrder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "case-studies_select".
+ */
+export interface CaseStudiesSelect<T extends boolean = true> {
+  title?: T;
+  accentPhrase?: T;
+  client?: T;
+  track?: T;
+  studyNumber?: T;
+  engagementLine?: T;
+  headlineMetric?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        sub?: T;
+        accent?: T;
+      };
+  cardSummary?: T;
+  inShort?: T;
+  heroMedia?: T;
+  narrative?:
+    | T
+    | {
+        before?:
+          | T
+          | {
+              title?: T;
+              body?: T;
+            };
+        strategy?:
+          | T
+          | {
+              title?: T;
+              body?: T;
+            };
+        results?:
+          | T
+          | {
+              title?: T;
+              body?: T;
+            };
+      };
+  resultsTable?:
+    | T
+    | {
+        eyebrow?: T;
+        columns?:
+          | T
+          | {
+              measure?: T;
+              baseline?: T;
+              after?: T;
+              change?: T;
+            };
+        rows?:
+          | T
+          | {
+              measure?: T;
+              baseline?: T;
+              after?: T;
+              change?: T;
+              id?: T;
+            };
+        method?: T;
+      };
+  clientVoice?:
+    | T
+    | {
+        testimonial?: T;
+        doDifferently?: T;
+        phaseMapping?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+      };
+  closing?:
+    | T
+    | {
+        newsletterHeading?: T;
+        finalCtaHeading?: T;
+      };
+  generateSlug?: T;
+  slug?: T;
+  featured?: T;
+  figuresApproved?: T;
+  readTime?: T;
+  publishedAt?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
