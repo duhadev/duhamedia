@@ -1,7 +1,7 @@
 # Build Progress — Duha Media (duhamedia.com)
 
 ## Current state
-**Phase:** 2 — Schema design (schema-architect → SCHEMA.md → Gate S). Phase 1 done 2026-10-17
+**Phase:** 2 — **Gate S presented 2026-10-17** (SCHEMA.md), awaiting approval + 6 open questions. Phase 1 done 2026-10-17
 **Local dev:** `docker compose up -d` (Postgres 127.0.0.1:5433) + `pnpm dev` → http://localhost:3000, admin at /admin (test admin `test+gate@duhamedia.com`, creds in local `.env` `DEV_ADMIN_*`)
 **Installed versions:** payload@3.91.0 (all @payloadcms/* 3.91.0 lockstep), next@16.3.8, react 19.2.6, pnpm 11.28.3, image node:24-alpine
 **Staging:** none yet (OPS_REQUESTS #1). Image `ghcr.io/duhadev/duhamedia:sha-e061dd8…` / `:main` built + pushed by CI 2026-10-17
@@ -58,6 +58,7 @@ Append-only. New sessions: read this before asking the human anything.
 | 2026-10-17 | Playwright MCP pinned `@playwright/mcp@0.0.83 --executable-path /usr/bin/chromium` (no Google Chrome on laptop) | human ran |
 | 2026-10-17 | **Design conflicts resolved** (MERGED.md §10): design section order wins + CLAUDE.md-required sections restored (overrides CLAUDE.md locked order); page colour values win; only real facts = Lombard, IL + founder "Abdur-Rahman Ch"; pricing inline only; one-founder story; homework fields TBD; recs accepted for the rest | Human, after merge |
 | 2026-10-17 | **Gold standard = red-disc page designs** (`project/*.dc.html`); all yellow/multicolour-disc DS copies (`_ds/`, Design System project + its UI-kit `index.html`, April artifact) are outdated, gap-fill only. DS project imported to `design-reference/design-system-project/` | Human |
+| 2026-10-17 | SCHEMA.md drafted (11 collections + 3 plugin, 4 globals, 23 blocks / 51 variants); Gate S presented | schema-architect |
 | 2026-10-17 | Local Postgres image provisional `postgres:17-alpine` until server major is known; local port 5433 | OPS #6 open |
 
 ## Session handoff
