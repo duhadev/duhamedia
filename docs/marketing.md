@@ -27,6 +27,7 @@ Sections are added here as each part of the site is finished and approved.
 | Add a testimonial or Google review | **Admin → Collections → Testimonials → Create New** → **Quote**, **Author Name** → pick **Source** (Google needs its link and the "word for word" tick) → **Publish**. See [Testimonials and reviews](#testimonials-and-reviews). |
 | Add an FAQ | **Admin → Collections → FAQs → Create New** → **Question**, **Answer**, **Category** → set **Sort Order** → **Publish**. See [FAQs](#faqs). |
 | Publish a case study | **Admin → Collections → Case studies → (study)** → tick **Client approved the figures** (right-hand sidebar) → **Publish changes**. Only once the client has signed off every number. See [Case studies](#case-studies-the-collection). |
+| Review and publish a pipeline draft (article) | **Admin → Collections → Posts** → filter **Status: Draft** → open the draft → check the copy, set **Author** and **Hero image** → **Publish changes**. See [Posts](#posts-articles-and-newsletter-issues). |
 | Someone is locked out after wrong passwords | Wait 10 minutes, or ask an Admin to open **Admin → Collections → Users → (person) → Force Unlock**. See [Users and roles](#users-and-roles). |
 
 ## Table of contents
@@ -54,6 +55,7 @@ Sections are added here as each part of the site is finished and approved.
 11. [FAQ](#11-faq)
 12. [Contact](#12-contact)
 13. [DEV-SEO template](#13-dev-seo-template)
+    - [Posts (articles and newsletter issues)](#posts-articles-and-newsletter-issues)
 14. [MKT-SEO template](#14-mkt-seo-template)
 15. [Campaign LP template](#15-campaign-lp-template)
 16. [Newsletter](#16-newsletter)
@@ -144,7 +146,7 @@ A **lead magnet** is a free resource (a guide, checklist or worksheet) that visi
 
 These four collections hold reusable content: client brands, team members, testimonials and reviews, and FAQs. You write each item once here, and the page sections that show it (logo strips, testimonial rows, FAQ lists) pull it in automatically. Those page sections are built later and are described under each page as they land.
 
-Case studies are a library too, but because each one is a full page of its own, their editing guide lives under [2. Case Study template → Case studies (the collection)](#case-studies-the-collection).
+Case studies are a library too, but because each one is a full page of its own, their editing guide lives under [2. Case Study template → Case studies (the collection)](#case-studies-the-collection). The same goes for articles and newsletter issues, whose guide is under [13. DEV-SEO template → Posts](#posts-articles-and-newsletter-issues).
 
 **How drafts work in these four libraries** (the same for all of them):
 - **Save draft** stores your work at any time, even when required fields (marked with a red asterisk) are still empty. Visitors never see drafts.
@@ -379,11 +381,77 @@ The edit screen has four **tabs** (the headings across the top of the form: Summ
 
 ## 13. DEV-SEO template
 
-*Not built yet.*
+Long-form articles aimed at search, at `duhamedia.com/insights/(web address)`. The page design that displays an article is built later; this entry covers where the content is written. Articles, MKT-SEO articles ([14](#14-mkt-seo-template)) and newsletter issues ([16](#16-newsletter)) all live in one list called **Posts**.
+
+### Posts (articles and newsletter issues)
+
+**Pick the Track first.** Every post has a **Track** (right-hand sidebar, required) that decides what it is and which tabs appear:
+- **DEV-SEO article**: published at `/insights/(web address)`.
+- **MKT-SEO article**: published at `/insights/(web address)`.
+- **Newsletter issue**: published at `/newsletter/(web address)`.
+
+The **Sections** and **FAQ** tabs only appear for the two article tracks; newsletter issues hide both. If you cannot see a tab, check the Track.
+
+**The content pipeline writes drafts here.** The "content pipeline" is the automated article writer (see [Users and roles](#users-and-roles)). It can create and edit **drafts** only. It cannot publish, delete, set the **Author**, pick the hero image, or change a post that is already live. **Publishing is always a person:** review the draft (fix the copy, set the **Author** and **Hero image**), then **Publish changes**.
+
+**SEO:** not here yet. Search-result title, description and share image fields for posts arrive with the SEO unit and will be added to this entry then. The **Target keyword** (sidebar) is recorded for that purpose. Images take their **Alt** text from the [Media library](#media-library-images).
+
+**Editable by marketing**
+
+Open **Admin → Collections → Posts** and click **Create New**, or open an existing post. The list shows title, track, status (Draft / Published), published date and last update; published posts come first, newest first, then drafts. To find pipeline drafts, filter the list by **Status: Draft**.
+
+*Sidebar*
+- **Track** (required): see above.
+- **Web address (slug)**: made automatically from the title and kept unique (`-2`, `-3` … is added if the address is taken). Click **Unlock** to type your own, then **Lock**. **Changing the web address of a published post changes its link**, so old links stop working; add a redirect (see the Quick reference once that feature is built).
+- **Target keyword**: the search phrase the article is written for, e.g. "Shopify development Chicago".
+- **Author**: pick a person from [Team members](#team-members). Shown as "By …, Duha Media". Set by a person during review; the pipeline cannot set it.
+- **Read time** (minutes): leave empty and it is worked out from the body when you publish.
+- **Published** (date): set automatically the first time you publish. You can set it yourself.
+- **Updated (shown)**: optional "Updated …" date shown on the article.
+
+*Article tab* (all tracks)
+- **Title** (required): the headline, e.g. "Shopify development in Chicago, scoped and priced in writing."
+- **Newsletter issues only**: **Issue number** (required to publish, shown as "ISSUE 011"), **Sent on** (date) and **Issue metric** (the number shown on the issue's row).
+- **Eyebrow**: the small line above the headline.
+- **Standfirst** (required, maximum 300 characters): the paragraph under the headline. It is also the short excerpt on newsletter cards.
+- **Hero image**: optional, from Media. Set by a person.
+- **Body** (required): the article. It supports **H2** and **H3** headings (H2s are numbered 01, 02 … on the site), bold, italic, bulleted and numbered lists, quotes, links and images. Use the toolbar at the top, select text for the formatting bar, or type `/` to insert an image from Media. **Give an image a caption:** click its **pencil (Edit Relationship)** button and fill in **Caption**; this caption belongs to that spot only and does not change the image's own caption in the Media library.
+- **Pricing note** (optional, maximum 80 characters): a small inline note about price. Prices go only here, never in headings or metrics.
+
+*Sections tab* (DEV-SEO and MKT-SEO only)
+- **DIY vs done-for-you**: **Eyebrow**, **Heading**, **Accent phrase** (a word or phrase copied from the heading, shown in the accent colour; anything not found in the heading is rejected), **Body**, and up to **3 Facts** (a value and a label each, e.g. "4–6" / "Weeks"; never a price). **Add a fact:** click the add button; **reorder:** drag by the handle; **remove:** the row's menu.
+- **How we do it**: **Eyebrow**, **Body** and an optional **Link** (link type, link text, new-tab tick box; leave empty for no link).
+- **Educational block** (DEV-SEO only): **Eyebrow**, **Heading**, **Body**.
+- **Proof**: which case studies back the article up. **Source**: **Featured studies**, **Studies of this track** or **Pick studies** (then choose them, in display order). Only **published** studies show. While none is published, a designed fallback shows instead: choose **Fallback** as **Testimonials** (then pick them) or **Metric strip** (then add metrics, drag to reorder), plus an optional **Fallback note**. Leave **Fallback** empty to use the default (DEV-SEO: testimonials, MKT-SEO: metric strip). Set by a person; the pipeline cannot fill this in.
+
+*FAQ tab* (DEV-SEO and MKT-SEO only)
+- **FAQ heading**, e.g. "On consolidating your marketing", then up to **8 Questions**. Click **Add Question**; each row needs a **Question** and an **Answer** (paragraphs, bold, italic, lists, links). Rows are labelled with their question; **drag** by the handle to reorder; use the row's menu to remove one.
+- These FAQs belong to this article only. They are separate from the [FAQs](#faqs) library and do not appear on the FAQ page. They are also offered to search engines as FAQ results.
+
+*Closing tab* (all tracks)
+- **Newsletter heading** and **Final CTA heading** (call to action; the "book a call" section at the end): optional. Empty means the site-wide defaults.
+
+*Saving and publishing*
+- The admin saves your draft automatically as you type (**autosave**). Clicking **Create New** creates a blank draft straight away, so delete any you abandon.
+- **Publish changes** checks everything at once. If anything required is missing, nothing is published and every problem is listed together. The error badge on a tab can read one higher than the list; that is normal (the section itself is counted).
+- Edits to a published post only reach visitors after you click **Publish changes** again.
+
+*Removing a post*
+- Marketing can delete posts, **including published ones**. To keep a post but take it offline, use the **⋯ (three dots) menu → Unpublish** instead.
+
+**Forms & leads:** n/a. (The newsletter sign-up and final call-to-action at the end of each article are covered under their own blocks once built.)
+
+**Social share:** not set here yet. The share image and text for posts arrive with the SEO unit. Every image uploaded to Media already gets a 1200 × 630 share-size version.
+
+**Other**
+- Never put prices in headings, facts or metrics; use the **Pricing note**.
+- Never invent client results. Proof only shows published case studies, with a designed fallback otherwise.
+- Changes appear on the site as soon as they are published; no developer is needed.
+- The reading-progress bar on article pages is part of the page design; there is no field for it.
 
 ## 14. MKT-SEO template
 
-*Not built yet.*
+MKT-SEO articles are written in the same place as DEV-SEO articles: **Admin → Collections → Posts**, with **Track** set to **MKT-SEO article**. The full guide is under [Posts (articles and newsletter issues)](#posts-articles-and-newsletter-issues). The article page design itself is built later.
 
 ## 15. Campaign LP template
 
@@ -391,7 +459,7 @@ The edit screen has four **tabs** (the headings across the top of the form: Summ
 
 ## 16. Newsletter
 
-*Not built yet.*
+Newsletter issues (the archive shown on this page) are written in **Admin → Collections → Posts** with **Track** set to **Newsletter issue**. See [Posts (articles and newsletter issues)](#posts-articles-and-newsletter-issues), including the issue-only fields. The Newsletter page itself is built later.
 
 ## 17. Link-in-Bio
 
