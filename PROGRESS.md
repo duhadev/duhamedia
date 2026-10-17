@@ -13,8 +13,8 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 
 | Unit type | Unit | Page(s) | Status | Notes |
 |---|---|---|---|---|
-| collection | C1 access helpers + `users` (roles→role, pipeline user, lockout) | all | cleared | Gate 1 approved by human 2026-10-17 (batched w/ C2); Gate 2 n/a; marketing-docs next |
-| collection | C2 `media` (final) + `downloads` | all, p18 | cleared | Gate 1 approved by human 2026-10-17; alt pattern widened (svg/avif/heic…); Gate 2 n/a; marketing-docs next |
+| collection | C1 access helpers + `users` (roles→role, pipeline user, lockout) | all | documented | Gate 1 approved 2026-10-17 (batched w/ C2); Gate 2 n/a; dev + marketing docs done |
+| collection | C2 `media` (final) + `downloads` | all, p18 | documented | Gate 1 approved 2026-10-17; alt pattern widened; Gate 2 n/a; dev + marketing docs done |
 | collection | C3 `clients` | 1, 8, 15 | coding | |
 | collection | C4 `team-members` | 1, 8, posts | queued | |
 | collection | C5 `testimonials` (+GBP source) | 1, 7, 9, 15, 19 | queued | |
