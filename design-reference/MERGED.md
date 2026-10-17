@@ -443,3 +443,27 @@ Numbered so they can be answered by number. Nothing here has been resolved.
     - Homepage's first Founder section is headed "Chicago operators, not account managers" (plural) while the second says "One founder, no layers". The human should pick one story.
     - Book a Call: the homework form has **six** fields (Name, Business, Website URL, Revenue range, Marketing setup, Biggest bottleneck) but says "Five fields". Thank You's homework reminder lists a **different** five (Store URL, Annual revenue, Who runs the store, Monthly ad spend, The one number).
 18. **Not found in source 2 (OK, no conflict):** no payment, checkout or Stripe UI; no Proton references; no "coming soon" placeholders (the phrase appears only inside "No demo studies, no 'coming soon.'"); no Turnstile shown on forms (to be added in the port); no public account or login UI.
+
+## 10. Resolutions (human, 2026-10-17) — binding
+
+Answers to §9. These override CLAUDE.md where they conflict (logged in PROGRESS.md Decision log).
+
+| # | Resolution |
+|---|---|
+| 1 | Colours: **page (effective) values win** — ink primary CTA, white page, wine for geometry/accents. Gradient masks allowed for the decorative geometry only. `merged-tokens.css` stands |
+| 2 | **Design's section order wins** on every page, **plus** every section CLAUDE.md requires that the design dropped is restored (e.g. Marketing Proof, Work staggered grid + Load More + fallback, Shopify "Where people usually start", MKT-SEO "How Duha does it", About logo strip, Link-in-Bio "current push", Case Study hero metric + browser frame, Campaign LP CTA after each major block, DEV-SEO Educational block). Extra design sections are kept |
+| 3 | Launch-state rule holds: no case study renders as real at launch; every case-study surface (incl. the "A study in full" card and Link-in-Bio metric) gets a designed fallback |
+| 4 | Placeholder rule holds: seeded hero headline/subhead carry `[STRATEGIC PLACEHOLDER — final copy TBD]` |
+| 5 | **Only two facts are real: location Lombard, IL, and founder name "Abdur-Rahman Ch".** Everything else (client names, logos, reviewers, "5.0 avg", six-month minimum, $12K scratch builds, 4–6 weeks, month-9 handover, two-week audit, all metrics) is placeholder → seeded as clearly labelled placeholder, never as real |
+| 6 | Testimonial source label + stars are data-driven (field), not hard-coded |
+| 7 | Review Hub stays a launch page; mobile built from the system |
+| 8 | Mobile booking: Nextcloud link-out at launch; the native slot picker waits for the post-launch CalDAV widget |
+| 9 | Map: monochrome treatment, **Lombard, IL** |
+| 10 | Reading progress: design's vertical left-edge bar; pages 2, 8 (About), 11, 13, 14 |
+| 11 | Intro Animation: not at launch |
+| 12 | Founder "Latest posts": dropped |
+| 13 | Pricing: **small inline notes only** (CLAUDE.md rule 5); display-number pricing shrinks to inline. Pricing copy may be left out of seed content for now |
+| 14 | `--gray-warm` darkened until it passes WCAG AA 4.5:1 on white (decision on exact value at Gate S / Tailwind theme) |
+| 15 | Logo: project PNG for now; vector to come from the human |
+| 16 | Focus ring from source 1 (2px ink, 2px offset); system mono stack; Tailwind default breakpoints (designs at 390 / 1440) |
+| 17 | Homepage = `Homepage.dc.html`. Founder story = **"One founder, no layers"** (single founder). Homework form fields **TBD** (editable via form-builder; form is off at launch). `SiteFooterMobile` = either (identical) |

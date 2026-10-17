@@ -1,0 +1,115 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Yellow-in-UI exploration</title>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="../styles.css">
+<style>
+body{margin:0;font-family:var(--font-body);color:var(--ink)}
+a{color:var(--ink)}a:hover{color:var(--accent)}
+.frame{position:absolute;top:40px;width:1080px;background:var(--cream);box-shadow:0 2px 24px rgba(0,0,0,.15)}
+.tag{position:absolute;top:-28px;left:0;font-weight:700;font-size:13px;background:#111;color:#FAF7F2;padding:4px 10px}
+.hdr{display:flex;justify-content:space-between;align-items:center;height:64px;padding:0 32px;border-bottom:1px solid var(--border-divider)}
+.hdr .wm{display:flex;gap:8px;align-items:center;font-family:var(--font-display);font-size:15px}
+.hdr nav{display:flex;gap:22px;align-items:center;font-size:14px;font-weight:500}
+.cta{background:var(--accent);color:#FAF7F2;font-weight:700;font-size:14px;padding:11px 20px;text-decoration:none}
+.hero{position:relative;overflow:hidden;padding:72px 32px 64px}
+.eyebrow{font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.08em}
+h1{font-family:var(--font-display);font-weight:400;font-size:56px;line-height:1.02;text-transform:uppercase;letter-spacing:-.01em;margin:18px 0 0;max-width:15ch}
+.sub{font-weight:500;font-size:17px;line-height:1.6;max-width:50ch;margin:22px 0 0}
+.btns{display:flex;gap:12px;margin-top:26px}
+.ghost{border:2px solid var(--ink);color:var(--ink);font-weight:700;font-size:14px;padding:11px 20px;text-decoration:none}
+.strip{display:flex;gap:80px;padding:24px 32px;border-top:1px solid var(--border-divider)}
+.strip b{font-family:var(--font-display);font-weight:400;font-size:24px;text-transform:uppercase;display:block}
+.strip i{font-style:normal;font-size:12px;font-weight:500;color:var(--gray-warm);display:block;margin-top:4px}
+.metrics{display:flex;gap:56px;padding:40px 32px}
+.metrics .v{font-family:var(--font-display);font-size:56px;line-height:1;display:block}
+.metrics .l{font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.08em;display:block;margin-top:8px}
+.note{padding:18px 32px 28px;font-size:12px;color:var(--gray-warm);font-weight:500}
+</style></head><body>
+<section class="frame" id="2a" style="left:40px">
+<span class="tag">2a — Both yellows layered into the current system (quiet: surfaces + details)</span>
+<div class="hdr"><span class="wm"><img src="../assets/logo.png" width="28" height="28" alt="">DUHA MEDIA</span><nav><a href="#2a">Work</a><a href="#2a">Services</a><a href="#2a">About</a><a class="cta" href="#2a">Book a Call</a></nav></div>
+<div class="hero">
+<div style="position:absolute;right:-90px;top:50%;width:420px;height:420px;transform:translateY(-50%) rotate(45deg);background:var(--gold-pale)"></div>
+<div style="position:relative">
+<span class="eyebrow">Integrated ecommerce growth partner — Chicago</span>
+<h1>Your ecommerce growth team, <span style="color:var(--accent)">until you don't need one.</span></h1>
+<p class="sub">One team builds your store, runs your marketing, and trains yours to take over. Builds from $5K. Engines from $1K/mo.</p>
+<div class="btns"><a class="cta" href="#2a">Book a Call</a><a class="ghost" href="#2a">See the Work</a></div>
+</div></div>
+<div class="strip" style="background:var(--gold-pale);border-top:3px solid var(--gold)">
+<div><b>3 projects ongoing</b><i style="color:rgba(17,17,17,.55)">Current load, shown transparently.</i></div>
+<div><b>Max 7 client capacity</b><i style="color:rgba(17,17,17,.55)">The cap is our quality gate, not a countdown.</i></div>
+</div>
+<div class="metrics">
+<div><span class="v" style="color:var(--accent)">+212%</span><span class="l" style="border-bottom:3px solid var(--gold);padding-bottom:4px">Online revenue</span></div>
+<div><span class="v">$1.4M</span><span class="l">Tracked client revenue</span></div>
+<div><span class="v">9<span style="font-size:32px">mo</span></span><span class="l">To independence handover</span></div>
+</div>
+<div class="note">Wine keeps everything it has now (accent word, CTA, hot metric). Pale yellow joins as a surface (hero diamond, scarcity band); gold appears only as hairline details — the 3px band rule and one metric underline.</div>
+</section>
+<section class="frame" id="2b" style="left:1200px">
+<span class="tag">2b — Both yellows layered in (louder: gold proof band + pale cards)</span>
+<div class="hdr" style="border-bottom:4px solid var(--gold)"><span class="wm"><img src="../assets/logo.png" width="28" height="28" alt="">DUHA MEDIA</span><nav><a href="#2b">Work</a><a href="#2b">Services</a><a href="#2b">About</a><a class="cta" href="#2b">Book a Call</a></nav></div>
+<div class="hero">
+<div style="position:absolute;right:-90px;top:50%;width:420px;height:420px;transform:translateY(-50%) rotate(45deg);background:var(--gray-light);border:3px solid var(--gold)"></div>
+<div style="position:relative">
+<span class="eyebrow">Integrated ecommerce growth partner — Chicago</span>
+<h1>Your ecommerce growth team, <span style="color:var(--accent)">until you don't need one.</span></h1>
+<p class="sub">One team builds your store, runs your marketing, and trains yours to take over. Builds from $5K. Engines from $1K/mo.</p>
+<div class="btns"><a class="cta" href="#2b">Book a Call</a><a class="ghost" href="#2b">See the Work</a></div>
+</div></div>
+<div class="strip">
+<div style="background:var(--gold-pale);padding:14px 18px"><b>3 projects ongoing</b><i style="color:rgba(17,17,17,.55)">Current load, shown transparently.</i></div>
+<div style="background:var(--gold-pale);padding:14px 18px"><b>Max 7 client capacity</b><i style="color:rgba(17,17,17,.55)">The cap is our quality gate, not a countdown.</i></div>
+</div>
+<div class="metrics" style="background:var(--gold)">
+<div><span class="v" style="color:var(--accent)">+212%</span><span class="l">Online revenue</span></div>
+<div><span class="v">$1.4M</span><span class="l">Tracked client revenue</span></div>
+<div><span class="v">9<span style="font-size:32px">mo</span></span><span class="l">To independence handover</span></div>
+</div>
+<div class="note">Louder read: the whole proof band goes gold (wine +212% still pops on it), scarcity facts become pale-yellow cards, gold rules the header. Wine's jobs are unchanged everywhere.</div>
+</section>
+<section class="frame" id="1a" style="left:40px;top:1560px">
+<span class="tag">1a — Pale yellow #FCE588 as highlight surface</span>
+<div class="hdr"><span class="wm"><img src="../assets/logo.png" width="28" height="28" alt="">DUHA MEDIA</span><nav><a href="#1a">Work</a><a href="#1a">Services</a><a href="#1a">About</a><a class="cta" href="#1a">Book a Call</a></nav></div>
+<div class="hero">
+<div style="position:absolute;right:-90px;top:50%;width:420px;height:420px;transform:translateY(-50%) rotate(45deg);background:var(--gold-pale)"></div>
+<div style="position:relative">
+<span class="eyebrow">Integrated ecommerce growth partner — Chicago</span>
+<h1>Your ecommerce growth team, <span style="background:var(--gold-pale);box-shadow:0 0 0 6px var(--gold-pale)">until you don't need one.</span></h1>
+<p class="sub">One team builds your store, runs your marketing, and trains yours to take over. Builds from $5K. Engines from $1K/mo.</p>
+<div class="btns"><a class="cta" href="#1a">Book a Call</a><a class="ghost" href="#1a">See the Work</a></div>
+</div></div>
+<div class="strip" style="background:var(--gold-pale);border-top:none">
+<div><b>3 projects ongoing</b><i style="color:rgba(17,17,17,.55)">Current load, shown transparently.</i></div>
+<div><b>Max 7 client capacity</b><i style="color:rgba(17,17,17,.55)">The cap is our quality gate, not a countdown.</i></div>
+</div>
+<div class="metrics">
+<div><span class="v" style="color:var(--accent)">+212%</span><span class="l">Online revenue</span></div>
+<div><span class="v">$1.4M</span><span class="l">Tracked client revenue</span></div>
+<div><span class="v">9<span style="font-size:32px">mo</span></span><span class="l">To independence handover</span></div>
+</div>
+<div class="note">Pale yellow works as a SURFACE: highlight-marker behind the accent phrase, hero diamond, scarcity band. Wine stays the only "ink" accent; yellow never carries text or CTAs.</div>
+</section>
+<section class="frame" id="1b" style="left:1200px;top:1560px">
+<span class="tag">1b — Gold #F5C842 as secondary accent</span>
+<div class="hdr" style="border-bottom:4px solid var(--gold)"><span class="wm"><img src="../assets/logo.png" width="28" height="28" alt="">DUHA MEDIA</span><nav><a href="#1b">Work</a><a href="#1b">Services</a><a href="#1b">About</a><a class="cta" href="#1b">Book a Call</a></nav></div>
+<div class="hero" style="background:var(--ink);color:var(--cream)">
+<div style="position:absolute;right:-90px;top:50%;width:420px;height:420px;transform:translateY(-50%) rotate(45deg);border:3px solid var(--gold)"></div>
+<div style="position:relative">
+<span class="eyebrow" style="color:var(--gold)">Integrated ecommerce growth partner — Chicago</span>
+<h1>Your ecommerce growth team, <span style="color:var(--gold)">until you don't need one.</span></h1>
+<p class="sub" style="opacity:.85">One team builds your store, runs your marketing, and trains yours to take over. Builds from $5K. Engines from $1K/mo.</p>
+<div class="btns"><a class="cta" href="#1b" style="background:var(--gold);color:var(--ink)">Book a Call</a><a class="ghost" href="#1b" style="border-color:var(--cream);color:var(--cream)">See the Work</a></div>
+</div></div>
+<div class="strip">
+<div><b>3 projects ongoing</b><i>Current load, shown transparently.</i></div>
+<div><b>Max 7 client capacity</b><i>The cap is our quality gate, not a countdown.</i></div>
+</div>
+<div class="metrics" style="background:var(--gray-light)">
+<div><span class="v" style="color:var(--accent)">+212%</span><span class="l">Online revenue</span></div>
+<div><span class="v">$1.4M</span><span class="l">Tracked client revenue</span></div>
+<div><span class="v">9<span style="font-size:32px">mo</span></span><span class="l">To independence handover</span></div>
+</div>
+<div class="note">Gold as a true second ACCENT on dark inversions: eyebrow, accent word, CTA fill (gold-on-ink passes contrast where wine-on-ink fails). Wine keeps light sections; gold owns dark ones.</div>
+</section>
+</body></html>

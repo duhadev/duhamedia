@@ -1,0 +1,15 @@
+:root{
+--font-display:"Archivo Black","Arial Black",sans-serif; /* single weight 900 */
+--font-body:"DM Sans","Helvetica Neue",Arial,sans-serif;
+/* Scale (desktop; mobile values in comments) */
+--text-h1:4.5rem; --text-h1-mobile:2.5rem; --leading-h1:1.0;
+--text-h2:3rem; --text-h2-mobile:2rem; --leading-h2:1.05;
+--text-h3:1.75rem; --text-h3-mobile:1.375rem; --leading-h3:1.15;
+--text-body-size:1.125rem; --text-body-mobile:1rem; --leading-body:1.6;
+--text-small:0.875rem; --text-small-mobile:0.8125rem; --leading-small:1.5;
+--weight-body:500; /* default body = DM Sans Medium */
+--weight-emphasis:700;
+--tracking-eyebrow:0.08em; /* uppercase eyebrows/labels */
+/* Metric display style: H1–H2 scale, Archivo Black, accent permitted */
+--text-metric:4.5rem; --text-metric-mobile:2.75rem;
+}

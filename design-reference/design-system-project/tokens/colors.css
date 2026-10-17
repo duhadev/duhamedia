@@ -1,0 +1,23 @@
+:root{
+/* Base — sampled from uploads/logo.png + brief §2 */
+--cream:#FAF7F2; /* primary surface, warm off-white */
+--ink:#111111; /* near-black */
+--accent:#C20E59; /* deep wine magenta — sampled from logo band (brief estimate was #B01458; client sign-off pending) */
+--accent-bright:#E82561; /* logo bright pink — logo/brand contexts only, never UI accent */
+--gold:#F5C842; /* logo golden band — brand contexts only */
+--gold-pale:#FCE588; /* logo pale yellow band — UI "ground" color: large cropped geometry + quiet structural details only; never text, never interactive, never semantic (wine is figure, yellow is ground) */
+--gray-warm:#8A857D; /* mid warm gray */
+--gray-light:#EDE9E2; /* light warm gray */
+/* Semantic */
+--surface-page:var(--cream);
+--surface-card:var(--gray-light);
+--surface-inverse:var(--ink);
+--text-body:var(--ink);
+--text-secondary:var(--gray-warm);
+--text-on-dark:var(--cream);
+--text-on-accent:#FAF7F2; /* light text on accent fill — contrast winner per brief §9 */
+--accent-primary:var(--accent);
+--ground-accent:var(--gold-pale); /* diamond geometry, eyebrow/scarcity ticks, testimonial edges */
+--border-divider:rgba(138,133,125,.35);
+--border-strong:var(--ink);
+}

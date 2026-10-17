@@ -1,0 +1,22 @@
+<!-- @dsCard group="Components" viewport="700x760" subtitle="AccentHeadline, Metric, MetricStrip, PhaseTimeline, CaseStudyCard, Testimonial" name="Display & Proof" -->
+<!DOCTYPE html><html><head><link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>body{margin:0;background:var(--cream);font-family:var(--font-body);padding:20px 24px}</style></head><body><div id="root"></div>
+<script type="text/babel">
+const { AccentHeadline, Metric, MetricStrip, PhaseTimeline, CaseStudyCard, Testimonial } = window.DuhaMediaDesignSystem_a9da48;
+ReactDOM.createRoot(document.getElementById('root')).render(<div style={{display:'flex',flexDirection:'column',gap:24}}>
+  <AccentHeadline level={2} text="Growth, checkable." accent="checkable."/>
+  <MetricStrip items={[
+    {value:'3',label:'Builds in progress',sub:'Current load, transparently'},
+    {value:'7',label:'Client capacity, max',sub:'Capacity is our quality gate'},
+    {value:'+212%',label:'Online revenue',accent:true}]}/>
+  <PhaseTimeline active={2}/>
+  <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,alignItems:'start'}}>
+    <CaseStudyCard client="Multi-location retail, Chicago" metric="+212%" metricLabel="Online revenue, 12 months" summary="Neglected store rebuilt, engine launched."/>
+    <Testimonial quote="They rebuilt the store, ran the ads, then taught my manager to run it. We stopped paying them in month nine — on their schedule." name="J. Alvarez" role="3-location retailer, Chicago"/>
+  </div>
+</div>);
+</script></body></html>

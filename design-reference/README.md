@@ -9,6 +9,7 @@ Phase 3. Never edit files here except to re-import from source.
 | # | Source | Link | Local copy | Imported |
 |---|---|---|---|---|
 | 1 | Design System artifact "duha media" (v3 files layout, last change 2026-10-06 by Arch) | https://claude.ai/artifact/KSz4saFvMmJ78NC3M6cgwT (version `1792260275-e3e9`) | `design-system/` | 2026-10-17 |
+| 3 | Claude Design project "Duha Media Design System" (outdated; UI kit `ui_kits/website/index.html`, components, guidelines) | https://claude.ai/design/p/a9da4886-8cd2-4a89-bc2c-d8fe2794aeca | `design-system-project/` | 2026-10-17 — 70 files, reference only |
 | 2 | Claude Design project (page designs + its own `_ds/` design system) | https://claude.ai/design/p/d7adf2c6-3dd2-4734-90fd-33d51130563b | `project/` | 2026-10-17 — all 87 files, raw source (`?raw=1`), byte sizes verified against the project listing |
 
 ### 1. `design-system/` (imported)
@@ -33,6 +34,9 @@ Files the human selected (2026-10-17). Whole project is readable; these are the 
 **Re-import:** via the `claude_design` MCP — `render_preview` gives a browser-only preview link; the Playwright browser fetches each file with `?raw=1` and saves to disk. Never persist the preview link (it carries a token).
 
 ## Precedence (human decision, 2026-10-17)
+
+**Clarified 2026-10-17 (human): whatever has the solid red / wine banded disc is the newest work and the gold standard** — i.e. the page designs in `project/*.dc.html` (Duha Media project). The design-system copies that still show the multicolour yellow/pink disc and yellow geometry are **outdated**: `project/_ds/…`, `design-system-project/` (the separate "Duha Media Design System" project, incl. its `ui_kits/website/index.html`) and `design-system/` (April artifact). Use them only to fill gaps the pages leave, never against the pages. `project/Sitemap.dc.html` is the index of the page designs.
+
 
 **Merge the two, with the Claude Design project (source 2) as the gold standard.**
 1. **Source 2 (design project, incl. its `_ds/`) wins** on everything it defines: page designs, components, tokens, copy patterns.
