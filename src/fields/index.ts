@@ -159,10 +159,10 @@ export const accentPhraseAdminField = (headingField: string) => ({
  * Collections an internal link may point at. SCHEMA §3 lists `pages`,
  * `case-studies`, `posts`, `lead-magnets`. The relationship is polymorphic
  * from day one so adding the others is additive (new `*_id` columns in the
- * `_rels` tables, same value shape). C8 added 'posts'.
- * TODO(C9): add 'lead-magnets' · TODO(C10): add 'pages'.
+ * `_rels` tables, same value shape). C8 added 'posts', C9 'lead-magnets'.
+ * TODO(C10): add 'pages'.
  */
-const LINK_TARGETS = ['case-studies', 'posts'] as const satisfies CollectionSlug[]
+const LINK_TARGETS = ['case-studies', 'posts', 'lead-magnets'] as const satisfies CollectionSlug[]
 
 const isInternal: Condition = (_data, siblingData) => (siblingData?.type ?? 'internal') === 'internal'
 const isCustom: Condition = (_data, siblingData) => siblingData?.type === 'custom'

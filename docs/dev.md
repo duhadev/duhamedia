@@ -40,6 +40,7 @@ Entry format for every unit: **Files** / **Fields & schema** / **Wiring** (regis
     - [`faqs` (C6)](#faqs-unit-c6)
     - [`case-studies` (C7)](#case-studies-unit-c7)
     - [`posts` (C8)](#posts-unit-c8)
+    - [`lead-magnets` (C9)](#lead-magnets-unit-c9)
 - [Block showcase sandbox (`/_showcase`)](#block-showcase-sandbox-_showcase)
 - [Deploy](#deploy)
 - [Integrations](#integrations)
@@ -119,7 +120,7 @@ Issue rows and issue pages come from the [`posts` collection (C8)](#posts-unit-c
 
 ## 18. Lead Magnet template
 
-*No units documented yet.*
+Data source: the [`lead-magnets` collection (C9)](#lead-magnets-unit-c9), route `/resources/<slug>` (site-wide section). No blocks documented yet.
 
 ## 19. Review Hub
 
@@ -183,7 +184,7 @@ Entries are in build order (C1, C2, C3 …), not `SCHEMA.md` §6 order (PM decis
 - Pipeline authentication: header `Authorization: users API-Key <key>` only.
 
 **Wiring**
-- Registration: `src/payload.config.ts` → `collections` array (the latest collection entry, currently [C8](#posts-unit-c8), lists it), `admin.user: Users.slug`.
+- Registration: `src/payload.config.ts` → `collections` array (the latest collection entry, currently [C9](#lead-magnets-unit-c9), lists it), `admin.user: Users.slug`.
 - Pages using it: none (not publicly rendered).
 - Revalidation: n/a.
 - Migration: `20261017_193341_c1_users_role`. Up: creates `enum_users_role`, adds `name`, `role` (default `marketing`, not null), `enable_a_p_i_key`, `api_key`, `api_key_index`; data step sets `role = 'admin'` for every user holding `admin` in `users_roles`; drops `users_roles` and `enum_users_roles`. Down (best-effort): restores one `users_roles` row per admin/marketing user; pipeline users get no row and lose their key; a user who held both roles comes back admin only; `name` values are lost.
@@ -541,7 +542,7 @@ Outside the tabs:
 **Notes**
 - Launch state: all case studies are drafts at launch; every surface derives its fallback from an empty published set. There is no "live" toggle field.
 - Deferred:
-  - `linkField` targets `posts` (C8), `lead-magnets` (C9), `pages` (C10) (`TODO` in `src/fields/index.ts`); adding them is additive (new `*_id` columns in the `_rels` tables).
+  - `linkField` targets: `posts` (added C8) and `lead-magnets` (added C9) are now present; `pages` (C10) is a `TODO` in `src/fields/index.ts`; adding it is additive (new `*_id` columns in the `_rels` tables).
   - Rich-text internal links in `narrativeEditor` / `asideEditor` (C10).
   - SEO `meta` tab (plugin-seo unit, `collections: ['case-studies']`).
   - Live preview URL and draft mode for `/work/<slug>` (when the route lands).
@@ -650,9 +651,83 @@ Access:
 
 **Notes**
 - SEO `meta` tab is deferred (plugin-seo with `collections: ['posts']`, editable by staff and pipeline).
-- Deferred: live preview and draft mode with the `/insights/<slug>` and `/newsletter/<slug>` routes; rich-text internal links in `bodyEditor`/`shortEditor` (C10, `TODO(C10)`); `linkField` targets `lead-magnets` (C9) and `pages` (C10).
+- Deferred: live preview and draft mode with the `/insights/<slug>` and `/newsletter/<slug>` routes; rich-text internal links in `bodyEditor`/`shortEditor` (C10, `TODO(C10)`); `linkField` target `pages` (C10) (`lead-magnets` added in [C9](#lead-magnets-unit-c9)).
 - `/work/<slug>` is not purged when a post linked from a case study changes (C10).
 - Reading progress (p11/p13/p14) is a template behaviour, not a field (R10). The FAQ renders through the AccordionFAQ component when it exists.
+
+#### `lead-magnets` (unit C9)
+
+The p18 Lead Magnet template, route `/resources/<slug>`. Rendered from fixed fields (no layout builder). Section order is bound to the asset: capture state → what's inside → delivered state + newsletter cross-sell. Legal-only footer and logo-only header are template behaviour.
+
+**Files**
+- `src/collections/LeadMagnets.ts`: collection, access, hooks, validators (`validateBullets`, `validateAssetFile`, `validateAssetUrl`), revalidation config.
+- `src/lib/leadMagnetAsset.ts`: pure asset rule (`assetFileError`, `assetUrlError`, message constants). No imports; shared by the server validators and the admin client components.
+- `src/components/admin/LeadMagnetAssetFields.tsx` (client): `LeadMagnetAssetFileField`, `LeadMagnetAssetUrlField`.
+- `src/components/admin/ValueBulletRowLabel.tsx` (client): array `RowLabel` using `useRowLabel`; shows the bullet text truncated to 60 characters, fallback `Bullet NN`.
+- `src/fields/index.ts`: `LINK_TARGETS` is now `['case-studies', 'posts', 'lead-magnets']`.
+- `src/payload.config.ts`: `LeadMagnets` registered. `src/payload-types.ts` and `src/app/(payload)/admin/importMap.js` regenerated.
+- `src/migrations/20261017_221725_c9_lead_magnets.ts` (+ `.json`), registered in `src/migrations/index.ts`.
+
+**Fields & schema**
+
+Drafts on (`contentVersions`; required means required to publish). Labels "Lead magnet" / "Lead magnets"; `useAsTitle: 'title'`; `defaultColumns`: `title`, `slug`, `_status`, `publishedAt`, `updatedAt`.
+- `defaultSort: ['-_status', '-publishedAt']` (same reasoning as [C7](#case-studies-unit-c7)).
+- `defaultPopulate: { title: true, slug: true }`, so link targets never populate the asset or the delivery email.
+
+Tab **Capture**:
+
+| Field | Type | Notes |
+|---|---|---|
+| `eyebrow` | text | Default `Free download` |
+| `title` | text, required | H1 |
+| `accentPhrase` | text, `validateAccentPhrase('title')`, `accentPhraseAdminField('title')` | Optional |
+| `pitch` | textarea, required | |
+| `formNote` | text | Small line under the form |
+
+Tab **What's inside**: `valueBullets` array "Bullets", required, `minRows: 3`, `maxRows: 6`, each row `text` (text, required). Custom `validate: validateBullets` replaces the built-in array check so the message names bullets ("requires at least 3 bullets" via `validation:requiresAtLeast` / `requiresNoMoreThan`); accepts the value as an array or a row count. `RowLabel`: `ValueBulletRowLabel`.
+
+Tab **Asset & email**:
+
+| Field | Type | Notes |
+|---|---|---|
+| `asset.file` | upload → `downloads`, `maxDepth: 1`, `validate: validateAssetFile` | Admin `Field`: `LeadMagnetAssetFileField` |
+| `asset.externalUrl` | text ("Or a link"), `validate: validateAssetUrl` | Admin `Field`: `LeadMagnetAssetUrlField` |
+| `deliveryEmail.subject` | text, required | |
+| `deliveryEmail.intro` | textarea, required | |
+
+Tab **Delivered state** (`deliveredState` group): `eyebrow` (default `Sent`), `heading` (required), `accentPhrase` (`validateAccentPhrase('heading')`), `body` (textarea), `crossSellLine` (text, "Newsletter cross-sell line").
+
+Outside the tabs: `slug` (+ hidden `generateSlug`) via `slugField({ overrides: slug.slugFieldOverrides })`; `publishedAt` (date, indexed, sidebar, day only, "Set automatically on first publish").
+
+Asset rule (exactly one of file or URL), in `leadMagnetAsset.ts`:
+- `assetFileError`: error `ASSET_MISSING_MESSAGE` if the file is empty and `externalUrl` is empty.
+- `assetUrlError`: error `ASSET_URL_FORMAT_MESSAGE` if the value is not a parseable `https:` URL; `ASSET_BOTH_MESSAGE` if `file` is also set. Empty URL passes.
+- Server validators call the built-in `upload` (async) / `text` validator from `payload/shared` first, then the rule.
+- Client wrappers pass the same functions as the `validate` prop of `UploadField` / `TextField` from `@payloadcms/ui`. Reason: Payload strips custom validators from the client config, so a server-only error on a custom-validated field can be lost when autosave merges form state. Errors display only after a submit attempt, not while drafting.
+
+Access: `staffContentAccess` (SCHEMA §4.3). Public and pipeline read published documents only; only staff write; versions are staff-only; marketing may delete published documents.
+
+Slug: `uniqueSlugHooks('lead-magnets')` (`beforeValidate` fills from title, `-2`, `-3` … on collision; see [C8 Slugs](#posts-unit-c8)). `publishedAt`: `setPublishedAtOnPublish`, never overwrites an entered date.
+
+**Wiring**
+- Registration: `src/payload.config.ts` → `collections: [Users, Media, Downloads, Clients, TeamMembers, Testimonials, Faqs, CaseStudies, Posts, LeadMagnets]`.
+- Hooks: `beforeValidate: [slug.beforeValidate]`; `beforeChange: [setPublishedAtOnPublish]`; `afterChange: [revalidate.afterChange]`; `afterDelete: [revalidate.afterDelete]`.
+- Pages using it: p18 at `/resources/<slug>`. The route and blocks are not built yet.
+- Revalidation: `revalidateTagHooks('lead-magnets', { paths })`. Tag `lead-magnets` plus `/resources/<slug>` for `doc` and `previousDoc` (a slug change purges the old URL). Proven live 2026-10-17. Any block or route that reads a linked lead magnet's title or slug must fetch with the `lead-magnets` tag.
+- Migration: `20261017_221725_c9_lead_magnets`. Additive.
+  - Up: enums `enum_lead_magnets_status`, `enum__lead_magnets_v_version_status`; tables `lead_magnets`, `lead_magnets_value_bullets`, `_lead_magnets_v`, `_lead_magnets_v_version_value_bullets`; FKs `asset_file_id` / `version_asset_file_id` → `downloads` (set null), parent FKs cascade/set null; unique `lead_magnets_slug_idx`; adds `lead_magnets_id` (FK cascade, indexed) to `case_studies_rels`, `_case_studies_v_rels`, `posts_rels`, `_posts_v_rels` (new `linkField` target) and `payload_locked_documents_rels`.
+  - Down: hand-fixed to drop the FKs held on `lead_magnets` by those five tables before the `DROP TABLE … CASCADE` statements, then drops the added indexes, columns and enums.
+
+**Notes**
+- Frontend rule (SCHEMA §5.2): public queries use `draft: false`. With `draft: true`, a published document with a newer staff draft returns 404 to the public.
+- Noindex is template behaviour (SCHEMA §6.8; gated template), so there is no `noindex` field.
+- Deferred:
+  - `form` relationship → form-builder `forms` (P1): additive, one nullable `form_id` column; `TODO(P1)` in the collection.
+  - SEO `meta` tab (P3, `collections: ['lead-magnets']`).
+  - Live preview and draft mode with the `/resources/<slug>` route.
+- Open, held for the human at C10:
+  - The public API exposes the asset link and delivery email text of published lead magnets (no gate).
+  - The "What's inside" heading is template text, not a field.
 
 ## Block showcase sandbox (`/_showcase`)
 

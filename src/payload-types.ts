@@ -76,6 +76,7 @@ export interface Config {
     faqs: Faq;
     'case-studies': CaseStudy;
     posts: Post;
+    'lead-magnets': LeadMagnet;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -92,6 +93,7 @@ export interface Config {
     faqs: FaqsSelect<false> | FaqsSelect<true>;
     'case-studies': CaseStudiesSelect<false> | CaseStudiesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
+    'lead-magnets': LeadMagnetsSelect<false> | LeadMagnetsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -635,6 +637,10 @@ export interface CaseStudy {
         | ({
             relationTo: 'posts';
             value: number | Post;
+          } | null)
+        | ({
+            relationTo: 'lead-magnets';
+            value: number | LeadMagnet;
           } | null);
       /**
        * https://…, mailto:…, or a site path like /book-a-call.
@@ -803,6 +809,10 @@ export interface Post {
         | ({
             relationTo: 'posts';
             value: number | Post;
+          } | null)
+        | ({
+            relationTo: 'lead-magnets';
+            value: number | LeadMagnet;
           } | null);
       /**
        * https://…, mailto:…, or a site path like /book-a-call.
@@ -948,6 +958,105 @@ export interface Post {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Free downloads (/resources/…): the page, what's inside, the file or link, and the delivery email. Pages are hidden from search engines.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "lead-magnets".
+ */
+export interface LeadMagnet {
+  id: number;
+  /**
+   * Small line above the headline.
+   */
+  eyebrow?: string | null;
+  /**
+   * The headline (H1): the asset name and its pitch, e.g. "The 20-point store leak checklist."
+   */
+  title: string;
+  /**
+   * Optional: one word or phrase from the headline to show in the accent colour.
+   */
+  accentPhrase?: string | null;
+  /**
+   * One paragraph: what the asset is, who it is for, the problem it solves. Lead with the number.
+   */
+  pitch: string;
+  /**
+   * Small line under the form, e.g. "Email delivery. No drip sequence ambush — one send, plus the monthly newsletter if you opt in."
+   */
+  formNote?: string | null;
+  /**
+   * 3 to 6 concrete things the asset gives the reader. Drag to reorder.
+   */
+  valueBullets: {
+    /**
+     * e.g. "The benchmark conversion rate for your store size".
+     */
+    text: string;
+    id?: string | null;
+  }[];
+  /**
+   * Upload the file OR link to it. Exactly one is needed to publish.
+   */
+  asset?: {
+    /**
+     * A PDF, spreadsheet, CSV or zip from Downloads.
+     */
+    file?: (number | null) | Download;
+    /**
+     * A full https:// address, if the asset lives somewhere else (e.g. a shared doc).
+     */
+    externalUrl?: string | null;
+  };
+  /**
+   * The single email that sends the asset. No follow-up sequence.
+   */
+  deliveryEmail: {
+    /**
+     * e.g. "Your store leak checklist".
+     */
+    subject: string;
+    /**
+     * Short text above the download link.
+     */
+    intro: string;
+  };
+  deliveredState: {
+    /**
+     * Small line above the heading.
+     */
+    eyebrow?: string | null;
+    /**
+     * e.g. "Check your inbox. It's on the way."
+     */
+    heading: string;
+    /**
+     * Optional: one word or phrase from the heading to show in the accent colour.
+     */
+    accentPhrase?: string | null;
+    /**
+     * e.g. "If it's not there in five minutes, check spam — then email us."
+     */
+    body?: string | null;
+    /**
+     * Leads into the newsletter sign-up, e.g. "While you're here:".
+     */
+    crossSellLine?: string | null;
+  };
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  /**
+   * Set automatically on first publish.
+   */
+  publishedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
  * Questions and answers for the FAQ page and the FAQ sections on service pages.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1049,6 +1158,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'posts';
         value: number | Post;
+      } | null)
+    | ({
+        relationTo: 'lead-magnets';
+        value: number | LeadMagnet;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1484,6 +1597,50 @@ export interface PostsSelect<T extends boolean = true> {
   readTime?: T;
   publishedAt?: T;
   updatedAtDisplay?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "lead-magnets_select".
+ */
+export interface LeadMagnetsSelect<T extends boolean = true> {
+  eyebrow?: T;
+  title?: T;
+  accentPhrase?: T;
+  pitch?: T;
+  formNote?: T;
+  valueBullets?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  asset?:
+    | T
+    | {
+        file?: T;
+        externalUrl?: T;
+      };
+  deliveryEmail?:
+    | T
+    | {
+        subject?: T;
+        intro?: T;
+      };
+  deliveredState?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        accentPhrase?: T;
+        body?: T;
+        crossSellLine?: T;
+      };
+  generateSlug?: T;
+  slug?: T;
+  publishedAt?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;

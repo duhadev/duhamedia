@@ -10,6 +10,7 @@ import { CaseStudies } from './collections/CaseStudies'
 import { Clients } from './collections/Clients'
 import { Downloads } from './collections/Downloads'
 import { Faqs } from './collections/Faqs'
+import { LeadMagnets } from './collections/LeadMagnets'
 import { Media } from './collections/Media'
 import { Posts } from './collections/Posts'
 import { TeamMembers } from './collections/TeamMembers'
@@ -29,7 +30,7 @@ export default buildConfig({
     },
   },
   serverURL: process.env.SITE_URL || '',
-  collections: [Users, Media, Downloads, Clients, TeamMembers, Testimonials, Faqs, CaseStudies, Posts],
+  collections: [Users, Media, Downloads, Clients, TeamMembers, Testimonials, Faqs, CaseStudies, Posts, LeadMagnets],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

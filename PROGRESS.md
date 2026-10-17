@@ -21,8 +21,8 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 | collection | C6 `faqs` | 4, 5, 6, 11, 13, 14 | documented | Gate 1 approved 2026-10-17; Gate 2 n/a; dev + marketing docs done |
 | collection | C7 `case-studies` | 2, 3 + pulls | documented | Gate 1 approved 2026-10-17; dev + marketing docs done; (cosmetic: a few fields still auto-labelled — later sweep); server-side unique slug applied 2026-10-17 (9/9 smoke); coded 43/43; migration c7 proven; reworks verified (errors together, labels, "1 Result", day-only date); awaiting human Gate 1; revalidation of /work + /work/<old|new slug> proven in a real request (PM); QA next; testimonials.caseStudy added; drafts at launch; figuresApproved gate; **+ add `testimonials.caseStudy` rel (own migration)** |
 | collection | C8 `posts` | 13, 14, 16 | documented | Gate 1 cleared 2026-10-17 under standing approval: QA core pass; reworks verified in browser by PM (accent inline error posts+case-studies, FAQ question labels; badge +1 per failing group/array is stock); dev + marketing docs done; pipeline user drafts only; **slug must auto-generate server-side for REST creates** (slugField only fills in the admin UI; REST create without slug fails) |
-| collection | C9 `lead-magnets` | 18 | coding | standing Gate 1 approval |
-| collection | C10 `pages` (shell; layout grows per block) | all | queued | **+ enable FAQ answer internal links to pages** (editor config) |
+| collection | C9 `lead-magnets` | 18 | cleared | Gate 1 cleared 2026-10-17 under standing approval (QA all 9 checks pass; accepted: slug 'required' shown on empty publish until a title exists, stale file error beside the link error after a failed publish); marketing-docs next; form rel TODO(P1), SEO TODO(P3) |
+| collection | C10 `pages` (shell; layout grows per block) | all | coding | **third checkpoint: human Gate 1 + held questions** | **+ enable FAQ answer internal links to pages** (editor config) |
 | global | G1 `site-settings` · G2 `scarcity` · G3 `navigation` · G4 `seo-defaults` | all | queued | one unit each |
 | plugin | P1 form-builder (overrides + delivery fields) · P2 redirects · P3 seo | all | queued | one unit each |
 | block | 23 blocks in page build order (SCHEMA.md §8–9) | — | queued after collections/globals | appended to /_showcase on Gate 1 |
@@ -35,6 +35,7 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 ## Migrations log
 | Date | Migration file | What it changes | Applied in dev / staging / prod |
 |---|---|---|---|
+| 2026-10-17 | `src/migrations/20261017_221725_c9_lead_magnets.ts` | + lead_magnets (+value_bullets) and `_v` tables, status enums, FK to downloads; nullable lead_magnets_id on case_studies_rels, _case_studies_v_rels, posts_rels, _posts_v_rels, locked rels (down hand-fixed) | scratch proofs; dev via push / no / no |
 | 2026-10-17 | `src/migrations/20261017_215325_c8_posts.ts` | + posts (+rels, faq, diy facts, fallback metrics) and `_v` tables, enums; posts_id on case_studies_rels(+_v) and locked rels (down hand-fixed) | scratch proofs; dev via push / no / no |
 | 2026-10-17 | `src/migrations/20261017_210942_c7_case_studies.ts` | + case_studies (+rels, results rows) and `_v` tables, enums; testimonials.case_study_id; locked rels col (down hand-fixed). One FK name auto-truncated to 63 chars (harmless) | scratch proofs; dev via push / no / no |
 | 2026-10-17 | `src/migrations/20261017_202453_c3_c6_clients_team_testimonials_faqs.ts` | + clients, team_members(+socials), testimonials, faqs and their `_v` version tables, enums, FKs; locked_documents_rels cols (down hand-fixed: FKs before tables) | scratch proofs; dev via push / no / no |
@@ -118,9 +119,15 @@ Append-only. New sessions: read this before asking the human anything.
 | 2026-10-17 | **Deferred to C10 checkpoint (human):** marketing can delete *published* posts (case studies block this). Neither SCHEMA nor CLAUDE.md requires it for posts — keep or align? | C8 dev-docs |
 | 2026-10-17 | C8 QA accepted stock: stale tab badges until next attempt; Sections/FAQ tabs appear only once a track is picked (no default track, by SCHEMA); newsletter issues hide Sections too; autosave can leave empty required FAQ rows in a draft | PM |
 | 2026-10-17 | Accent-phrase check also runs in the browser (custom `AccentPhraseField` passes `validate`), because Payload strips custom validators from the client config and server-only errors on custom-validated fields could be lost | C8 rework |
+| 2026-10-17 | **Deferred to C10 checkpoint (human):** lead-magnet download reachable without the form — public API returns `asset.file`/`externalUrl` + delivery email text (matches SCHEMA §4.3/§6.10 "files are not secret"). Gate it? (fix = staff-only field read on `asset`/`deliveryEmail`; mini Gate S, no DB change) | schema-architect C9 |
+| 2026-10-17 | **Deferred to C10 checkpoint (human):** lead-magnet "What's inside" heading is fixed template text (no SCHEMA field). Make it editable? | schema-architect C9 |
+| 2026-10-17 | Marketing can delete published lead magnets too — folds into the C8 posts deletion question for C10 | C9 |
+| 2026-10-17 | Frontend rule: public lead-magnet/post/case-study queries use `draft: false` (SCHEMA §5.2); `draft: true` with a newer staff draft returns 404 to the public | C9 |
+| 2026-10-17 | Block/route checklist item: any frontend that reads a linked doc's title/slug via `linkField` must fetch with that collection's tag (case-studies, posts, lead-magnets) so renames refresh | integrator C9 |
+| 2026-10-17 | Transient `InvalidFieldRelationship ... 'posts'` (6× in dev log, 16:40–16:5x) = hot-reload window while C8 added `posts` to linkField before registering Posts; not recurring | PM |
 | 2026-10-17 | Local Postgres image provisional `postgres:17-alpine` until server major is known; local port 5433 | OPS #6 open |
 
 ## Session handoff
-- **In flight:** C8 posts (standing Gate 1 approval for C8 + C9; human questions batched to C10 gate).
+- **In flight:** C10 pages (third checkpoint — human Gate 1 + 4 held questions).
 - **Next up:** session restart (MCPs) → import Claude Design project → write `design-reference/MERGED.md` → Phase 2 (schema-architect → SCHEMA.md → Gate S).
 - **Blockers:** OPS_REQUESTS #1–#6 unanswered; postal address (first broadcast only).
