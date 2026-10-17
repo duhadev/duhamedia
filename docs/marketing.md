@@ -27,6 +27,7 @@ Sections are added here as each part of the site is finished and approved.
 | Add a testimonial or Google review | **Admin → Collections → Testimonials → Create New** → **Quote**, **Author Name** → pick **Source** (Google needs its link and the "word for word" tick) → **Publish**. See [Testimonials and reviews](#testimonials-and-reviews). |
 | Add an FAQ | **Admin → Collections → FAQs → Create New** → **Question**, **Answer**, **Category** → set **Sort Order** → **Publish**. See [FAQs](#faqs). |
 | Publish a case study | **Admin → Collections → Case studies → (study)** → tick **Client approved the figures** (right-hand sidebar) → **Publish changes**. Only once the client has signed off every number. See [Case studies](#case-studies-the-collection). |
+| Create a lead magnet (free download page) | Upload the file first: **Admin → Collections → Downloads → Create New**. Then **Admin → Collections → Lead magnets → Create New** → fill the **Capture**, **What's inside**, **Asset & email** and **Delivered state** tabs → **Publish changes**. See [Lead magnets](#lead-magnets-the-collection). |
 | Review and publish a pipeline draft (article) | **Admin → Collections → Posts** → filter **Status: Draft** → open the draft → check the copy, set **Author** and **Hero image** → **Publish changes**. See [Posts](#posts-articles-and-newsletter-issues). |
 | Someone is locked out after wrong passwords | Wait 10 minutes, or ask an Admin to open **Admin → Collections → Users → (person) → Force Unlock**. See [Users and roles](#users-and-roles). |
 
@@ -61,6 +62,7 @@ Sections are added here as each part of the site is finished and approved.
 16. [Newsletter](#16-newsletter)
 17. [Link-in-Bio](#17-link-in-bio)
 18. [Lead Magnet template](#18-lead-magnet-template)
+    - [Lead magnets (the collection)](#lead-magnets-the-collection)
 19. [Review Hub](#19-review-hub)
 20. [Legal template](#20-legal-template)
 21. [404](#21-404)
@@ -146,7 +148,7 @@ A **lead magnet** is a free resource (a guide, checklist or worksheet) that visi
 
 These four collections hold reusable content: client brands, team members, testimonials and reviews, and FAQs. You write each item once here, and the page sections that show it (logo strips, testimonial rows, FAQ lists) pull it in automatically. Those page sections are built later and are described under each page as they land.
 
-Case studies are a library too, but because each one is a full page of its own, their editing guide lives under [2. Case Study template → Case studies (the collection)](#case-studies-the-collection). The same goes for articles and newsletter issues, whose guide is under [13. DEV-SEO template → Posts](#posts-articles-and-newsletter-issues).
+Case studies are a library too, but because each one is a full page of its own, their editing guide lives under [2. Case Study template → Case studies (the collection)](#case-studies-the-collection). The same goes for articles and newsletter issues, whose guide is under [13. DEV-SEO template → Posts](#posts-articles-and-newsletter-issues), and for free downloads (lead magnets), whose guide is under [18. Lead Magnet template → Lead magnets](#lead-magnets-the-collection).
 
 **How drafts work in these four libraries** (the same for all of them):
 - **Save draft** stores your work at any time, even when required fields (marked with a red asterisk) are still empty. Visitors never see drafts.
@@ -467,7 +469,65 @@ Newsletter issues (the archive shown on this page) are written in **Admin → Co
 
 ## 18. Lead Magnet template
 
-*Not built yet.*
+Each **lead magnet** (a free download offered in exchange for an email address) is its own landing page at `duhamedia.com/resources/(web address)`. You write one once in the admin: the pitch, what is inside, the file to deliver, the delivery email, and the "check your inbox" message. The page design that displays it is built later; this entry covers where the content is written. Upload the file itself first, in [Downloads](#downloads-lead-magnet-files).
+
+### Lead magnets (the collection)
+
+**SEO:** lead-magnet pages are meant to be kept out of search engines (the page template does this itself, so there is no setting to tick). Search-result title, description and share image fields arrive with the SEO unit and will be added here then.
+
+**Editable by marketing**
+
+Open **Admin → Collections → Lead magnets** and click **Create New**, or open an existing one. The list shows title, web address, status (Draft / Published), published date and last update; published ones first, newest first, then drafts. The edit screen has four **tabs** (the headings across the top of the form) plus a right-hand **sidebar**. Fields with a red asterisk are needed to publish; you can save a draft with them empty.
+
+*Capture tab* (the top of the page)
+- **Eyebrow**: the small line above the headline. Starts as "Free download".
+- **Title** (required): the headline, naming the download and its pitch, e.g. "The 20-point store leak checklist."
+- **Accent phrase** (optional): a word or phrase to show in the accent colour. It must be copied from the title (capital letters do not matter); anything not found in the title is rejected.
+- **Pitch** (required): one paragraph on what it is, who it is for and the problem it solves. Lead with the number.
+- **Form note** (optional): a small line under the sign-up form.
+- The sign-up form itself is not chosen here yet. It is linked once the forms are built.
+
+*What's inside tab*
+- **Value bullets** (required, **3 to 6**): the concrete things the reader gets. Each row is one line of text, and the collapsed row shows that text.
+  - **Add:** click **Add Bullet**. The button disappears once you reach 6.
+  - **Reorder:** drag a row by its handle.
+  - **Remove:** use the row's menu. You need at least 3 to publish.
+
+*Asset & email tab*
+- **Asset**: what the visitor receives. Give **either** a file **or** a link, not both, and not neither.
+  - **File:** pick it from [Downloads](#downloads-lead-magnet-files) (upload it there first: **Admin → Collections → Downloads → Create New**).
+  - **Or a link:** a full `https://` address, if the asset lives somewhere else (for example a shared document).
+- **Delivery email**: the one email that sends the asset (there is no follow-up series).
+  - **Subject** (required), e.g. "Your store leak checklist".
+  - **Intro** (required): short text above the download link.
+
+*Delivered state tab* (what the visitor sees right after signing up)
+- **Eyebrow**: small line above the heading. Starts as "Sent".
+- **Heading** (required), e.g. "Check your inbox. It's on the way."
+- **Accent phrase** (optional): a word or phrase copied from the heading, shown in the accent colour.
+- **Body** (optional): e.g. a note to check spam.
+- **Newsletter cross-sell line** (optional): the line that leads into the newsletter sign-up, e.g. "While you're here:".
+
+*Sidebar*
+- **Web address (slug)**: made automatically from the title and kept unique (`-2`, `-3` … is added if taken). The page lives at `/resources/(slug)`. Click **Unlock** to type your own, then **Lock**. **Changing the web address of a published lead magnet changes its link**, so old links stop working; add a redirect (see the Quick reference once that feature is built).
+- **Published** (date): set automatically the first time you publish. You can set it yourself.
+
+*Saving and publishing*
+- The admin saves your draft automatically as you type (**autosave**). Clicking **Create New** saves a blank draft straight away, so delete any you abandon.
+- **Publish changes** checks everything at once: if anything is missing or invalid (for example both a file and a link, or only 2 bullets), nothing is published and every problem is shown together, so you can fix them in one pass.
+- Edits to a published lead magnet only reach visitors after you click **Publish changes** again. Publishing is always done by a person.
+
+*Removing a lead magnet*
+- Marketing can delete lead magnets, **including published ones**. To keep one but take it offline, use the **⋯ (three dots) menu → Unpublish** instead.
+
+**Forms & leads:** not wired up yet. The sign-up form (name/email, with an optional newsletter opt-in tick box) and where its submissions land arrive with the forms unit, and will be described here then, including how to spot and re-send a failed delivery.
+
+**Social share:** not set here yet. The share image and text arrive with the SEO unit.
+
+**Other**
+- **Treat files as shareable.** The download link is not yet hidden behind the sign-up form: anyone who gets the link to the file (or the external link) can use it without signing up. Do not upload anything you would not want passed around.
+- Changes appear on the site as soon as they are published; no developer is needed.
+- Never invent figures in the pitch or bullets.
 
 ## 19. Review Hub
 
