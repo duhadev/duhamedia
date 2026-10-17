@@ -145,6 +145,7 @@ Sources: `CLAUDE.md` → "Integration architecture" (locked, Oct 2026); `DECISIO
 - `fingerprint` = error name + top stack frame + route (stable).
 - Local dedupe/rate limit: at most one event per fingerprint per 10 minutes; `count` carries the suppressed total. A crash loop must not flood the queue or Matrix.
 - **Never** include request bodies, cookies, headers or form PII. `stack` = first 20 lines.
+- **Missing upload files:** Payload 3.91.0 answers a request for a file missing from disk (`/api/media/file/<name>`, `/api/downloads/file/<name>`) with a **500** "Something went wrong.", not a 404. These must not page the human per request: ignore them, or collapse them into one rate-limited fingerprint per collection (noted 2026-10-17, C2).
 
 ### `booking`
 

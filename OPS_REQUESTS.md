@@ -28,7 +28,7 @@ Requests from the duhamedia.com build to the server agent, relayed by the human.
 - **Script flow:** pull → start new container → poll `/api/health` → on failure roll back to previous image and alert via the secretary → prune old images.
 - **Runtime env names:** as in #1, with `APP_ENV=production` for production.
 - **Container:** listens on port 3000, runs as **uid:gid 1001:1001**, `NODE_OPTIONS=--max-old-space-size=384`. Measured locally: 66 MiB idle, 131 MiB peak after 100 requests, 85 MiB settled. Image 324 MB.
-- **`MEDIA_DIR` bind mount must be writable by uid 1001.**
+- **`MEDIA_DIR` bind mount must be writable by uid 1001.** The app creates two subfolders inside it: `media/` (images) and `downloads/` (lead-magnet files). Back up the whole `MEDIA_DIR`.
 - The image has a Docker `HEALTHCHECK` on `/api/health` (30 s start period). Note: Next boots lazily, so **`prodMigrations` runs at the first request that initialises Payload** — in practice the first health hit. A failed migration keeps health at 503 (and is retried on each poll), so the rollback rule still holds.
 - **Rollback:** the `release` workflow's manual trigger (input `tag`) moves `:production` back to an existing `vX.Y.Z`, no rebuild.
 - **Needed from you:** a GHCR read token on the server for pulls (token name only here).

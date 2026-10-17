@@ -6,6 +6,7 @@ import { buildConfig } from 'payload'
 import sharp from 'sharp'
 import { fileURLToPath } from 'url'
 
+import { Downloads } from './collections/Downloads'
 import { Media } from './collections/Media'
 import { Users } from './collections/Users'
 import { migrations } from './migrations'
@@ -22,7 +23,7 @@ export default buildConfig({
     },
   },
   serverURL: process.env.SITE_URL || '',
-  collections: [Users, Media],
+  collections: [Users, Media, Downloads],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

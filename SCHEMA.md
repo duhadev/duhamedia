@@ -137,7 +137,7 @@ Public (no user): read **published** docs of content collections, read media/dow
 | case-studies | `publishedOrStaff` | staff | staff | admin: any · marketing: `{ _status: { not_equals: 'published' } }` | `readVersions`: staff. Publish also requires `figuresApproved` (hook) |
 | posts | staff: all · pipeline: `{ _status: { equals: 'draft' } }` · public: published | staff, pipeline (hook forbids publish) | staff · pipeline: `{ _status: { equals: 'draft' } }` (hook forbids publish) | staff | `readVersions`: staff |
 | media, downloads | `true` (files are public at `/api/<slug>/file/…`) | staff | staff | staff | |
-| users | admin: all · others: self | admin | admin; self (not `role`, not API-key fields) | admin | `admin` (panel access): staff only · `unlock`: admin |
+| users | admin: all · marketing: self · pipeline: none *(erratum 2026-10-17, PM: stricter than original "others: self")* | admin | admin; self (not `role`, not API-key fields) | admin | `admin` (panel access): staff only · `unlock`: admin |
 | forms | staff (definitions contain notification addresses; the frontend reads them server-side with `overrideAccess: true`, no user) | admin | admin | admin | |
 | form-submissions | staff (overrides plugin default "any logged-in user", which would include pipeline) | `turnstileVerifiedOrAdmin` (overrides plugin default `() => true`) | admin (delivery fields are written by jobs with `overrideAccess`) | admin | re-send endpoint: staff |
 | redirects | `true` (behaviour is public anyway) | staff | staff | staff | |
@@ -362,7 +362,7 @@ Lead magnets are `noindex` by default (gated template), flag in the template.
 | (`enableAPIKey`, `apiKey`) | auth (API key) | | A | Validate in `beforeChange`: API key may be enabled **only** when `role = pipeline` |
 
 - Hooks: `beforeChange` first user → `role: admin` (kept from scaffolding, adapted to single role); API-key/role guard. `beforeLogin`: throw if `role = pipeline` (the pipeline authenticates only with `Authorization: users API-Key <key>`; it is created by the admin with a random password that is never used). `access.admin`: staff only, so the pipeline key cannot open the admin UI.
-- **Migration note:** `roles` (hasMany → join table) becomes `role` (column). Only local/dev data exists (one test admin); staging/production have never run. The Phase 3 migration therefore needs no data step, but the integrator must confirm no non-dev DB has users before generating it.
+- **Migration note:** `roles` (hasMany → join table) becomes `role` (column). Only local/dev data exists (one test admin); staging/production have never run. *(Erratum 2026-10-17: the committed migration `20261017_193341_c1_users_role` does include a data step that keeps existing admins as `admin`, because the new column defaults to `marketing`.)* The integrator confirmed no non-dev DB has users.
 
 ### 6.12 `forms` (form-builder) — overrides
 **Justification:** p9 §Homework form, p10 §Homework reminder, p12 §Contact form, newsletter (p2/3/4/10/13/14 bands, p16 hero, footer nudge), p18 capture.

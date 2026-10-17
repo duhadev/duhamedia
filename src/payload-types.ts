@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    downloads: Download;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -78,6 +79,7 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    downloads: DownloadsSelect<false> | DownloadsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -123,9 +125,20 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: number;
-  roles: ('admin' | 'marketing')[];
+  /**
+   * Display name in the admin.
+   */
+  name?: string | null;
+  /**
+   * Admin: everything. Marketing: content, not users or form definitions. Pipeline: API key only, drafts in Posts only, cannot log in. To issue a key, save the user as Pipeline first.
+   */
+  role: 'admin' | 'marketing' | 'pipeline';
   updatedAt: string;
   createdAt: string;
+  enableAPIKey?: boolean | null;
+  apiKey?: string | null;
+  apiKeyIndex?: string | null;
+  hasAPIKey?: boolean | null;
   email: string;
   resetPasswordToken?: string | null;
   resetPasswordExpiration?: string | null;
@@ -151,9 +164,13 @@ export interface User {
 export interface Media {
   id: number;
   /**
-   * Describe the image for screen readers and search engines.
+   * Describe the image for screen readers and search engines, e.g. "Founder at a whiteboard mapping a store launch". Not a file name.
    */
   alt: string;
+  /**
+   * Optional default caption when this image is used as a figure in an article.
+   */
+  caption?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -182,6 +199,14 @@ export interface Media {
       filesize?: number | null;
       filename?: string | null;
     };
+    browser?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
     wide?: {
       url?: string | null;
       width?: number | null;
@@ -190,7 +215,35 @@ export interface Media {
       filesize?: number | null;
       filename?: string | null;
     };
+    og?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
   };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "downloads".
+ */
+export interface Download {
+  id: number;
+  /**
+   * Shown in the admin and used as the link text in the delivery email.
+   */
+  title: string;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -223,6 +276,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'downloads';
+        value: number | Download;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -271,9 +328,14 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
-  roles?: T;
+  name?: T;
+  role?: T;
   updatedAt?: T;
   createdAt?: T;
+  enableAPIKey?: T;
+  apiKey?: T;
+  apiKeyIndex?: T;
+  hasAPIKey?: T;
   email?: T;
   resetPasswordToken?: T;
   resetPasswordExpiration?: T;
@@ -296,6 +358,7 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  caption?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -330,6 +393,16 @@ export interface MediaSelect<T extends boolean = true> {
               filesize?: T;
               filename?: T;
             };
+        browser?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
         wide?:
           | T
           | {
@@ -340,7 +413,33 @@ export interface MediaSelect<T extends boolean = true> {
               filesize?: T;
               filename?: T;
             };
+        og?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "downloads_select".
+ */
+export interface DownloadsSelect<T extends boolean = true> {
+  title?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
