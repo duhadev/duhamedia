@@ -26,6 +26,7 @@ Sections are added here as each part of the site is finished and approved.
 | Add a client logo to the logo strip | **Admin → Collections → Clients → Create New** (or open the client) → **Name**, **Logo** → tick **Show In Logo Strip** → set **Sort Order** → **Publish**. See [Clients](#clients-logo-strips). |
 | Add a testimonial or Google review | **Admin → Collections → Testimonials → Create New** → **Quote**, **Author Name** → pick **Source** (Google needs its link and the "word for word" tick) → **Publish**. See [Testimonials and reviews](#testimonials-and-reviews). |
 | Add an FAQ | **Admin → Collections → FAQs → Create New** → **Question**, **Answer**, **Category** → set **Sort Order** → **Publish**. See [FAQs](#faqs). |
+| Publish a case study | **Admin → Collections → Case studies → (study)** → tick **Client approved the figures** (right-hand sidebar) → **Publish changes**. Only once the client has signed off every number. See [Case studies](#case-studies-the-collection). |
 | Someone is locked out after wrong passwords | Wait 10 minutes, or ask an Admin to open **Admin → Collections → Users → (person) → Force Unlock**. See [Users and roles](#users-and-roles). |
 
 ## Table of contents
@@ -41,6 +42,7 @@ Sections are added here as each part of the site is finished and approved.
   - [FAQs](#faqs)
 1. [Homepage](#1-homepage)
 2. [Case Study template](#2-case-study-template)
+   - [Case studies (the collection)](#case-studies-the-collection)
 3. [Work hub](#3-work-hub)
 4. [Services Hub](#4-services-hub)
 5. [Shopify Theme Development](#5-shopify-theme-development)
@@ -142,6 +144,8 @@ A **lead magnet** is a free resource (a guide, checklist or worksheet) that visi
 
 These four collections hold reusable content: client brands, team members, testimonials and reviews, and FAQs. You write each item once here, and the page sections that show it (logo strips, testimonial rows, FAQ lists) pull it in automatically. Those page sections are built later and are described under each page as they land.
 
+Case studies are a library too, but because each one is a full page of its own, their editing guide lives under [2. Case Study template → Case studies (the collection)](#case-studies-the-collection).
+
 **How drafts work in these four libraries** (the same for all of them):
 - **Save draft** stores your work at any time, even when required fields (marked with a red asterisk) are still empty. Visitors never see drafts.
 - **Publish** checks that every required field is filled, then makes the item live on the site. Only published items ever appear to visitors. Publishing is always done by a person.
@@ -211,6 +215,7 @@ Every client quote, video testimonial and public review (Google, LinkedIn) lives
     - **Poster**: a still image from Media, shown before the video plays. Required to publish.
     - **Duration Label** (optional), for example "1:42".
   - **Metric** (optional): a headline result shown on the card, as a **Value** (for example "+212%") and a **Label** (for example "Revenue, 12 mo"). A result, never a price.
+  - **Case Study** (optional): pick the case study about this client. Once that study is **published**, the testimonial shows a "Read the full case study" link to it. While the study is still a draft, no link appears. See [Case studies](#case-studies-the-collection).
   - **Review Date** (sidebar, optional): when the review or quote was given.
   - **Sort Order** (sidebar): position in the testimonial feed and review wall; lower numbers first.
 - **Reorder:** change **Sort Order** and **Publish**.
@@ -251,7 +256,86 @@ Every client quote, video testimonial and public review (Google, LinkedIn) lives
 
 ## 2. Case Study template
 
-*Not built yet.*
+Each case study is its own long-form page on the site, at `duhamedia.com/work/(web address)`. You write a study once in the admin, and the site uses it in two ways: as its full page, and as a card (headline metric, short summary, image) wherever studies are pulled in (Homepage, Work, the service pages, About, campaign pages, Link-in-Bio, Review Hub). The page design that displays a study is built later; this entry covers where the content is written.
+
+### Case studies (the collection)
+
+**The launch rule:** every case study stays a **draft** at launch. No study is visible to visitors until a person publishes it. Wherever studies would appear, the site shows a designed alternative (for example a testimonial or metric strip) instead, so nothing looks empty or "coming soon". You can write and save studies freely in the meantime; visitors never see drafts.
+
+**SEO:** not here yet. Search-result title, description and share image fields for case studies arrive with the SEO unit and will be added to this entry then. The images a study uses take their **Alt** text from the [Media library](#media-library-images).
+
+**Editable by marketing**
+
+Open **Admin → Collections → Case studies** and click **Create New**, or open an existing study. The list shows each study's title, client, track, whether the figures are approved, and its status (Draft / Published). Published studies are listed first, newest first, then drafts.
+
+The edit screen has four **tabs** (the headings across the top of the form: Summary, Story, Results, Client voice & closing) plus a right-hand **sidebar**. Fields marked with a red asterisk must be filled before you can publish; you can save a draft with them empty.
+
+*Summary tab*
+- **Title** (required): the study's headline, shown largest at the top of the page, e.g. "The demand was already there. The store was leaking it."
+- **Accent phrase** (optional): a word or phrase to show in the accent colour. It must be copied from the title exactly as it appears there (capital letters do not matter); anything not found in the title is rejected.
+- **Client** (required): pick the brand from [Clients](#clients-logo-strips). Add the client there first if it is missing.
+- **Track** (required): the kind of engagement, which decides which service pages show this study as proof: **Build**, **Growth engine**, **Build + engine** or **Handover complete**.
+- **Study number** (optional): a whole number, shown as "Study 01" / "№ 01".
+- **Engagement line** (optional), e.g. "Build + engine, 12 months · Hardgoods retail, 3 locations".
+- **Headline metric**: the oversized result shown on the study and on every study card.
+  - **Value** (required), e.g. "+212%". Always a result or a count, **never a price**.
+  - **Label** (required): what the number measures, e.g. "Revenue, 12 months".
+  - **Sub-line** (optional): a quiet line under the metric.
+  - **Accent colour** (tick box): show the number in the accent colour.
+- **Card summary** (required): one or two lines for study cards and the Work list. Maximum 160 characters.
+- **In short** (required): the "In short" box under the headline.
+- **Hero media** (required): the main image, shown inside a browser-style frame (for example a screenshot of the store). Pick or upload it from Media.
+
+*Story tab*
+- Three numbered sections, always in this order: **01 — The before**, **02 — The strategy**, **03 — The results**. Each has a **Heading** (required) and **Text** (required).
+- The text editor supports paragraphs, **bold**, *italic*, bulleted and numbered lists, quotes, links and images. Use the toolbar at the top of the editor, select text for the formatting bar, or type `/` to insert something.
+- **Add an image to the story:** type `/` (or use the toolbar), choose the upload option, and pick or upload an image from Media.
+- **Give a story image a caption:** click the image's **pencil (Edit Relationship)** button and fill in **Caption**, e.g. "Fig. 1 — Checkout before the rebuild". This caption belongs to this spot in this study only. It is separate from the image's own **Caption** in the Media library, which stays unchanged.
+
+*Results tab*
+- **Eyebrow** (optional): the small label above the table, e.g. "Results — 12 months, client-reported".
+- **Column headings** (optional): the table's four header labels, **Measure**, **Baseline**, **After** and **Change**, e.g. "Measure", "Before", "After 12 mo", "Change".
+- **Results** (required, at least one): one row per measured result.
+  - **Add a row:** click **Add Result**. Each row needs **Measure** (e.g. "Online revenue") and **After**; **Baseline** and **Change** (e.g. "+212%") are optional.
+  - **Reorder:** drag a row by its handle. Each collapsed row is labelled with its measure and change, so you can tell them apart.
+  - **Remove:** use the row's menu.
+- **How it was measured** (optional): how the numbers were measured and who reported them.
+
+*Client voice & closing tab*
+- **Testimonial** (optional): pick the client's testimonial from [Testimonials and reviews](#testimonials-and-reviews). A video testimonial plays first; a text one shows as a quote.
+- **What we'd do differently** (optional): a short aside, with paragraphs, bold, italic, lists and links.
+- **How this maps to our phases** (optional).
+- **Link** (optional): a link under this section, e.g. "See the two tracks".
+  - **Link type**: **Page on this site** (then pick it under **Page**; for now only case studies can be picked, more page types are added as they are built) or **Custom address** (then type the **Address**: `https://…`, `mailto:…`, or a site path like `/book-a-call`).
+  - **Link text**: the words shown.
+  - **Open in a new tab** (tick box).
+  - Leave the whole link empty for no link. Once you fill in any part, both the link text and the destination are needed to publish.
+- **Closing → Newsletter heading** and **Final CTA heading** (optional): headings for the newsletter sign-up and the final "book a call" section at the end of this study. Leave empty to use the site-wide defaults.
+
+*Sidebar*
+- **Slug** (the study's web address, `/work/(slug)`): made automatically from the title. While the study is a draft it follows the title as you edit; once it is published it no longer changes by itself. The box is locked by default. To change it by hand, click **Unlock**, then type a new one (or click **Generate** to rebuild it from the title), then **Lock**. **Changing the slug of a published study changes its web address**, so old links to it stop working; add a redirect from the old address when that feature lands.
+- **Featured** (tick box): show this study in the "featured" spots on the Homepage, Services and Review Hub.
+- **Client approved the figures** (tick box): **required to publish.** Tick it only once the client has signed off every number in the study (headline metric, results table and anything quoted in the story).
+- **Read time** (minutes, optional): leave it empty and it is worked out from the length of the story when you publish. To have it recalculated after editing the story, clear it and publish again.
+- **Published** (date): set automatically the first time the study is published. It orders the Work page and the "Next study" link. You can set it yourself; a date you enter is never overwritten.
+
+*Saving and publishing*
+- The admin saves your draft automatically as you type (**autosave**). As with the libraries, clicking **Create New** creates a blank draft straight away, so delete any you abandon.
+- **Publish changes** checks everything at once: if anything is missing or invalid (including an unticked **Client approved the figures**), nothing is published and every problem is highlighted together, so you can fix them all in one pass.
+- Publishing is always done by a person. Edits to a published study are only visible to visitors after you click **Publish changes** again.
+
+*Removing a study*
+- **Marketing can delete drafts only.** To take a published study off the site, open it, use the **⋯ (three dots) menu** at the top right of the document and choose **Unpublish**; it returns to being a draft, which you can then delete if you wish. Or ask an Admin.
+
+**Forms & leads:** n/a. (The newsletter sign-up and final call-to-action at the end of each study are covered under their own blocks once built.)
+
+**Social share:** not set here yet. The share image and text for a study arrive with the SEO unit. Every image uploaded to Media already gets a 1200 × 630 share-size version automatically.
+
+**Other**
+- **Never invent figures or present a demonstration study as a real result.** Placeholder studies stay drafts.
+- A testimonial can point back to a study through its **Case Study** field; that "Read the full case study" link only appears once the study is published.
+- Changes appear on the site as soon as they are published; no rebuild or developer is needed.
+- The reading-progress bar on the study page will be part of the page design (built later); there is no field for it.
 
 ## 3. Work hub
 

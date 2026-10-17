@@ -19,7 +19,7 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 | collection | C4 `team-members` | 1, 8, posts | documented | Gate 1 approved 2026-10-17; Gate 2 n/a; dev + marketing docs done |
 | collection | C5 `testimonials` (+GBP source) | 1, 7, 9, 15, 19 | documented | Gate 1 approved 2026-10-17; Gate 2 n/a; dev + marketing docs done |
 | collection | C6 `faqs` | 4, 5, 6, 11, 13, 14 | documented | Gate 1 approved 2026-10-17; Gate 2 n/a; dev + marketing docs done |
-| collection | C7 `case-studies` | 2, 3 + pulls | cleared | Gate 1 approved 2026-10-17; marketing-docs next; coded 43/43; migration c7 proven; reworks verified (errors together, labels, "1 Result", day-only date); awaiting human Gate 1; revalidation of /work + /work/<old|new slug> proven in a real request (PM); QA next; testimonials.caseStudy added; drafts at launch; figuresApproved gate; **+ add `testimonials.caseStudy` rel (own migration)** |
+| collection | C7 `case-studies` | 2, 3 + pulls | documented | Gate 1 approved 2026-10-17; dev + marketing docs done; (cosmetic: a few fields still auto-labelled — later sweep); coded 43/43; migration c7 proven; reworks verified (errors together, labels, "1 Result", day-only date); awaiting human Gate 1; revalidation of /work + /work/<old|new slug> proven in a real request (PM); QA next; testimonials.caseStudy added; drafts at launch; figuresApproved gate; **+ add `testimonials.caseStudy` rel (own migration)** |
 | collection | C8 `posts` | 13, 14, 16 | coding | pipeline user drafts only; **slug must auto-generate server-side for REST creates** (slugField only fills in the admin UI; REST create without slug fails) |
 | collection | C9 `lead-magnets` | 18 | queued | |
 | collection | C10 `pages` (shell; layout grows per block) | all | queued | **+ enable FAQ answer internal links to pages** (editor config) |
@@ -108,9 +108,10 @@ Append-only. New sessions: read this before asking the human anything.
 | 2026-10-17 | Admin list for case studies: `defaultSort ['-_status','-publishedAt']` (no nulls-last in Drizzle) → published first, then drafts | C7 rework |
 | 2026-10-17 | C7 re-check: error flow + labels pass. Accepted: admin list honours a user's saved sort over `defaultSort` (fresh users get published-first); Payload's "shorter than the max length of 160" wording; approval column shows true/false chips; possible autosave overwrite at automation speed only (unconfirmed for humans). Fixing: rows labels ("Results"), publishedAt day-only display | PM |
 | 2026-10-17 | **Gate 1 approved: C7 case-studies (+ testimonials.caseStudy)** (Gate 2 deferred to template/blocks) | Human: "approve" |
+| 2026-10-17 | **Standing approval (human):** Gate 1 pre-approved for the next two units — C8 `posts` and C9 `lead-magnets` — provided QA passes and findings are reworked + re-verified as usual. Anything needing human input is deferred and batched to the **third checkpoint (C10 `pages` gate)**. Not covered: schema deltas needing a mini Gate S, production/credentials/DNS, new dependencies — those are held for C10 too | Human |
 | 2026-10-17 | Local Postgres image provisional `postgres:17-alpine` until server major is known; local port 5433 | OPS #6 open |
 
 ## Session handoff
-- **In flight:** nothing. First CI run green (~5 billed min/push).
+- **In flight:** C8 posts (standing Gate 1 approval for C8 + C9; human questions batched to C10 gate).
 - **Next up:** session restart (MCPs) → import Claude Design project → write `design-reference/MERGED.md` → Phase 2 (schema-architect → SCHEMA.md → Gate S).
 - **Blockers:** OPS_REQUESTS #1–#6 unanswered; postal address (first broadcast only).

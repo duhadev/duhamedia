@@ -444,7 +444,11 @@ Drafts on (`contentVersions`); `useAsTitle: 'question'`; `defaultSort: ['categor
 
 **Fields & schema**
 
-Drafts on (`contentVersions`); labels "Case study" / "Case studies"; `useAsTitle: 'title'`; `defaultSort: '-publishedAt'`; default columns `title`, `client`, `track`, `featured`, `figuresApproved`, `_status`, `updatedAt`.
+Drafts on (`contentVersions`: autosave interval 375, `schedulePublish: false`, `validate: false`); labels "Case study" / "Case studies"; `useAsTitle: 'title'`.
+
+- `defaultSort: ['-_status', '-publishedAt']`: published studies first (`'published'` > `'draft'`), newest first, then drafts. Postgres sorts NULLs first on DESC and `@payloadcms/drizzle@3.91.0` has no nulls-last option (`queries/buildOrderBy.js`), hence the explicit `_status` key. Public queries are published-only, so for them this is effectively `-publishedAt`. A user's saved list sort in the admin overrides it.
+- `defaultColumns`: `title`, `client`, `track`, `figuresApproved`, `_status`, `publishedAt`, `updatedAt`. `featured` is not a default column; it is still filterable in the list.
+- Explicit sentence-case `label`s: `accentPhrase` "Accent phrase", `studyNumber` "Study number", `engagementLine` "Engagement line", `headlineMetric` "Headline metric", `cardSummary` "Card summary", `inShort` "In short", `heroMedia` "Hero media", `narrative` "Story sections" (sub-groups "01 — The before" / "02 — The strategy" / "03 — The results", each `title` "Heading", `body` "Text"), `resultsTable` "Results table", `resultsTable.columns` "Column headings", `resultsTable.rows` "Results", `resultsTable.method` "How it was measured", `clientVoice` "Client voice", `clientVoice.doDifferently` "What we'd do differently", `clientVoice.phaseMapping` "How this maps to our phases", `clientVoice.link` "Link", `closing` "Closing", `closing.newsletterHeading` "Newsletter heading", `closing.finalCtaHeading` "Final CTA heading", `figuresApproved` "Client approved the figures", `readTime` "Read time", `publishedAt` "Published". Fields without an explicit `label` (Payload derives it from the name): `title`, `client`, `track`, `resultsTable.eyebrow`, the `columns` and `rows` sub-fields (`measure`, `baseline`, `after`, `change`), `featured`, and the `slugField()` fields.
 
 Tab **Summary**:
 
@@ -471,7 +475,7 @@ Tab **Results**: `resultsTable` group:
 |---|---|---|
 | `eyebrow` | text | |
 | `columns` | group ("Column headings"): `measure`, `baseline`, `after`, `change` (text) | Table header labels |
-| `rows` | array, required, `minRows: 1`, RowLabel `ResultRowLabel` | Per row: `measure` (text, required), `baseline` (text), `after` (text, required), `change` (text). Reorderable |
+| `rows` | array ("Results"; `labels` Result / Results), required, `minRows: 1`, custom `validate`, RowLabel `ResultRowLabel` | Per row: `measure` (text, required), `baseline` (text), `after` (text, required), `change` (text). Reorderable. The `validate` returns `t('validation:requiresAtLeast', { count: 1, label: 'Result' })` when empty, because the built-in array validator in payload@3.91.0 ignores `labels` (words it "1 Rows") |
 | `method` | textarea | How the numbers were measured |
 
 Tab **Client voice & closing**:
@@ -488,11 +492,16 @@ Outside the tabs:
 
 | Field | Type | Notes |
 |---|---|---|
-| `slugField()` | `generateSlug` checkbox (default `true`) + `slug` text | Unique index on `slug`. `slugField` is marked `@experimental` in payload@3.91.0; used because SCHEMA requires it |
+| `slugField()` | `generateSlug` checkbox (hidden, default `true`) + `slug` text (required) | Unique index on `slug`. `slugField` is marked `@experimental` in payload@3.91.0; used because SCHEMA requires it. See slug behaviour below |
 | `featured` | checkbox, default `false`, indexed, sidebar | Homepage, Services, Review Hub featured spots |
-| `figuresApproved` | checkbox ("Client approved the figures"), default `false`, sidebar | Required to publish (hook below) |
+| `figuresApproved` | checkbox ("Client approved the figures"), default `false`, sidebar, `validate: validateFiguresApproved` | Required to publish (see Publish rule below). Error message "Tick this before publishing."; the longer explanation is in `admin.description` |
 | `readTime` | number, `min: 1`, step 1, sidebar | Minutes; empty = filled on publish |
-| `publishedAt` | date, `dayOnly`, indexed, sidebar | Set on first publish; orders Work and "Next study" |
+| `publishedAt` | date ("Published"), indexed, sidebar, `admin.date: { pickerAppearance: 'dayOnly', displayFormat: 'd MMM yyyy' }` | Set on first publish; orders Work and "Next study" |
+
+- Slug behaviour:
+  - Admin: the slug box opens locked with an Unlock button (Generate / Lock controls of Payload's `SlugField` client component).
+  - Because `contentVersions` enables autosave, the `generateSlug` hook stops regenerating the slug from the title once the doc is published (or the slug was edited by hand); the slug is not hard-locked and can still be changed by hand.
+  - REST creates without `slug` fail with "Slug required" (observed in the C7 rework; `slugField` only fills the slug in the admin UI in practice). REST callers creating case studies must pass `slug` and `generateSlug: false`. (`posts`, C8, generates slugs server-side.)
 
 - `defaultPopulate` (card fields only, used when another doc populates a case study): `title`, `slug`, `client`, `track`, `headlineMetric`, `cardSummary`, `heroMedia`, `publishedAt`.
 - Access:
@@ -503,10 +512,16 @@ Outside the tabs:
 | marketing | all | yes | yes | yes | only where `_status` ≠ `published` |
 | pipeline, public | published only (`publishedOrStaff`) | no | no | no | no |
 
-- Hooks, `beforeChange` in this order:
-  1. `requireFiguresApproved`: if the effective status is `published` and `figuresApproved` (data, else originalDoc) is not `true`, throws `ValidationError` on path `figuresApproved`. Collection `beforeChange` also runs on restore-version, so publishing by restore is blocked too.
-  2. `setPublishedAtOnPublish` (above).
-  3. `fillReadTime`: on publish only, when `readTime` is empty (not a positive number), sets it from `readTimeMinutes` over the word count of `narrative.before/strategy/results.body`. A set value is kept; clear the field to recalculate on the next publish. 0 words leaves it empty.
+- Publish rule (`figuresApproved`), two layers:
+  1. `validateFiguresApproved` (field `validate` on `figuresApproved`): runs the built-in `checkbox()` validator from `payload/shared` first; `true` passes; on a server save (`event: 'submit'`) it returns "Tick this before publishing." only when the merged `data._status` is `published`. Being a field validator, it is reported together with every other field error in one attempt. Draft saves skip validation (`drafts.validate: false`); a non-draft update of a draft and a version restore that publishes are validated. In admin form state (`event: 'onChange'`, only after a submit attempt) it ignores `_status`, like the built-in `required` errors it is shown with.
+  2. `blockUnapprovedPublish` (FIRST `afterChange` hook, before revalidation): backstop for any publish path that skips field validation (none known in 3.91.0). If `doc._status` is `published` and `figuresApproved` is not `true`, throws `ValidationError` on path `figuresApproved`. It runs inside the operation's transaction (update, create, restoreVersion), so the throw rolls the publish back. Must stay first in `afterChange`.
+- Hooks:
+  - `beforeChange`: `[setPublishedAtOnPublish, fillReadTime]`.
+    1. `setPublishedAtOnPublish` (above).
+    2. `fillReadTime`: on publish only, when `readTime` is empty (not a positive number), sets it from `readTimeMinutes` over the word count of `narrative.before/strategy/results.body`. A set value is kept; clear the field to recalculate on the next publish. 0 words leaves it empty.
+  - `afterChange`: `[blockUnapprovedPublish, revalidate.afterChange]`.
+  - `afterDelete`: `[revalidate.afterDelete]`.
+- Convention (PROGRESS.md Decision log, 2026-10-17): publish rules are field `validate` functions plus an `afterChange` backstop; collection `beforeChange` hooks never throw validation errors (collection `beforeChange` runs before field validation in payload@3.91.0, so a throw there hides every other publish error). Applies to posts, pages, lead-magnets.
 
 **Wiring**
 - Registration: `src/payload.config.ts` → `collections: [Users, Media, Downloads, Clients, TeamMembers, Testimonials, Faqs, CaseStudies]`.
