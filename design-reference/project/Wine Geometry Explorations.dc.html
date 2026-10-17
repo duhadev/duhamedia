@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/effects.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+  <script src="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/_ds_bundle.js"></script>
+  <style>
+    html{--accent-primary:#111111;}
+    body{margin:0;background:#f0eee9;font-family:system-ui,sans-serif}
+    a{color:#111}a:hover{color:#C20E59}
+    .dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}
+    .dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 20px}
+    .dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}
+    .dv-tname{font:600 13px/1.2 system-ui,sans-serif;color:#1a1a1a}
+    .dv-opts{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}
+    .dv-opt{flex:none;display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px}
+    .dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}
+    .dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.55)}
+    .dv-card{max-width:100%;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden}
+    .dv-opt:target .dv-oid{background:#2a78d6;color:#fff}
+    .dv-next{margin:22px 0 0;font:12px/1.5 system-ui,sans-serif;color:rgba(0,0,0,.5)}
+  </style>
+</helmet>
+
+<section class="dv-turn" id="t11">
+<div class="dv-thd"><a class="dv-tid" href="#t11">11</a><span class="dv-tname">Fade variations — <a class="dv-oid" href="#10b">10b</a>'s hero kept as-is; the sections handle the gradient differently</span></div>
+<div class="dv-opts">
+<div class="dv-opt" id="11a"><div class="dv-olabel"><a class="dv-oid" href="#11a">11a</a>Fade down — every section's dots start at its top edge and dissolve downward, like a header wash</div><div class="dv-card" style="width:390px"><dc-import name="GeoHome" treatment="fade-down" hint-size="390px,4400px"></dc-import></div></div>
+<div class="dv-opt" id="11b"><div class="dv-olabel"><a class="dv-oid" href="#11b">11b</a>Edge bands — dots hug each section's top and bottom edges, keeping the content zone clean</div><div class="dv-card" style="width:390px"><dc-import name="GeoHome" treatment="fade-edge" hint-size="390px,4400px"></dc-import></div></div>
+<div class="dv-opt" id="11c"><div class="dv-olabel"><a class="dv-oid" href="#11c">11c</a>Radial pools — dots pool radially out of one corner per section, echoing the hero's fall-off</div><div class="dv-card" style="width:390px"><dc-import name="GeoHome" treatment="fade-radial" hint-size="390px,4400px"></dc-import></div></div>
+</div>
+<p class="dv-next">Try next: "make <a class="dv-oid" href="#11a">11a</a> the real homepage" · "slower fade in <a class="dv-oid" href="#11a">11a</a>" · "<a class="dv-oid" href="#11c">11c</a> but pooling from the wine diamonds"</p>
+</section>
+
+<section class="dv-turn" id="t10">
+<div class="dv-thd"><a class="dv-tid" href="#t10">10</a><span class="dv-tname">More matrices — riffs near <a class="dv-oid" href="#9a">9a</a>, same hero figure, different lattice</span></div>
+<div class="dv-opts">
+<div class="dv-opt" id="10a"><div class="dv-olabel"><a class="dv-oid" href="#10a">10a</a>Diamond weave — the lattice is made of tiny brand diamonds instead of dots</div><div class="dv-card" style="width:390px"><dc-import name="GeoHome" treatment="matrix-diamond" hint-size="390px,4400px"></dc-import></div></div>
+<div class="dv-opt" id="10b"><div class="dv-olabel"><a class="dv-oid" href="#10b">10b</a>Halftone fade — 9a's dots, but they dissolve away from the wine figure; each section fades from a different corner</div><div class="dv-card" style="width:390px"><dc-import name="GeoHome" treatment="matrix-fade" hint-size="390px,4400px"></dc-import></div></div>
+<div class="dv-opt" id="10c"><div class="dv-olabel"><a class="dv-oid" href="#10c">10c</a>Ruled lines — horizontal notebook rules only; the most editorial read</div><div class="dv-card" style="width:390px"><dc-import name="GeoHome" treatment="matrix-rule" hint-size="390px,4400px"></dc-import></div></div>
+<div class="dv-opt" id="10d"><div class="dv-olabel"><a class="dv-oid" href="#10d">10d</a>Wide pitch — bigger dots at double spacing; sparser and more architectural than 9a</div><div class="dv-card" style="width:390px"><dc-import name="GeoHome" treatment="matrix-sparse" hint-size="390px,4400px"></dc-import></div></div>
+</div>
+<p class="dv-next">Try next: "make <a class="dv-oid" href="#10b">10b</a> the real homepage" · "wine dots instead of ink in <a class="dv-oid" href="#9a">9a</a>" · "combine <a class="dv-oid" href="#10d">10d</a> with <a class="dv-oid" href="#8b">8b</a>'s labels"</p>
+</section>
+
+<section class="dv-turn" id="t9">
+<div class="dv-thd"><a class="dv-tid" href="#t9">9</a><span class="dv-tname">Matrix patterns — the grid as texture instead of scattered diamonds (hero markers removed)</span></div>
+<div class="dv-opts">
+<div class="dv-opt" id="9a"><div class="dv-olabel"><a class="dv-oid" href="#9a">9a</a>Dot matrix — a uniform dot lattice under every section; the wine diamond is the only figure</div><div class="dv-card" style="width:390px"><dc-import name="GeoHome" treatment="matrix-dot" hint-size="390px,4400px"></dc-import></div></div>
+<div class="dv-opt" id="9b"><div class="dv-olabel"><a class="dv-oid" href="#9b">9b</a>Graph cells — full graph-paper grid; wine fills single cells as square accents alongside the diamond</div><div class="dv-card" style="width:390px"><dc-import name="GeoHome" treatment="matrix-cell" hint-size="390px,4400px"></dc-import></div></div>
+<div class="dv-opt" id="9c"><div class="dv-olabel"><a class="dv-oid" href="#9c">9c</a>Diagonal lattice — a faint wine X-weave across the page, tying the texture itself to the brand color</div><div class="dv-card" style="width:390px"><dc-import name="GeoHome" treatment="matrix-x" hint-size="390px,4400px"></dc-import></div></div>
+</div>
+<p class="dv-next">Try next: "make <a class="dv-oid" href="#9a">9a</a> the real homepage" · "denser dots in <a class="dv-oid" href="#9a">9a</a>" · "mix <a class="dv-oid" href="#9b">9b</a>'s filled cells with <a class="dv-oid" href="#8b">8b</a>'s labels"</p>
+</section>
+
+<section class="dv-turn" id="t8">
+<div class="dv-thd"><a class="dv-tid" href="#t8">8</a><span class="dv-tname">The <a class="dv-oid" href="#7b">7b</a> grid, hero diamond now solid wine — three ways the system runs down the page</span></div>
+<div class="dv-opts">
+<div class="dv-opt" id="8a"><div class="dv-olabel"><a class="dv-oid" href="#8a">8a</a>Survey — rules through every section, small 9px markers at intersections; the quietest read</div><div class="dv-card" style="width:390px"><dc-import name="GeoHome" treatment="grid" hint-size="390px,4400px"></dc-import></div></div>
+<div class="dv-opt" id="8b"><div class="dv-olabel"><a class="dv-oid" href="#8b">8b</a>Data points — markers grow section by section along the rules, with coordinate labels (02 / Services, 03 / Process…)</div><div class="dv-card" style="width:390px"><dc-import name="GeoHome" treatment="grid-b" hint-size="390px,4400px"></dc-import></div></div>
+<div class="dv-opt" id="8c"><div class="dv-olabel"><a class="dv-oid" href="#8c">8c</a>Grid + figure — rules thin out; one solid diamond per section pinned to a grid line does the talking</div><div class="dv-card" style="width:390px"><dc-import name="GeoHome" treatment="grid-c" hint-size="390px,4400px"></dc-import></div></div>
+</div>
+<p class="dv-next">Try next: "make <a class="dv-oid" href="#8b">8b</a> the real homepage" · "labels on every section in <a class="dv-oid" href="#8a">8a</a>" · "bigger diamonds in <a class="dv-oid" href="#8c">8c</a>"</p>
+</section>
+
+<section class="dv-turn" id="t7">
+<div class="dv-thd"><a class="dv-tid" href="#t7">7</a><span class="dv-tname">Geometry reimagined — four systems, each with its own logic for the whole page</span></div>
+<div class="dv-opts">
+<div class="dv-opt" id="7a"><div class="dv-olabel"><a class="dv-oid" href="#7a">7a</a>Supergraphic split — the diamond blown up until its edge becomes the layout; cropped color fields, one per section</div><div class="dv-card" style="width:390px"><dc-import name="GeoHome" treatment="split" hint-size="390px,4400px"></dc-import></div></div>
+<div class="dv-opt" id="7b"><div class="dv-olabel"><a class="dv-oid" href="#7b">7b</a>Exposed grid — technical hairline grid running the page; diamonds as coordinate markers, a survey of the store</div><div class="dv-card" style="width:390px"><dc-import name="GeoHome" treatment="grid" hint-size="390px,4400px"></dc-import></div></div>
+<div class="dv-opt" id="7c"><div class="dv-olabel"><a class="dv-oid" href="#7c">7c</a>Mark anatomy — the logo's four bands zoomed 40×, cropped behind the type; wine at four strengths</div><div class="dv-card" style="width:390px"><dc-import name="GeoHome" treatment="bands" hint-size="390px,4400px"></dc-import></div></div>
+<div class="dv-opt" id="7d"><div class="dv-olabel"><a class="dv-oid" href="#7d">7d</a>Dotted axis — one stitched 45° line threads every section; diamonds as waypoints along it</div><div class="dv-card" style="width:390px"><dc-import name="GeoHome" treatment="axis" hint-size="390px,4400px"></dc-import></div></div>
+</div>
+<p class="dv-next">Try next: "make <a class="dv-oid" href="#7a">7a</a> the real homepage" · "put <a class="dv-oid" href="#7b">7b</a>'s grid under <a class="dv-oid" href="#6a">6a</a>" · "push <a class="dv-oid" href="#7c">7c</a>'s bands bigger"</p>
+</section>
+
+<section class="dv-turn" id="t6">
+<div class="dv-thd"><a class="dv-tid" href="#t6">6</a><span class="dv-tname">Interlock — kept from the last round; hero diamond now behind the headline</span></div>
+<div class="dv-opts">
+<div class="dv-opt" id="6a"><div class="dv-olabel"><a class="dv-oid" href="#6a">6a</a>Interlock, full page — solid diamond behind the header text, hairline diagonals + rotated micro-copy through the sections</div><div class="dv-card" style="width:390px"><dc-import name="GeoHome" treatment="interlock" hint-size="390px,4400px"></dc-import></div></div>
+</div>
+</section>
+
+</x-dc>
+</body>
+</html>

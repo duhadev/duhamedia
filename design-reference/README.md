@@ -9,7 +9,7 @@ Phase 3. Never edit files here except to re-import from source.
 | # | Source | Link | Local copy | Imported |
 |---|---|---|---|---|
 | 1 | Design System artifact "duha media" (v3 files layout, last change 2026-10-06 by Arch) | https://claude.ai/artifact/KSz4saFvMmJ78NC3M6cgwT (version `1792260275-e3e9`) | `design-system/` | 2026-10-17 |
-| 2 | Claude Design project (page designs + its own `_ds/` design system) | https://claude.ai/design/p/d7adf2c6-3dd2-4734-90fd-33d51130563b | `project/` *(pending)* | **Pending** — needs the `claude_design` MCP (see below) |
+| 2 | Claude Design project (page designs + its own `_ds/` design system) | https://claude.ai/design/p/d7adf2c6-3dd2-4734-90fd-33d51130563b | `project/` | 2026-10-17 — all 87 files, raw source (`?raw=1`), byte sizes verified against the project listing |
 
 ### 1. `design-system/` (imported)
 - `README.md` — brand book: character, voice, logo, colour, type, buttons, layout, imagery, history, open items.
@@ -18,7 +18,7 @@ Phase 3. Never edit files here except to re-import from source.
 - `assets/Logos/duha-mark.svg` — four-band disc mark (vector redraw; the README notes the original export is still wanted).
 - `design-system.json` — the artifact's index, kept for provenance.
 
-### 2. `project/` (pending import)
+### 2. `project/` (imported 2026-10-17)
 Files the human selected (2026-10-17). Whole project is readable; these are the focus:
 
 - **Design system (project copy):** `_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/` — `readme.md`, `styles.css`, `tokens/{colors,effects,fonts,spacing,typography}.css`, `_ds_bundle.js`, `_ds_manifest.json`, `_adherence.oxlintrc.json`.
@@ -30,12 +30,7 @@ Files the human selected (2026-10-17). Whole project is readable; these are the 
 - **Maps:** `maps/map-live.html`, `maps/map-locator.html`, `maps/map-mono.html`.
 - **Images:** `assets/logo-duha-01.png`, `assets/logo.png`, `scraps/{bookcall-proof,home-testi,svchub-testi}.png`, `uploads/pasted-*.png` (4).
 
-**To import:** the human adds the Claude Design MCP and logs in, then the PM pulls every file above
-into `project/` preserving paths:
-```
-claude mcp add --transport http claude_design https://api.anthropic.com/v1/design/mcp
-/design-login
-```
+**Re-import:** via the `claude_design` MCP — `render_preview` gives a browser-only preview link; the Playwright browser fetches each file with `?raw=1` and saves to disk. Never persist the preview link (it carries a token).
 
 ## Precedence (human decision, 2026-10-17)
 

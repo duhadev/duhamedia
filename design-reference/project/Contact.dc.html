@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+  <script src="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/_ds_bundle.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;}
+    body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--font-body);font-weight:500;}
+    :root{/*fade-edge*/--cream:#FFFFFF;--gray-light:#F5F5F4;--accent-primary:#111111;--ground-accent:#C20E59;}
+    a{color:var(--ink);}
+    a:hover{color:var(--accent-primary);}
+  </style>
+</helmet>
+
+<sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+<dc-import name="SiteHeader" hint-size="100%,72px"></dc-import>
+
+<section data-screen-label="Contact hero" style="background:var(--cream);padding:80px 0 56px;position:relative;overflow:hidden">
+  <div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.22) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(215deg,#000 15%,transparent 65%);mask-image:linear-gradient(215deg,#000 15%,transparent 65%);z-index:0"></div>
+  <div aria-hidden="true" style="position:absolute;right:-160px;top:-80px;width:340px;height:340px;background:var(--ground-accent);-webkit-mask-image:url('assets/logo.png');-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;mask-image:url('assets/logo.png');mask-size:contain;mask-repeat:no-repeat;z-index:0"></div>
+  <div style="position:relative;z-index:1;max-width:820px;margin:0 auto;padding:0 var(--container-pad)">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" tick="{{ true }}" hint-size="auto,20px">Contact</x-import>
+    <div style="margin-top:20px">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.AccentHeadline" level="{{ 1 }}" as="h1" text="Prospect? Book a call. Everything else, here." accent="Book a call." hint-size="100%,180px"></x-import>
+    </div>
+    <p style="margin:24px 0 0;font-size:1rem;line-height:1.6;max-width:52ch">Fit and pricing questions get real answers on a <a href="Book a Call.dc.html" style="font-weight:700;border-bottom:2px solid var(--ink);text-decoration:none">30-minute call</a>. Partnerships, press, and existing clients: the form below.</p>
+  </div>
+</section>
+
+<section data-screen-label="Contact form" style="background:var(--gray-light);padding:64px 0">
+  <div data-anim style="max-width:820px;margin:0 auto;padding:0 var(--container-pad)">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Input" label="Name" placeholder="Your name" hint-size="100%,80px"></x-import>
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Input" label="Email" type="email" placeholder="you@company.com" hint-size="100%,80px"></x-import>
+      <div style="grid-column:1 / -1;display:flex;flex-direction:column;gap:6px">
+        <label style="font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.08em">Reason</label>
+        <select style="border:2px solid var(--ink);background:var(--cream);color:var(--ink);padding:12px 14px;font-family:var(--font-body);font-weight:500;font-size:15px;border-radius:var(--radius-sm);min-height:44px">
+          <option>Partnership</option>
+          <option>Press</option>
+          <option>Existing client</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div style="grid-column:1 / -1">
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Input" label="Message" textarea="{{ true }}" placeholder="Short and direct works best here too" hint-size="100%,140px"></x-import>
+      </div>
+    </div>
+    <div style="margin-top:24px">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="dark" size="md" hint-size="120px,48px">Send</x-import>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Direct info + map" style="background:var(--cream);padding:96px 0">
+  <div data-anim style="max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad);display:grid;grid-template-columns:1fr 1.4fr;gap:48px;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:24px">
+      <div style="border-top:2px solid var(--ink);padding-top:14px">
+        <span style="font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.08em">Email</span>
+        <p style="margin:6px 0 0;font-size:1.125rem">[hello@duhamedia.com — placeholder]</p>
+      </div>
+      <div style="border-top:2px solid var(--ink);padding-top:14px">
+        <span style="font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.08em">Socials</span>
+        <p style="margin:6px 0 0;font-size:1.125rem">[LinkedIn · Instagram · YouTube — placeholder handles]</p>
+      </div>
+      <div style="border-top:2px solid var(--ink);padding-top:14px">
+        <span style="font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.08em">Location</span>
+        <p style="margin:6px 0 0;font-size:1.125rem">Chicago, IL — [neighborhood/address placeholder]</p>
+      </div>
+    </div>
+    <div style="border:2px solid var(--ink);min-height:340px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;background:var(--gray-light)">
+      <i class="ph-bold ph-map-pin" style="font-size:32px;color:var(--gray-warm)"></i>
+      <span style="font-size:0.9375rem;color:var(--gray-warm)">Embedded map placeholder — Chicago</span>
+    </div>
+  </div>
+</section>
+
+<dc-import name="SiteFooter" variant="standard" hint-size="100%,420px"></dc-import>
+</sc-if>
+
+<sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+<div style="background:#DED9D0;min-height:100vh"><div style="max-width:390px;margin:0 auto;background:var(--cream);overflow-x:hidden;box-shadow:0 0 0 1px rgba(17,17,17,.15)">
+<dc-import name="SiteHeaderMobile" hint-size="100%,60px"></dc-import>
+
+<section data-screen-label="Contact hero" style="background:var(--cream);padding:48px 0 40px;position:relative;overflow:hidden">
+  
+  <div style="position:relative;padding:0 20px">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" tick="{{ true }}" hint-size="auto,20px">Contact</x-import>
+    <h1 style="margin:16px 0 0;font-family:var(--font-display);font-weight:400;font-size:2.25rem;line-height:1.02;text-transform:uppercase">Prospect? <span style="color:var(--accent-primary)">Book a call.</span> Everything else, here.</h1>
+    <p style="margin:18px 0 0;font-size:1rem;line-height:1.6">Fit and pricing questions get real answers on a <a href="Book a Call.dc.html" style="font-weight:700;border-bottom:2px solid var(--ink);text-decoration:none">30-minute call</a>. Partnerships, press, and existing clients: the form below.</p>
+  </div>
+</section>
+
+<section data-screen-label="Contact form" style="background:var(--gray-light);padding:48px 0">
+  <div data-anim style="padding:0 20px">
+    <div style="border:2px solid var(--ink);background:var(--cream);position:relative;overflow:hidden;min-height:520px;display:flex;flex-direction:column">
+
+      <!-- STEP 1 — NAME -->
+      <sc-if value="{{ isName }}" hint-placeholder-val="{{ true }}">
+        <div class="step-in" style="position:relative;flex:1;display:flex;flex-direction:column">
+          <div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.22) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(215deg,#000 15%,transparent 65%);mask-image:linear-gradient(215deg,#000 15%,transparent 65%);z-index:0"></div>
+  <div aria-hidden="true" style="position:absolute;right:-70px;top:-40px;width:150px;height:150px;background:var(--ground-accent);-webkit-mask-image:url('assets/logo.png');-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;mask-image:url('assets/logo.png');mask-size:contain;mask-repeat:no-repeat"></div>
+          <div style="position:relative;padding:26px 24px 0">
+            <div style="display:flex;gap:6px">
+              <span style="flex:1;height:5px;background:var(--ink)"></span>
+              <span style="flex:1;height:5px;background:var(--border-divider)"></span>
+              <span style="flex:1;height:5px;background:var(--border-divider)"></span>
+              <span style="flex:1;height:5px;background:var(--border-divider)"></span>
+            </div>
+            <span style="display:block;margin-top:16px;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gray-warm)">Question 1 of 4</span>
+          </div>
+          <div style="position:relative;padding:22px 24px;flex:1">
+            <h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:2rem;line-height:1.02;text-transform:uppercase">Who's <span style="color:var(--accent-primary)">reaching out?</span></h3>
+            <p style="margin:12px 0 0;font-size:0.95rem;color:var(--gray-warm);line-height:1.5">First name is plenty.</p>
+            <input value="{{ name }}" onChange="{{ onName }}" placeholder="Type your name" style="width:100%;margin-top:26px;border:0;border-bottom:3px solid var(--ink);background:transparent;font-family:var(--font-body);font-size:1.5rem;padding:8px 2px;outline:none;color:var(--ink)">
+          </div>
+          <div style="position:relative;display:flex;border-top:2px solid var(--ink)">
+            <button disabled="{{ true }}" style="width:64px;border:0;border-right:2px solid var(--ink);background:var(--gray-light);cursor:not-allowed;font-size:1.2rem;color:var(--gray-warm)"><i class="ph-bold ph-arrow-left"></i></button>
+            <button onClick="{{ next }}" style="flex:1;border:0;background:var(--ink);color:var(--cream);font-family:var(--font-display);font-weight:400;font-size:1.1rem;text-transform:uppercase;letter-spacing:0.04em;padding:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px">Start <i class="ph-bold ph-arrow-right"></i></button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- STEP 2 — EMAIL -->
+      <sc-if value="{{ isEmail }}">
+        <div class="step-in" style="position:relative;flex:1;display:flex;flex-direction:column">
+          <div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(250,247,242,.18) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(215deg,#000 15%,transparent 65%);mask-image:linear-gradient(215deg,#000 15%,transparent 65%);z-index:0"></div>
+  <div aria-hidden="true" style="position:absolute;right:-70px;top:-40px;width:150px;height:150px;background:var(--ground-accent);-webkit-mask-image:url('assets/logo.png');-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;mask-image:url('assets/logo.png');mask-size:contain;mask-repeat:no-repeat"></div>
+          <div style="position:relative;padding:26px 24px 0">
+            <div style="display:flex;gap:6px">
+              <span style="flex:1;height:5px;background:var(--ink)"></span>
+              <span style="flex:1;height:5px;background:var(--ink)"></span>
+              <span style="flex:1;height:5px;background:var(--border-divider)"></span>
+              <span style="flex:1;height:5px;background:var(--border-divider)"></span>
+            </div>
+            <span style="display:block;margin-top:16px;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gray-warm)">Question 2 of 4</span>
+          </div>
+          <div style="position:relative;padding:22px 24px;flex:1">
+            <h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:2rem;line-height:1.02;text-transform:uppercase">What's your <span style="color:var(--accent-primary)">email?</span></h3>
+            <p style="margin:12px 0 0;font-size:0.95rem;color:var(--gray-warm);line-height:1.5">So we can reply. We won't add you to anything.</p>
+            <input value="{{ email }}" onChange="{{ onEmail }}" type="email" placeholder="you@company.com" style="width:100%;margin-top:26px;border:0;border-bottom:3px solid var(--ink);background:transparent;font-family:var(--font-body);font-size:1.5rem;padding:8px 2px;outline:none;color:var(--ink)">
+          </div>
+          <div style="position:relative;display:flex;border-top:2px solid var(--ink)">
+            <button onClick="{{ back }}" style="width:64px;border:0;border-right:2px solid var(--ink);background:var(--cream);cursor:pointer;font-size:1.2rem"><i class="ph-bold ph-arrow-left"></i></button>
+            <button onClick="{{ next }}" style="flex:1;border:0;background:var(--ink);color:var(--cream);font-family:var(--font-display);font-weight:400;font-size:1.1rem;text-transform:uppercase;letter-spacing:0.04em;padding:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px">Next <i class="ph-bold ph-arrow-right"></i></button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- STEP 3 — REASON -->
+      <sc-if value="{{ isReason }}">
+        <div class="step-in" style="position:relative;flex:1;display:flex;flex-direction:column">
+          <div style="position:relative;padding:26px 24px 0">
+            <div style="display:flex;gap:6px">
+              <span style="flex:1;height:5px;background:var(--ink)"></span>
+              <span style="flex:1;height:5px;background:var(--ink)"></span>
+              <span style="flex:1;height:5px;background:var(--ink)"></span>
+              <span style="flex:1;height:5px;background:var(--border-divider)"></span>
+            </div>
+            <span style="display:block;margin-top:16px;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gray-warm)">Question 3 of 4</span>
+          </div>
+          <div style="position:relative;padding:22px 24px;flex:1">
+            <h3 style="margin:0 0 20px;font-family:var(--font-display);font-weight:400;font-size:2rem;line-height:1.02;text-transform:uppercase">What's this <span style="color:var(--accent-primary)">about?</span></h3>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <sc-for list="{{ reasonList }}" as="opt" hint-placeholder-count="4">
+                <div onClick="{{ opt.pick }}" style="{{ opt.style }}">
+                  <span style="font-family:var(--font-display);font-size:1.05rem;text-transform:uppercase">{{ opt.label }}</span>
+                  <sc-if value="{{ opt.checked }}"><i class="ph-bold ph-check" style="font-size:1.1rem"></i></sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="position:relative;display:flex;border-top:2px solid var(--ink)">
+            <button onClick="{{ back }}" style="width:64px;border:0;border-right:2px solid var(--ink);background:var(--cream);cursor:pointer;font-size:1.2rem"><i class="ph-bold ph-arrow-left"></i></button>
+            <button onClick="{{ next }}" style="flex:1;border:0;background:var(--ink);color:var(--cream);font-family:var(--font-display);font-weight:400;font-size:1.1rem;text-transform:uppercase;letter-spacing:0.04em;padding:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px">Next <i class="ph-bold ph-arrow-right"></i></button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- STEP 4 — MESSAGE -->
+      <sc-if value="{{ isMessage }}">
+        <div class="step-in" style="position:relative;flex:1;display:flex;flex-direction:column">
+          <div style="position:relative;padding:26px 24px 0">
+            <div style="display:flex;gap:6px">
+              <span style="flex:1;height:5px;background:var(--ink)"></span>
+              <span style="flex:1;height:5px;background:var(--ink)"></span>
+              <span style="flex:1;height:5px;background:var(--ink)"></span>
+              <span style="flex:1;height:5px;background:var(--ink)"></span>
+            </div>
+            <span style="display:block;margin-top:16px;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gray-warm)">Question 4 of 4</span>
+          </div>
+          <div style="position:relative;padding:22px 24px;flex:1;display:flex;flex-direction:column">
+            <h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:2rem;line-height:1.02;text-transform:uppercase">The short <span style="color:var(--accent-primary)">version.</span></h3>
+            <p style="margin:12px 0 0;font-size:0.95rem;color:var(--gray-warm);line-height:1.5">Direct works best here too.</p>
+            <textarea value="{{ message }}" onChange="{{ onMessage }}" placeholder="Type your message" style="width:100%;flex:1;margin-top:18px;border:2px solid var(--ink);background:var(--cream);font-family:var(--font-body);font-size:1rem;padding:12px;outline:none;resize:none;color:var(--ink);min-height:150px"></textarea>
+          </div>
+          <div style="position:relative;display:flex;border-top:2px solid var(--ink)">
+            <button onClick="{{ back }}" style="width:64px;border:0;border-right:2px solid var(--ink);background:var(--cream);cursor:pointer;font-size:1.2rem"><i class="ph-bold ph-arrow-left"></i></button>
+            <button onClick="{{ next }}" style="flex:1;border:0;background:var(--accent-primary);color:var(--text-on-accent);font-family:var(--font-display);font-weight:400;font-size:1.1rem;text-transform:uppercase;letter-spacing:0.04em;padding:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px">Send <i class="ph-bold ph-paper-plane-tilt"></i></button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- STEP 5 — CONFIRMATION -->
+      <sc-if value="{{ isDone }}">
+        <div class="step-in" style="position:relative;flex:1;display:flex;flex-direction:column;background:var(--ink);color:var(--cream);margin:-1px">
+          <div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(250,247,242,.18) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(215deg,#000 15%,transparent 65%);mask-image:linear-gradient(215deg,#000 15%,transparent 65%);z-index:0"></div>
+  <div aria-hidden="true" style="position:absolute;left:-70px;bottom:-50px;width:160px;height:160px;background:var(--ground-accent);opacity:0.9;-webkit-mask-image:url('assets/logo.png');-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;mask-image:url('assets/logo.png');mask-size:contain;mask-repeat:no-repeat"></div>
+          <div style="position:relative;padding:40px 24px;flex:1;display:flex;flex-direction:column;justify-content:center">
+            <i class="ph-bold ph-check-circle" style="font-size:44px;color:var(--ground-accent)"></i>
+            <h3 style="margin:22px 0 0;font-family:var(--font-display);font-weight:400;font-size:2.1rem;line-height:1.02;text-transform:uppercase">Got it,<br>{{ firstName }}.</h3>
+            <p style="margin:16px 0 0;font-size:1rem;line-height:1.6;color:rgba(250,247,242,0.8)">Your note landed. A real person reads every one — expect a reply within one business day.</p>
+            <div style="margin-top:24px;border-top:2px solid rgba(250,247,242,0.25);padding-top:16px">
+              <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(250,247,242,0.6)">Prospect, not press?</span>
+              <p style="margin:8px 0 0;font-size:0.95rem;line-height:1.5">Skip the queue — <a href="Book a Call.dc.html" style="color:var(--cream);font-weight:700;border-bottom:2px solid var(--ground-accent);text-decoration:none">book a 30-min call</a>.</p>
+            </div>
+          </div>
+          <div style="position:relative;display:flex;border-top:2px solid rgba(250,247,242,0.25)">
+            <button onClick="{{ reset }}" style="flex:1;border:0;background:transparent;color:var(--cream);font-family:var(--font-display);font-weight:400;font-size:1rem;text-transform:uppercase;letter-spacing:0.04em;padding:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px"><i class="ph-bold ph-arrow-counter-clockwise"></i> Send another</button>
+          </div>
+        </div>
+      </sc-if>
+
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Direct line" style="background:var(--cream);padding:48px 0">
+  <div data-anim style="padding:0 20px">
+    <div style="border-top:2px solid var(--ink);padding-top:22px">
+      <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--gray-warm)">Skip the form</span>
+      <a href="mailto:hello@duhamedia.com" style="display:block;margin-top:14px;font-family:var(--font-display);font-weight:400;font-size:1.25rem;line-height:1.05;text-transform:uppercase;text-decoration:none;color:var(--ink);white-space:nowrap">hello@duhamedia.com</a>
+      <div style="height:2px;background:var(--border-divider);margin:22px 0"></div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;justify-content:space-between;gap:12px">
+          <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">Based in</span>
+          <span style="font-size:0.9375rem;font-weight:700;text-align:right">Chicago, IL · remote-first</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;gap:12px">
+          <span style="font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">Reply in</span>
+          <span style="font-size:0.9375rem;font-weight:700;text-align:right">1 business day</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:22px;border-top:2px solid var(--border-divider);padding-top:18px">
+        <a href="#" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)"><i class="ph-bold ph-linkedin-logo" style="font-size:1.25rem"></i><span style="font-size:0.9375rem;font-weight:700">linkedin.com/company/duhamedia</span></a>
+        <a href="#" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)"><i class="ph-bold ph-instagram-logo" style="font-size:1.25rem"></i><span style="font-size:0.9375rem;font-weight:700">@duhamedia</span></a>
+        <a href="#" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)"><i class="ph-bold ph-x-logo" style="font-size:1.25rem"></i><span style="font-size:0.9375rem;font-weight:700">@duhamedia</span></a>
+        <a href="#" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)"><i class="ph-bold ph-facebook-logo" style="font-size:1.25rem"></i><span style="font-size:0.9375rem;font-weight:700">facebook.com/duhamedia</span></a>
+        <a href="#" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)"><i class="ph-bold ph-youtube-logo" style="font-size:1.25rem"></i><span style="font-size:0.9375rem;font-weight:700">@duhamedia</span></a>
+      </div>
+    </div>
+
+    <div style="margin-top:32px">
+    <div style="border:2px solid var(--ink);height:360px;overflow:hidden">
+      <iframe src="maps/map-locator.html" title="Duha Media service area — Lombard, IL" style="width:100%;height:100%;border:0;display:block"></iframe>
+    </div>
+    <p style="margin:14px 0 0;font-size:0.9375rem;line-height:1.5;color:var(--gray-warm)">Based in Lombard, IL — serving the greater Chicagoland area within a ~30-mile radius. Outside the ring? We work remote-first, so reach out anyway.</p>
+    </div>
+  </div>
+</section>
+
+<dc-import name="SiteFooterMobile" variant="standard" hint-size="100%,620px"></dc-import>
+</div></div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;viewport&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;desktop&quot;,&quot;mobile&quot;],&quot;default&quot;:&quot;desktop&quot;,&quot;tsType&quot;:&quot;'desktop'|'mobile'&quot;,&quot;section&quot;:&quot;Viewport&quot;}}">
+class Component extends DCLogic {
+  state = { step: 0, name: '', email: '', reason: '', message: '' };
+  next = () => {
+    const { step, name, email, reason } = this.state;
+    if (step === 0 && !name.trim()) return;
+    if (step === 1 && !/.+@.+\..+/.test(email)) return;
+    if (step === 2 && !reason) return;
+    this.setState(s => ({ step: Math.min(s.step + 1, 4) }));
+  };
+  back = () => this.setState(s => ({ step: Math.max(s.step - 1, 0) }));
+  reset = () => this.setState({ step: 0, name: '', email: '', reason: '', message: '' });
+  onName = (e) => this.setState({ name: e.target.value });
+  onEmail = (e) => this.setState({ email: e.target.value });
+  onMessage = (e) => this.setState({ message: e.target.value });
+  pick = (r) => this.setState({ reason: r });
+  renderVals() {
+    const { step, name, email, message, reason } = this.state;
+    const base = 'border:2px solid var(--ink);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer';
+    const sel = base + ';background:var(--ink);color:var(--cream)';
+    const reasonList = ['Partnership', 'Press', 'Existing client', 'Other'].map(label => ({
+      label,
+      checked: reason === label,
+      style: reason === label ? sel : base,
+      pick: () => this.pick(label),
+    }));
+    return { isDesktop: (this.props.viewport ?? 'desktop') !== 'mobile', isMobile: (this.props.viewport ?? 'desktop') === 'mobile',
+      isName: step === 0, isEmail: step === 1, isReason: step === 2,
+      isMessage: step === 3, isDone: step === 4,
+      name, email, message, reasonList,
+      firstName: (name.trim().split(/\s+/)[0]) || 'there',
+      next: this.next, back: this.back, reset: this.reset,
+      onName: this.onName, onEmail: this.onEmail, onMessage: this.onMessage,
+    };
+  }
+  componentDidMount() { import('./site-fx.js').then(m => { this._fx = m; m.armAnim(this); }); }
+  componentDidUpdate() { if (this._fx) this._fx.armAnim(this); }
+  componentWillUnmount() { if (this._fx) this._fx.disarmAnim(this); }
+}
+</script>
+</body>
+</html>

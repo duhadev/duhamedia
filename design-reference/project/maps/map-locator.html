@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://unpkg.com/d3@7.9.0/dist/d3.min.js" integrity="sha384-CjloA8y00+1SDAUkjs099PVfnY2KmDC2BZnws9kh8D/lX1s46w6EPhpXdqMfjK6i" crossorigin="anonymous"></script>
+<style>
+  html,body{margin:0;height:100%;background:#FAF7F2;font-family:'DM Sans',system-ui,sans-serif;overflow:hidden}
+  #wrap{position:absolute;inset:0}
+  svg{width:100%;height:100%;display:block}
+  .title{position:absolute;left:18px;top:16px;font-family:'Archivo Black','DM Sans',sans-serif;font-size:20px;letter-spacing:0.02em;text-transform:uppercase;color:#111;line-height:1}
+  .cap{position:absolute;left:18px;bottom:14px;font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#8A857D}
+</style>
+</head>
+<body>
+<div id="wrap"><svg id="svg"></svg></div>
+<div class="title">Service area<br>Lombard, IL</div>
+<div class="cap">Greater Chicagoland · ~30 mi radius</div>
+<script>
+  const svg = d3.select('#svg');
+  const W = window.innerWidth, H = window.innerHeight;
+  svg.attr('viewBox', `0 0 ${W} ${H}`);
+
+  const LOMBARD = [-88.008, 41.880];
+  const RADIUS_DEG = 0.62;                       // ~30 mi coverage disc
+  const service = d3.geoCircle().center(LOMBARD).radius(RADIUS_DEG)();
+  const frame   = d3.geoCircle().center(LOMBARD).radius(RADIUS_DEG * 1.35)();
+  const proj = d3.geoMercator().fitExtent([[24,52],[W-24,H-40]], frame);
+  const path = d3.geoPath(proj);
+
+  // Coverage disc
+  svg.append('path').datum(service).attr('d', path)
+    .attr('fill', 'rgba(194,14,89,0.12)').attr('stroke', '#C20E59').attr('stroke-width', 2);
+
+  // Real towns within / near the service area
+  const cities = [
+    { n: 'Chicago',    c: [-87.6298, 41.8781], dx: 8,  dy: -6, a: 'start' },
+    { n: "O'Hare",     c: [-87.9073, 41.9742], dx: 8,  dy: -6, a: 'start' },
+    { n: 'Schaumburg', c: [-88.0834, 42.0334], dx: -8, dy: -6, a: 'end'   },
+    { n: 'Naperville', c: [-88.1473, 41.7508], dx: -8, dy: 14, a: 'end'   },
+    { n: 'Aurora',     c: [-88.3201, 41.7606], dx: -8, dy: -6, a: 'end'   },
+    { n: 'Joliet',     c: [-88.0817, 41.5250], dx: 8,  dy: 14, a: 'start' },
+  ];
+  cities.forEach(city => {
+    const [x, y] = proj(city.c);
+    svg.append('circle').attr('cx', x).attr('cy', y).attr('r', 3).attr('fill', '#111');
+    svg.append('text').attr('x', x + city.dx).attr('y', y + city.dy).attr('text-anchor', city.a)
+      .attr('fill', '#111').attr('font-family', "'DM Sans',system-ui,sans-serif")
+      .attr('font-size', 11).attr('font-weight', 700).text(city.n);
+  });
+
+  // Lombard — accent diamond
+  const [lx, ly] = proj(LOMBARD);
+  svg.append('rect').attr('x', lx-8).attr('y', ly-8).attr('width', 16).attr('height', 16)
+    .attr('transform', `rotate(45 ${lx} ${ly})`).attr('fill', '#C20E59').attr('stroke', '#111').attr('stroke-width', 2.5);
+  svg.append('text').attr('x', lx).attr('y', ly - 16).attr('text-anchor', 'middle')
+    .attr('fill', '#111').attr('font-family', "'Archivo Black','DM Sans',sans-serif")
+    .attr('font-size', 13).attr('letter-spacing', 0.5).attr('text-transform', 'uppercase').text('LOMBARD');
+
+  // Scale bar (10 mi)
+  const miPerDegLon = 69.17 * Math.cos(41.88 * Math.PI/180);
+  const p1 = proj(LOMBARD), p2 = proj([LOMBARD[0] + 10/miPerDegLon, LOMBARD[1]]);
+  const barPx = Math.abs(p2[0] - p1[0]);
+  const bx = W - 24 - barPx, by = H - 30;
+  svg.append('line').attr('x1', bx).attr('y1', by).attr('x2', bx + barPx).attr('y2', by).attr('stroke', '#111').attr('stroke-width', 2);
+  svg.append('line').attr('x1', bx).attr('y1', by-4).attr('x2', bx).attr('y2', by+4).attr('stroke', '#111').attr('stroke-width', 2);
+  svg.append('line').attr('x1', bx+barPx).attr('y1', by-4).attr('x2', bx+barPx).attr('y2', by+4).attr('stroke', '#111').attr('stroke-width', 2);
+  svg.append('text').attr('x', bx + barPx/2).attr('y', by - 8).attr('text-anchor', 'middle')
+    .attr('fill', '#8A857D').attr('font-family', "ui-monospace,'SF Mono',Menlo,monospace")
+    .attr('font-size', 10).attr('letter-spacing', 1).text('10 MI');
+</script>
+</body>
+</html>

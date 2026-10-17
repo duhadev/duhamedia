@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/effects.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+  <script src="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/_ds_bundle.js"></script>
+  <script src="image-slot.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;}
+    body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--font-body);font-weight:500;}
+    a{color:var(--ink);}
+    a:hover{color:var(--accent-primary);}
+  </style>
+</helmet>
+
+<sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+<dc-import name="SiteHeader" hint-size="100%,72px"></dc-import>
+
+<section data-screen-label="Hero" style="position:relative;overflow:hidden;background:var(--cream)">
+  <div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.3) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(215deg,#000 15%,transparent 60%);mask-image:linear-gradient(215deg,#000 15%,transparent 60%);z-index:0"></div>
+  <div aria-hidden="true" style="position:absolute;right:8%;top:46%;width:460px;height:460px;transform:translateY(-50%);background:var(--ground-accent);z-index:0;-webkit-mask-image:url('assets/logo.png');-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;mask-image:url('assets/logo.png');mask-size:contain;mask-repeat:no-repeat"></div>
+  <span aria-hidden="true" style="position:absolute;left:var(--container-pad);top:38%;transform:rotate(-90deg) translateX(-50%) translateY(-100%);transform-origin:left top;font-weight:700;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gray-warm);white-space:nowrap">Build · Operate · Hand over</span>
+  <div style="position:relative;z-index:1;max-width:var(--container-max);margin:0 auto;padding:104px var(--container-pad) 96px">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" tick="{{ true }}" hint-size="auto,20px">Integrated ecommerce growth partner — Chicago</x-import>
+    <h1 style="margin:22px 0 0;font-family:var(--font-display);font-weight:400;font-size:var(--text-h1);line-height:var(--leading-h1);text-transform:uppercase;letter-spacing:-0.01em;max-width:20ch">Your ecommerce growth team, <span style="color:var(--accent-primary)">until you don't need one.</span></h1>
+    <div style="margin-top:22px">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Badge" tone="fill" hint-size="auto,30px">$X.XM client revenue tracked</x-import>
+    </div>
+    <p style="margin:24px 0 0;font-size:var(--text-body-size);line-height:var(--leading-body);max-width:52ch">One team builds your store, runs your marketing, and trains yours to take over. Builds from $5K. Engines from $1K/mo.</p>
+    <div style="display:flex;gap:14px;margin-top:32px;flex-wrap:wrap">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="primary" size="md" href="Book a Call.dc.html" hint-size="160px,52px">Book a Call</x-import>
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="ghost" size="md" href="Work.dc.html" hint-size="160px,52px">See the Work</x-import>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Proof strip" style="border-top:var(--border-hairline);border-bottom:var(--border-hairline);background:var(--gray-light)">
+  <div data-anim style="max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad);display:grid;grid-template-columns:1fr 1fr">
+    <div style="padding:44px 32px;border-right:1px solid var(--border-divider);text-align:center">
+      <span style="display:block;font-family:var(--font-display);font-size:5rem;line-height:.9;color:var(--ground-accent)">{{ ongoingCount }}</span>
+      <span style="display:block;margin-top:14px;font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase;letter-spacing:0.02em">Projects ongoing</span>
+      <span style="display:block;margin-top:8px;font-size:0.8125rem;color:var(--gray-warm)">Current load, shown transparently.</span>
+    </div>
+    <div style="padding:44px 32px;text-align:center">
+      <span style="display:block;font-family:var(--font-display);font-size:5rem;line-height:.9">7</span>
+      <span style="display:block;margin-top:14px;font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase;letter-spacing:0.02em">Max client capacity</span>
+      <span style="display:block;margin-top:8px;font-size:0.8125rem;color:var(--gray-warm)">The cap is our quality gate, not a countdown.</span>
+    </div>
+  </div>
+  <div data-anim style="border-top:1px solid var(--border-divider)">
+    <div style="max-width:var(--container-max);margin:0 auto;padding:40px var(--container-pad) 48px;text-align:center">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">Stores we've run numbers for</x-import>
+      <div style="display:flex;justify-content:center;gap:56px;align-items:center;flex-wrap:wrap;opacity:.55;margin-top:24px">
+        <span style="font-family:var(--font-display);font-size:20px;letter-spacing:0.02em">NORTHSIDE GOODS</span>
+        <span style="font-family:var(--font-display);font-size:20px;letter-spacing:0.02em">KEDZIE &amp; CO</span>
+        <span style="font-family:var(--font-display);font-size:20px;letter-spacing:0.02em">LAKE SUPPLY</span>
+        <span style="font-family:var(--font-display);font-size:20px;letter-spacing:0.02em">MARROW</span>
+        <span style="font-family:var(--font-display);font-size:20px;letter-spacing:0.02em">FIELDHOUSE</span>
+        <span style="font-family:var(--font-display);font-size:20px;letter-spacing:0.02em">WICKER &amp; PINE</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Featured case studies" style="background:var(--cream);padding:96px 0">
+  <div style="max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad)">
+    <sc-if value="{{ csLive }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.AccentHeadline" level="{{ 2 }}" text="The work, in numbers." accent="in numbers." hint-size="100%,60px"></x-import>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;align-items:start;margin-top:36px">
+          <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.CaseStudyCard" client="Client A" metric="+212%" metric-label="Revenue, 12 months" summary="Rebuild plus engine. Store stopped leaking demand." href="Case Study.dc.html" hint-size="100%,380px"></x-import>
+          <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.CaseStudyCard" client="Client B" metric="3.2×" metric-label="ROAS after restructure" summary="Ads rebuilt on tracking that finally told the truth." href="Case Study.dc.html" hint-size="100%,380px"></x-import>
+          <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.CaseStudyCard" client="Client C" metric="$0/mo" metric-label="Agency fees after handover" summary="Their team runs it now. That was the plan." href="Case Study.dc.html" hint-size="100%,380px"></x-import>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ csFallback }}" hint-placeholder-val="{{ true }}">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start">
+        <div>
+          <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">No studies live yet — the numbers we can show</x-import>
+          <h2 style="margin:18px 0 0;font-family:var(--font-display);font-weight:400;font-size:var(--text-h2);line-height:1.08;text-transform:uppercase">Numbers <span style="color:var(--accent-primary)">anyway.</span></h2>
+          <p style="margin:20px 0 0;font-size:1.0625rem;line-height:1.6;color:var(--gray-warm);max-width:44ch">Studies publish here as clients sign off. No demo studies, no "coming soon."</p>
+        </div>
+        <div>
+          <div style="border:2px solid var(--ink)">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:24px;padding:22px 26px;border-bottom:1px solid var(--border-divider)">
+              <span style="font-weight:700;font-size:0.9375rem;text-transform:uppercase;letter-spacing:0.04em">Builds start</span>
+              <span style="font-family:var(--font-display);font-size:2.25rem">$5K</span>
+            </div>
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:24px;padding:22px 26px;border-bottom:1px solid var(--border-divider)">
+              <span style="font-weight:700;font-size:0.9375rem;text-transform:uppercase;letter-spacing:0.04em">Engines start</span>
+              <span style="font-family:var(--font-display);font-size:2.25rem">$1K<span style="font-size:1.25rem">/mo</span></span>
+            </div>
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:24px;padding:22px 26px">
+              <span style="font-weight:700;font-size:0.9375rem;text-transform:uppercase;letter-spacing:0.04em">Client cap</span>
+              <span style="font-family:var(--font-display);font-size:2.25rem;color:var(--accent-primary)">7</span>
+            </div>
+          </div>
+          <p style="margin:12px 0 0;font-size:0.8125rem;color:var(--gray-warm)">Capacity is the quality gate, not a countdown.</p>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+</section>
+
+<section data-screen-label="Mini CTA" style="background:var(--ink);color:var(--cream)">
+  <a href="Book a Call.dc.html" data-anim style="max-width:var(--container-max);margin:0 auto;padding:24px var(--container-pad);display:flex;align-items:center;justify-content:space-between;gap:32px;text-decoration:none;color:var(--cream)">
+    <span style="font-family:var(--font-display);font-size:1.5rem;line-height:1.15;text-transform:uppercase">One team. One dashboard. A handover date.</span>
+    <span style="display:flex;align-items:center;gap:10px;flex-shrink:0;font-weight:700;font-size:15px;white-space:nowrap;border:1.5px solid var(--cream);border-radius:999px;padding:12px 24px">Book a Call <i class="ph-bold ph-arrow-right"></i></span>
+  </a>
+</section>
+
+<section data-screen-label="What we do" style="background:var(--cream);padding:96px 0;position:relative;overflow:hidden">
+  <div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.22) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(to bottom,#000 0,transparent 25%,transparent 75%,#000 100%);mask-image:linear-gradient(to bottom,#000 0,transparent 25%,transparent 75%,#000 100%);z-index:0"></div>
+  <div data-anim style="position:relative;z-index:1;max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad)">
+    <div style="display:flex;flex-direction:column;gap:24px">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.AccentHeadline" level="{{ 2 }}" text="What we actually do" hint-size="100%,60px"></x-import>
+      <p style="margin:0;font-size:1.125rem;line-height:1.7"><span style="font-family:var(--font-display);text-transform:uppercase">First, we build it.</span> A Shopify store that converts, built from scratch or rebuilt from whatever the last agency left behind. That's where most clients start. From $5K. <a href="Shopify Theme Development.dc.html" style="font-weight:700">How the build works →</a></p>
+      <p style="margin:0;font-size:1.125rem;line-height:1.7"><span style="font-family:var(--font-display);text-transform:uppercase;color:var(--ground-accent)">Then we grow it.</span> Email, ads, content, SEO, GBP and CRM run by one team on one dashboard, so nobody has to chase five freelancers for one answer. From $1K/mo. <a href="Marketing.dc.html" style="font-weight:700">What we run →</a></p>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Process" style="background:var(--gray-light);padding:96px 0;overflow:hidden">
+  <div data-anim style="max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad)">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">How it runs</x-import>
+    <div style="margin-top:16px">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.AccentHeadline" level="{{ 2 }}" text="Three phases. The last one is the point." accent="the point." hint-size="100%,60px"></x-import>
+    </div>
+    <p style="margin:18px 0 0;font-size:0.9375rem;line-height:1.6;color:var(--gray-warm);max-width:64ch">Eight steps, one calendar. You approve at dated checkpoints and finish owning the whole thing.</p>
+    <div style="margin-top:48px;display:flex;gap:8px;align-items:stretch">
+              <div ref="{{ g1 }}" style="flex:4;min-width:0;transition:flex .45s cubic-bezier(.2,.8,.2,1),min-width .45s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;gap:10px">
+                <span style="font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Phase 1 — Build foundation</span>
+                <span style="display:block;height:6px;background:var(--ink)"></span>
+                <div style="display:flex;gap:8px;align-items:stretch;height:280px">
+                  <sc-for list="{{ cardsE1 }}" as="c" hint-placeholder-count="5">
+                    <div ref="{{ c.ref }}" onClick="{{ c.onClick }}" style="flex:0.8;transition:flex .45s cubic-bezier(.2,.8,.2,1),min-width .45s cubic-bezier(.2,.8,.2,1),background .3s,border-color .3s,color .3s;min-width:56px;padding:18px 12px;background:transparent;border:2px solid var(--ink);color:var(--ink);height:100%;min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:12px;cursor:pointer">
+                      <span style="font-family:var(--font-display);font-size:1.75rem;line-height:1;color:inherit">{{ c.n }}</span>
+                      <sc-if value="{{ c.vertical }}" hint-placeholder-val="{{ false }}">
+                        <span style="display:block;margin-top:12px;writing-mode:vertical-rl;font-family:var(--font-display);font-size:1.0625rem;line-height:1;text-transform:uppercase;white-space:nowrap;color:inherit">{{ c.name }}</span>
+                      </sc-if>
+                      <sc-if value="{{ c.open }}" hint-placeholder-val="{{ true }}">
+                        <span style="display:block;font-family:var(--font-display);font-size:1.0625rem;line-height:1.15;text-transform:uppercase;color:inherit">{{ c.name }}</span>
+                      </sc-if>
+                      <sc-if value="{{ c.open }}" hint-placeholder-val="{{ false }}">
+                        <span style="display:block;font-size:0.875rem;line-height:1.5;color:var(--gray-warm)">{{ c.more }}</span>
+                      </sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              <div ref="{{ g2 }}" style="flex:1.6;min-width:0;transition:flex .45s cubic-bezier(.2,.8,.2,1),min-width .45s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;gap:10px">
+                <span style="font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Phase 2 — Operate engine</span>
+                <span style="display:block;height:6px;background:var(--ink)"></span>
+                <div style="display:flex;gap:8px;align-items:stretch;height:280px">
+                  <sc-for list="{{ cardsE2 }}" as="c" hint-placeholder-count="2">
+                    <div ref="{{ c.ref }}" onClick="{{ c.onClick }}" style="flex:0.8;transition:flex .45s cubic-bezier(.2,.8,.2,1),min-width .45s cubic-bezier(.2,.8,.2,1),background .3s,border-color .3s,color .3s;min-width:56px;padding:18px 12px;background:transparent;border:2px solid var(--ink);color:var(--ink);height:100%;min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:12px;cursor:pointer">
+                      <span style="font-family:var(--font-display);font-size:1.75rem;line-height:1;color:inherit">{{ c.n }}</span>
+                      <sc-if value="{{ c.vertical }}" hint-placeholder-val="{{ false }}">
+                        <span style="display:block;margin-top:12px;writing-mode:vertical-rl;font-family:var(--font-display);font-size:1.0625rem;line-height:1;text-transform:uppercase;white-space:nowrap;color:inherit">{{ c.name }}</span>
+                      </sc-if>
+                      <sc-if value="{{ c.open }}" hint-placeholder-val="{{ true }}">
+                        <span style="display:block;font-family:var(--font-display);font-size:1.0625rem;line-height:1.15;text-transform:uppercase;color:inherit">{{ c.name }}</span>
+                      </sc-if>
+                      <sc-if value="{{ c.open }}" hint-placeholder-val="{{ false }}">
+                        <span style="display:block;font-size:0.875rem;line-height:1.5;color:var(--gray-warm)">{{ c.more }}</span>
+                      </sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              <div ref="{{ g3 }}" style="flex:0.8;min-width:0;transition:flex .45s cubic-bezier(.2,.8,.2,1),min-width .45s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;gap:10px">
+                <span style="font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ground-accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Phase 3 — Independence</span>
+                <span style="display:block;height:6px;background:var(--ground-accent)"></span>
+                <div style="display:flex;gap:8px;align-items:stretch;height:280px">
+                  <sc-for list="{{ cardsE3 }}" as="c" hint-placeholder-count="1">
+                    <div ref="{{ c.ref }}" onClick="{{ c.onClick }}" style="flex:0.8;transition:flex .45s cubic-bezier(.2,.8,.2,1),min-width .45s cubic-bezier(.2,.8,.2,1),background .3s,border-color .3s,color .3s;min-width:56px;padding:18px 12px;background:transparent;border:2px solid var(--ink);color:var(--ink);height:100%;min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:12px;cursor:pointer">
+                      <span style="font-family:var(--font-display);font-size:1.75rem;line-height:1;color:inherit">{{ c.n }}</span>
+                      <sc-if value="{{ c.vertical }}" hint-placeholder-val="{{ false }}">
+                        <span style="display:block;margin-top:12px;writing-mode:vertical-rl;font-family:var(--font-display);font-size:1.0625rem;line-height:1;text-transform:uppercase;white-space:nowrap;color:inherit">{{ c.name }}</span>
+                      </sc-if>
+                      <sc-if value="{{ c.open }}" hint-placeholder-val="{{ true }}">
+                        <span style="display:block;font-family:var(--font-display);font-size:1.0625rem;line-height:1.15;text-transform:uppercase;color:inherit">{{ c.name }}</span>
+                      </sc-if>
+                      <sc-if value="{{ c.open }}" hint-placeholder-val="{{ false }}">
+                        <span style="display:block;font-size:0.875rem;line-height:1.5;color:var(--gray-warm)">{{ c.more }}</span>
+                      </sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Founder" style="background:var(--cream);padding:96px 0">
+  <div data-anim style="max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad);display:grid;grid-template-columns:1fr 380px;gap:64px;align-items:center">
+    <div>
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">Who you'd work with</x-import>
+      <div style="margin-top:16px">
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.AccentHeadline" level="{{ 2 }}" text="Chicago operators, not account managers." hint-size="100%,60px"></x-import>
+      </div>
+      <p style="margin:20px 0 0;font-size:1.125rem;line-height:1.6;max-width:52ch">You've managed five freelancers who never talked to each other. You've had an agency disappear after launch. We built Duha to be the opposite: one team, one dashboard, and a handover date.</p>
+      <a href="About.dc.html" style="display:inline-block;margin-top:20px;font-weight:700;font-size:15px;border-bottom:2px solid var(--ink);text-decoration:none;padding:4px 0">More about us →</a>
+    </div>
+    <div style="aspect-ratio:4/5;position:relative">
+      <image-slot id="team-founder-01" shape="rect" placeholder="team-founder-01.jpg — founder photo (camera-work slot)"></image-slot>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Testimonials" style="background:var(--cream);padding:96px 0;border-top:1px solid var(--border-divider)">
+  <div style="max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad)">
+    <h2 style="margin:0 0 40px;font-family:var(--font-display);font-weight:400;font-size:var(--text-h2);line-height:var(--leading-h2);text-transform:uppercase">Proof, in their words.</h2>
+  </div>
+  <div data-anim style="max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad);display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <span style="display:block;font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">What clients say</span>
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Testimonial" quote="They rebuilt the store, ran the ads, then taught my manager to run it. We stopped paying them in month nine — on their schedule." name="J. Alvarez" role="3-location retailer, Chicago" hint-size="100%,220"></x-import>
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Testimonial" quote="Third agency we tried. First one that showed us the dashboard instead of a deck." name="M. Okafor" role="Online-only, home goods" hint-size="100%,200"></x-import>
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Testimonial" quote="I'd spent $10k with nothing to show. Duha started with what that money should have bought." name="R. Patel" role="Hybrid retail, 2 locations" hint-size="100%,200"></x-import>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <span style="display:block;font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">A study in full</span>
+      <a href="Case Study.dc.html" style="display:flex;flex-direction:column;gap:14px;border:2px solid var(--ink);background:var(--cream);padding:28px 28px 26px;text-decoration:none;color:var(--ink)">
+        <span style="font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">Client A · Build + engine, 12 months</span>
+        <span style="font-family:var(--font-display);font-weight:400;font-size:3.5rem;line-height:1;color:var(--ground-accent)">+212%</span>
+        <span style="font-weight:700;font-size:0.875rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--gray-warm);margin-top:-6px">Revenue, 12 months</span>
+        <p style="margin:0;font-size:1rem;line-height:1.6">Rebuild plus engine. The store stopped leaking demand, then the engine scaled what was left.</p>
+        <span style="font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:0.06em;border-bottom:2px solid var(--ink);align-self:flex-start;padding-bottom:4px;margin-top:4px">Read the study →</span>
+      </a>
+      <a href="Work.dc.html" style="font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:0.06em;border-bottom:2px solid var(--ink);align-self:flex-start;padding-bottom:4px;text-decoration:none">All studies →</a>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Founder" style="background:var(--cream);padding:72px 0;border-top:1px solid var(--border-divider)">
+  <div data-anim style="max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad)">
+        <h2 style="margin:0 0 18px;font-family:var(--font-display);font-weight:400;font-size:var(--text-h2);line-height:var(--leading-h2);text-transform:uppercase">One founder, <span style="color:var(--ground-accent)">no layers.</span></h2>
+        <p style="margin:0;font-size:1.0625rem;line-height:1.65;color:#3A3630">The person who scopes the work is the person who does it. You will not be introduced to a team after you sign, and you will not repeat yourself to a new contact in month four. [One-sentence bio, founder-authored. Background before Duha, and why the build and the engine sit under one roof here.]</p>
+        <div style="border-top:1px solid var(--border-divider);margin-top:28px;padding-top:24px">
+          <div style="display:flex;align-items:center;gap:16px">
+            <div style="flex:none;width:80px;height:80px;position:relative;border:2px solid var(--ink);border-radius:50%;overflow:hidden">
+              <image-slot id="founder-home-d" shape="circle" placeholder="founder.jpg"></image-slot>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:3px">
+              <span style="font-family:var(--font-display);font-size:1.375rem;line-height:1.05;text-transform:uppercase">Abdur-Rahman Ch</span>
+              <span style="font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">Founder · Chicago</span>
+              <span style="display:flex;flex-wrap:wrap;gap:16px;margin-top:8px">
+                <a href="#" style="display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;text-decoration:none;color:var(--ink)"><i class="ph-bold ph-linkedin-logo" style="font-size:18px"></i>LinkedIn</a>
+                <a href="#" style="display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;text-decoration:none;color:var(--ink)"><i class="ph-bold ph-x-logo" style="font-size:18px"></i>Twitter</a>
+                <a href="#" style="display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;text-decoration:none;color:var(--ink)"><i class="ph-bold ph-github-logo" style="font-size:18px"></i>GitHub</a>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div style="border-top:1px solid var(--border-divider);margin-top:28px;padding-top:24px">
+          <span style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px">
+            <span style="font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">Latest posts</span>
+            <a href="#" style="font-weight:700;font-size:13px;text-decoration:none;color:var(--ink)">@handle →</a>
+          </span>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:start">
+          <a href="#" style="display:flex;flex-direction:column;gap:10px;border:1px solid #CFD9DE;border-radius:16px;background:#FFFFFF;padding:14px;text-decoration:none;color:#0F1419;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
+            <span style="display:flex;align-items:flex-start;gap:12px">
+              <span style="flex:none;width:38px;height:38px;border-radius:50%;background:#E1E8ED"></span>
+              <span style="display:flex;flex-direction:column;gap:1px;flex:1;min-width:0">
+                <span style="font-weight:700;font-size:15px;line-height:1.3;color:#0F1419">Abdur-Rahman Ch</span>
+                <span style="font-size:15px;line-height:1.3;color:#536471">@handle</span>
+              </span>
+              <i class="ph-bold ph-x-logo" style="flex:none;font-size:18px;color:#0F1419"></i>
+            </span>
+            <p style="margin:0;font-size:15px;line-height:1.4;color:#0F1419">[Post 1 text — paste the tweet you want here.]</p>
+            <span style="display:flex;align-items:center;gap:20px;border-top:1px solid #EFF3F4;padding-top:10px;font-size:13px;color:#536471">
+              <span style="display:inline-flex;align-items:center;gap:6px"><i class="ph-bold ph-chat-circle" style="font-size:16px"></i>[n]</span>
+              <span style="display:inline-flex;align-items:center;gap:6px"><i class="ph-bold ph-repeat" style="font-size:15px"></i>[n]</span>
+              <span style="display:inline-flex;align-items:center;gap:6px"><i class="ph-bold ph-heart" style="font-size:15px"></i>[n]</span>
+              <span style="margin-left:auto">[date]</span>
+            </span>
+          </a>
+          <a href="#" style="display:flex;flex-direction:column;gap:10px;border:1px solid #CFD9DE;border-radius:16px;background:#FFFFFF;padding:14px;text-decoration:none;color:#0F1419;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
+            <span style="display:flex;align-items:flex-start;gap:12px">
+              <span style="flex:none;width:38px;height:38px;border-radius:50%;background:#E1E8ED"></span>
+              <span style="display:flex;flex-direction:column;gap:1px;flex:1;min-width:0">
+                <span style="font-weight:700;font-size:15px;line-height:1.3;color:#0F1419">Abdur-Rahman Ch</span>
+                <span style="font-size:15px;line-height:1.3;color:#536471">@handle</span>
+              </span>
+              <i class="ph-bold ph-x-logo" style="flex:none;font-size:18px;color:#0F1419"></i>
+            </span>
+            <p style="margin:0;font-size:15px;line-height:1.4;color:#0F1419">[Post 2 text — paste the tweet you want here.]</p>
+            <span style="display:flex;align-items:center;gap:20px;border-top:1px solid #EFF3F4;padding-top:10px;font-size:13px;color:#536471">
+              <span style="display:inline-flex;align-items:center;gap:6px"><i class="ph-bold ph-chat-circle" style="font-size:16px"></i>[n]</span>
+              <span style="display:inline-flex;align-items:center;gap:6px"><i class="ph-bold ph-repeat" style="font-size:15px"></i>[n]</span>
+              <span style="display:inline-flex;align-items:center;gap:6px"><i class="ph-bold ph-heart" style="font-size:15px"></i>[n]</span>
+              <span style="margin-left:auto">[date]</span>
+            </span>
+          </a>
+          <a href="#" style="display:flex;flex-direction:column;gap:10px;border:1px solid #CFD9DE;border-radius:16px;background:#FFFFFF;padding:14px;text-decoration:none;color:#0F1419;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
+            <span style="display:flex;align-items:flex-start;gap:12px">
+              <span style="flex:none;width:38px;height:38px;border-radius:50%;background:#E1E8ED"></span>
+              <span style="display:flex;flex-direction:column;gap:1px;flex:1;min-width:0">
+                <span style="font-weight:700;font-size:15px;line-height:1.3;color:#0F1419">Abdur-Rahman Ch</span>
+                <span style="font-size:15px;line-height:1.3;color:#536471">@handle</span>
+              </span>
+              <i class="ph-bold ph-x-logo" style="flex:none;font-size:18px;color:#0F1419"></i>
+            </span>
+            <p style="margin:0;font-size:15px;line-height:1.4;color:#0F1419">[Post 3 text — paste the tweet you want here.]</p>
+            <span style="display:flex;align-items:center;gap:20px;border-top:1px solid #EFF3F4;padding-top:10px;font-size:13px;color:#536471">
+              <span style="display:inline-flex;align-items:center;gap:6px"><i class="ph-bold ph-chat-circle" style="font-size:16px"></i>[n]</span>
+              <span style="display:inline-flex;align-items:center;gap:6px"><i class="ph-bold ph-repeat" style="font-size:15px"></i>[n]</span>
+              <span style="display:inline-flex;align-items:center;gap:6px"><i class="ph-bold ph-heart" style="font-size:15px"></i>[n]</span>
+              <span style="margin-left:auto">[date]</span>
+            </span>
+          </a>
+          </div>
+        </div>
+        </div>
+  </div>
+</section>
+
+<section data-screen-label="Final CTA" style="background:var(--ink);color:var(--cream);padding:96px 0;position:relative;overflow:hidden">
+  <div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(250,247,242,.18) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(to bottom,#000 0,transparent 25%,transparent 75%,#000 100%);mask-image:linear-gradient(to bottom,#000 0,transparent 25%,transparent 75%,#000 100%);z-index:0"></div>
+  <div aria-hidden="true" style="position:absolute;left:-100px;bottom:-100px;width:240px;height:240px;background:var(--ground-accent);z-index:0;-webkit-mask-image:url('assets/logo.png');-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;mask-image:url('assets/logo.png');mask-size:contain;mask-repeat:no-repeat"></div>
+  <div data-anim style="position:relative;z-index:1;text-align:center;max-width:760px;margin:0 auto;padding:0 var(--container-pad)">
+    <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:var(--text-h2);line-height:1.05;text-transform:uppercase">Your store already has the demand. It's leaking it.</h2>
+    <p style="margin:20px 0 0;font-size:1.125rem;opacity:.85">{{ ongoingCount }} builds in progress. We cap at 7.</p>
+    <div style="margin-top:32px;display:flex;justify-content:center">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="ghost-light" size="md" href="Book a Call.dc.html" style="min-width:220px" hint-size="220px,52px">Book a Call</x-import>
+    </div>
+  </div>
+</section>
+
+<dc-import name="SiteFooter" hint-size="100%,420px"></dc-import>
+</sc-if>
+
+<sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+<div style="background:#DED9D0;min-height:100vh"><div style="max-width:390px;margin:0 auto;background:var(--cream);overflow-x:hidden;box-shadow:0 0 0 1px rgba(17,17,17,.15)">
+<dc-import name="SiteHeaderMobile" hint-size="100%,60px"></dc-import>
+
+<section data-screen-label="Hero" style="position:relative;overflow:hidden;background:var(--cream)">
+  <div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.3) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(215deg,#000 15%,transparent 65%);mask-image:linear-gradient(215deg,#000 15%,transparent 65%);z-index:0"></div>
+  <div aria-hidden="true" style="position:absolute;right:-80px;top:90px;width:280px;height:280px;background:var(--ground-accent);-webkit-mask-image:url('assets/logo.png');-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;mask-image:url('assets/logo.png');mask-size:contain;mask-repeat:no-repeat;z-index:0"></div>
+  <div style="position:relative;z-index:1;padding:56px 20px 48px">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" tick="{{ true }}" hint-size="auto,20px">Ecommerce growth partner — Chicago</x-import>
+    <h1 style="margin:18px 0 0;font-family:var(--font-display);font-weight:400;font-size:2.5rem;line-height:1.02;text-transform:uppercase;letter-spacing:-0.01em">Your ecommerce growth team, <span style="color:var(--accent-primary)">until you don't need one.</span></h1>
+    <div style="margin-top:18px"><x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Badge" tone="fill" hint-size="auto,30px">$X.XM client revenue tracked</x-import></div>
+    <p style="margin:18px 0 0;font-size:1.0625rem;line-height:1.6;max-width:34ch">One team builds your store, runs your marketing, and trains yours to take over. Builds from $5K. Engines from $1K/mo.</p>
+    <span style="display:block;margin-top:12px;font-weight:700;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gray-warm)">Build · Operate · Hand over</span>
+    <div style="display:flex;gap:12px;margin-top:28px">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="primary" size="md" href="Book a Call.dc.html" style="display:grid;flex:1" hint-size="50%,52px">Book a Call</x-import>
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="ghost" size="md" href="Work.dc.html" style="display:grid;flex:1" hint-size="50%,52px">See the Work</x-import>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Proof strip" style="border-top:var(--border-hairline);border-bottom:var(--border-hairline);background:var(--gray-light)">
+  <div data-anim style="display:grid;grid-template-columns:1fr 1fr">
+    <div style="padding:28px 18px;border-right:1px solid var(--border-divider);text-align:center">
+      <span style="display:block;font-family:var(--font-display);font-size:3.25rem;line-height:.9;color:var(--ground-accent)">{{ ongoingCount }}</span>
+      <span style="display:block;margin-top:10px;font-family:var(--font-display);font-size:0.9375rem;text-transform:uppercase;letter-spacing:0.02em">Projects ongoing</span>
+      <span style="display:flex;justify-content:center;gap:7px;margin-top:8px;font-size:0.75rem;color:var(--gray-warm);line-height:1.4">Current load, shown transparently.</span>
+    </div>
+    <div style="padding:28px 18px;text-align:center">
+      <span style="display:block;font-family:var(--font-display);font-size:3.25rem;line-height:.9">7</span>
+      <span style="display:block;margin-top:10px;font-family:var(--font-display);font-size:0.9375rem;text-transform:uppercase;letter-spacing:0.02em">Max client capacity</span>
+      <span style="display:flex;justify-content:center;gap:7px;margin-top:8px;font-size:0.75rem;color:var(--gray-warm);line-height:1.4">The cap is our quality gate, not a countdown.</span>
+    </div>
+  </div>
+  <div data-anim style="border-top:1px solid var(--border-divider);padding:32px 20px 40px;text-align:center">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">Stores we've run numbers for</x-import>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px 16px;justify-items:center;align-items:start;opacity:.55;margin-top:20px">
+      <span style="font-family:var(--font-display);font-size:15px;letter-spacing:0.01em;white-space:nowrap">NORTHSIDE GOODS</span>
+      <span style="font-family:var(--font-display);font-size:15px;letter-spacing:0.01em;white-space:nowrap">KEDZIE &amp; CO</span>
+      <span style="font-family:var(--font-display);font-size:15px;letter-spacing:0.01em;white-space:nowrap">LAKE SUPPLY</span>
+      <span style="font-family:var(--font-display);font-size:15px;letter-spacing:0.01em;white-space:nowrap">MARROW</span>
+      <span style="font-family:var(--font-display);font-size:15px;letter-spacing:0.01em;white-space:nowrap">FIELDHOUSE</span>
+      <span style="font-family:var(--font-display);font-size:15px;letter-spacing:0.01em;white-space:nowrap">WICKER &amp; PINE</span>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Featured case studies" style="background:var(--cream);padding:56px 0">
+  <sc-if value="{{ csLive }}" hint-placeholder-val="{{ false }}">
+    <div>
+      <div style="padding:0 20px">
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.AccentHeadline" level="{{ 3 }}" text="The work, in numbers." accent="in numbers." hint-size="100%,60px"></x-import>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px;padding:28px 20px 4px">
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.CaseStudyCard" client="Client A" metric="+212%" metric-label="Revenue, 12 months" summary="Rebuild plus engine. Store stopped leaking demand." href="Case Study.dc.html" hint-size="100%,380px"></x-import>
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.CaseStudyCard" client="Client B" metric="3.2×" metric-label="ROAS after restructure" summary="Ads rebuilt on tracking that finally told the truth." href="Case Study.dc.html" hint-size="100%,380px"></x-import>
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.CaseStudyCard" client="Client C" metric="$0/mo" metric-label="Agency fees after handover" summary="Their team runs it now. That was the plan." href="Case Study.dc.html" hint-size="100%,380px"></x-import>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ csFallback }}" hint-placeholder-val="{{ true }}">
+    <div style="padding:0 20px">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">No studies live yet — the numbers we can show</x-import>
+      <h2 style="margin:14px 0 0;font-family:var(--font-display);font-weight:400;font-size:1.75rem;line-height:1.12;text-transform:uppercase">Numbers <span style="color:var(--accent-primary)">anyway.</span></h2>
+      <p style="margin:14px 0 0;font-size:1rem;line-height:1.6;color:var(--gray-warm)">Studies publish here as clients sign off. No demo studies, no "coming soon."</p>
+      <div style="margin-top:24px;border:2px solid var(--ink)">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:16px 18px;border-bottom:1px solid var(--border-divider)">
+          <span style="font-weight:700;font-size:0.9375rem;text-transform:uppercase;letter-spacing:0.04em">Builds start</span>
+          <span style="font-family:var(--font-display);font-size:1.75rem">$5K</span>
+        </div>
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:16px 18px;border-bottom:1px solid var(--border-divider)">
+          <span style="font-weight:700;font-size:0.9375rem;text-transform:uppercase;letter-spacing:0.04em">Engines start</span>
+          <span style="font-family:var(--font-display);font-size:1.75rem">$1K<span style="font-size:1rem">/mo</span></span>
+        </div>
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:16px 18px">
+          <span style="font-weight:700;font-size:0.9375rem;text-transform:uppercase;letter-spacing:0.04em">Client cap</span>
+          <span style="font-family:var(--font-display);font-size:1.75rem;color:var(--accent-primary)">7</span>
+        </div>
+      </div>
+      <p style="margin:12px 0 0;font-size:0.75rem;color:var(--gray-warm)">Capacity is the quality gate, not a countdown.</p>
+    </div>
+  </sc-if>
+</section>
+
+<section data-screen-label="Mini CTA" style="background:var(--ink);color:var(--cream)">
+  <a href="Book a Call.dc.html" data-anim style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px;text-decoration:none;color:var(--cream)">
+    <span style="font-family:var(--font-display);font-size:1rem;line-height:1.15;text-transform:uppercase">One team. One dashboard. A handover date.</span>
+    <span style="display:flex;align-items:center;gap:8px;flex-shrink:0;font-weight:700;font-size:14px;white-space:nowrap;border:1.5px solid var(--cream);border-radius:999px;padding:10px 18px">Book a Call <i class="ph-bold ph-arrow-right"></i></span>
+  </a>
+</section>
+
+<section data-screen-label="What we do" style="background:var(--cream);padding:56px 0;position:relative;overflow:hidden">
+  <div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.22) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(to bottom,#000 0,transparent 25%,transparent 75%,#000 100%);mask-image:linear-gradient(to bottom,#000 0,transparent 25%,transparent 75%,#000 100%);z-index:0"></div>
+  <div data-anim style="position:relative;z-index:1;padding:0 20px">
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.AccentHeadline" level="{{ 3 }}" text="What we actually do" hint-size="100%,48px"></x-import>
+      <p style="margin:0;font-size:1rem;line-height:1.7"><span style="font-family:var(--font-display);text-transform:uppercase">First, we build it.</span> A Shopify store that converts, built from scratch or rebuilt from whatever the last agency left behind. That's where most clients start. From $5K. <a href="Shopify Theme Development.dc.html" style="font-weight:700">How the build works →</a></p>
+      <p style="margin:0;font-size:1rem;line-height:1.7"><span style="font-family:var(--font-display);text-transform:uppercase;color:var(--ground-accent)">Then we grow it.</span> Email, ads, content, SEO, GBP and CRM run by one team on one dashboard, so nobody has to chase five freelancers for one answer. From $1K/mo. <a href="Marketing.dc.html" style="font-weight:700">What we run →</a></p>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Process" style="background:var(--gray-light);padding:56px 0">
+  <div data-anim style="padding:0 20px">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">How it runs</x-import>
+    <div style="margin-top:14px">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.AccentHeadline" level="{{ 3 }}" text="Three phases. The last one is the point." accent="the point." hint-size="100%,60px"></x-import>
+    </div>
+    <p style="margin:14px 0 0;font-size:0.9375rem;line-height:1.6;color:var(--gray-warm)">Eight steps, one calendar. You approve at dated checkpoints and finish owning the whole thing.</p>
+          <div style="margin-top:32px;display:flex;flex-direction:column;gap:8px">
+            <span style="font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">Phase 1 — Build foundation</span>
+            <span style="display:block;height:6px;background:var(--ink)"></span>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+              <sc-for list="{{ cardsM1 }}" as="c" hint-placeholder-count="5">
+                <div ref="{{ c.ref }}" onClick="{{ c.onClick }}" style="height:54px;overflow:hidden;transition:height .4s cubic-bezier(.2,.8,.2,1),background .3s,border-color .3s,color .3s;padding:14px 16px;background:transparent;border:2px solid var(--ink);color:var(--ink);display:flex;flex-direction:column;gap:10px;cursor:pointer">
+                  <span style="display:flex;align-items:baseline;gap:14px">
+                    <span style="font-family:var(--font-display);font-size:1.375rem;line-height:1;color:inherit">{{ c.n }}</span>
+                    <span style="font-family:var(--font-display);font-size:1.0625rem;line-height:1;text-transform:uppercase;color:inherit">{{ c.name }}</span>
+                  </span>
+                  <sc-if value="{{ c.open }}" hint-placeholder-val="{{ false }}"><span style="display:block;font-size:0.875rem;line-height:1.5;color:var(--gray-warm)">{{ c.more }}</span></sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="margin-top:28px;display:flex;flex-direction:column;gap:8px">
+            <span style="font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">Phase 2 — Operate engine</span>
+            <span style="display:block;height:6px;background:var(--ink)"></span>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+              <sc-for list="{{ cardsM2 }}" as="c" hint-placeholder-count="2">
+                <div ref="{{ c.ref }}" onClick="{{ c.onClick }}" style="height:54px;overflow:hidden;transition:height .4s cubic-bezier(.2,.8,.2,1),background .3s,border-color .3s,color .3s;padding:14px 16px;background:transparent;border:2px solid var(--ink);color:var(--ink);display:flex;flex-direction:column;gap:10px;cursor:pointer">
+                  <span style="display:flex;align-items:baseline;gap:14px">
+                    <span style="font-family:var(--font-display);font-size:1.375rem;line-height:1;color:inherit">{{ c.n }}</span>
+                    <span style="font-family:var(--font-display);font-size:1.0625rem;line-height:1;text-transform:uppercase;color:inherit">{{ c.name }}</span>
+                  </span>
+                  <sc-if value="{{ c.open }}" hint-placeholder-val="{{ false }}"><span style="display:block;font-size:0.875rem;line-height:1.5;color:var(--gray-warm)">{{ c.more }}</span></sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="margin-top:28px;display:flex;flex-direction:column;gap:8px">
+            <span style="font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ground-accent)">Phase 3 — Build independence</span>
+            <span style="display:block;height:6px;background:var(--ground-accent)"></span>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+              <sc-for list="{{ cardsM3 }}" as="c" hint-placeholder-count="1">
+                <div ref="{{ c.ref }}" onClick="{{ c.onClick }}" style="height:54px;overflow:hidden;transition:height .4s cubic-bezier(.2,.8,.2,1),background .3s,border-color .3s,color .3s;padding:14px 16px;background:transparent;border:2px solid var(--ink);color:var(--ink);display:flex;flex-direction:column;gap:10px;cursor:pointer">
+                  <span style="display:flex;align-items:baseline;gap:14px">
+                    <span style="font-family:var(--font-display);font-size:1.375rem;line-height:1;color:inherit">{{ c.n }}</span>
+                    <span style="font-family:var(--font-display);font-size:1.0625rem;line-height:1;text-transform:uppercase;color:inherit">{{ c.name }}</span>
+                  </span>
+                  <sc-if value="{{ c.open }}" hint-placeholder-val="{{ false }}"><span style="display:block;font-size:0.875rem;line-height:1.5;color:var(--gray-warm)">{{ c.more }}</span></sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+  </div>
+</section>
+
+<section data-screen-label="Founder" style="background:var(--cream);padding:48px 0 0">
+  <div data-anim style="padding:0 20px;display:flex;flex-direction:column;gap:28px">
+    <div>
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">Who you'd work with</x-import>
+      <div style="margin-top:14px">
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.AccentHeadline" level="{{ 3 }}" text="Chicago operators, not account managers." hint-size="100%,60px"></x-import>
+      </div>
+      <p style="margin:16px 0 0;font-size:1.0625rem;line-height:1.6">You've managed five freelancers who never talked to each other. You've had an agency disappear after launch. We built Duha to be the opposite: one team, one dashboard, and a handover date.</p>
+      <a href="About.dc.html" style="display:inline-block;margin-top:18px;font-weight:700;font-size:15px;border-bottom:2px solid var(--ink);text-decoration:none;padding:4px 0">More about us →</a>
+    </div>
+    <div style="aspect-ratio:4/5;position:relative;margin:0 -20px">
+      <image-slot id="team-founder-01" shape="rect" placeholder="team-founder-01.jpg — founder photo (camera-work slot)"></image-slot>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Testimonials" style="background:var(--cream);padding:44px 20px 48px;border-top:1px solid var(--border-divider)">
+  <div data-anim>
+    <h2 style="margin:0 0 24px;font-family:var(--font-display);font-weight:400;font-size:var(--text-h2-mobile);line-height:var(--leading-h2);text-transform:uppercase">Proof, in their words.</h2>
+    <span style="display:block;font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">What clients say</span>
+    <div style="display:flex;flex-direction:column;gap:16px;margin-top:14px">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Testimonial" quote="They rebuilt the store, ran the ads, then taught my manager to run it. We stopped paying them in month nine — on their schedule." name="J. Alvarez" role="3-location retailer, Chicago" hint-size="100%,220"></x-import>
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Testimonial" quote="Third agency we tried. First one that showed us the dashboard instead of a deck." name="M. Okafor" role="Online-only, home goods" hint-size="100%,200"></x-import>
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Testimonial" quote="I'd spent $10k with nothing to show. Duha started with what that money should have bought." name="R. Patel" role="Hybrid retail, 2 locations" hint-size="100%,200"></x-import>
+    </div>
+    <span style="display:block;margin-top:28px;font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">A study in full</span>
+    <a href="Case Study.dc.html" style="display:flex;flex-direction:column;gap:12px;border:2px solid var(--ink);background:var(--cream);padding:22px 20px;margin-top:14px;text-decoration:none;color:var(--ink)">
+      <span style="font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">Client A · Build + engine, 12 months</span>
+      <span style="font-family:var(--font-display);font-weight:400;font-size:2.75rem;line-height:1;color:var(--ground-accent)">+212%</span>
+      <span style="font-weight:700;font-size:0.8125rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--gray-warm);margin-top:-6px">Revenue, 12 months</span>
+      <p style="margin:0;font-size:0.9375rem;line-height:1.6">Rebuild plus engine. The store stopped leaking demand, then the engine scaled what was left.</p>
+      <span style="font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.06em;border-bottom:2px solid var(--ink);align-self:flex-start;padding-bottom:4px;margin-top:4px">Read the study →</span>
+    </a>
+    <a href="Work.dc.html" style="display:inline-block;margin-top:20px;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.06em;border-bottom:2px solid var(--ink);padding-bottom:4px">All studies →</a>
+  </div>
+</section>
+
+<section data-screen-label="Founder" style="background:var(--cream);padding:40px 20px 44px;border-top:1px solid var(--border-divider)">
+  <div data-anim>
+        <h2 style="margin:0 0 20px;font-family:var(--font-display);font-weight:400;font-size:var(--text-h2-mobile);line-height:var(--leading-h2);text-transform:uppercase">One founder, <span style="color:var(--ground-accent)">no layers.</span></h2>
+        <p style="margin:0;font-size:1rem;line-height:1.7;color:#3A3630">The person who scopes the work is the person who does it. You will not be introduced to a team after you sign, and you will not repeat yourself to a new contact in month four. [One-sentence bio, founder-authored. Background before Duha, and why the build and the engine sit under one roof here.]</p>
+        <div style="display:flex;align-items:center;gap:16px;border-top:1px solid var(--border-divider);margin-top:28px;padding-top:24px">
+          <div style="flex:none;width:76px;height:76px;position:relative;border:2px solid var(--ink);border-radius:50%;overflow:hidden">
+            <image-slot id="founder-home-m" shape="circle" placeholder="founder.jpg"></image-slot>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <span style="font-family:var(--font-display);font-size:1.25rem;line-height:1.05;text-transform:uppercase">Abdur-Rahman Ch</span>
+            <span style="font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">Founder · Chicago</span>
+            <span style="display:flex;flex-wrap:wrap;gap:0 16px;margin-top:-4px">
+              <a href="#" style="display:inline-flex;align-items:center;gap:6px;min-height:44px;font-weight:700;font-size:13px;text-decoration:none;color:var(--ink)"><i class="ph-bold ph-linkedin-logo" style="font-size:16px"></i>LinkedIn</a>
+              <a href="#" style="display:inline-flex;align-items:center;gap:6px;min-height:44px;font-weight:700;font-size:13px;text-decoration:none;color:var(--ink)"><i class="ph-bold ph-x-logo" style="font-size:16px"></i>Twitter</a>
+              <a href="#" style="display:inline-flex;align-items:center;gap:6px;min-height:44px;font-weight:700;font-size:13px;text-decoration:none;color:var(--ink)"><i class="ph-bold ph-github-logo" style="font-size:16px"></i>GitHub</a>
+            </span>
+          </div>
+        </div>
+        <div style="border-top:1px solid var(--border-divider);margin-top:24px;padding-top:20px">
+          <span style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px">
+            <span style="font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">Latest posts</span>
+            <a href="#" style="font-weight:700;font-size:13px;text-decoration:none;color:var(--ink)">@handle →</a>
+          </span>
+          <div style="display:flex;flex-direction:column;gap:14px">
+          <a href="#" style="display:flex;flex-direction:column;gap:10px;border:1px solid #CFD9DE;border-radius:16px;background:#FFFFFF;padding:14px;text-decoration:none;color:#0F1419;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
+            <span style="display:flex;align-items:flex-start;gap:12px">
+              <span style="flex:none;width:38px;height:38px;border-radius:50%;background:#E1E8ED"></span>
+              <span style="display:flex;flex-direction:column;gap:1px;flex:1;min-width:0">
+                <span style="font-weight:700;font-size:15px;line-height:1.3;color:#0F1419">Abdur-Rahman Ch</span>
+                <span style="font-size:15px;line-height:1.3;color:#536471">@handle</span>
+              </span>
+              <i class="ph-bold ph-x-logo" style="flex:none;font-size:18px;color:#0F1419"></i>
+            </span>
+            <p style="margin:0;font-size:15px;line-height:1.4;color:#0F1419">[Post 1 text — paste the tweet you want here.]</p>
+            <span style="display:flex;align-items:center;gap:20px;border-top:1px solid #EFF3F4;padding-top:10px;font-size:13px;color:#536471">
+              <span style="display:inline-flex;align-items:center;gap:6px"><i class="ph-bold ph-chat-circle" style="font-size:16px"></i>[n]</span>
+              <span style="display:inline-flex;align-items:center;gap:6px"><i class="ph-bold ph-repeat" style="font-size:15px"></i>[n]</span>
+              <span style="display:inline-flex;align-items:center;gap:6px"><i class="ph-bold ph-heart" style="font-size:15px"></i>[n]</span>
+              <span style="margin-left:auto">[date]</span>
+            </span>
+          </a>
+          <a href="#" style="display:flex;flex-direction:column;gap:10px;border:1px solid #CFD9DE;border-radius:16px;background:#FFFFFF;padding:14px;text-decoration:none;color:#0F1419;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
+            <span style="display:flex;align-items:flex-start;gap:12px">
+              <span style="flex:none;width:38px;height:38px;border-radius:50%;background:#E1E8ED"></span>
+              <span style="display:flex;flex-direction:column;gap:1px;flex:1;min-width:0">
+                <span style="font-weight:700;font-size:15px;line-height:1.3;color:#0F1419">Abdur-Rahman Ch</span>
+                <span style="font-size:15px;line-height:1.3;color:#536471">@handle</span>
+              </span>
+              <i class="ph-bold ph-x-logo" style="flex:none;font-size:18px;color:#0F1419"></i>
+            </span>
+            <p style="margin:0;font-size:15px;line-height:1.4;color:#0F1419">[Post 2 text — paste the tweet you want here.]</p>
+            <span style="display:flex;align-items:center;gap:20px;border-top:1px solid #EFF3F4;padding-top:10px;font-size:13px;color:#536471">
+              <span style="display:inline-flex;align-items:center;gap:6px"><i class="ph-bold ph-chat-circle" style="font-size:16px"></i>[n]</span>
+              <span style="display:inline-flex;align-items:center;gap:6px"><i class="ph-bold ph-repeat" style="font-size:15px"></i>[n]</span>
+              <span style="display:inline-flex;align-items:center;gap:6px"><i class="ph-bold ph-heart" style="font-size:15px"></i>[n]</span>
+              <span style="margin-left:auto">[date]</span>
+            </span>
+          </a>
+          <a href="#" style="display:flex;flex-direction:column;gap:10px;border:1px solid #CFD9DE;border-radius:16px;background:#FFFFFF;padding:14px;text-decoration:none;color:#0F1419;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
+            <span style="display:flex;align-items:flex-start;gap:12px">
+              <span style="flex:none;width:38px;height:38px;border-radius:50%;background:#E1E8ED"></span>
+              <span style="display:flex;flex-direction:column;gap:1px;flex:1;min-width:0">
+                <span style="font-weight:700;font-size:15px;line-height:1.3;color:#0F1419">Abdur-Rahman Ch</span>
+                <span style="font-size:15px;line-height:1.3;color:#536471">@handle</span>
+              </span>
+              <i class="ph-bold ph-x-logo" style="flex:none;font-size:18px;color:#0F1419"></i>
+            </span>
+            <p style="margin:0;font-size:15px;line-height:1.4;color:#0F1419">[Post 3 text — paste the tweet you want here.]</p>
+            <span style="display:flex;align-items:center;gap:20px;border-top:1px solid #EFF3F4;padding-top:10px;font-size:13px;color:#536471">
+              <span style="display:inline-flex;align-items:center;gap:6px"><i class="ph-bold ph-chat-circle" style="font-size:16px"></i>[n]</span>
+              <span style="display:inline-flex;align-items:center;gap:6px"><i class="ph-bold ph-repeat" style="font-size:15px"></i>[n]</span>
+              <span style="display:inline-flex;align-items:center;gap:6px"><i class="ph-bold ph-heart" style="font-size:15px"></i>[n]</span>
+              <span style="margin-left:auto">[date]</span>
+            </span>
+          </a>
+          </div>
+        </div>
+  </div>
+</section>
+
+<section data-screen-label="Final CTA" style="background:var(--ink);color:var(--cream);padding:64px 0 72px;position:relative;overflow:hidden">
+  <div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(250,247,242,.18) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(to bottom,#000 0,transparent 25%,transparent 75%,#000 100%);mask-image:linear-gradient(to bottom,#000 0,transparent 25%,transparent 75%,#000 100%);z-index:0"></div>
+  <div aria-hidden="true" style="position:absolute;left:-90px;bottom:-90px;width:220px;height:220px;background:var(--ground-accent);-webkit-mask-image:url('assets/logo.png');-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;mask-image:url('assets/logo.png');mask-size:contain;mask-repeat:no-repeat;z-index:0"></div>
+  <div data-anim style="position:relative;z-index:1;padding:0 20px;text-align:center">
+    <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:2rem;line-height:1.05;text-transform:uppercase">Your store already has the demand. It's leaking it.</h2>
+    <p style="margin:18px 0 0;font-size:1.0625rem;opacity:.85">{{ ongoingCount }} builds in progress. We cap at 7.</p>
+    <div style="margin-top:28px;display:flex;justify-content:center">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="ghost-light" size="md" href="Book a Call.dc.html" style="display:grid;min-width:220px;min-height:44px" hint-size="220px,52px">Book a Call</x-import>
+    </div>
+  </div>
+</section>
+
+<dc-import name="SiteFooterMobile" hint-size="100%,620px"></dc-import>
+</div></div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;pageBackground&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#FFFFFF&quot;,&quot;options&quot;:[&quot;#FFFFFF&quot;,&quot;#FCFCFB&quot;,&quot;#FAFAF7&quot;,&quot;#FAF7F2&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Background&quot;},&quot;bandColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#F5F5F4&quot;,&quot;options&quot;:[&quot;#F2F1EE&quot;,&quot;#F5F5F4&quot;,&quot;#EFEFEF&quot;,&quot;#EAEAE8&quot;,&quot;#EDE9E2&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Background&quot;},&quot;caseStudiesLive&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Launch state&quot;},&quot;ongoingProjects&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:0,&quot;max&quot;:7,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Capacity&quot;},&quot;geometryColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#C20E59&quot;,&quot;options&quot;:[&quot;#C20E59&quot;,&quot;#FCE588&quot;,&quot;#111111&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Geometry&quot;},&quot;viewport&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;desktop&quot;,&quot;mobile&quot;],&quot;default&quot;:&quot;desktop&quot;,&quot;tsType&quot;:&quot;'desktop'|'mobile'&quot;,&quot;section&quot;:&quot;Viewport&quot;}}">
+const STEPS = [
+  { n: '01', name: 'Intake', more: 'We start from your P&L, not your homepage. Margins, repeat rate, and what actually sells.' },
+  { n: '02', name: 'Research', more: 'Competitors, category language, and the one objection that stalls your buyer.' },
+  { n: '03', name: 'Branding', more: 'Positioning is decided before a single visual. The look follows the claim.' },
+  { n: '04', name: 'Design', more: 'Every screen is drawn against the funnel step it has to carry.' },
+  { n: '05', name: 'Development', more: 'GA4 and server events go live before the theme, so launch has a baseline.' },
+  { n: '06', name: 'Onboarding', more: 'Your team meets the dashboard they will own, while we are still on the hook.' },
+  { n: '07', name: 'Engine launch', more: 'Content and acquisition run on one calendar with one owner of the number.' },
+  { n: '08', name: 'Handover', more: 'Documentation, training, and the keys. The goal is your team running this without us.' }
+];
+
+class Component extends DCLogic {
+  state = { activeD: 0, activeM: 0 };
+
+  onScroll = () => {
+    if (this._raf) return;
+    this._raf = requestAnimationFrame(() => {
+      this._raf = null;
+      const nodes = (this._m || []).filter(Boolean);
+      if (!nodes.length) return;
+      const mid = window.innerHeight * 0.45;
+      let best = 0, bestD = Infinity;
+      (this._m || []).forEach((el, i) => {
+        if (!el) return;
+        const r = el.getBoundingClientRect();
+        const d = Math.abs(r.top + r.height / 2 - mid);
+        if (d < bestD) { bestD = d; best = i; }
+      });
+      if (best !== this.state.activeM) this.setState({ activeM: best });
+    });
+  };
+
+  cardSet(key, lo, hi) {
+    const a = key === '_m' ? this.state.activeM : this.state.activeD;
+    this[key] = this[key] || [];
+    return STEPS.map((s, i) => [s, i]).slice(lo, hi + 1).map(([s, i]) => ({
+      ...s,
+      open: a === i,
+      vertical: a !== i,
+      ref: el => { this[key][i] = el; if (el) requestAnimationFrame(() => this.paintProcess()); },
+      onClick: () => {
+        if (key === '_m') { this.setState({ activeM: i }); return; }
+        this._pinned = true; this.setState({ activeD: i });
+      }
+    }));
+  }
+
+  paintProcess() {
+    const a = this.state.activeD;
+    (this._d || []).forEach((el, i) => {
+      if (!el) return;
+      const open = a === i;
+      el.style.flex = open ? '3.6' : '0.8';
+      el.style.minWidth = open ? '220px' : '56px';
+      el.style.padding = open ? '18px 20px' : '18px 12px';
+      el.style.background = open ? 'var(--cream)' : 'transparent';
+      el.style.borderColor = open ? 'var(--ground-accent)' : 'var(--ink)';
+      el.style.color = open ? 'var(--ground-accent)' : 'var(--ink)';
+    });
+    (this._m || []).forEach((el, i) => {
+      if (!el) return;
+      const open = this.state.activeM === i;
+      el.style.height = open ? '146px' : '54px';
+      el.style.background = open ? 'var(--cream)' : 'transparent';
+      el.style.borderColor = open ? 'var(--ground-accent)' : 'var(--ink)';
+      el.style.color = open ? 'var(--ground-accent)' : 'var(--ink)';
+    });
+    const groups = [[0, 4], [5, 6], [7, 7]];
+    (this._g || []).forEach((el, gi) => {
+      if (!el) return;
+      const [lo, hi] = groups[gi];
+      let sum = 0, min = 0;
+      for (let i = lo; i <= hi; i++) { const open = a === i; sum += open ? 3.6 : 0.8; min += open ? 220 : 56; }
+      el.style.flex = String(sum);
+      el.style.minWidth = (min + (hi - lo) * 8) + 'px';
+    });
+  }
+
+  renderVals() {
+    const live = this.props.caseStudiesLive ?? false;
+    this._g = this._g || [];
+    const proc = {
+      cardsE1: this.cardSet('_d', 0, 4), cardsE2: this.cardSet('_d', 5, 6), cardsE3: this.cardSet('_d', 7, 7),
+      cardsM1: this.cardSet('_m', 0, 4), cardsM2: this.cardSet('_m', 5, 6), cardsM3: this.cardSet('_m', 7, 7),
+      g1: el => { this._g[0] = el; if (el) requestAnimationFrame(() => this.paintProcess()); },
+      g2: el => { this._g[1] = el; if (el) requestAnimationFrame(() => this.paintProcess()); },
+      g3: el => { this._g[2] = el; if (el) requestAnimationFrame(() => this.paintProcess()); }
+    };
+    return { ...proc, isDesktop: (this.props.viewport ?? 'desktop') !== 'mobile', isMobile: (this.props.viewport ?? 'desktop') === 'mobile', csLive: live, csFallback: !live, ongoingCount: this.props.ongoingProjects ?? 3 };
+  }
+  componentDidMount() {
+    this._applyTheme(); this._armAnim(); this.paintProcess();
+    this._t = setInterval(() => { if (!this._pinned) this.setState(st => ({ activeD: (st.activeD + 1) % STEPS.length })); }, 2200);
+    window.addEventListener('scroll', this.onScroll, true);
+    window.addEventListener('resize', this.onScroll);
+    this.onScroll();
+  }
+  componentDidUpdate() { this._applyTheme(); this._armAnim(); this.paintProcess(); }
+  _applyTheme() {
+    const r = document.documentElement.style;
+    r.setProperty('--cream', this.props.pageBackground ?? '#FFFFFF');
+    r.setProperty('--gray-light', this.props.bandColor ?? '#F5F5F4');
+    r.setProperty('--accent-primary', '#111111');
+    r.setProperty('--ground-accent', this.props.geometryColor ?? '#C20E59');
+  }
+  _armAnim() {
+    if (!this._io) {
+      this._io = new IntersectionObserver(es => es.forEach(e => {
+        if (e.isIntersecting) this._reveal(e.target);
+      }), { threshold: 0.12 });
+    }
+    document.querySelectorAll('[data-anim]').forEach(el => {
+      if (el.dataset.animArmed) return;
+      el.dataset.animArmed = '1';
+      const r = el.getBoundingClientRect();
+      if (r.top > window.innerHeight * 0.95) {
+        el.style.opacity = '0'; el.style.transform = 'translateY(24px)';
+        el.style.transition = 'opacity 450ms cubic-bezier(.16,1,.3,1),transform 450ms cubic-bezier(.16,1,.3,1)';
+        this._io.observe(el);
+        setTimeout(() => this._reveal(el), 4000);
+      }
+    });
+  }
+  _reveal(el) {
+    el.style.opacity = '1'; el.style.transform = 'none';
+    if (this._io) this._io.unobserve(el);
+  }
+  componentWillUnmount() {
+    if (this._io) this._io.disconnect();
+    clearInterval(this._t);
+    window.removeEventListener('scroll', this.onScroll, true);
+    window.removeEventListener('resize', this.onScroll);
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/styles.css">
+  <script src="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/_ds_bundle.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;}
+    :root{--cream:#FFFFFF;--gray-light:#F5F5F4;--accent-primary:#111111;--ground-accent:#C20E59;}
+    body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--font-body);font-weight:500;}
+    a{color:var(--ink);}
+    a:hover{color:var(--accent-primary);}
+  </style>
+</helmet>
+
+<sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+<section data-screen-label="Sitemap hero" style="background:var(--cream);padding:72px 0 56px;position:relative;overflow:hidden">
+  <div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.22) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(215deg,#000 15%,transparent 65%);mask-image:linear-gradient(215deg,#000 15%,transparent 65%);z-index:0"></div>
+  <div aria-hidden="true" style="position:absolute;right:-150px;top:-70px;width:320px;height:320px;background:var(--ground-accent);-webkit-mask-image:url('assets/logo.png');-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;mask-image:url('assets/logo.png');mask-size:contain;mask-repeat:no-repeat;z-index:0"></div>
+  <div style="position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 24px">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" tick="{{ true }}" hint-size="auto,20px">Duha Media — site index</x-import>
+    <h1 style="margin:18px 0 0;font-family:var(--font-display);font-weight:400;font-size:3rem;line-height:1.02;text-transform:uppercase;max-width:22ch">Every page, both breakpoints.</h1>
+    <p style="margin:18px 0 0;font-size:1.125rem;line-height:1.6;max-width:60ch">Click a page name for desktop. The <strong>M</strong> button opens the 390px mobile build of the same page.</p>
+    <a href="Sitemap.dc.html" style="display:inline-flex;align-items:center;min-height:44px;margin-top:18px;padding:0 18px;border:2px solid var(--ink);font-weight:700;font-size:14px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">Mobile version of this index →</a>
+  </div>
+</section>
+
+<section data-screen-label="Primary pages" style="background:var(--gray-light);padding:56px 0">
+  <div style="max-width:1200px;margin:0 auto;padding:0 24px">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">01 — Primary pages</x-import>
+    <div style="margin-top:24px;border-top:2px solid var(--ink)">
+
+      <div style="display:grid;grid-template-columns:44px 1fr 1.1fr 96px;align-items:center;gap:20px;border-bottom:1px solid var(--border-divider);padding:16px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">01</span>
+        <a href="Homepage.dc.html" style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase;text-decoration:none">Homepage</a>
+        <span style="font-size:0.9375rem;color:var(--gray-warm)">The integrated-partner claim, made checkable</span>
+        <a href="Homepage.dc.html" style="justify-self:end;min-width:56px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">M</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:44px 1fr 1.1fr 96px;align-items:center;gap:20px;border-bottom:1px solid var(--border-divider);padding:16px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">02</span>
+        <a href="Services Hub.dc.html" style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase;text-decoration:none">Services Hub</a>
+        <span style="font-size:0.9375rem;color:var(--gray-warm)">Two tracks: build, then operate</span>
+        <a href="Services Hub.dc.html" style="justify-self:end;min-width:56px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">M</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:44px 1fr 1.1fr 96px;align-items:center;gap:20px;border-bottom:1px solid var(--border-divider);padding:16px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">03</span>
+        <a href="Shopify Theme Development.dc.html" style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase;text-decoration:none">Shopify Theme Development</a>
+        <span style="font-size:0.9375rem;color:var(--gray-warm)">Phase 1 — builds from $5K</span>
+        <a href="Shopify Theme Development.dc.html" style="justify-self:end;min-width:56px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">M</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:44px 1fr 1.1fr 96px;align-items:center;gap:20px;border-bottom:1px solid var(--border-divider);padding:16px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">04</span>
+        <a href="Marketing.dc.html" style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase;text-decoration:none">Marketing</a>
+        <span style="font-size:0.9375rem;color:var(--gray-warm)">Phase 2 — engines from $1K/mo</span>
+        <a href="Marketing.dc.html" style="justify-self:end;min-width:56px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">M</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:44px 1fr 1.1fr 96px;align-items:center;gap:20px;border-bottom:1px solid var(--border-divider);padding:16px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">05</span>
+        <a href="Work.dc.html" style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase;text-decoration:none">Work</a>
+        <span style="font-size:0.9375rem;color:var(--gray-warm)">Proof index — metric fallback until sign-off</span>
+        <a href="Work.dc.html" style="justify-self:end;min-width:56px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">M</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:44px 1fr 1.1fr 96px;align-items:center;gap:20px;border-bottom:1px solid var(--border-divider);padding:16px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">06</span>
+        <a href="Case Study.dc.html" style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase;text-decoration:none">Case Study</a>
+        <span style="font-size:0.9375rem;color:var(--gray-warm)">Single-study template</span>
+        <a href="Case Study.dc.html" style="justify-self:end;min-width:56px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">M</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:44px 1fr 1.1fr 96px;align-items:center;gap:20px;border-bottom:1px solid var(--border-divider);padding:16px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">07</span>
+        <a href="Testimonials.dc.html" style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase;text-decoration:none">Testimonials</a>
+        <span style="font-size:0.9375rem;color:var(--gray-warm)">Quotes, no invented proof</span>
+        <a href="Testimonials.dc.html" style="justify-self:end;min-width:56px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">M</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:44px 1fr 1.1fr 96px;align-items:center;gap:20px;border-bottom:1px solid var(--border-divider);padding:16px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">08</span>
+        <a href="About.dc.html" style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase;text-decoration:none">About</a>
+        <span style="font-size:0.9375rem;color:var(--gray-warm)">Team, method, capacity cap</span>
+        <a href="About.dc.html" style="justify-self:end;min-width:56px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">M</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:44px 1fr 1.1fr 96px;align-items:center;gap:20px;border-bottom:2px solid var(--ink);padding:16px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">09</span>
+        <a href="FAQ.dc.html" style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase;text-decoration:none">FAQ</a>
+        <span style="font-size:0.9375rem;color:var(--gray-warm)">Straight answers, priced in public</span>
+        <a href="FAQ.dc.html" style="justify-self:end;min-width:56px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">M</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Conversion pages" style="background:var(--cream);padding:56px 0">
+  <div style="max-width:1200px;margin:0 auto;padding:0 24px">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">02 — Conversion &amp; contact</x-import>
+    <div style="margin-top:24px;border-top:2px solid var(--ink)">
+
+      <div style="display:grid;grid-template-columns:44px 1fr 1.1fr 96px;align-items:center;gap:20px;border-bottom:1px solid var(--border-divider);padding:16px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">10</span>
+        <a href="Book a Call.dc.html" style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase;text-decoration:none">Book a Call</a>
+        <span style="font-size:0.9375rem;color:var(--gray-warm)">Primary CTA destination</span>
+        <a href="Book a Call.dc.html" style="justify-self:end;min-width:56px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">M</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:44px 1fr 1.1fr 96px;align-items:center;gap:20px;border-bottom:1px solid var(--border-divider);padding:16px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">11</span>
+        <a href="Contact.dc.html" style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase;text-decoration:none">Contact</a>
+        <span style="font-size:0.9375rem;color:var(--gray-warm)">Direct email route, no queue</span>
+        <a href="Contact.dc.html" style="justify-self:end;min-width:56px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">M</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:44px 1fr 1.1fr 96px;align-items:center;gap:20px;border-bottom:1px solid var(--border-divider);padding:16px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">12</span>
+        <a href="Thank You.dc.html" style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase;text-decoration:none">Thank You</a>
+        <span style="font-size:0.9375rem;color:var(--gray-warm)">Post-submit state, next steps</span>
+        <a href="Thank You.dc.html" style="justify-self:end;min-width:56px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">M</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:44px 1fr 1.1fr 96px;align-items:center;gap:20px;border-bottom:1px solid var(--border-divider);padding:16px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">13</span>
+        <a href="Newsletter.dc.html" style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase;text-decoration:none">Newsletter</a>
+        <span style="font-size:0.9375rem;color:var(--gray-warm)">One useful email a month</span>
+        <a href="Newsletter.dc.html" style="justify-self:end;min-width:56px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">M</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:44px 1fr 1.1fr 96px;align-items:center;gap:20px;border-bottom:2px solid var(--ink);padding:16px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">14</span>
+        <a href="Link-in-Bio.dc.html" style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase;text-decoration:none">Link-in-Bio</a>
+        <span style="font-size:0.9375rem;color:var(--gray-warm)">Social profile landing</span>
+        <a href="Link-in-Bio.dc.html" style="justify-self:end;min-width:56px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">M</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Templates" style="background:var(--gray-light);padding:56px 0">
+  <div style="max-width:1200px;margin:0 auto;padding:0 24px">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">03 — Repeatable templates</x-import>
+    <div style="margin-top:24px;border-top:2px solid var(--ink)">
+
+      <div style="display:grid;grid-template-columns:44px 1fr 1.1fr 96px;align-items:center;gap:20px;border-bottom:1px solid var(--border-divider);padding:16px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">15</span>
+        <a href="DEV-SEO Article.dc.html" style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase;text-decoration:none">DEV-SEO Template</a>
+        <span style="font-size:0.9375rem;color:var(--gray-warm)">Build-side search landing pattern</span>
+        <a href="DEV-SEO Article.dc.html" style="justify-self:end;min-width:56px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">M</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:44px 1fr 1.1fr 96px;align-items:center;gap:20px;border-bottom:1px solid var(--border-divider);padding:16px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">16</span>
+        <a href="MKT-SEO Article.dc.html" style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase;text-decoration:none">MKT-SEO Template</a>
+        <span style="font-size:0.9375rem;color:var(--gray-warm)">Marketing-side article pattern</span>
+        <a href="MKT-SEO Article.dc.html" style="justify-self:end;min-width:56px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">M</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:44px 1fr 1.1fr 96px;align-items:center;gap:20px;border-bottom:1px solid var(--border-divider);padding:16px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">17</span>
+        <a href="Campaign LP.dc.html" style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase;text-decoration:none">Campaign LP Template</a>
+        <span style="font-size:0.9375rem;color:var(--gray-warm)">Paid-traffic landing page</span>
+        <a href="Campaign LP.dc.html" style="justify-self:end;min-width:56px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">M</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:44px 1fr 1.1fr 96px;align-items:center;gap:20px;border-bottom:2px solid var(--ink);padding:16px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">18</span>
+        <a href="Lead Magnet.dc.html" style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase;text-decoration:none">Lead Magnet Template</a>
+        <span style="font-size:0.9375rem;color:var(--gray-warm)">Gated asset — capture + delivered states</span>
+        <a href="Lead Magnet.dc.html" style="justify-self:end;min-width:56px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">M</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="System pages" style="background:var(--cream);padding:56px 0">
+  <div style="max-width:1200px;margin:0 auto;padding:0 24px">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">04 — System, states &amp; shared parts</x-import>
+    <div style="margin-top:24px;border-top:2px solid var(--ink)">
+
+      <div style="display:grid;grid-template-columns:44px 1fr 1.1fr 96px;align-items:center;gap:20px;border-bottom:1px solid var(--border-divider);padding:16px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">19</span>
+        <a href="Intro Animation.dc.html" style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase;text-decoration:none">Intro Animation</a>
+        <span style="font-size:0.9375rem;color:var(--gray-warm)">First-visit logo load-in</span>
+        <a href="Intro Animation.dc.html" style="justify-self:end;min-width:56px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">M</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:44px 1fr 1.1fr 96px;align-items:center;gap:20px;border-bottom:1px solid var(--border-divider);padding:16px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">20</span>
+        <a href="Legal.dc.html" style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase;text-decoration:none">Legal</a>
+        <span style="font-size:0.9375rem;color:var(--gray-warm)">Privacy, terms, cookies, GDPR</span>
+        <a href="Legal.dc.html" style="justify-self:end;min-width:56px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">M</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:44px 1fr 1.1fr 96px;align-items:center;gap:20px;border-bottom:1px solid var(--border-divider);padding:16px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">21</span>
+        <a href="404.dc.html" style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase;text-decoration:none">404</a>
+        <span style="font-size:0.9375rem;color:var(--gray-warm)">Dead-end recovery</span>
+        <a href="404.dc.html" style="justify-self:end;min-width:56px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">M</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:44px 1fr 1.1fr 96px;align-items:center;gap:20px;border-bottom:1px solid var(--border-divider);padding:16px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">22</span>
+        <a href="SiteHeader.dc.html" style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase;text-decoration:none">SiteHeader</a>
+        <span style="font-size:0.9375rem;color:var(--gray-warm)">Shared component, not a page</span>
+        <a href="SiteHeader.dc.html" style="justify-self:end;min-width:56px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">M</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:44px 1fr 1.1fr 96px;align-items:center;gap:20px;border-bottom:2px solid var(--ink);padding:16px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">23</span>
+        <a href="SiteFooter.dc.html" style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase;text-decoration:none">SiteFooter</a>
+        <span style="font-size:0.9375rem;color:var(--gray-warm)">Shared component, not a page</span>
+        <a href="SiteFooter.dc.html" style="justify-self:end;min-width:56px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">M</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<sc-if value="{{ showWork }}" hint-placeholder-val="{{ true }}">
+<section data-screen-label="Working files" style="background:var(--ink);color:var(--cream);padding:56px 0 64px;position:relative;overflow:hidden">
+  <div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(250,247,242,.18) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(215deg,#000 15%,transparent 65%);mask-image:linear-gradient(215deg,#000 15%,transparent 65%);z-index:0"></div>
+  <div style="position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 24px">
+    <span style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;opacity:.7">05 — Exploration boards &amp; variants (not shipping pages)</span>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:24px">
+      <a href="Marketing Body Concepts.dc.html" style="border:2px solid var(--cream);padding:16px 18px;min-height:44px;display:flex;flex-direction:column;gap:4px;text-decoration:none;color:var(--cream)" style-hover="background:var(--cream);color:var(--ink)"><span style="font-family:var(--font-display);font-size:1rem;text-transform:uppercase">Marketing Body Concepts</span><span style="font-size:0.8125rem;opacity:.7">Engine ledger directions</span></a>
+      <a href="Wine Geometry Explorations.dc.html" style="border:2px solid var(--cream);padding:16px 18px;min-height:44px;display:flex;flex-direction:column;gap:4px;text-decoration:none;color:var(--cream)" style-hover="background:var(--cream);color:var(--ink)"><span style="font-family:var(--font-display);font-size:1rem;text-transform:uppercase">Wine Geometry Explorations</span><span style="font-size:0.8125rem;opacity:.7">How the geometry was chosen</span></a>
+      <a href="Contact Form Concepts.dc.html" style="border:2px solid var(--cream);padding:16px 18px;min-height:44px;display:flex;flex-direction:column;gap:4px;text-decoration:none;color:var(--cream)" style-hover="background:var(--cream);color:var(--ink)"><span style="font-family:var(--font-display);font-size:1rem;text-transform:uppercase">Contact Form Concepts</span><span style="font-size:0.8125rem;opacity:.7">Form patterns</span></a>
+      <a href="Testimonial Concepts.dc.html" style="border:2px solid var(--cream);padding:16px 18px;min-height:44px;display:flex;flex-direction:column;gap:4px;text-decoration:none;color:var(--cream)" style-hover="background:var(--cream);color:var(--ink)"><span style="font-family:var(--font-display);font-size:1rem;text-transform:uppercase">Testimonial Concepts</span><span style="font-size:0.8125rem;opacity:.7">Quote treatments</span></a>
+      <a href="Testimonials Page Concepts.dc.html" style="border:2px solid var(--cream);padding:16px 18px;min-height:44px;display:flex;flex-direction:column;gap:4px;text-decoration:none;color:var(--cream)" style-hover="background:var(--cream);color:var(--ink)"><span style="font-family:var(--font-display);font-size:1rem;text-transform:uppercase">Testimonials Page Concepts</span><span style="font-size:0.8125rem;opacity:.7">Page-level layouts</span></a>
+      <a href="MKT-SEO Article Concepts.dc.html" style="border:2px solid var(--cream);padding:16px 18px;min-height:44px;display:flex;flex-direction:column;gap:4px;text-decoration:none;color:var(--cream)" style-hover="background:var(--cream);color:var(--ink)"><span style="font-family:var(--font-display);font-size:1rem;text-transform:uppercase">MKT-SEO Article Concepts</span><span style="font-size:0.8125rem;opacity:.7">Article layouts</span></a>
+      <a href="Homepage Fade Edge.dc.html" style="border:2px solid var(--cream);padding:16px 18px;min-height:44px;display:flex;flex-direction:column;gap:4px;text-decoration:none;color:var(--cream)" style-hover="background:var(--cream);color:var(--ink)"><span style="font-family:var(--font-display);font-size:1rem;text-transform:uppercase">Homepage Fade Edge</span><span style="font-size:0.8125rem;opacity:.7">Desktop variant</span></a>
+      <a href="Homepage (Mobile) White.dc.html" style="border:2px solid var(--cream);padding:16px 18px;min-height:44px;display:flex;flex-direction:column;gap:4px;text-decoration:none;color:var(--cream)" style-hover="background:var(--cream);color:var(--ink)"><span style="font-family:var(--font-display);font-size:1rem;text-transform:uppercase">Homepage (Mobile) White</span><span style="font-size:0.8125rem;opacity:.7">Mobile variant</span></a>
+      <a href="Review Hub.dc.html" style="border:2px solid var(--cream);padding:16px 18px;min-height:44px;display:flex;flex-direction:column;gap:4px;text-decoration:none;color:var(--cream)" style-hover="background:var(--cream);color:var(--ink)"><span style="font-family:var(--font-display);font-size:1rem;text-transform:uppercase">Review Hub</span><span style="font-size:0.8125rem;opacity:.7">Review board</span></a>
+    </div>
+  </div>
+</section>
+</sc-if>
+</sc-if>
+
+<sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+<div style="background:#DED9D0;min-height:100vh"><div style="max-width:390px;margin:0 auto;background:var(--cream);overflow-x:hidden;box-shadow:0 0 0 1px rgba(17,17,17,.15)">
+<section data-screen-label="Sitemap hero" style="background:var(--cream);padding:44px 0 36px;position:relative;overflow:hidden">
+  <div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.22) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(215deg,#000 15%,transparent 65%);mask-image:linear-gradient(215deg,#000 15%,transparent 65%);z-index:0"></div>
+  <div aria-hidden="true" style="position:absolute;right:-110px;top:-60px;width:230px;height:230px;background:var(--ground-accent);-webkit-mask-image:url('assets/logo.png');-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;mask-image:url('assets/logo.png');mask-size:contain;mask-repeat:no-repeat;z-index:0"></div>
+  <div style="position:relative;z-index:1;padding:0 20px">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" tick="{{ true }}" hint-size="auto,20px">Duha Media — site index</x-import>
+    <h1 style="margin:16px 0 0;font-family:var(--font-display);font-weight:400;font-size:2.25rem;line-height:1.02;text-transform:uppercase">Every page, both breakpoints.</h1>
+    <p style="margin:16px 0 0;font-size:1.0625rem;line-height:1.6">Tap the name for the mobile build. <strong>D</strong> opens the desktop version of the same page.</p>
+  </div>
+</section>
+
+<section data-screen-label="Primary pages" style="background:var(--gray-light);padding:40px 0">
+  <div style="padding:0 20px">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">01 — Primary pages</x-import>
+    <div style="margin-top:20px;border-top:2px solid var(--ink)">
+
+      <div style="display:grid;grid-template-columns:30px 1fr 52px;align-items:center;gap:10px;border-bottom:1px solid var(--border-divider);padding:14px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">01</span>
+        <a href="Homepage.dc.html" style="text-decoration:none;display:block"><span style="display:block;font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">Homepage</span><span style="display:block;margin-top:2px;font-size:0.8125rem;color:var(--gray-warm)">The claim, made checkable</span></a>
+        <a href="Homepage.dc.html" style="justify-self:end;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">D</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:30px 1fr 52px;align-items:center;gap:10px;border-bottom:1px solid var(--border-divider);padding:14px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">02</span>
+        <a href="Services Hub.dc.html" style="text-decoration:none;display:block"><span style="display:block;font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">Services Hub</span><span style="display:block;margin-top:2px;font-size:0.8125rem;color:var(--gray-warm)">Two tracks: build, then operate</span></a>
+        <a href="Services Hub.dc.html" style="justify-self:end;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">D</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:30px 1fr 52px;align-items:center;gap:10px;border-bottom:1px solid var(--border-divider);padding:14px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">03</span>
+        <a href="Shopify Theme Development.dc.html" style="text-decoration:none;display:block"><span style="display:block;font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">Shopify Theme Dev</span><span style="display:block;margin-top:2px;font-size:0.8125rem;color:var(--gray-warm)">Phase 1 — builds from $5K</span></a>
+        <a href="Shopify Theme Development.dc.html" style="justify-self:end;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">D</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:30px 1fr 52px;align-items:center;gap:10px;border-bottom:1px solid var(--border-divider);padding:14px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">04</span>
+        <a href="Marketing.dc.html" style="text-decoration:none;display:block"><span style="display:block;font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">Marketing</span><span style="display:block;margin-top:2px;font-size:0.8125rem;color:var(--gray-warm)">Phase 2 — engines from $1K/mo</span></a>
+        <a href="Marketing.dc.html" style="justify-self:end;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">D</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:30px 1fr 52px;align-items:center;gap:10px;border-bottom:1px solid var(--border-divider);padding:14px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">05</span>
+        <a href="Work.dc.html" style="text-decoration:none;display:block"><span style="display:block;font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">Work</span><span style="display:block;margin-top:2px;font-size:0.8125rem;color:var(--gray-warm)">Proof index</span></a>
+        <a href="Work.dc.html" style="justify-self:end;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">D</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:30px 1fr 52px;align-items:center;gap:10px;border-bottom:1px solid var(--border-divider);padding:14px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">06</span>
+        <a href="Case Study.dc.html" style="text-decoration:none;display:block"><span style="display:block;font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">Case Study</span><span style="display:block;margin-top:2px;font-size:0.8125rem;color:var(--gray-warm)">Single-study template</span></a>
+        <a href="Case Study.dc.html" style="justify-self:end;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">D</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:30px 1fr 52px;align-items:center;gap:10px;border-bottom:1px solid var(--border-divider);padding:14px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">07</span>
+        <a href="Testimonials.dc.html" style="text-decoration:none;display:block"><span style="display:block;font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">Testimonials</span><span style="display:block;margin-top:2px;font-size:0.8125rem;color:var(--gray-warm)">Quotes, no invented proof</span></a>
+        <a href="Testimonials.dc.html" style="justify-self:end;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">D</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:30px 1fr 52px;align-items:center;gap:10px;border-bottom:1px solid var(--border-divider);padding:14px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">08</span>
+        <a href="About.dc.html" style="text-decoration:none;display:block"><span style="display:block;font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">About</span><span style="display:block;margin-top:2px;font-size:0.8125rem;color:var(--gray-warm)">Team, method, capacity cap</span></a>
+        <a href="About.dc.html" style="justify-self:end;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">D</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:30px 1fr 52px;align-items:center;gap:10px;border-bottom:2px solid var(--ink);padding:14px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">09</span>
+        <a href="FAQ.dc.html" style="text-decoration:none;display:block"><span style="display:block;font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">FAQ</span><span style="display:block;margin-top:2px;font-size:0.8125rem;color:var(--gray-warm)">Straight answers</span></a>
+        <a href="FAQ.dc.html" style="justify-self:end;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">D</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Conversion pages" style="background:var(--cream);padding:40px 0">
+  <div style="padding:0 20px">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">02 — Conversion &amp; contact</x-import>
+    <div style="margin-top:20px;border-top:2px solid var(--ink)">
+
+      <div style="display:grid;grid-template-columns:30px 1fr 52px;align-items:center;gap:10px;border-bottom:1px solid var(--border-divider);padding:14px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">10</span>
+        <a href="Book a Call.dc.html" style="text-decoration:none;display:block"><span style="display:block;font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">Book a Call</span><span style="display:block;margin-top:2px;font-size:0.8125rem;color:var(--gray-warm)">Primary CTA destination</span></a>
+        <a href="Book a Call.dc.html" style="justify-self:end;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">D</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:30px 1fr 52px;align-items:center;gap:10px;border-bottom:1px solid var(--border-divider);padding:14px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">11</span>
+        <a href="Contact.dc.html" style="text-decoration:none;display:block"><span style="display:block;font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">Contact</span><span style="display:block;margin-top:2px;font-size:0.8125rem;color:var(--gray-warm)">Direct email route</span></a>
+        <a href="Contact.dc.html" style="justify-self:end;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">D</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:30px 1fr 52px;align-items:center;gap:10px;border-bottom:1px solid var(--border-divider);padding:14px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">12</span>
+        <a href="Thank You.dc.html" style="text-decoration:none;display:block"><span style="display:block;font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">Thank You</span><span style="display:block;margin-top:2px;font-size:0.8125rem;color:var(--gray-warm)">Post-submit state</span></a>
+        <a href="Thank You.dc.html" style="justify-self:end;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">D</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:30px 1fr 52px;align-items:center;gap:10px;border-bottom:1px solid var(--border-divider);padding:14px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">13</span>
+        <a href="Newsletter.dc.html" style="text-decoration:none;display:block"><span style="display:block;font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">Newsletter</span><span style="display:block;margin-top:2px;font-size:0.8125rem;color:var(--gray-warm)">One useful email a month</span></a>
+        <a href="Newsletter.dc.html" style="justify-self:end;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">D</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:30px 1fr 52px;align-items:center;gap:10px;border-bottom:2px solid var(--ink);padding:14px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">14</span>
+        <a href="Link-in-Bio.dc.html" style="text-decoration:none;display:block"><span style="display:block;font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">Link-in-Bio</span><span style="display:block;margin-top:2px;font-size:0.8125rem;color:var(--gray-warm)">Social profile landing</span></a>
+        <a href="Link-in-Bio.dc.html" style="justify-self:end;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">D</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Templates" style="background:var(--gray-light);padding:40px 0">
+  <div style="padding:0 20px">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">03 — Repeatable templates</x-import>
+    <div style="margin-top:20px;border-top:2px solid var(--ink)">
+
+      <div style="display:grid;grid-template-columns:30px 1fr 52px;align-items:center;gap:10px;border-bottom:1px solid var(--border-divider);padding:14px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">15</span>
+        <a href="DEV-SEO Article.dc.html" style="text-decoration:none;display:block"><span style="display:block;font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">DEV-SEO Template</span><span style="display:block;margin-top:2px;font-size:0.8125rem;color:var(--gray-warm)">Build-side search landing</span></a>
+        <a href="DEV-SEO Article.dc.html" style="justify-self:end;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">D</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:30px 1fr 52px;align-items:center;gap:10px;border-bottom:1px solid var(--border-divider);padding:14px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">16</span>
+        <a href="MKT-SEO Article.dc.html" style="text-decoration:none;display:block"><span style="display:block;font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">MKT-SEO Template</span><span style="display:block;margin-top:2px;font-size:0.8125rem;color:var(--gray-warm)">Marketing-side article</span></a>
+        <a href="MKT-SEO Article.dc.html" style="justify-self:end;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">D</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:30px 1fr 52px;align-items:center;gap:10px;border-bottom:1px solid var(--border-divider);padding:14px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">17</span>
+        <a href="Campaign LP.dc.html" style="text-decoration:none;display:block"><span style="display:block;font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">Campaign LP</span><span style="display:block;margin-top:2px;font-size:0.8125rem;color:var(--gray-warm)">Paid-traffic landing page</span></a>
+        <a href="Campaign LP.dc.html" style="justify-self:end;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">D</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:30px 1fr 52px;align-items:center;gap:10px;border-bottom:2px solid var(--ink);padding:14px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">18</span>
+        <a href="Lead Magnet.dc.html" style="text-decoration:none;display:block"><span style="display:block;font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">Lead Magnet</span><span style="display:block;margin-top:2px;font-size:0.8125rem;color:var(--gray-warm)">Capture + delivered states</span></a>
+        <a href="Lead Magnet.dc.html" style="justify-self:end;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">D</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="System pages" style="background:var(--cream);padding:40px 0">
+  <div style="padding:0 20px">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">04 — System, states &amp; parts</x-import>
+    <div style="margin-top:20px;border-top:2px solid var(--ink)">
+
+      <div style="display:grid;grid-template-columns:30px 1fr 52px;align-items:center;gap:10px;border-bottom:1px solid var(--border-divider);padding:14px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">19</span>
+        <a href="Intro Animation.dc.html" style="text-decoration:none;display:block"><span style="display:block;font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">Intro Animation</span><span style="display:block;margin-top:2px;font-size:0.8125rem;color:var(--gray-warm)">First-visit logo load-in</span></a>
+        <a href="Intro Animation.dc.html" style="justify-self:end;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">D</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:30px 1fr 52px;align-items:center;gap:10px;border-bottom:1px solid var(--border-divider);padding:14px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">20</span>
+        <a href="Legal.dc.html" style="text-decoration:none;display:block"><span style="display:block;font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">Legal</span><span style="display:block;margin-top:2px;font-size:0.8125rem;color:var(--gray-warm)">Privacy, terms, cookies, GDPR</span></a>
+        <a href="Legal.dc.html" style="justify-self:end;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">D</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:30px 1fr 52px;align-items:center;gap:10px;border-bottom:1px solid var(--border-divider);padding:14px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">21</span>
+        <a href="404.dc.html" style="text-decoration:none;display:block"><span style="display:block;font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">404</span><span style="display:block;margin-top:2px;font-size:0.8125rem;color:var(--gray-warm)">Dead-end recovery</span></a>
+        <a href="404.dc.html" style="justify-self:end;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">D</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:30px 1fr 52px;align-items:center;gap:10px;border-bottom:1px solid var(--border-divider);padding:14px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">22</span>
+        <a href="SiteHeader.dc.html" style="text-decoration:none;display:block"><span style="display:block;font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">SiteHeader</span><span style="display:block;margin-top:2px;font-size:0.8125rem;color:var(--gray-warm)">Shared part, not a page</span></a>
+        <a href="SiteHeader.dc.html" style="justify-self:end;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">D</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:30px 1fr 52px;align-items:center;gap:10px;border-bottom:2px solid var(--ink);padding:14px 0">
+        <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">23</span>
+        <a href="SiteFooter.dc.html" style="text-decoration:none;display:block"><span style="display:block;font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">SiteFooter</span><span style="display:block;margin-top:2px;font-size:0.8125rem;color:var(--gray-warm)">Shared part, not a page</span></a>
+        <a href="SiteFooter.dc.html" style="justify-self:end;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--ink);font-weight:700;font-size:13px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">D</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<sc-if value="{{ showWork }}" hint-placeholder-val="{{ true }}">
+<section data-screen-label="Working files" style="background:var(--ink);color:var(--cream);padding:40px 0 48px;position:relative;overflow:hidden">
+  <div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(250,247,242,.18) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(215deg,#000 15%,transparent 65%);mask-image:linear-gradient(215deg,#000 15%,transparent 65%);z-index:0"></div>
+  <div style="position:relative;z-index:1;padding:0 20px">
+    <span style="display:block;font-weight:700;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;opacity:.7">05 — Boards &amp; variants (not shipping)</span>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:18px">
+      <a href="Marketing Body Concepts.dc.html" style="border:2px solid var(--cream);padding:14px 16px;min-height:44px;display:flex;flex-direction:column;gap:3px;text-decoration:none;color:var(--cream)" style-hover="background:var(--cream);color:var(--ink)"><span style="font-family:var(--font-display);font-size:1rem;text-transform:uppercase">Marketing Body Concepts</span><span style="font-size:0.8125rem;opacity:.7">Engine ledger directions</span></a>
+      <a href="Wine Geometry Explorations.dc.html" style="border:2px solid var(--cream);padding:14px 16px;min-height:44px;display:flex;flex-direction:column;gap:3px;text-decoration:none;color:var(--cream)" style-hover="background:var(--cream);color:var(--ink)"><span style="font-family:var(--font-display);font-size:1rem;text-transform:uppercase">Wine Geometry Explorations</span><span style="font-size:0.8125rem;opacity:.7">How the geometry was chosen</span></a>
+      <a href="Contact Form Concepts.dc.html" style="border:2px solid var(--cream);padding:14px 16px;min-height:44px;display:flex;flex-direction:column;gap:3px;text-decoration:none;color:var(--cream)" style-hover="background:var(--cream);color:var(--ink)"><span style="font-family:var(--font-display);font-size:1rem;text-transform:uppercase">Contact Form Concepts</span><span style="font-size:0.8125rem;opacity:.7">Form patterns</span></a>
+      <a href="Testimonial Concepts.dc.html" style="border:2px solid var(--cream);padding:14px 16px;min-height:44px;display:flex;flex-direction:column;gap:3px;text-decoration:none;color:var(--cream)" style-hover="background:var(--cream);color:var(--ink)"><span style="font-family:var(--font-display);font-size:1rem;text-transform:uppercase">Testimonial Concepts</span><span style="font-size:0.8125rem;opacity:.7">Quote treatments</span></a>
+      <a href="Testimonials Page Concepts.dc.html" style="border:2px solid var(--cream);padding:14px 16px;min-height:44px;display:flex;flex-direction:column;gap:3px;text-decoration:none;color:var(--cream)" style-hover="background:var(--cream);color:var(--ink)"><span style="font-family:var(--font-display);font-size:1rem;text-transform:uppercase">Testimonials Page Concepts</span><span style="font-size:0.8125rem;opacity:.7">Page-level layouts</span></a>
+      <a href="MKT-SEO Article Concepts.dc.html" style="border:2px solid var(--cream);padding:14px 16px;min-height:44px;display:flex;flex-direction:column;gap:3px;text-decoration:none;color:var(--cream)" style-hover="background:var(--cream);color:var(--ink)"><span style="font-family:var(--font-display);font-size:1rem;text-transform:uppercase">MKT-SEO Article Concepts</span><span style="font-size:0.8125rem;opacity:.7">Article layouts</span></a>
+      <a href="Homepage (Mobile) White.dc.html" style="border:2px solid var(--cream);padding:14px 16px;min-height:44px;display:flex;flex-direction:column;gap:3px;text-decoration:none;color:var(--cream)" style-hover="background:var(--cream);color:var(--ink)"><span style="font-family:var(--font-display);font-size:1rem;text-transform:uppercase">Homepage (Mobile) White</span><span style="font-size:0.8125rem;opacity:.7">Mobile variant</span></a>
+      <a href="Homepage (Mobile) Fade Edge.dc.html" style="border:2px solid var(--cream);padding:14px 16px;min-height:44px;display:flex;flex-direction:column;gap:3px;text-decoration:none;color:var(--cream)" style-hover="background:var(--cream);color:var(--ink)"><span style="font-family:var(--font-display);font-size:1rem;text-transform:uppercase">Homepage (Mobile) Fade Edge</span><span style="font-size:0.8125rem;opacity:.7">Mobile variant</span></a>
+      <a href="Sitemap.dc.html" style="border:2px solid var(--cream);padding:14px 16px;min-height:44px;display:flex;flex-direction:column;gap:3px;text-decoration:none;color:var(--cream)" style-hover="background:var(--cream);color:var(--ink)"><span style="font-family:var(--font-display);font-size:1rem;text-transform:uppercase">Sitemap — desktop</span><span style="font-size:0.8125rem;opacity:.7">This index at 1200px</span></a>
+    </div>
+  </div>
+</section>
+</sc-if>
+</div></div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showWorkingFiles&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Sitemap&quot;},&quot;viewport&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;desktop&quot;,&quot;mobile&quot;],&quot;default&quot;:&quot;desktop&quot;,&quot;tsType&quot;:&quot;'desktop'|'mobile'&quot;,&quot;section&quot;:&quot;Viewport&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return { isDesktop: (this.props.viewport ?? 'desktop') !== 'mobile', isMobile: (this.props.viewport ?? 'desktop') === 'mobile', showWork: this.props.showWorkingFiles ?? true };
+  }
+}
+</script>
+</body>
+</html>

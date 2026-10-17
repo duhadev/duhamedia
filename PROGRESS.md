@@ -4,7 +4,7 @@
 **Phase:** 1 — Restructure & pipeline foundation: boot checklist PASSED 2026-10-17; committed + pushed
 **Local dev:** `docker compose up -d` (Postgres 127.0.0.1:5433) + `pnpm dev` → http://localhost:3000, admin at /admin (test admin `test+gate@duhamedia.com`, creds in local `.env` `DEV_ADMIN_*`)
 **Installed versions:** payload@3.91.0 (all @payloadcms/* 3.91.0 lockstep), next@16.3.8, react 19.2.6, pnpm 11.28.3, image node:24-alpine
-**Staging:** none yet (OPS_REQUESTS #1)
+**Staging:** none yet (OPS_REQUESTS #1). Image `ghcr.io/duhadev/duhamedia:sha-e061dd8…` / `:main` built + pushed by CI 2026-10-17
 **Production:** old site on Vercel
 **Last session ended:** — (session 1 in progress, 2026-10-17)
 
@@ -54,9 +54,11 @@ Append-only. New sessions: read this before asking the human anything.
 | 2026-10-17 | `next.config.ts` `agentRules: false` — Next 16.3 `next dev` appended rules to CLAUDE.md; reverted to the human's version byte-for-byte | Phase 1 incident |
 | 2026-10-17 | Old-site live secrets moved `.env.local` → `.env.local.old-site` (gitignored, never committed); human to revoke Neon/Blob/old Resend keys and delete | Phase 1 |
 | 2026-10-17 | **Removed old site** — full list in `docs/dev.md` → Restructure log | Phase 1 |
+| 2026-10-17 | Claude Design project imported to `design-reference/project/` (87 files, sizes verified) | via claude_design MCP + Playwright |
+| 2026-10-17 | Playwright MCP pinned `@playwright/mcp@0.0.83 --executable-path /usr/bin/chromium` (no Google Chrome on laptop) | human ran |
 | 2026-10-17 | Local Postgres image provisional `postgres:17-alpine` until server major is known; local port 5433 | OPS #6 open |
 
 ## Session handoff
-- **In flight:** CI first run on push (measure Actions minutes).
+- **In flight:** nothing. First CI run green (~5 billed min/push).
 - **Next up:** session restart (MCPs) → import Claude Design project → write `design-reference/MERGED.md` → Phase 2 (schema-architect → SCHEMA.md → Gate S).
-- **Blockers:** Playwright + `claude_design` MCPs added 2026-10-17 (local config) — live after `/design-login` + session restart; then import design project; OPS_REQUESTS #1–#6 unanswered; postal address (first broadcast only).
+- **Blockers:** OPS_REQUESTS #1–#6 unanswered; postal address (first broadcast only).

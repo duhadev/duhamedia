@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/styles.css">
+  <script src="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/_ds_bundle.js"></script>
+  <style>:root{/*fade-edge*/--cream:#FFFFFF;--gray-light:#F5F5F4;--accent-primary:#111111;--ground-accent:#C20E59;}</style>
+</helmet>
+<footer style="background:var(--ink);color:var(--cream);font-family:var(--font-body);font-weight:500">
+  <sc-if value="{{ isStandard }}" hint-placeholder-val="{{ true }}">
+    <div style="padding:32px 20px 26px;display:flex;flex-direction:column;gap:26px">
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <span style="display:flex;align-items:center;gap:10px"><img src="assets/logo-duha-01.png" alt="" style="width:28px;height:28px"><span style="font-family:var(--font-display);font-size:16px">DUHA MEDIA</span></span>
+        <div style="display:flex;gap:8px">
+          <input placeholder="you@store.com" style="flex:1;background:transparent;border:2px solid var(--cream);color:var(--cream);padding:12px;font-family:var(--font-body);font-size:15px;min-width:0">
+          <a href="Newsletter.dc.html" style="display:flex;align-items:center;justify-content:center;flex:none;min-height:48px;padding:0 18px;border:2px solid var(--cream);color:var(--cream);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.06em;text-decoration:none">Join</a>
+        </div>
+        <span style="font-size:13px;opacity:.6">One useful email a month. Numbers included.</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px 20px;border-top:1px solid rgba(250,247,242,.2);padding-top:24px">
+        <div style="display:flex;flex-direction:column;gap:10px;font-size:15px">
+          <span style="font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;opacity:.55">Pages</span>
+          <a href="Work.dc.html" style="color:var(--cream);text-decoration:none;opacity:.85">Work</a>
+          <a href="About.dc.html" style="color:var(--cream);text-decoration:none;opacity:.85">About</a>
+          <a href="Testimonials.dc.html" style="color:var(--cream);text-decoration:none;opacity:.85">Testimonials</a>
+          <a href="Book a Call.dc.html" style="color:var(--cream);text-decoration:none;opacity:.85">Book a Call</a>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;font-size:15px">
+          <span style="font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;opacity:.55">Resources</span>
+          <a href="Newsletter.dc.html" style="color:var(--cream);text-decoration:none;opacity:.85">Newsletter</a>
+          <a href="Review Hub.dc.html" style="color:var(--cream);text-decoration:none;opacity:.85">Review Hub</a>
+          <a href="FAQ.dc.html" style="color:var(--cream);text-decoration:none;opacity:.85">FAQ</a>
+          <a href="Contact.dc.html" style="color:var(--cream);text-decoration:none;opacity:.85">Contact</a>
+        </div>
+        <div style="grid-column:1/-1;display:flex;flex-direction:column;gap:10px;font-size:15px">
+          <span style="font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;opacity:.55">Services</span>
+          <span style="display:flex;flex-wrap:wrap;gap:6px 18px">
+            <a href="Shopify Theme Development.dc.html" style="color:var(--cream);text-decoration:none;opacity:.85">Shopify Theme Development</a>
+            <a href="Marketing.dc.html" style="color:var(--cream);text-decoration:none;opacity:.85">Marketing</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ isReduced }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:26px 20px;display:flex;flex-direction:column;gap:16px">
+      <span style="display:flex;align-items:center;gap:10px"><img src="assets/logo-duha-01.png" alt="" style="width:28px;height:28px"><span style="font-family:var(--font-display);font-size:16px">DUHA MEDIA</span></span>
+      <span style="display:flex;flex-wrap:wrap;gap:18px;font-size:15px">
+        <a href="Homepage.dc.html" style="color:var(--cream);text-decoration:none;opacity:.85">Home</a>
+        <a href="Work.dc.html" style="color:var(--cream);text-decoration:none;opacity:.85">Work</a>
+        <a href="FAQ.dc.html" style="color:var(--cream);text-decoration:none;opacity:.85">FAQ</a>
+        <a href="Contact.dc.html" style="color:var(--cream);text-decoration:none;opacity:.85">Contact</a>
+      </span>
+    </div>
+  </sc-if>
+  <div style="border-top:1px solid rgba(250,247,242,.2)">
+    <div style="padding:14px 20px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;font-size:12px;opacity:.55">
+      <span style="display:flex;flex-wrap:wrap;gap:14px">
+        <a href="Legal.dc.html" style="color:var(--cream);text-decoration:none">Privacy</a>
+        <a href="Legal.dc.html" style="color:var(--cream);text-decoration:none">Terms</a>
+        <a href="Legal.dc.html" style="color:var(--cream);text-decoration:none">Cookies</a>
+        <a href="Legal.dc.html" style="color:var(--cream);text-decoration:none">GDPR</a>
+      </span>
+      <span>© 2026 Duha Media LLC</span>
+    </div>
+  </div>
+</footer>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:520},&quot;variant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;standard&quot;,&quot;reduced&quot;,&quot;legal&quot;],&quot;default&quot;:&quot;standard&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const v = this.props.variant ?? 'standard';
+    return { isStandard: v === 'standard', isReduced: v === 'reduced' };
+  }
+}
+</script>
+</body>
+</html>

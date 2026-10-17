@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/styles.css">
+  <script src="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/_ds_bundle.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;}
+    body{margin:0;background:#DED9D0;color:var(--ink);font-family:var(--font-body);font-weight:500;}
+    a{color:var(--ink);}
+    a:hover{color:var(--accent-primary);}
+  </style>
+</helmet>
+
+<section data-screen-label="Turn 1 — About as article" style="padding:48px 40px 80px;display:flex;flex-direction:column;gap:32px">
+
+  <div style="display:flex;flex-direction:column;gap:6px;max-width:760px">
+    <span style="font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#6E6A63">Turn 1 · About page, rewritten as an article</span>
+    <h1 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.75rem;line-height:1.1;text-transform:uppercase">Three article treatments — <a href="#1a">1a</a> dispatch, <a href="#1b">1b</a> field notes, <a href="#1c">1c</a> on the record</h1>
+    <p style="margin:6px 0 0;font-size:0.9375rem;line-height:1.6;color:#3A3630">Each borrows the case-study article grammar: breadcrumb, dated meta rule, numbered sections, figures with captions, pull quotes, proof before the CTA. Desktop and mobile of each sit side by side; frames scroll.</p>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:56px;align-items:flex-start">
+
+    <div id="1a" style="display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:baseline;gap:12px">
+        <span style="background:var(--ink);color:#FFF;font-family:var(--font-display);font-size:0.875rem;padding:3px 10px">1a</span>
+        <span style="font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">Dispatch</span>
+        <span style="font-size:0.8125rem;color:#3A3630">Case-study grammar, applied to the company: in-short box, numbered sections, facts table.</span>
+      </div>
+      <div style="display:flex;gap:20px;align-items:flex-start">
+        <div style="width:1180px;height:1080px;overflow:auto;background:#FFF;box-shadow:0 2px 0 var(--ink)">
+          <dc-import name="SiteHeader" hint-size="100%,72px"></dc-import>
+          <dc-import name="About Article A" view="desktop" hint-size="100%,2400px"></dc-import>
+        </div>
+        <div style="width:390px;height:1080px;overflow:auto;background:#FFF;box-shadow:0 2px 0 var(--ink)">
+          <dc-import name="SiteHeaderMobile" hint-size="100%,60px"></dc-import>
+          <dc-import name="About Article A" view="mobile" hint-size="100%,3200px"></dc-import>
+        </div>
+      </div>
+    </div>
+
+    <div id="1b" style="display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:baseline;gap:12px">
+        <span style="background:var(--ink);color:#FFF;font-family:var(--font-display);font-size:0.875rem;padding:3px 10px">1b</span>
+        <span style="font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">Field notes</span>
+        <span style="font-size:0.8125rem;color:#3A3630">Sticky contents rail, inline stat row, running prose. Rail wraps above the text on mobile.</span>
+      </div>
+      <div style="display:flex;gap:20px;align-items:flex-start">
+        <div style="width:1180px;height:1080px;overflow:auto;background:#FFF;box-shadow:0 2px 0 var(--ink)">
+          <dc-import name="SiteHeader" hint-size="100%,72px"></dc-import>
+          <dc-import name="About Article B" view="desktop" hint-size="100%,2400px"></dc-import>
+        </div>
+        <div style="width:390px;height:1080px;overflow:auto;background:#FFF;box-shadow:0 2px 0 var(--ink)">
+          <dc-import name="SiteHeaderMobile" hint-size="100%,60px"></dc-import>
+          <dc-import name="About Article B" view="mobile" hint-size="100%,3200px"></dc-import>
+        </div>
+      </div>
+    </div>
+
+    <div id="1c" style="display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:baseline;gap:12px">
+        <span style="background:var(--ink);color:#FFF;font-family:var(--font-display);font-size:0.875rem;padding:3px 10px">1c</span>
+        <span style="font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">On the record</span>
+        <span style="font-size:0.8125rem;color:#3A3630">Nine questions, answered in transcript form. Reads fastest; scans like an interview.</span>
+      </div>
+      <div style="display:flex;gap:20px;align-items:flex-start">
+        <div style="width:1180px;height:1080px;overflow:auto;background:#FFF;box-shadow:0 2px 0 var(--ink)">
+          <dc-import name="SiteHeader" hint-size="100%,72px"></dc-import>
+          <dc-import name="About Article C" view="desktop" hint-size="100%,2400px"></dc-import>
+        </div>
+        <div style="width:390px;height:1080px;overflow:auto;background:#FFF;box-shadow:0 2px 0 var(--ink)">
+          <dc-import name="SiteHeaderMobile" hint-size="100%,60px"></dc-import>
+          <dc-import name="About Article C" view="mobile" hint-size="100%,3200px"></dc-import>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+</x-dc>
+</body>
+</html>

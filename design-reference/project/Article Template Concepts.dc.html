@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/effects.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+  <script src="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/_ds_bundle.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;}
+    :root{--cream:#FFFFFF;--gray-light:#F5F5F4;--accent-primary:#111111;--ground-accent:#C20E59;}
+    body{margin:0;background:#DED9D0;color:var(--ink);font-family:var(--font-body);font-weight:500;}
+    a{color:var(--ink);}
+    a:hover{color:var(--ground-accent);}
+  </style>
+</helmet>
+
+<section style="padding:48px 40px 80px;display:flex;flex-direction:column;gap:44px">
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <span style="font-weight:700;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gray-warm)">Article template</span>
+    <span style="font-family:var(--font-display);font-size:1.5rem;text-transform:uppercase">Three structures, all left-aligned</span>
+  </div>
+
+  <div id="1a" style="display:flex;flex-direction:column;gap:10px">
+    <span style="font-weight:700;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gray-warm)">1a — Sticky rail: contents, facts, CTA</span>
+    <div style="width:1200px;max-width:100%;background:var(--cream);border:1px solid rgba(17,17,17,.12)">
+      <div style="padding:56px 48px 0">
+        <span style="display:flex;flex-wrap:wrap;gap:8px 16px;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">
+          <span>Marketing</span><span>·</span><span>9 min read</span><span>·</span><span>Updated [date]</span>
+        </span>
+        <h1 style="margin:16px 0 0;font-family:var(--font-display);font-weight:400;font-size:clamp(2.25rem,4.5vw,3.25rem);line-height:1;text-transform:uppercase">What five freelancers actually cost you</h1>
+      </div>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:56px;padding:36px 48px 56px;border-top:2px solid var(--ink);margin-top:32px">
+        <div style="display:flex;flex-direction:column;gap:22px;font-size:1.0625rem;line-height:1.7">
+          <p style="margin:0;font-size:1.25rem;line-height:1.6;color:#3A3630">The invoices are the small part. When we audit a fragmented setup, the freelancer fees are usually the third-largest cost.</p>
+          <p style="margin:0">Every handoff between channels is a place where context dies. The email person does not know what the ads person tested last month, so the same offer gets relearned twice and neither result is trusted.</p>
+          <h2 style="margin:14px 0 0;font-family:var(--font-display);font-weight:400;font-size:1.75rem;line-height:1.1;text-transform:uppercase">Where the money actually goes</h2>
+          <p style="margin:0">Three costs sit underneath the invoice line, and none of them show up in a spreadsheet until you go looking. The third is the one owners argue with, and the one we can show from your own dashboards inside a week.</p>
+          <table style="width:100%;border-collapse:collapse;font-size:1rem;text-align:left">
+            <tbody>
+              <tr style="border-top:2px solid var(--ink)"><th scope="row" style="padding:14px 0;font-weight:500">Invoices, five contractors</th><td style="padding:14px 0;text-align:right;font-family:var(--font-display);white-space:nowrap">$8.2K/mo</td></tr>
+              <tr style="border-top:1px solid var(--border-divider)"><th scope="row" style="padding:14px 0;font-weight:500">Your time coordinating</th><td style="padding:14px 0;text-align:right;font-family:var(--font-display);white-space:nowrap">11 hrs/wk</td></tr>
+              <tr style="border-top:1px solid var(--border-divider);border-bottom:2px solid var(--ink)"><th scope="row" style="padding:14px 0;font-weight:500">Duplicated tests, annualized</th><td style="padding:14px 0;text-align:right;font-family:var(--font-display);white-space:nowrap;color:var(--ground-accent)">$31K</td></tr>
+            </tbody>
+          </table>
+          <p style="margin:0">Consolidation is not about firing people. It is about one place where the numbers live and one person accountable for what they say.</p>
+        </div>
+        <aside style="display:flex;flex-direction:column;gap:28px;position:sticky;top:24px;align-self:start">
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <span style="font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">On this page</span>
+            <a href="#1a" style="font-size:0.9375rem;text-decoration:none;border-left:2px solid var(--ground-accent);padding-left:12px;color:var(--ink)">The real bill</a>
+            <a href="#1a" style="font-size:0.9375rem;text-decoration:none;border-left:2px solid var(--border-divider);padding-left:12px;color:var(--gray-warm)">Where the money goes</a>
+            <a href="#1a" style="font-size:0.9375rem;text-decoration:none;border-left:2px solid var(--border-divider);padding-left:12px;color:var(--gray-warm)">Doing it yourself</a>
+            <a href="#1a" style="font-size:0.9375rem;text-decoration:none;border-left:2px solid var(--border-divider);padding-left:12px;color:var(--gray-warm)">Questions</a>
+          </div>
+          <div style="border-top:1px solid var(--border-divider);padding-top:20px;display:flex;flex-direction:column;gap:14px">
+            <span style="font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">The numbers</span>
+            <span style="display:flex;flex-direction:column"><span style="font-family:var(--font-display);font-size:2rem;line-height:1;color:var(--ground-accent)">$31K</span><span style="font-size:0.8125rem;color:var(--gray-warm)">Duplicated tests, annualized</span></span>
+            <span style="display:flex;flex-direction:column"><span style="font-family:var(--font-display);font-size:2rem;line-height:1">11 hrs</span><span style="font-size:0.8125rem;color:var(--gray-warm)">Your time coordinating, weekly</span></span>
+          </div>
+          <a href="Book a Call.dc.html" style="display:flex;align-items:center;justify-content:center;min-height:48px;background:var(--ink);color:var(--cream);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.06em;text-decoration:none">Book a Call</a>
+        </aside>
+      </div>
+      <div style="background:var(--gray-light);border-top:1px solid var(--border-divider);padding:32px 48px">
+        <span style="font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">Proof · FAQ · Newsletter · Final CTA follow, full width</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="1b" style="display:flex;flex-direction:column;gap:10px">
+    <span style="font-weight:700;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gray-warm)">1b — Labelled left gutter, no sticky rail</span>
+    <div style="width:1200px;max-width:100%;background:var(--cream);border:1px solid rgba(17,17,17,.12)">
+      <div style="padding:56px 48px 0">
+        <span style="display:flex;flex-wrap:wrap;gap:8px 16px;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">
+          <span>Marketing</span><span>·</span><span>9 min read</span><span>·</span><span>Updated [date]</span>
+        </span>
+        <h1 style="margin:16px 0 0;font-family:var(--font-display);font-weight:400;font-size:clamp(2.25rem,4.5vw,3.25rem);line-height:1;text-transform:uppercase">What five freelancers actually cost you</h1>
+        <p style="margin:20px 0 0;font-size:1.25rem;line-height:1.6;color:#3A3630">The invoices are the small part. When we audit a fragmented setup, the freelancer fees are usually the third-largest cost.</p>
+      </div>
+      <div style="padding:0 48px 56px;margin-top:36px">
+        <div style="display:grid;grid-template-columns:160px minmax(0,1fr);gap:32px;border-top:2px solid var(--ink);padding:28px 0">
+          <span style="font:700 12px ui-monospace,Menlo,monospace;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">01 · The real bill</span>
+          <div style="display:flex;flex-direction:column;gap:18px;font-size:1.0625rem;line-height:1.7">
+            <p style="margin:0">Every handoff between channels is a place where context dies. The email person does not know what the ads person tested last month, so the same offer gets relearned twice and neither result is trusted.</p>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:160px minmax(0,1fr);gap:32px;border-top:1px solid var(--border-divider);padding:28px 0">
+          <span style="font:700 12px ui-monospace,Menlo,monospace;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">02 · Where it goes</span>
+          <div style="display:flex;flex-direction:column;gap:18px;font-size:1.0625rem;line-height:1.7">
+            <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.75rem;line-height:1.1;text-transform:uppercase">Three costs under the invoice line</h2>
+            <p style="margin:0">None of them show up in a spreadsheet until you go looking. The third is the one owners argue with, and the one we can show from your own dashboards inside a week.</p>
+            <table style="width:100%;border-collapse:collapse;font-size:1rem;text-align:left">
+              <tbody>
+                <tr style="border-top:2px solid var(--ink)"><th scope="row" style="padding:14px 0;font-weight:500">Invoices, five contractors</th><td style="padding:14px 0;text-align:right;font-family:var(--font-display);white-space:nowrap">$8.2K/mo</td></tr>
+                <tr style="border-top:1px solid var(--border-divider)"><th scope="row" style="padding:14px 0;font-weight:500">Your time coordinating</th><td style="padding:14px 0;text-align:right;font-family:var(--font-display);white-space:nowrap">11 hrs/wk</td></tr>
+                <tr style="border-top:1px solid var(--border-divider);border-bottom:2px solid var(--ink)"><th scope="row" style="padding:14px 0;font-weight:500">Duplicated tests, annualized</th><td style="padding:14px 0;text-align:right;font-family:var(--font-display);white-space:nowrap;color:var(--ground-accent)">$31K</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:160px minmax(0,1fr);gap:32px;border-top:1px solid var(--border-divider);border-bottom:2px solid var(--ink);padding:28px 0">
+          <span style="font:700 12px ui-monospace,Menlo,monospace;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">03 · What to do</span>
+          <div style="display:flex;flex-direction:column;gap:18px;font-size:1.0625rem;line-height:1.7">
+            <p style="margin:0">Consolidation is not about firing people. It is about one place where the numbers live and one person accountable for what they say.</p>
+          </div>
+        </div>
+      </div>
+      <div style="background:var(--gray-light);border-top:1px solid var(--border-divider);padding:32px 48px">
+        <span style="font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">Proof · FAQ · Newsletter · Final CTA follow, full width</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="1c" style="display:flex;flex-direction:column;gap:10px">
+    <span style="font-weight:700;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gray-warm)">1c — Split header, full-width body</span>
+    <div style="width:1200px;max-width:100%;background:var(--cream);border:1px solid rgba(17,17,17,.12)">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:40px 48px;align-items:end;padding:56px 48px 32px">
+        <div>
+          <span style="display:flex;flex-wrap:wrap;gap:8px 16px;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">
+            <span>Marketing</span><span>·</span><span>9 min read</span><span>·</span><span>Updated [date]</span>
+          </span>
+          <h1 style="margin:16px 0 0;font-family:var(--font-display);font-weight:400;font-size:clamp(2.25rem,4.5vw,3.25rem);line-height:1;text-transform:uppercase">What five freelancers actually cost you</h1>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px;border-left:2px solid var(--ink);padding-left:24px">
+          <span style="font-family:var(--font-display);font-size:2.5rem;line-height:1;color:var(--ground-accent)">$31K</span>
+          <span style="font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">Duplicated tests, annualized — the cost nobody invoices</span>
+        </div>
+      </div>
+      <div style="padding:32px 48px 56px;border-top:2px solid var(--ink)">
+        <p style="margin:0;font-size:1.375rem;line-height:1.5;color:#3A3630">The invoices are the small part. When we audit a fragmented setup, the freelancer fees are usually the third-largest cost.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:40px 48px;margin-top:32px;font-size:1.0625rem;line-height:1.7">
+          <div style="display:flex;flex-direction:column;gap:18px">
+            <p style="margin:0">Every handoff between channels is a place where context dies. The email person does not know what the ads person tested last month, so the same offer gets relearned twice and neither result is trusted.</p>
+            <h2 style="margin:8px 0 0;font-family:var(--font-display);font-weight:400;font-size:1.75rem;line-height:1.1;text-transform:uppercase">Where the money actually goes</h2>
+            <p style="margin:0">Three costs sit underneath the invoice line, and none of them show up in a spreadsheet until you go looking.</p>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:18px">
+            <p style="margin:0">The third is the one owners argue with, and the one we can show from your own dashboards inside a week.</p>
+            <p style="margin:0">Consolidation is not about firing people. It is about one place where the numbers live and one person accountable for what they say.</p>
+            <table style="width:100%;border-collapse:collapse;font-size:1rem;text-align:left">
+              <tbody>
+                <tr style="border-top:2px solid var(--ink)"><th scope="row" style="padding:14px 0;font-weight:500">Invoices, five contractors</th><td style="padding:14px 0;text-align:right;font-family:var(--font-display);white-space:nowrap">$8.2K/mo</td></tr>
+                <tr style="border-top:1px solid var(--border-divider);border-bottom:2px solid var(--ink)"><th scope="row" style="padding:14px 0;font-weight:500">Your time coordinating</th><td style="padding:14px 0;text-align:right;font-family:var(--font-display);white-space:nowrap">11 hrs/wk</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div style="background:var(--gray-light);border-top:1px solid var(--border-divider);padding:32px 48px">
+        <span style="font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">Proof · FAQ · Newsletter · Final CTA follow, full width</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+</x-dc>
+</body>
+</html>

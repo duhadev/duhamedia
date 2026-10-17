@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+  <script src="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/_ds_bundle.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;}
+    body{margin:0;background:#DED9D0;color:var(--ink);font-family:var(--font-body);font-weight:500;}
+    :root{--cream:#FFFFFF;--gray-light:#F5F5F4;--accent-primary:#111111;--ground-accent:#C20E59;--wine:#C20E59;}
+    a{color:var(--ink);}
+    a:hover{color:var(--accent-primary);}
+  </style>
+</helmet>
+
+<section data-screen-label="Turn 1 — Recent issues display types" style="padding:48px 40px 80px;display:flex;flex-direction:column;gap:40px">
+
+  <div style="display:flex;flex-direction:column;gap:6px;max-width:760px">
+    <span style="font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#6E6A63">Turn 1 · Newsletter — "Recent issues"</span>
+    <h1 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.75rem;line-height:1.1;text-transform:uppercase">Four display types — <a href="#1a">1a</a>, <a href="#1b">1b</a>, <a href="#1c">1c</a>, <a href="#1d">1d</a></h1>
+    <p style="margin:6px 0 0;font-size:0.9375rem;line-height:1.6;color:#3A3630">Desktop at 1180px. Same placeholder content in each so the layout is what differs. Live page currently runs 1a's ancestor (three bordered cards).</p>
+  </div>
+
+  <!-- 1a ledger rows -->
+  <div id="1a" style="display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+      <span style="background:var(--ink);color:#FFF;font-family:var(--font-display);font-size:0.875rem;padding:3px 10px">1a</span>
+      <span style="font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">Ledger rows</span>
+      <span style="font-size:0.8125rem;color:#3A3630">Archive as a table: issue no, subject, the number it centers on, read link. Scales to 50 issues.</span>
+    </div>
+    <div style="width:1180px;flex-shrink:0;background:var(--gray-light);padding:64px 48px">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">Recent issues</x-import>
+      <div style="margin-top:28px;border-top:2px solid var(--ink)">
+        <div style="display:grid;grid-template-columns:96px 1fr 160px 120px;align-items:center;gap:24px;padding:18px 0;border-bottom:1px solid var(--border-divider)">
+          <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">012</span>
+          <span style="font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">[The email flow that pays the ad bill]</span>
+          <span style="font-family:var(--font-display);font-size:1.125rem;color:var(--wine)">[metric]</span>
+          <a href="Newsletter.dc.html" style="justify-self:end;font-weight:700;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none">Read →</a>
+        </div>
+        <div style="display:grid;grid-template-columns:96px 1fr 160px 120px;align-items:center;gap:24px;padding:18px 0;border-bottom:1px solid var(--border-divider)">
+          <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">011</span>
+          <span style="font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">[What broke when the pixel lied]</span>
+          <span style="font-family:var(--font-display);font-size:1.125rem;color:var(--wine)">[metric]</span>
+          <a href="Newsletter.dc.html" style="justify-self:end;font-weight:700;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none">Read →</a>
+        </div>
+        <div style="display:grid;grid-template-columns:96px 1fr 160px 120px;align-items:center;gap:24px;padding:18px 0;border-bottom:2px solid var(--ink)">
+          <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">010</span>
+          <span style="font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">[The handover checklist, published]</span>
+          <span style="font-family:var(--font-display);font-size:1.125rem;color:var(--wine)">[metric]</span>
+          <a href="Newsletter.dc.html" style="justify-self:end;font-weight:700;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none">Read →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1b featured + list -->
+  <div id="1b" style="display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+      <span style="background:var(--ink);color:#FFF;font-family:var(--font-display);font-size:0.875rem;padding:3px 10px">1b</span>
+      <span style="font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">Latest, then archive</span>
+      <span style="font-size:0.8125rem;color:#3A3630">One issue gets the space and a real excerpt; older ones compress to a stacked list. Desktop + 390px mobile.</span>
+    </div>
+    <div style="display:flex;gap:20px;align-items:flex-start">
+    <div style="width:1180px;flex-shrink:0;background:var(--gray-light);padding:64px 48px">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">Recent issues</x-import>
+      <div style="margin-top:28px;display:grid;grid-template-columns:1.35fr 1fr;gap:28px;align-items:start">
+        <div style="background:var(--cream);border:2px solid var(--ink);box-shadow:var(--shadow-card);padding:34px 36px;display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+            <span style="font-weight:700;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">Latest — Issue 012</span>
+            <span style="background:var(--ground-accent);color:#FFFFFF;font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:4px 10px">New</span>
+          </div>
+          <h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.875rem;line-height:1.1;text-transform:uppercase">[The email flow that pays the ad bill]</h3>
+          <p style="margin:0;font-size:1rem;line-height:1.65">[Two-line excerpt placeholder — the setup, the number it moved, and what we'd do differently. Written like the issue itself, no teaser copy.]</p>
+          <a href="Newsletter.dc.html" style="margin-top:6px;align-self:flex-start;display:inline-flex;align-items:center;min-height:44px;padding:0 20px;border:2px solid var(--ink);font-weight:700;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">Read issue 012</a>
+        </div>
+        <div style="display:flex;flex-direction:column">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-bottom:10px">
+            <span style="font-weight:700;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">Previously</span>
+            <span style="font:700 11px ui-monospace,Menlo,monospace;color:var(--gray-warm)">11 issues</span>
+          </div>
+          <div style="border-top:2px solid var(--ink);padding:14px 0;display:grid;grid-template-columns:1fr auto;gap:4px 16px;border-bottom:1px solid var(--border-divider)">
+            <span style="font:700 11px ui-monospace,Menlo,monospace;color:var(--gray-warm)">ISSUE 011 · [DATE]</span>
+            <span style="font-family:var(--font-display);font-size:0.9375rem;color:var(--wine);grid-row:span 2;align-self:center">[metric]</span>
+            <span style="font-family:var(--font-display);font-size:1.0625rem;line-height:1.15;text-transform:uppercase">[What broke when the pixel lied]</span>
+            <p style="margin:2px 0 0;grid-column:1 / -1;font-size:0.875rem;line-height:1.55;color:var(--gray-warm)">[One-line summary placeholder.]</p>
+          </div>
+          <div style="padding:14px 0;display:grid;grid-template-columns:1fr auto;gap:4px 16px;border-bottom:1px solid var(--border-divider)">
+            <span style="font:700 11px ui-monospace,Menlo,monospace;color:var(--gray-warm)">ISSUE 010 · [DATE]</span>
+            <span style="font-family:var(--font-display);font-size:0.9375rem;color:var(--wine);grid-row:span 2;align-self:center">[metric]</span>
+            <span style="font-family:var(--font-display);font-size:1.0625rem;line-height:1.15;text-transform:uppercase">[The handover checklist, published]</span>
+            <p style="margin:2px 0 0;grid-column:1 / -1;font-size:0.875rem;line-height:1.55;color:var(--gray-warm)">[One-line summary placeholder.]</p>
+          </div>
+          <div style="border-bottom:2px solid var(--ink)"></div>
+          <a href="Newsletter.dc.html" style="margin-top:18px;align-self:flex-start;display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border:2px solid var(--ink);font-weight:700;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">Full archive →</a>
+        </div>
+      </div>
+    </div>
+
+    <div style="width:390px;flex-shrink:0;background:var(--gray-light);padding:40px 20px">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">Recent issues</x-import>
+      <div style="margin-top:22px;display:flex;flex-direction:column;gap:24px">
+        <div style="background:var(--cream);border:2px solid var(--ink);box-shadow:var(--shadow-card);padding:22px 20px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+            <span style="font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">Latest — Issue 012</span>
+            <span style="background:var(--ground-accent);color:#FFFFFF;font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:4px 9px">New</span>
+          </div>
+          <h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.375rem;line-height:1.1;text-transform:uppercase">[The email flow that pays the ad bill]</h3>
+          <p style="margin:0;font-size:0.9375rem;line-height:1.6">[Two-line excerpt placeholder — the setup, the number it moved, and what we'd do differently.]</p>
+          <a href="Newsletter.dc.html" style="margin-top:4px;display:flex;align-items:center;justify-content:center;min-height:48px;border:2px solid var(--ink);font-weight:700;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">Read issue 012</a>
+        </div>
+        <div style="display:flex;flex-direction:column">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-bottom:10px">
+            <span style="font-weight:700;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">Previously</span>
+            <span style="font:700 11px ui-monospace,Menlo,monospace;color:var(--gray-warm)">11 issues</span>
+          </div>
+          <div style="border-top:2px solid var(--ink);padding:14px 0;display:grid;grid-template-columns:1fr auto;gap:4px 12px;border-bottom:1px solid var(--border-divider)">
+            <span style="font:700 11px ui-monospace,Menlo,monospace;color:var(--gray-warm)">ISSUE 011 · [DATE]</span>
+            <span style="font-family:var(--font-display);font-size:0.9375rem;color:var(--wine);grid-row:span 2;align-self:center">[metric]</span>
+            <span style="font-family:var(--font-display);font-size:1rem;line-height:1.15;text-transform:uppercase">[What broke when the pixel lied]</span>
+            <p style="margin:2px 0 0;grid-column:1 / -1;font-size:0.875rem;line-height:1.55;color:var(--gray-warm)">[One-line summary placeholder.]</p>
+          </div>
+          <div style="padding:14px 0;display:grid;grid-template-columns:1fr auto;gap:4px 12px;border-bottom:2px solid var(--ink)">
+            <span style="font:700 11px ui-monospace,Menlo,monospace;color:var(--gray-warm)">ISSUE 010 · [DATE]</span>
+            <span style="font-family:var(--font-display);font-size:0.9375rem;color:var(--wine);grid-row:span 2;align-self:center">[metric]</span>
+            <span style="font-family:var(--font-display);font-size:1rem;line-height:1.15;text-transform:uppercase">[The handover checklist, published]</span>
+            <p style="margin:2px 0 0;grid-column:1 / -1;font-size:0.875rem;line-height:1.55;color:var(--gray-warm)">[One-line summary placeholder.]</p>
+          </div>
+          <a href="Newsletter.dc.html" style="margin-top:16px;display:flex;align-items:center;justify-content:center;min-height:48px;border:2px solid var(--ink);font-weight:700;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">Full archive →</a>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <!-- 1c inbox specimens -->
+  <div id="1c" style="display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+      <span style="background:var(--ink);color:#FFF;font-family:var(--font-display);font-size:0.875rem;padding:3px 10px">1c</span>
+      <span style="font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">Inbox specimens</span>
+      <span style="font-size:0.8125rem;color:#3A3630">Each issue shown as the email as it lands — from line, subject, preview text. Sells the product, not the archive.</span>
+    </div>
+    <div style="width:1180px;flex-shrink:0;background:var(--gray-light);padding:64px 48px">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">Recent issues</x-import>
+      <div style="margin-top:28px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px">
+        <div style="background:var(--cream);border:2px solid var(--ink)">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--border-divider);padding:12px 18px">
+            <span style="font-weight:700;font-size:11px;letter-spacing:0.06em">Duha Media</span>
+            <span style="font:700 10px ui-monospace,Menlo,monospace;color:var(--gray-warm)">012 · [DATE]</span>
+          </div>
+          <div style="padding:22px 20px 24px;display:flex;flex-direction:column;gap:10px">
+            <h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.125rem;line-height:1.15;text-transform:uppercase">[The email flow that pays the ad bill]</h3>
+            <p style="margin:0;font-size:0.9375rem;line-height:1.6;color:var(--gray-warm)">[Preview text placeholder — the number it centers on.]</p>
+            <span style="margin-top:6px;font-family:var(--font-display);font-size:1.5rem;color:var(--wine)">[metric]</span>
+          </div>
+        </div>
+        <div style="background:var(--cream);border:2px solid var(--ink)">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--border-divider);padding:12px 18px">
+            <span style="font-weight:700;font-size:11px;letter-spacing:0.06em">Duha Media</span>
+            <span style="font:700 10px ui-monospace,Menlo,monospace;color:var(--gray-warm)">011 · [DATE]</span>
+          </div>
+          <div style="padding:22px 20px 24px;display:flex;flex-direction:column;gap:10px">
+            <h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.125rem;line-height:1.15;text-transform:uppercase">[What broke when the pixel lied]</h3>
+            <p style="margin:0;font-size:0.9375rem;line-height:1.6;color:var(--gray-warm)">[Preview text placeholder — the number it centers on.]</p>
+            <span style="margin-top:6px;font-family:var(--font-display);font-size:1.5rem;color:var(--wine)">[metric]</span>
+          </div>
+        </div>
+        <div style="background:var(--cream);border:2px solid var(--ink)">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--border-divider);padding:12px 18px">
+            <span style="font-weight:700;font-size:11px;letter-spacing:0.06em">Duha Media</span>
+            <span style="font:700 10px ui-monospace,Menlo,monospace;color:var(--gray-warm)">010 · [DATE]</span>
+          </div>
+          <div style="padding:22px 20px 24px;display:flex;flex-direction:column;gap:10px">
+            <h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.125rem;line-height:1.15;text-transform:uppercase">[The handover checklist, published]</h3>
+            <p style="margin:0;font-size:0.9375rem;line-height:1.6;color:var(--gray-warm)">[Preview text placeholder — the number it centers on.]</p>
+            <span style="margin-top:6px;font-family:var(--font-display);font-size:1.5rem;color:var(--wine)">[metric]</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1d ink strip -->
+  <div id="1d" style="display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+      <span style="background:var(--ink);color:#FFF;font-family:var(--font-display);font-size:0.875rem;padding:3px 10px">1d</span>
+      <span style="font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">Ink strip</span>
+      <span style="font-size:0.8125rem;color:#3A3630">One dark panel, hairline-divided columns, oversized issue numerals. Loudest; reads as a section break.</span>
+    </div>
+    <div style="width:1180px;flex-shrink:0;background:var(--cream);padding:64px 48px">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">Recent issues</x-import>
+      <div style="margin-top:28px;background:var(--ink);color:var(--cream);display:grid;grid-template-columns:1fr 1fr 1fr">
+        <div style="padding:34px 30px;border-right:1px solid rgba(250,247,242,.22);display:flex;flex-direction:column;gap:12px">
+          <span style="font-family:var(--font-display);font-size:3rem;line-height:1;opacity:.35">012</span>
+          <h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.25rem;line-height:1.15;text-transform:uppercase">[The email flow that pays the ad bill]</h3>
+          <p style="margin:0;font-size:0.9375rem;line-height:1.6;opacity:.8">[One-line summary placeholder — the number it centers on.]</p>
+        </div>
+        <div style="padding:34px 30px;border-right:1px solid rgba(250,247,242,.22);display:flex;flex-direction:column;gap:12px">
+          <span style="font-family:var(--font-display);font-size:3rem;line-height:1;opacity:.35">011</span>
+          <h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.25rem;line-height:1.15;text-transform:uppercase">[What broke when the pixel lied]</h3>
+          <p style="margin:0;font-size:0.9375rem;line-height:1.6;opacity:.8">[One-line summary placeholder — the number it centers on.]</p>
+        </div>
+        <div style="padding:34px 30px;display:flex;flex-direction:column;gap:12px">
+          <span style="font-family:var(--font-display);font-size:3rem;line-height:1;color:var(--ground-accent)">010</span>
+          <h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.25rem;line-height:1.15;text-transform:uppercase">[The handover checklist, published]</h3>
+          <p style="margin:0;font-size:0.9375rem;line-height:1.6;opacity:.8">[One-line summary placeholder — the number it centers on.]</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+</x-dc>
+</body>
+</html>

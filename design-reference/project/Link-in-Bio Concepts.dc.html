@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+  <script src="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/_ds_bundle.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;}
+    body{margin:0;background:#DED9D0;color:var(--ink);font-family:var(--font-body);font-weight:500;}
+    :root{--cream:#FFFFFF;--gray-light:#F5F5F4;--accent-primary:#111111;--ground-accent:#C20E59;--wine:#C20E59;}
+    a{color:var(--ink);}
+    a:hover{color:var(--accent-primary);}
+  </style>
+</helmet>
+
+<section data-screen-label="Turn 1 — Link-in-bio versions" style="padding:48px 40px 80px;display:flex;flex-direction:column;gap:32px">
+
+  <div style="display:flex;flex-direction:column;gap:6px;max-width:760px">
+    <span style="font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#6E6A63">Turn 1 · Link-in-Bio</span>
+    <h1 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.75rem;line-height:1.1;text-transform:uppercase">Three versions — <a href="#1a">1a</a> ledger, <a href="#1b">1b</a> ink, <a href="#1c">1c</a> proof-first</h1>
+    <p style="margin:6px 0 0;font-size:0.9375rem;line-height:1.6;color:#3A3630">All at 390px, one screen deep before scroll. Live page today is a centered stack of bordered rows.</p>
+  </div>
+
+  <div style="display:flex;gap:40px;align-items:flex-start;flex-wrap:wrap">
+
+    <!-- 1a -->
+    <div id="1a" style="display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:baseline;gap:12px">
+        <span style="background:var(--ink);color:#FFF;font-family:var(--font-display);font-size:0.875rem;padding:3px 10px">1a</span>
+        <span style="font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">Ledger</span>
+      </div>
+      <p style="margin:0;max-width:390px;font-size:0.8125rem;line-height:1.55;color:#3A3630">Left-aligned, numbered rows on hairlines. Reads like the site's tables — least "linktree", most Duha.</p>
+      <div style="width:390px;flex-shrink:0;background:var(--cream);box-shadow:0 2px 0 var(--ink);padding:36px 24px 24px;display:flex;flex-direction:column;gap:28px;min-height:780px;position:relative;overflow:hidden;isolation:isolate">
+        <div aria-hidden="true" style="position:absolute;right:-90px;top:-60px;width:220px;height:220px;background:var(--ground-accent);-webkit-mask-image:url('assets/logo.png');-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;mask-image:url('assets/logo.png');mask-size:contain;mask-repeat:no-repeat;z-index:-1"></div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <img src="assets/logo-duha-01.png" alt="Duha Media" style="width:44px;height:44px">
+          <div>
+            <div style="font-family:var(--font-display);font-size:1.125rem">DUHA MEDIA</div>
+            <div style="font-size:0.8125rem;color:var(--gray-warm)">Chicago · Ecommerce growth</div>
+          </div>
+        </div>
+        <p style="margin:0;font-size:1rem;line-height:1.55">One team builds the store, runs the engine, then hands it to yours.</p>
+        <a href="Book a Call.dc.html" style="display:flex;flex-direction:column;gap:6px;background:var(--ink);color:var(--cream);padding:22px 20px;text-decoration:none" style-hover="color:var(--cream);background:var(--wine)">
+          <span style="font-family:var(--font-display);font-size:1.25rem;text-transform:uppercase">Book a strategy call</span>
+          <span style="font-size:0.875rem;opacity:.85">30 min · your numbers, straight answers</span>
+        </a>
+        <div style="display:flex;flex-direction:column">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;padding-bottom:10px">
+            <span style="font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">Start here</span>
+            <span style="font:700 10px ui-monospace,Menlo,monospace;color:var(--wine)">3 of 7 slots</span>
+          </div>
+          <a href="Newsletter.dc.html" style="border-top:2px solid var(--ink);border-bottom:1px solid var(--border-divider);padding:14px 0;display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:12px;text-decoration:none">
+            <span style="font:700 11px ui-monospace,Menlo,monospace;color:var(--gray-warm)">01</span>
+            <span><span style="display:block;font-family:var(--font-display);font-size:1rem;text-transform:uppercase">The newsletter</span><span style="display:block;margin-top:2px;font-size:0.8125rem;color:var(--gray-warm)">One useful email a month</span></span>
+            <span style="font-size:14px"><i class="ph-bold ph-arrow-right"></i></span>
+          </a>
+          <a href="Work.dc.html" style="border-bottom:1px solid var(--border-divider);padding:14px 0;display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:12px;text-decoration:none">
+            <span style="font:700 11px ui-monospace,Menlo,monospace;color:var(--gray-warm)">02</span>
+            <span><span style="display:block;font-family:var(--font-display);font-size:1rem;text-transform:uppercase">The work</span><span style="display:block;margin-top:2px;font-size:0.8125rem;color:var(--gray-warm)">Numbers clients signed off on</span></span>
+            <span style="font-size:14px"><i class="ph-bold ph-arrow-right"></i></span>
+          </a>
+          <a href="MKT-SEO Article.dc.html" style="border-bottom:2px solid var(--ink);padding:14px 0;display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:12px;text-decoration:none">
+            <span style="font:700 11px ui-monospace,Menlo,monospace;color:var(--gray-warm)">03</span>
+            <span><span style="display:block;font-family:var(--font-display);font-size:1rem;text-transform:uppercase">Current push</span><span style="display:block;margin-top:2px;font-size:0.8125rem;color:var(--gray-warm)">The real cost of five freelancers</span></span>
+            <span style="font-size:14px"><i class="ph-bold ph-arrow-right"></i></span>
+          </a>
+        </div>
+        <div style="display:flex;gap:10px">
+          <a href="#" style="flex:1;display:flex;align-items:center;justify-content:center;min-height:48px;border:1px solid var(--border-divider);text-decoration:none;font-size:18px"><i class="ph-bold ph-linkedin-logo"></i></a>
+          <a href="#" style="flex:1;display:flex;align-items:center;justify-content:center;min-height:48px;border:1px solid var(--border-divider);text-decoration:none;font-size:18px"><i class="ph-bold ph-instagram-logo"></i></a>
+          <a href="#" style="flex:1;display:flex;align-items:center;justify-content:center;min-height:48px;border:1px solid var(--border-divider);text-decoration:none;font-size:18px"><i class="ph-bold ph-youtube-logo"></i></a>
+        </div>
+        <div style="margin-top:auto;border-top:1px solid var(--border-divider);padding-top:14px;display:flex;justify-content:space-between;font-size:12px;color:var(--gray-warm)">
+          <span>© 2026 Duha Media LLC</span>
+          <span style="display:flex;gap:12px"><a href="Legal.dc.html" style="color:var(--gray-warm);text-decoration:none">Privacy</a><a href="Legal.dc.html" style="color:var(--gray-warm);text-decoration:none">Terms</a></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1b -->
+    <div id="1b" style="display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:baseline;gap:12px">
+        <span style="background:var(--ink);color:#FFF;font-family:var(--font-display);font-size:0.875rem;padding:3px 10px">1b</span>
+        <span style="font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">Ink</span>
+      </div>
+      <p style="margin:0;max-width:390px;font-size:0.8125rem;line-height:1.55;color:#3A3630">Full dark screen, wine CTA, cream outline rows. Highest contrast in a feed; matches the footer's inversion.</p>
+      <div style="width:390px;flex-shrink:0;background:var(--ink);color:var(--cream);box-shadow:0 2px 0 var(--ink);padding:36px 24px 24px;display:flex;flex-direction:column;gap:26px;min-height:780px;position:relative;overflow:hidden;isolation:isolate">
+        <div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(250,247,242,.18) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(215deg,#000 15%,transparent 60%);mask-image:linear-gradient(215deg,#000 15%,transparent 60%);z-index:-1"></div>
+        <div aria-hidden="true" style="position:absolute;right:-100px;bottom:-80px;width:260px;height:260px;background:var(--ground-accent);opacity:.55;-webkit-mask-image:url('assets/logo.png');-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;mask-image:url('assets/logo.png');mask-size:contain;mask-repeat:no-repeat;z-index:-1"></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center">
+          <img src="assets/logo-duha-01.png" alt="Duha Media" style="width:60px;height:60px">
+          <span style="font-family:var(--font-display);font-size:1.25rem">DUHA MEDIA</span>
+          <p style="margin:0;font-size:0.9375rem;line-height:1.55;opacity:.85">Integrated ecommerce growth partner — Chicago. One team, one dashboard, a handover date.</p>
+        </div>
+        <a href="Book a Call.dc.html" style="display:flex;flex-direction:column;gap:6px;background:var(--wine);color:#FFFFFF;padding:24px 22px;text-decoration:none;text-align:center" style-hover="color:#FFFFFF;filter:brightness(.92)">
+          <span style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase">Book a strategy call</span>
+          <span style="font-size:0.875rem;opacity:.9">30 minutes. Your numbers.</span>
+        </a>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <a href="Newsletter.dc.html" style="display:flex;align-items:center;justify-content:space-between;gap:12px;border:2px solid var(--cream);color:var(--cream);padding:16px 18px;min-height:56px;text-decoration:none" style-hover="background:var(--cream);color:var(--ink)">
+            <span><span style="display:block;font-family:var(--font-display);font-size:1rem;text-transform:uppercase">The newsletter</span><span style="display:block;margin-top:2px;font-size:0.8125rem;opacity:.7">Monthly, numbers included</span></span>
+            <i class="ph-bold ph-arrow-right" style="font-size:16px"></i>
+          </a>
+          <a href="Work.dc.html" style="display:flex;align-items:center;justify-content:space-between;gap:12px;border:2px solid var(--cream);color:var(--cream);padding:16px 18px;min-height:56px;text-decoration:none" style-hover="background:var(--cream);color:var(--ink)">
+            <span><span style="display:block;font-family:var(--font-display);font-size:1rem;text-transform:uppercase">The work</span><span style="display:block;margin-top:2px;font-size:0.8125rem;opacity:.7">Signed-off client numbers</span></span>
+            <i class="ph-bold ph-arrow-right" style="font-size:16px"></i>
+          </a>
+          <a href="MKT-SEO Article.dc.html" style="display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid rgba(250,247,242,.4);color:var(--cream);padding:16px 18px;min-height:56px;text-decoration:none" style-hover="background:var(--cream);color:var(--ink)">
+            <span><span style="display:block;font-weight:700;font-size:0.9375rem">Current push</span><span style="display:block;margin-top:2px;font-size:0.8125rem;opacity:.7">The real cost of five freelancers</span></span>
+            <i class="ph-bold ph-arrow-right" style="font-size:16px"></i>
+          </a>
+        </div>
+        <div style="border-top:1px solid rgba(250,247,242,.3);border-bottom:1px solid rgba(250,247,242,.3);padding:14px 0;display:flex;align-items:center;justify-content:space-between;font-size:0.8125rem">
+          <span style="opacity:.7">Builds in progress</span>
+          <span style="font-family:var(--font-display);font-size:1rem;color:var(--ground-accent)">3 OF 7</span>
+        </div>
+        <div style="display:flex;gap:10px">
+          <a href="#" style="flex:1;display:flex;align-items:center;justify-content:center;min-height:48px;border:1px solid rgba(250,247,242,.4);color:var(--cream);text-decoration:none;font-size:18px" style-hover="background:var(--cream);color:var(--ink)"><i class="ph-bold ph-linkedin-logo"></i></a>
+          <a href="#" style="flex:1;display:flex;align-items:center;justify-content:center;min-height:48px;border:1px solid rgba(250,247,242,.4);color:var(--cream);text-decoration:none;font-size:18px" style-hover="background:var(--cream);color:var(--ink)"><i class="ph-bold ph-instagram-logo"></i></a>
+          <a href="#" style="flex:1;display:flex;align-items:center;justify-content:center;min-height:48px;border:1px solid rgba(250,247,242,.4);color:var(--cream);text-decoration:none;font-size:18px" style-hover="background:var(--cream);color:var(--ink)"><i class="ph-bold ph-youtube-logo"></i></a>
+        </div>
+        <div style="margin-top:auto;padding-top:14px;display:flex;justify-content:space-between;font-size:12px;opacity:.6">
+          <span>© 2026 Duha Media LLC</span>
+          <span style="display:flex;gap:12px"><a href="Legal.dc.html" style="color:var(--cream);text-decoration:none">Privacy</a><a href="Legal.dc.html" style="color:var(--cream);text-decoration:none">Terms</a></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1c -->
+    <div id="1c" style="display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:baseline;gap:12px">
+        <span style="background:var(--ink);color:#FFF;font-family:var(--font-display);font-size:0.875rem;padding:3px 10px">1c</span>
+        <span style="font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">Proof-first</span>
+      </div>
+      <p style="margin:0;max-width:390px;font-size:0.8125rem;line-height:1.55;color:#3A3630">Leads with a client number before any link. For cold social traffic that doesn't know the name yet.</p>
+      <div style="width:390px;flex-shrink:0;background:var(--cream);box-shadow:0 2px 0 var(--ink);padding:0 0 24px;display:flex;flex-direction:column;min-height:780px">
+        <div style="background:var(--gray-light);border-bottom:2px solid var(--ink);padding:28px 24px;display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden">
+          <div aria-hidden="true" style="position:absolute;right:-80px;top:-70px;width:220px;height:220px;background:var(--ground-accent);-webkit-mask-image:url('assets/logo.png');-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;mask-image:url('assets/logo.png');mask-size:contain;mask-repeat:no-repeat;z-index:0"></div>
+          <div style="position:relative;z-index:1;display:flex;align-items:center;gap:10px">
+            <img src="assets/logo-duha-01.png" alt="Duha Media" style="width:40px;height:40px">
+            <span style="font-family:var(--font-display);font-size:1.0625rem">DUHA MEDIA</span>
+          </div>
+          <div style="position:relative;z-index:1">
+            <span style="display:block;font-family:var(--font-display);font-size:4.5rem;line-height:0.92;letter-spacing:-0.02em;color:var(--wine)">+212%</span>
+            <span style="display:block;margin-top:8px;font-family:var(--font-display);font-size:1.125rem;line-height:1.15;text-transform:uppercase">Revenue · 12 months</span>
+          </div>
+        </div>
+        <div style="padding:24px;display:flex;flex-direction:column;gap:20px;flex:1">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);padding:14px 0">
+            <span style="font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">Slots open</span>
+            <span style="font-family:var(--font-display);font-size:1.75rem;line-height:1;color:var(--wine)">3/7</span>
+          </div>
+          <a href="Book a Call.dc.html" style="display:flex;align-items:center;justify-content:space-between;gap:14px;background:var(--ink);color:var(--cream);padding:24px 20px;text-decoration:none" style-hover="color:var(--cream);background:var(--wine)">
+            <span style="font-family:var(--font-display);font-size:1.5rem;line-height:1.05;text-transform:uppercase">Book a call</span>
+            <i class="ph-bold ph-arrow-up-right" style="font-size:26px"></i>
+          </a>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <span style="font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">Follow</span>
+            <a href="#" style="display:flex;align-items:center;gap:14px;background:var(--gray-light);padding:16px 18px;min-height:60px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">
+              <i class="ph-bold ph-linkedin-logo" style="font-size:24px"></i>
+              <span style="font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">@duhamedia</span>
+              <i class="ph-bold ph-arrow-up-right" style="font-size:16px;margin-left:auto"></i>
+            </a>
+            <a href="#" style="display:flex;align-items:center;gap:14px;background:var(--gray-light);padding:16px 18px;min-height:60px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">
+              <i class="ph-bold ph-instagram-logo" style="font-size:24px"></i>
+              <span style="font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">@duhamedia</span>
+              <i class="ph-bold ph-arrow-up-right" style="font-size:16px;margin-left:auto"></i>
+            </a>
+            <a href="#" style="display:flex;align-items:center;gap:14px;background:var(--gray-light);padding:16px 18px;min-height:60px;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">
+              <i class="ph-bold ph-youtube-logo" style="font-size:24px"></i>
+              <span style="font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">@duhamedia</span>
+              <i class="ph-bold ph-arrow-up-right" style="font-size:16px;margin-left:auto"></i>
+            </a>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <span style="font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">On the site</span>
+            <a href="Work.dc.html" style="display:flex;align-items:center;gap:14px;border:1px solid var(--border-divider);padding:18px;min-height:64px;text-decoration:none" style-hover="background:var(--gray-light)">
+              <i class="ph-bold ph-chart-line-up" style="font-size:24px;color:var(--wine)"></i>
+              <span style="font-family:var(--font-display);font-size:1.25rem;text-transform:uppercase">The work</span>
+              <i class="ph-bold ph-arrow-right" style="font-size:18px;margin-left:auto"></i>
+            </a>
+            <a href="Testimonials.dc.html" style="display:flex;align-items:center;gap:14px;border:1px solid var(--border-divider);padding:18px;min-height:64px;text-decoration:none" style-hover="background:var(--gray-light)">
+              <i class="ph-bold ph-quotes" style="font-size:24px;color:var(--wine)"></i>
+              <span style="font-family:var(--font-display);font-size:1.25rem;text-transform:uppercase">Clients</span>
+              <i class="ph-bold ph-arrow-right" style="font-size:18px;margin-left:auto"></i>
+            </a>
+            <a href="Newsletter.dc.html" style="display:flex;align-items:center;gap:14px;border:1px solid var(--border-divider);padding:18px;min-height:64px;text-decoration:none" style-hover="background:var(--gray-light)">
+              <i class="ph-bold ph-envelope-simple" style="font-size:24px;color:var(--wine)"></i>
+              <span style="font-family:var(--font-display);font-size:1.25rem;text-transform:uppercase">Newsletter</span>
+              <i class="ph-bold ph-arrow-right" style="font-size:18px;margin-left:auto"></i>
+            </a>
+          </div>
+          <div style="margin-top:auto;border-top:1px solid var(--border-divider);padding-top:14px;display:flex;justify-content:space-between;font-size:12px;color:var(--gray-warm)">
+            <span>© 2026 Duha Media LLC</span>
+            <span style="display:flex;gap:12px"><a href="Legal.dc.html" style="color:var(--gray-warm);text-decoration:none">Privacy</a><a href="Legal.dc.html" style="color:var(--gray-warm);text-decoration:none">Terms</a></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+</x-dc>
+</body>
+</html>

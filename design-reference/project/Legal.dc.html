@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/styles.css">
+  <script src="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/_ds_bundle.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;}
+    body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--font-body);font-weight:500;}
+    :root{/*fade-edge*/--cream:#FFFFFF;--gray-light:#F5F5F4;--accent-primary:#111111;--ground-accent:#C20E59;}
+    a{color:var(--ink);}
+    a:hover{color:var(--accent-primary);}
+  </style>
+</helmet>
+
+<sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+<dc-import name="SiteHeader" hint-size="100%,72px"></dc-import>
+
+<div style="background:var(--gray-light);border-bottom:var(--border-hairline)">
+  <div style="max-width:var(--container-max);margin:0 auto;padding:8px var(--container-pad);font-size:12px;color:var(--gray-warm)">[Legal template — Privacy / Terms / Cookies / GDPR share this layout. Structure only; content is counsel-provided, never generated.]</div>
+</div>
+
+<section data-screen-label="Legal document" style="background:var(--cream);padding:80px 0 96px;position:relative;overflow:hidden">
+  <div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.22) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(215deg,#000 15%,transparent 65%);mask-image:linear-gradient(215deg,#000 15%,transparent 65%);z-index:0"></div>
+  <div aria-hidden="true" style="position:absolute;right:-160px;top:-80px;width:340px;height:340px;background:var(--ground-accent);-webkit-mask-image:url('assets/logo.png');-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;mask-image:url('assets/logo.png');mask-size:contain;mask-repeat:no-repeat;z-index:0"></div>
+  <div style="position:relative;z-index:1;max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad);display:grid;grid-template-columns:240px 1fr;gap:64px;align-items:start">
+    <nav style="position:sticky;top:104px;display:flex;flex-direction:column;gap:2px;border-left:2px solid var(--ink);padding-left:0">
+      <span style="font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.08em;padding:8px 0 12px 20px;color:var(--gray-warm)">On this page</span>
+      <a href="#scope" style="padding:10px 20px;font-size:14px;text-decoration:none;min-height:44px;display:flex;align-items:center">1. Scope</a>
+      <a href="#data" style="padding:10px 20px;font-size:14px;text-decoration:none;min-height:44px;display:flex;align-items:center">2. Data we collect</a>
+      <a href="#use" style="padding:10px 20px;font-size:14px;text-decoration:none;min-height:44px;display:flex;align-items:center">3. How it's used</a>
+      <a href="#sharing" style="padding:10px 20px;font-size:14px;text-decoration:none;min-height:44px;display:flex;align-items:center">4. Sharing &amp; processors</a>
+      <a href="#rights" style="padding:10px 20px;font-size:14px;text-decoration:none;min-height:44px;display:flex;align-items:center">5. Your rights</a>
+      <a href="#contact" style="padding:10px 20px;font-size:14px;text-decoration:none;min-height:44px;display:flex;align-items:center">6. Contact</a>
+    </nav>
+    <article style="max-width:680px">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">Legal — [Privacy Policy]</x-import>
+      <h1 style="margin:16px 0 0;font-family:var(--font-display);font-weight:400;font-size:var(--text-h2);line-height:var(--leading-h2);text-transform:uppercase">[Document title]</h1>
+      <p style="margin:12px 0 0;font-size:0.875rem;color:var(--gray-warm)">Last updated: [date placeholder]</p>
+      <div style="display:flex;flex-direction:column;gap:40px;margin-top:48px;font-size:1.0625rem;line-height:1.7">
+        <div id="scope"><h2 style="margin:0 0 12px;font-family:var(--font-display);font-weight:400;font-size:1.25rem;text-transform:uppercase">1. Scope</h2><p style="margin:0">[Placeholder — counsel-provided content. This template defines structure and typography only.]</p></div>
+        <div id="data"><h2 style="margin:0 0 12px;font-family:var(--font-display);font-weight:400;font-size:1.25rem;text-transform:uppercase">2. Data we collect</h2><p style="margin:0">[Placeholder — counsel-provided content.]</p></div>
+        <div id="use"><h2 style="margin:0 0 12px;font-family:var(--font-display);font-weight:400;font-size:1.25rem;text-transform:uppercase">3. How it's used</h2><p style="margin:0">[Placeholder — counsel-provided content.]</p></div>
+        <div id="sharing"><h2 style="margin:0 0 12px;font-family:var(--font-display);font-weight:400;font-size:1.25rem;text-transform:uppercase">4. Sharing &amp; processors</h2><p style="margin:0">[Placeholder — counsel-provided content.]</p></div>
+        <div id="rights"><h2 style="margin:0 0 12px;font-family:var(--font-display);font-weight:400;font-size:1.25rem;text-transform:uppercase">5. Your rights</h2><p style="margin:0">[Placeholder — counsel-provided content.]</p></div>
+        <div id="contact"><h2 style="margin:0 0 12px;font-family:var(--font-display);font-weight:400;font-size:1.25rem;text-transform:uppercase">6. Contact</h2><p style="margin:0">[Placeholder — counsel-provided content. Routes to <a href="Contact.dc.html" style="font-weight:700;border-bottom:2px solid var(--ink);text-decoration:none">Contact</a>.]</p></div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<dc-import name="SiteFooter" variant="standard" hint-size="100%,420px"></dc-import>
+</sc-if>
+
+<sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+<div style="background:#DED9D0;min-height:100vh"><div style="max-width:390px;margin:0 auto;background:var(--cream);overflow-x:hidden;box-shadow:0 0 0 1px rgba(17,17,17,.15)">
+<dc-import name="SiteHeaderMobile" hint-size="100%,60px"></dc-import>
+
+<div style="background:var(--gray-light);border-bottom:var(--border-hairline)">
+  <div style="padding:8px 20px;font-size:12px;color:var(--gray-warm)">[Legal template — Privacy / Terms / Cookies / GDPR share this layout. Structure only; content is counsel-provided, never generated.]</div>
+</div>
+
+<section data-screen-label="Legal head" style="background:var(--cream);padding:44px 0 0;position:relative;overflow:hidden">
+  <div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.22) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(215deg,#000 15%,transparent 65%);mask-image:linear-gradient(215deg,#000 15%,transparent 65%);z-index:0"></div>
+  <div aria-hidden="true" style="position:absolute;right:-120px;top:-60px;width:240px;height:240px;background:var(--ground-accent);-webkit-mask-image:url('assets/logo.png');-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;mask-image:url('assets/logo.png');mask-size:contain;mask-repeat:no-repeat;z-index:0"></div>
+  <div style="position:relative;z-index:1;padding:0 20px">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">Legal — [Privacy Policy]</x-import>
+    <h1 style="margin:14px 0 0;font-family:var(--font-display);font-weight:400;font-size:1.75rem;line-height:1.08;text-transform:uppercase">[Document title]</h1>
+    <p style="margin:10px 0 0;font-size:0.875rem;color:var(--gray-warm)">Last updated: [date placeholder]</p>
+  </div>
+</section>
+
+<section data-screen-label="Section nav" style="background:var(--cream);border-bottom:var(--border-hairline);position:sticky;top:60px;z-index:10;margin-top:24px">
+  <div class="rail" style="display:flex;gap:4px;overflow-x:auto;padding:0 12px;scrollbar-width:none">
+    <a href="#scope" style="padding:13px 10px;font-size:13px;font-weight:700;text-decoration:none;min-height:44px;display:inline-flex;align-items:center;white-space:nowrap">1. Scope</a>
+    <a href="#data" style="padding:13px 10px;font-size:13px;font-weight:700;text-decoration:none;min-height:44px;display:inline-flex;align-items:center;white-space:nowrap">2. Data</a>
+    <a href="#use" style="padding:13px 10px;font-size:13px;font-weight:700;text-decoration:none;min-height:44px;display:inline-flex;align-items:center;white-space:nowrap">3. Use</a>
+    <a href="#sharing" style="padding:13px 10px;font-size:13px;font-weight:700;text-decoration:none;min-height:44px;display:inline-flex;align-items:center;white-space:nowrap">4. Sharing</a>
+    <a href="#rights" style="padding:13px 10px;font-size:13px;font-weight:700;text-decoration:none;min-height:44px;display:inline-flex;align-items:center;white-space:nowrap">5. Rights</a>
+    <a href="#contact" style="padding:13px 10px;font-size:13px;font-weight:700;text-decoration:none;min-height:44px;display:inline-flex;align-items:center;white-space:nowrap">6. Contact</a>
+  </div>
+</section>
+
+<section data-screen-label="Legal document" style="background:var(--cream);padding:36px 0 56px">
+  <article style="padding:0 20px;display:flex;flex-direction:column;gap:32px;font-size:1rem;line-height:1.7">
+    <div id="scope"><h2 style="margin:0 0 10px;font-family:var(--font-display);font-weight:400;font-size:1.125rem;text-transform:uppercase">1. Scope</h2><p style="margin:0">[Placeholder — counsel-provided content. This template defines structure and typography only.]</p></div>
+    <div id="data"><h2 style="margin:0 0 10px;font-family:var(--font-display);font-weight:400;font-size:1.125rem;text-transform:uppercase">2. Data we collect</h2><p style="margin:0">[Placeholder — counsel-provided content.]</p></div>
+    <div id="use"><h2 style="margin:0 0 10px;font-family:var(--font-display);font-weight:400;font-size:1.125rem;text-transform:uppercase">3. How it's used</h2><p style="margin:0">[Placeholder — counsel-provided content.]</p></div>
+    <div id="sharing"><h2 style="margin:0 0 10px;font-family:var(--font-display);font-weight:400;font-size:1.125rem;text-transform:uppercase">4. Sharing &amp; processors</h2><p style="margin:0">[Placeholder — counsel-provided content.]</p></div>
+    <div id="rights"><h2 style="margin:0 0 10px;font-family:var(--font-display);font-weight:400;font-size:1.125rem;text-transform:uppercase">5. Your rights</h2><p style="margin:0">[Placeholder — counsel-provided content.]</p></div>
+    <div id="contact"><h2 style="margin:0 0 10px;font-family:var(--font-display);font-weight:400;font-size:1.125rem;text-transform:uppercase">6. Contact</h2><p style="margin:0">[Placeholder — counsel-provided content. Routes to <a href="Contact.dc.html" style="font-weight:700;border-bottom:2px solid var(--ink);text-decoration:none">Contact</a>.]</p></div>
+  </article>
+</section>
+
+<dc-import name="SiteFooterMobile" variant="standard" hint-size="100%,620px"></dc-import>
+</div></div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;viewport&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;desktop&quot;,&quot;mobile&quot;],&quot;default&quot;:&quot;desktop&quot;,&quot;tsType&quot;:&quot;'desktop'|'mobile'&quot;,&quot;section&quot;:&quot;Viewport&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return { isDesktop: (this.props.viewport ?? 'desktop') !== 'mobile', isMobile: (this.props.viewport ?? 'desktop') === 'mobile' };
+  }
+}
+</script>
+</body>
+</html>

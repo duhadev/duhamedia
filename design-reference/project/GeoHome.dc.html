@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/effects.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+</helmet>
+<div style="width:390px;background:#FAFAF7;color:#111;font-family:var(--font-body);font-weight:500;box-shadow:0 0 0 1px rgba(17,17,17,.15)">
+
+<header style="display:flex;align-items:center;justify-content:space-between;height:60px;padding:0 20px;border-bottom:2px solid #111;background:#FAFAF7">
+  <span style="display:flex;align-items:center;gap:10px"><img src="assets/logo-duha-01.png" alt="" style="width:28px;height:28px"><span style="font-family:var(--font-display);font-size:15px;letter-spacing:0.01em">DUHA MEDIA</span></span>
+  <i class="ph-bold ph-list" style="font-size:22px"></i>
+</header>
+
+<section style="position:relative;overflow:hidden">
+  <sc-if value="{{ tO }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;right:-90px;top:-10px;width:280px;height:280px;transform:rotate(45deg);border:2px solid #C20E59"></div><div style="position:absolute;right:-50px;top:30px;width:200px;height:200px;transform:rotate(45deg);border:2px solid #C20E59"></div><div style="position:absolute;right:-10px;top:70px;width:120px;height:120px;transform:rotate(45deg);border:2px solid #C20E59"></div><div style="position:absolute;right:52px;top:132px;width:14px;height:14px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ tW }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;right:-140px;top:-40px;width:340px;height:340px;transform:rotate(45deg);background:rgba(194,14,89,.09)"></div><div style="position:absolute;right:-140px;top:-40px;width:340px;height:340px;transform:rotate(45deg);border:2px solid #C20E59"></div><div style="position:absolute;right:36px;top:230px;width:44px;height:44px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ tS }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;right:-150px;top:-70px;width:360px;height:360px;transform:rotate(45deg);background:repeating-linear-gradient(45deg,#C20E59 0 1.5px,transparent 1.5px 11px);opacity:.55"></div><div style="position:absolute;right:-150px;top:-70px;width:360px;height:360px;transform:rotate(45deg);border:2px solid #C20E59"></div></div></sc-if>
+  <sc-if value="{{ tD }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;right:-120px;top:-30px;width:300px;height:300px;transform:rotate(45deg);background:#C20E59"></div><div style="position:absolute;left:-60px;bottom:-70px;width:150px;height:150px;transform:rotate(45deg);border:2px solid #C20E59"></div></div></sc-if>
+  <sc-if value="{{ tF }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;right:-120px;top:-120px;width:420px;height:420px;transform:rotate(45deg);background-image:linear-gradient(45deg,#C20E59 25%,transparent 25% 75%,#C20E59 75%),linear-gradient(45deg,#C20E59 25%,transparent 25% 75%,#C20E59 75%);background-size:14px 14px;background-position:0 0,7px 7px;opacity:.14"></div><div style="position:absolute;right:30px;top:40px;width:70px;height:70px;transform:rotate(45deg);border:2px solid #C20E59"></div></div></sc-if>
+  <sc-if value="{{ tI }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:55%;top:-40%;width:1px;height:180%;background:rgba(17,17,17,.18);transform:rotate(45deg)"></div><div style="position:absolute;left:20%;top:-40%;width:1px;height:180%;background:rgba(17,17,17,.18);transform:rotate(45deg)"></div><span style="position:absolute;right:10px;top:26px;transform:rotate(45deg);transform-origin:right;font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(17,17,17,.45);white-space:nowrap">We cap at 7</span><div style="position:absolute;right:-70px;top:60px;width:250px;height:250px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ gSplit }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;right:-420px;top:260px;width:800px;height:800px;transform:rotate(45deg);background:#C20E59"></div><div style="position:absolute;left:-30px;top:-30px;width:70px;height:70px;transform:rotate(45deg);border:2px solid #C20E59"></div></div></sc-if>
+  <sc-if value="{{ gGridHero }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:25%;top:0;width:1px;height:100%;background:rgba(17,17,17,.15)"></div><div style="position:absolute;left:50%;top:0;width:1px;height:100%;background:rgba(17,17,17,.15)"></div><div style="position:absolute;left:75%;top:0;width:1px;height:100%;background:rgba(17,17,17,.15)"></div><div style="position:absolute;left:calc(25% - 4px);top:40px;width:9px;height:9px;transform:rotate(45deg);background:#C20E59"></div><div style="position:absolute;left:calc(75% - 4px);top:88px;width:9px;height:9px;transform:rotate(45deg);background:#C20E59"></div><div style="position:absolute;right:-40px;top:120px;width:150px;height:150px;transform:rotate(45deg);background:#C20E59"></div><span style="position:absolute;right:14px;top:12px;font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(17,17,17,.45)">41.88°N — 87.63°W</span></div></sc-if>
+  <sc-if value="{{ mDot }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.22) 1.2px,transparent 1.2px);background-size:22px 22px"></div><div style="position:absolute;right:-60px;top:100px;width:200px;height:200px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ mCell }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:linear-gradient(rgba(17,17,17,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(17,17,17,.12) 1px,transparent 1px);background-size:44px 44px"></div><div style="position:absolute;left:88px;top:132px;width:44px;height:44px;background:#C20E59"></div><div style="position:absolute;right:-60px;top:100px;width:200px;height:200px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ mX }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:repeating-linear-gradient(45deg,rgba(194,14,89,.18) 0 1px,transparent 1px 26px),repeating-linear-gradient(-45deg,rgba(194,14,89,.18) 0 1px,transparent 1px 26px)"></div><div style="position:absolute;right:-60px;top:100px;width:200px;height:200px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ mDia }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:linear-gradient(45deg,rgba(17,17,17,.07) 25%,transparent 25% 75%,rgba(17,17,17,.07) 75%),linear-gradient(45deg,rgba(17,17,17,.07) 25%,transparent 25% 75%,rgba(17,17,17,.07) 75%);background-size:10px 10px;background-position:0 0,5px 5px"></div><div style="position:absolute;right:-60px;top:100px;width:200px;height:200px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ mFadeHero }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.3) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(215deg,#000 15%,transparent 65%);mask-image:linear-gradient(215deg,#000 15%,transparent 65%)"></div><div style="position:absolute;right:-60px;top:100px;width:200px;height:200px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ mRule }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:linear-gradient(rgba(17,17,17,.12) 1px,transparent 1px);background-size:100% 26px"></div><div style="position:absolute;right:-60px;top:100px;width:200px;height:200px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ mSparse }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.3) 1.6px,transparent 1.6px);background-size:44px 44px"></div><div style="position:absolute;right:-60px;top:100px;width:200px;height:200px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ gBands }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;right:-80px;top:118px;width:300px;height:26px;border-radius:999px;background:#C20E59"></div><div style="position:absolute;right:-80px;top:154px;width:340px;height:26px;border-radius:999px;background:rgba(194,14,89,.65)"></div><div style="position:absolute;right:-80px;top:190px;width:260px;height:26px;border-radius:999px;background:rgba(194,14,89,.4)"></div><div style="position:absolute;right:-80px;top:226px;width:310px;height:26px;border-radius:999px;background:rgba(194,14,89,.18)"></div></div></sc-if>
+  <sc-if value="{{ gAxis }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:50%;top:-40%;width:2px;height:180%;background:repeating-linear-gradient(to bottom,#C20E59 0 8px,transparent 8px 18px);transform:rotate(45deg)"></div><div style="position:absolute;left:87px;top:167px;width:16px;height:16px;transform:rotate(45deg);background:#C20E59"></div><div style="position:absolute;left:181px;top:261px;width:28px;height:28px;transform:rotate(45deg);background:#C20E59"></div><div style="position:absolute;left:273px;top:353px;width:44px;height:44px;transform:rotate(45deg);border:2px solid #C20E59"></div></div></sc-if>
+  <div style="position:relative;padding:56px 20px 48px">
+    <span style="display:flex;align-items:center;gap:8px;font-weight:700;font-size:11px;letter-spacing:0.08em;text-transform:uppercase"><span style="width:9px;height:9px;background:#C20E59;transform:rotate(45deg);flex-shrink:0"></span>Ecommerce growth partner — Chicago</span>
+    <sc-if value="{{ heroPanel }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:20px;background:#FAFAF7;border:2px solid #111;box-shadow:6px 6px 0 #111;padding:22px 18px"><h1 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:2.25rem;line-height:1.04;text-transform:uppercase;letter-spacing:-0.01em">Your ecommerce growth team, until you don't need one.</h1></div>
+    </sc-if>
+    <sc-if value="{{ heroPanelBold }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:20px;background:#FAFAF7;border:2px solid #111;box-shadow:6px 6px 0 #111;padding:22px 18px"><h1 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:2.25rem;line-height:1.04;text-transform:uppercase;letter-spacing:-0.01em">Your ecommerce growth team, <span style="color:#C20E59">until you don't need one.</span></h1></div>
+    </sc-if>
+    <sc-if value="{{ heroHl }}" hint-placeholder-val="{{ false }}">
+      <h1 style="margin:18px 0 0;font-family:var(--font-display);font-weight:400;font-size:2.5rem;line-height:1.02;text-transform:uppercase;letter-spacing:-0.01em">Your ecommerce growth team, <span style="background:#C20E59;color:#FAF7F2;padding:0 6px;box-decoration-break:clone;-webkit-box-decoration-break:clone">until you don't need one.</span></h1>
+    </sc-if>
+    <sc-if value="{{ heroAc }}" hint-placeholder-val="{{ false }}">
+      <h1 style="margin:18px 0 0;font-family:var(--font-display);font-weight:400;font-size:2.5rem;line-height:1.02;text-transform:uppercase;letter-spacing:-0.01em">Your ecommerce growth team, <span style="color:#C20E59">until you don't need one.</span></h1>
+    </sc-if>
+    <sc-if value="{{ heroPlain }}" hint-placeholder-val="{{ true }}">
+      <h1 style="margin:18px 0 0;font-family:var(--font-display);font-weight:400;font-size:2.5rem;line-height:1.02;text-transform:uppercase;letter-spacing:-0.01em">Your ecommerce growth team, until you don't need one.</h1>
+    </sc-if>
+    <p style="margin:18px 0 0;font-size:1.0625rem;line-height:1.6;max-width:30ch">One team builds your store, runs your marketing, and trains yours to take over. Builds from $5K. Engines from $1K/mo.</p>
+    <span style="display:block;margin-top:12px;font-weight:700;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gray-warm)">Build · Operate · Hand over</span>
+    <sc-if value="{{ wineBtn }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;gap:12px;margin-top:28px">
+        <span style="flex:1;display:flex;align-items:center;justify-content:center;min-height:52px;background:#C20E59;color:#FAF7F2;font-weight:700;font-size:15px;box-shadow:0 2px 0 #111">Book a Call</span>
+        <span style="flex:1;display:flex;align-items:center;justify-content:center;min-height:52px;border:2px solid #111;font-weight:700;font-size:15px;background:#FAFAF7">See the Work</span>
+      </div>
+    </sc-if>
+    <sc-if value="{{ inkBtn }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;gap:12px;margin-top:28px">
+        <span style="flex:1;display:flex;align-items:center;justify-content:center;min-height:52px;background:#111;color:#FAF7F2;font-weight:700;font-size:15px;box-shadow:0 2px 0 #111">Book a Call</span>
+        <span style="flex:1;display:flex;align-items:center;justify-content:center;min-height:52px;border:2px solid #111;font-weight:700;font-size:15px;background:#FAFAF7">See the Work</span>
+      </div>
+    </sc-if>
+  </div>
+</section>
+
+<section style="border-top:1px solid rgba(138,133,125,.35);border-bottom:1px solid rgba(138,133,125,.35);background:#F5F5F4">
+  <div style="display:grid;grid-template-columns:1fr 1fr">
+    <div style="padding:28px 18px;border-right:1px solid rgba(138,133,125,.35);text-align:center">
+      <sc-if value="{{ accent }}" hint-placeholder-val="{{ false }}"><span style="display:block;font-family:var(--font-display);font-size:3.25rem;line-height:.9;color:#C20E59">3</span></sc-if>
+      <sc-if value="{{ plainA }}" hint-placeholder-val="{{ true }}"><span style="display:block;font-family:var(--font-display);font-size:3.25rem;line-height:.9">3</span></sc-if>
+      <span style="display:block;margin-top:10px;font-family:var(--font-display);font-size:0.9375rem;text-transform:uppercase;letter-spacing:0.02em">Projects ongoing</span>
+      <span style="display:block;margin-top:8px;font-size:0.75rem;color:var(--gray-warm);line-height:1.4">Current load, shown transparently.</span>
+    </div>
+    <div style="padding:28px 18px;text-align:center">
+      <span style="display:block;font-family:var(--font-display);font-size:3.25rem;line-height:.9">7</span>
+      <span style="display:block;margin-top:10px;font-family:var(--font-display);font-size:0.9375rem;text-transform:uppercase;letter-spacing:0.02em">Max client capacity</span>
+      <span style="display:block;margin-top:8px;font-size:0.75rem;color:var(--gray-warm);line-height:1.4">The cap is our quality gate, not a countdown.</span>
+    </div>
+  </div>
+</section>
+
+<section style="padding:56px 20px">
+  <span style="display:flex;align-items:center;gap:8px;font-weight:700;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-warm)"><span style="width:9px;height:9px;background:#C20E59;transform:rotate(45deg);flex-shrink:0"></span>No studies live yet — the numbers we can show</span>
+  <sc-if value="{{ accent }}" hint-placeholder-val="{{ false }}"><h2 style="margin:14px 0 0;font-family:var(--font-display);font-weight:400;font-size:1.75rem;line-height:1.12;text-transform:uppercase">Numbers <span style="color:#C20E59">anyway.</span></h2></sc-if>
+  <sc-if value="{{ plainA }}" hint-placeholder-val="{{ true }}"><h2 style="margin:14px 0 0;font-family:var(--font-display);font-weight:400;font-size:1.75rem;line-height:1.12;text-transform:uppercase">Numbers anyway.</h2></sc-if>
+  <div style="margin-top:24px;border:2px solid #111">
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:16px 18px;border-bottom:1px solid rgba(138,133,125,.35)"><span style="font-weight:700;font-size:0.9375rem;text-transform:uppercase;letter-spacing:0.04em">Builds start</span><span style="font-family:var(--font-display);font-size:1.75rem">$5K</span></div>
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:16px 18px;border-bottom:1px solid rgba(138,133,125,.35)"><span style="font-weight:700;font-size:0.9375rem;text-transform:uppercase;letter-spacing:0.04em">Engines start</span><span style="font-family:var(--font-display);font-size:1.75rem">$1K<span style="font-size:1rem">/mo</span></span></div>
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:16px 18px"><span style="font-weight:700;font-size:0.9375rem;text-transform:uppercase;letter-spacing:0.04em">Client cap</span><span style="font-family:var(--font-display);font-size:1.75rem">7</span></div>
+  </div>
+</section>
+
+<sc-if value="{{ wineBand }}" hint-placeholder-val="{{ false }}">
+<section style="background:#C20E59;color:#FAF7F2">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px">
+    <span style="font-family:var(--font-display);font-size:1rem;line-height:1.15;text-transform:uppercase">One team. One dashboard. A handover date.</span>
+    <span style="display:flex;align-items:center;gap:8px;flex-shrink:0;font-weight:700;font-size:14px;white-space:nowrap">Book a Call <i class="ph-bold ph-arrow-right"></i></span>
+  </div>
+</section>
+</sc-if>
+<sc-if value="{{ inkBand }}" hint-placeholder-val="{{ true }}">
+<section style="background:#111;color:#FAF7F2">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px">
+    <span style="font-family:var(--font-display);font-size:1rem;line-height:1.15;text-transform:uppercase">One team. One dashboard. <span style="color:#FAF7F2">A handover date.</span></span>
+    <span style="display:flex;align-items:center;gap:8px;flex-shrink:0;font-weight:700;font-size:14px;white-space:nowrap">Book a Call <i class="ph-bold ph-arrow-right"></i></span>
+  </div>
+</section>
+</sc-if>
+
+<section style="position:relative;overflow:hidden;padding:56px 0">
+  <sc-if value="{{ tO }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:-110px;top:40px;width:200px;height:200px;transform:rotate(45deg);border:2px solid #C20E59"></div><div style="position:absolute;left:-70px;top:80px;width:120px;height:120px;transform:rotate(45deg);border:2px solid #C20E59"></div></div></sc-if>
+  <sc-if value="{{ tW }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:-110px;top:40px;width:200px;height:200px;transform:rotate(45deg);background:rgba(194,14,89,.09)"></div><div style="position:absolute;left:-110px;top:40px;width:200px;height:200px;transform:rotate(45deg);border:2px solid #C20E59"></div></div></sc-if>
+  <sc-if value="{{ tS }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true" style="position:absolute;left:-110px;top:40px;width:200px;height:200px;transform:rotate(45deg);background:repeating-linear-gradient(45deg,#C20E59 0 1.5px,transparent 1.5px 11px);opacity:.55"></div></sc-if>
+  <sc-if value="{{ tD }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:-60px;top:-60px;width:120px;height:120px;transform:rotate(45deg);background:#C20E59"></div><div style="position:absolute;left:30px;top:20px;width:16px;height:16px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ tF }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true" style="position:absolute;left:-120px;top:-20px;width:260px;height:260px;transform:rotate(45deg);background-image:linear-gradient(45deg,#C20E59 25%,transparent 25% 75%,#C20E59 75%),linear-gradient(45deg,#C20E59 25%,transparent 25% 75%,#C20E59 75%);background-size:14px 14px;background-position:0 0,7px 7px;opacity:.12"></div></sc-if>
+  <sc-if value="{{ tI }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:35%;top:-40%;width:1px;height:180%;background:rgba(17,17,17,.18);transform:rotate(-45deg)"></div><div style="position:absolute;left:-40px;top:-40px;width:110px;height:110px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ gSplit }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true" style="position:absolute;left:-460px;top:-460px;width:640px;height:640px;transform:rotate(45deg);background:#C20E59"></div></sc-if>
+  <sc-if value="{{ gGrid }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:25%;top:0;width:1px;height:100%;background:rgba(17,17,17,.15)"></div><div style="position:absolute;left:50%;top:0;width:1px;height:100%;background:rgba(17,17,17,.15)"></div><div style="position:absolute;left:75%;top:0;width:1px;height:100%;background:rgba(17,17,17,.15)"></div><div style="position:absolute;left:calc(50% - 4px);top:24px;width:9px;height:9px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ gGridB }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:25%;top:0;width:1px;height:100%;background:rgba(17,17,17,.15)"></div><div style="position:absolute;left:50%;top:0;width:1px;height:100%;background:rgba(17,17,17,.15)"></div><div style="position:absolute;left:75%;top:0;width:1px;height:100%;background:rgba(17,17,17,.15)"></div><div style="position:absolute;left:calc(25% - 11px);top:32px;width:22px;height:22px;transform:rotate(45deg);background:#C20E59"></div><div style="position:absolute;left:calc(75% - 8px);bottom:48px;width:16px;height:16px;transform:rotate(45deg);background:#C20E59"></div><span style="position:absolute;right:14px;top:12px;font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(17,17,17,.45)">02 / Services</span></div></sc-if>
+  <sc-if value="{{ gGridC }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true" style="position:absolute;left:calc(25% - 60px);top:-20px;width:120px;height:120px;transform:rotate(45deg);background:#C20E59"></div></sc-if>
+  <sc-if value="{{ gBands }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true" style="position:absolute;right:-120px;top:36px;width:300px;height:26px;border-radius:999px;background:rgba(194,14,89,.25)"></div></sc-if>
+  <sc-if value="{{ mDot }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.14) 1.2px,transparent 1.2px);background-size:22px 22px"></div></sc-if>
+  <sc-if value="{{ mCell }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:linear-gradient(rgba(17,17,17,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(17,17,17,.08) 1px,transparent 1px);background-size:44px 44px"></div></sc-if>
+  <sc-if value="{{ mX }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:repeating-linear-gradient(45deg,rgba(194,14,89,.1) 0 1px,transparent 1px 26px),repeating-linear-gradient(-45deg,rgba(194,14,89,.1) 0 1px,transparent 1px 26px)"></div></sc-if>
+  <sc-if value="{{ mDia }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:linear-gradient(45deg,rgba(17,17,17,.05) 25%,transparent 25% 75%,rgba(17,17,17,.05) 75%),linear-gradient(45deg,rgba(17,17,17,.05) 25%,transparent 25% 75%,rgba(17,17,17,.05) 75%);background-size:10px 10px;background-position:0 0,5px 5px"></div></sc-if>
+  <sc-if value="{{ mFade }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.22) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(145deg,#000 10%,transparent 60%);mask-image:linear-gradient(145deg,#000 10%,transparent 60%)"></div></sc-if>
+  <sc-if value="{{ fDown }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.22) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(#000,transparent 55%);mask-image:linear-gradient(#000,transparent 55%)"></div></sc-if>
+  <sc-if value="{{ fEdge }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.22) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(to bottom,#000 0,transparent 25%,transparent 75%,#000 100%);mask-image:linear-gradient(to bottom,#000 0,transparent 25%,transparent 75%,#000 100%)"></div></sc-if>
+  <sc-if value="{{ fRad }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.24) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:radial-gradient(circle at 0% 0%,#000 0,transparent 65%);mask-image:radial-gradient(circle at 0% 0%,#000 0,transparent 65%)"></div></sc-if>
+  <sc-if value="{{ mRule }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:linear-gradient(rgba(17,17,17,.08) 1px,transparent 1px);background-size:100% 26px"></div></sc-if>
+  <sc-if value="{{ mSparse }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.22) 1.6px,transparent 1.6px);background-size:44px 44px"></div></sc-if>
+  <sc-if value="{{ gAxis }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:50%;top:-40%;width:2px;height:180%;background:repeating-linear-gradient(to bottom,#C20E59 0 8px,transparent 8px 18px);transform:rotate(45deg)"></div><div style="position:absolute;right:40px;top:30px;width:20px;height:20px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <div style="position:relative;padding:0 20px">
+    <span style="display:flex;align-items:center;gap:8px;font-weight:700;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-warm)"><span style="width:9px;height:9px;background:#C20E59;transform:rotate(45deg);flex-shrink:0"></span>What we do</span>
+    <sc-if value="{{ accent }}" hint-placeholder-val="{{ false }}"><h2 style="margin:14px 0 0;font-family:var(--font-display);font-weight:400;font-size:1.75rem;line-height:1.12;text-transform:uppercase">We build it. <span style="color:#C20E59">Then we grow it.</span></h2></sc-if>
+    <sc-if value="{{ plainA }}" hint-placeholder-val="{{ true }}"><h2 style="margin:14px 0 0;font-family:var(--font-display);font-weight:400;font-size:1.75rem;line-height:1.12;text-transform:uppercase">We build it. Then we grow it.</h2></sc-if>
+    <div style="display:flex;flex-direction:column;gap:16px;margin-top:28px">
+      <div style="background:#FAFAF7;border:2px solid #111;padding:24px 20px;display:flex;flex-direction:column;gap:10px">
+        <span style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase">01 — We build it</span>
+        <p style="margin:0;font-size:1rem;line-height:1.6">Shopify store, built or rebuilt to convert. Half-built and not working? That's where most clients start. Builds from $5K.</p>
+        <span style="font-weight:700;font-size:14px;border-bottom:2px solid #111;align-self:flex-start;padding:4px 0">Shopify Theme Development →</span>
+      </div>
+      <div style="background:#FAFAF7;border:2px solid #111;padding:24px 20px;display:flex;flex-direction:column;gap:10px">
+        <span style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase">02 — Then we grow it</span>
+        <p style="margin:0;font-size:1rem;line-height:1.6">Email, ads, content, SEO, GBP, CRM — one team runs the whole engine, on one dashboard. Engines from $1K/mo.</p>
+        <span style="font-weight:700;font-size:14px;border-bottom:2px solid #111;align-self:flex-start;padding:4px 0">Marketing →</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="position:relative;overflow:hidden;background:#F5F5F4;padding:56px 0">
+  <sc-if value="{{ tO }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;right:-96px;bottom:-96px;width:280px;height:280px;transform:rotate(45deg);border:2px solid #C20E59"></div><div style="position:absolute;right:-40px;bottom:-40px;width:170px;height:170px;transform:rotate(45deg);border:2px solid #C20E59"></div><div style="position:absolute;right:16px;bottom:16px;width:60px;height:60px;transform:rotate(45deg);border:2px solid #C20E59"></div></div></sc-if>
+  <sc-if value="{{ tW }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;right:-70px;bottom:-70px;width:200px;height:200px;transform:rotate(45deg);background:rgba(194,14,89,.09)"></div><div style="position:absolute;right:-96px;bottom:-96px;width:280px;height:280px;transform:rotate(45deg);border:2px solid #C20E59"></div><div style="position:absolute;right:8px;bottom:104px;width:14px;height:14px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ tS }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;right:-70px;bottom:-70px;width:220px;height:220px;transform:rotate(45deg);background:repeating-linear-gradient(45deg,#C20E59 0 1.5px,transparent 1.5px 11px);opacity:.55"></div><div style="position:absolute;right:30px;bottom:20px;width:110px;height:110px;transform:rotate(45deg);border:2px solid #C20E59"></div></div></sc-if>
+  <sc-if value="{{ tD }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;right:-90px;bottom:-90px;width:220px;height:220px;transform:rotate(45deg);background:#C20E59"></div><div style="position:absolute;right:60px;bottom:60px;width:16px;height:16px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ tF }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;right:-130px;bottom:-130px;width:300px;height:300px;transform:rotate(45deg);background-image:linear-gradient(45deg,#C20E59 25%,transparent 25% 75%,#C20E59 75%),linear-gradient(45deg,#C20E59 25%,transparent 25% 75%,#C20E59 75%);background-size:14px 14px;background-position:0 0,7px 7px;opacity:.14"></div><div style="position:absolute;right:24px;bottom:110px;width:56px;height:56px;transform:rotate(45deg);border:2px solid #C20E59"></div></div></sc-if>
+  <sc-if value="{{ tI }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:60%;top:-40%;width:1px;height:180%;background:rgba(17,17,17,.18);transform:rotate(45deg)"></div><span style="position:absolute;left:20px;bottom:36px;transform:rotate(-45deg);transform-origin:left;font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(17,17,17,.45);white-space:nowrap">Build · Operate · Hand over</span><div style="position:absolute;right:-60px;bottom:-60px;width:150px;height:150px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ gSplit }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true" style="position:absolute;right:-460px;bottom:-460px;width:640px;height:640px;transform:rotate(45deg);background:#C20E59"></div></sc-if>
+  <sc-if value="{{ gGrid }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:25%;top:0;width:1px;height:100%;background:rgba(17,17,17,.15)"></div><div style="position:absolute;left:50%;top:0;width:1px;height:100%;background:rgba(17,17,17,.15)"></div><div style="position:absolute;left:75%;top:0;width:1px;height:100%;background:rgba(17,17,17,.15)"></div><div style="position:absolute;left:calc(25% - 4px);top:24px;width:9px;height:9px;transform:rotate(45deg);background:#C20E59"></div><div style="position:absolute;left:calc(75% - 4px);bottom:24px;width:9px;height:9px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ gGridB }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:25%;top:0;width:1px;height:100%;background:rgba(17,17,17,.15)"></div><div style="position:absolute;left:50%;top:0;width:1px;height:100%;background:rgba(17,17,17,.15)"></div><div style="position:absolute;left:75%;top:0;width:1px;height:100%;background:rgba(17,17,17,.15)"></div><div style="position:absolute;left:calc(75% - 6px);top:120px;width:12px;height:12px;transform:rotate(45deg);background:#C20E59"></div><div style="position:absolute;left:calc(75% - 9px);top:340px;width:18px;height:18px;transform:rotate(45deg);background:#C20E59"></div><div style="position:absolute;left:calc(75% - 13px);top:600px;width:26px;height:26px;transform:rotate(45deg);background:#C20E59"></div><span style="position:absolute;right:14px;top:12px;font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(17,17,17,.45)">03 / Process</span></div></sc-if>
+  <sc-if value="{{ gGridC }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:50%;top:0;width:1px;height:100%;background:rgba(17,17,17,.15)"></div><div style="position:absolute;right:-100px;bottom:-100px;width:220px;height:220px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ mDot }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.14) 1.2px,transparent 1.2px);background-size:22px 22px"></div><div style="position:absolute;right:-80px;bottom:-80px;width:180px;height:180px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ mCell }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:linear-gradient(rgba(17,17,17,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(17,17,17,.08) 1px,transparent 1px);background-size:44px 44px"></div><div style="position:absolute;right:44px;bottom:44px;width:88px;height:88px;background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ mX }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:repeating-linear-gradient(45deg,rgba(194,14,89,.1) 0 1px,transparent 1px 26px),repeating-linear-gradient(-45deg,rgba(194,14,89,.1) 0 1px,transparent 1px 26px)"></div><div style="position:absolute;right:-80px;bottom:-80px;width:180px;height:180px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ mDia }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:linear-gradient(45deg,rgba(17,17,17,.05) 25%,transparent 25% 75%,rgba(17,17,17,.05) 75%),linear-gradient(45deg,rgba(17,17,17,.05) 25%,transparent 25% 75%,rgba(17,17,17,.05) 75%);background-size:10px 10px;background-position:0 0,5px 5px"></div><div style="position:absolute;right:-80px;bottom:-80px;width:180px;height:180px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ mFade }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.22) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(35deg,#000 10%,transparent 60%);mask-image:linear-gradient(35deg,#000 10%,transparent 60%)"></div><div style="position:absolute;right:-80px;bottom:-80px;width:180px;height:180px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ fDown }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.22) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(#000,transparent 55%);mask-image:linear-gradient(#000,transparent 55%)"></div><div style="position:absolute;right:-80px;bottom:-80px;width:180px;height:180px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ fEdge }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.22) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(to bottom,#000 0,transparent 25%,transparent 75%,#000 100%);mask-image:linear-gradient(to bottom,#000 0,transparent 25%,transparent 75%,#000 100%)"></div><div style="position:absolute;right:-80px;bottom:-80px;width:180px;height:180px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ fRad }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.24) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:radial-gradient(circle at 100% 100%,#000 0,transparent 65%);mask-image:radial-gradient(circle at 100% 100%,#000 0,transparent 65%)"></div><div style="position:absolute;right:-80px;bottom:-80px;width:180px;height:180px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ mRule }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:linear-gradient(rgba(17,17,17,.08) 1px,transparent 1px);background-size:100% 26px"></div><div style="position:absolute;right:-80px;bottom:-80px;width:180px;height:180px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ mSparse }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.22) 1.6px,transparent 1.6px);background-size:44px 44px"></div><div style="position:absolute;right:-80px;bottom:-80px;width:180px;height:180px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ gBands }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:-100px;bottom:110px;width:280px;height:26px;border-radius:999px;background:rgba(194,14,89,.3)"></div><div style="position:absolute;left:-100px;bottom:74px;width:220px;height:26px;border-radius:999px;background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ gAxis }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:50%;top:-40%;width:2px;height:180%;background:repeating-linear-gradient(to bottom,#C20E59 0 8px,transparent 8px 18px);transform:rotate(45deg)"></div><div style="position:absolute;right:30px;bottom:40px;width:24px;height:24px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <div style="position:relative;padding:0 20px">
+    <span style="display:flex;align-items:center;gap:8px;font-weight:700;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-warm)"><span style="width:9px;height:9px;background:#C20E59;transform:rotate(45deg);flex-shrink:0"></span>How it runs</span>
+    <sc-if value="{{ accent }}" hint-placeholder-val="{{ false }}"><h2 style="margin:14px 0 0;font-family:var(--font-display);font-weight:400;font-size:1.75rem;line-height:1.12;text-transform:uppercase">Three phases. The last one is <span style="color:#C20E59">the point.</span></h2></sc-if>
+    <sc-if value="{{ plainA }}" hint-placeholder-val="{{ true }}"><h2 style="margin:14px 0 0;font-family:var(--font-display);font-weight:400;font-size:1.75rem;line-height:1.12;text-transform:uppercase">Three phases. The last one is the point.</h2></sc-if>
+    <div style="display:flex;flex-direction:column;margin-top:32px">
+      <div style="border:2px solid #111;padding:20px;background:#FAFAF7">
+        <span style="font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">Phase 1</span>
+        <span style="display:block;margin-top:6px;font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase">Build foundation</span>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:14px;font-size:0.9375rem"><span><strong>01</strong> — Intake</span><span><strong>02</strong> — Research</span><span><strong>03</strong> — Branding</span><span><strong>04</strong> — Design</span><span><strong>05</strong> — Development</span></div>
+      </div>
+      <div aria-hidden="true" style="width:2px;height:20px;background:#111;margin-left:32px"></div>
+      <div style="border:2px solid #111;padding:20px;background:#FAFAF7">
+        <span style="font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">Phase 2</span>
+        <span style="display:block;margin-top:6px;font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase">Operate engine</span>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:14px;font-size:0.9375rem"><span><strong>06</strong> — Onboarding</span><span><strong>07</strong> — Engine launch</span></div>
+      </div>
+      <div aria-hidden="true" style="width:2px;height:20px;background:#111;margin-left:32px"></div>
+      <div style="border:2px solid #111;padding:20px;background:#FAFAF7">
+        <span style="font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">Phase 3</span>
+        <span style="display:block;margin-top:6px;font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase">Build independence</span>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:14px;font-size:0.9375rem"><span><strong>08</strong> — Independence handover</span></div>
+        <p style="margin:12px 0 0;font-size:0.8125rem;color:var(--gray-warm)">The goal is your team running this without us.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding:48px 20px 0">
+  <span style="display:flex;align-items:center;gap:8px;font-weight:700;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-warm)"><span style="width:9px;height:9px;background:#C20E59;transform:rotate(45deg);flex-shrink:0"></span>Who you'd work with</span>
+  <h2 style="margin:14px 0 0;font-family:var(--font-display);font-weight:400;font-size:1.75rem;line-height:1.12;text-transform:uppercase">Chicago operators, not account managers.</h2>
+  <p style="margin:16px 0 0;font-size:1.0625rem;line-height:1.6">You've managed five freelancers who never talked to each other. You've had an agency disappear after launch. We built Duha to be the opposite: one team, one dashboard, and a handover date.</p>
+  <span style="display:inline-block;margin-top:18px;font-weight:700;font-size:15px;border-bottom:2px solid #111;padding:4px 0">More about us →</span>
+  <div style="aspect-ratio:4/5;margin:28px -20px 0;background:#EDE9E2;display:flex;align-items:center;justify-content:center;color:var(--gray-warm);font-size:12px;letter-spacing:0.08em;text-transform:uppercase">Founder photo</div>
+</section>
+
+<section style="background:#F5F5F4;padding:48px 20px">
+  <span style="display:flex;align-items:center;gap:8px;font-weight:700;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-warm)"><span style="width:9px;height:9px;background:#C20E59;transform:rotate(45deg);flex-shrink:0"></span>What clients say</span>
+  <h2 style="margin:14px 0 0;font-family:var(--font-display);font-weight:400;font-size:1.75rem;line-height:1.12;text-transform:uppercase">Proof, in their words.</h2>
+  <div style="margin-top:20px;display:flex;flex-direction:column;gap:16px">
+    <div style="border-left:4px solid #C20E59;background:#FAFAF7;padding:20px 18px">
+      <p style="margin:0;font-size:1rem;line-height:1.6">"They rebuilt the store, ran the ads, then taught my manager to run it. We stopped paying them in month nine — on their schedule."</p>
+      <span style="display:block;margin-top:12px;font-weight:700;font-size:0.875rem">J. Alvarez</span><span style="display:block;font-size:0.8125rem;color:var(--gray-warm)">3-location retailer, Chicago</span>
+    </div>
+    <div style="border-left:4px solid #C20E59;background:#FAFAF7;padding:20px 18px">
+      <p style="margin:0;font-size:1rem;line-height:1.6">"Third agency we tried. First one that showed us the dashboard instead of a deck."</p>
+      <span style="display:block;margin-top:12px;font-weight:700;font-size:0.875rem">M. Okafor</span><span style="display:block;font-size:0.8125rem;color:var(--gray-warm)">Online-only, home goods</span>
+    </div>
+  </div>
+</section>
+
+<section style="position:relative;overflow:hidden;background:#111;color:#FAF7F2;padding:64px 0 72px">
+  <sc-if value="{{ tO }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:-90px;bottom:-80px;width:220px;height:220px;transform:rotate(45deg);border:2px solid #C20E59;opacity:.7"></div><div style="position:absolute;right:-60px;top:-60px;width:120px;height:120px;transform:rotate(45deg);border:2px solid #C20E59;opacity:.7"></div></div></sc-if>
+  <sc-if value="{{ tW }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:-90px;bottom:-80px;width:220px;height:220px;transform:rotate(45deg);background:rgba(194,14,89,.28)"></div><div style="position:absolute;right:-60px;top:-60px;width:120px;height:120px;transform:rotate(45deg);border:2px solid #C20E59;opacity:.6"></div></div></sc-if>
+  <sc-if value="{{ tS }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:-110px;bottom:-100px;width:260px;height:260px;transform:rotate(45deg);background:repeating-linear-gradient(45deg,#C20E59 0 1.5px,transparent 1.5px 11px);opacity:.6"></div><div style="position:absolute;right:-60px;top:-60px;width:120px;height:120px;transform:rotate(45deg);border:2px solid #C20E59;opacity:.6"></div></div></sc-if>
+  <sc-if value="{{ tD }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:-90px;bottom:-80px;width:220px;height:220px;transform:rotate(45deg);background:#C20E59"></div><div style="position:absolute;right:-60px;top:-60px;width:120px;height:120px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ tF }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true" style="position:absolute;left:-120px;bottom:-120px;width:320px;height:320px;transform:rotate(45deg);background-image:linear-gradient(45deg,#C20E59 25%,transparent 25% 75%,#C20E59 75%),linear-gradient(45deg,#C20E59 25%,transparent 25% 75%,#C20E59 75%);background-size:14px 14px;background-position:0 0,7px 7px;opacity:.3"></div></sc-if>
+  <sc-if value="{{ tI }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:30%;top:-40%;width:1px;height:180%;background:rgba(250,247,242,.2);transform:rotate(45deg)"></div><div style="position:absolute;left:-70px;bottom:-70px;width:160px;height:160px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ gSplit }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true" style="position:absolute;left:-380px;top:-380px;width:560px;height:560px;transform:rotate(45deg);background:#C20E59"></div></sc-if>
+  <sc-if value="{{ gGrid }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:25%;top:0;width:1px;height:100%;background:rgba(250,247,242,.15)"></div><div style="position:absolute;left:50%;top:0;width:1px;height:100%;background:rgba(250,247,242,.15)"></div><div style="position:absolute;left:75%;top:0;width:1px;height:100%;background:rgba(250,247,242,.15)"></div><div style="position:absolute;left:calc(50% - 4px);top:24px;width:9px;height:9px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ gGridB }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:25%;top:0;width:1px;height:100%;background:rgba(250,247,242,.15)"></div><div style="position:absolute;left:50%;top:0;width:1px;height:100%;background:rgba(250,247,242,.15)"></div><div style="position:absolute;left:75%;top:0;width:1px;height:100%;background:rgba(250,247,242,.15)"></div><div style="position:absolute;left:calc(25% - 8px);top:30px;width:16px;height:16px;transform:rotate(45deg);background:#C20E59"></div><div style="position:absolute;left:calc(50% - 8px);top:30px;width:16px;height:16px;transform:rotate(45deg);background:#C20E59"></div><div style="position:absolute;left:calc(75% - 8px);top:30px;width:16px;height:16px;transform:rotate(45deg);background:#C20E59"></div><span style="position:absolute;right:14px;top:12px;font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(250,247,242,.45)">04 / Handover</span></div></sc-if>
+  <sc-if value="{{ gGridC }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true" style="position:absolute;left:-70px;top:-70px;width:140px;height:140px;transform:rotate(45deg);background:#C20E59"></div></sc-if>
+  <sc-if value="{{ mDot }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(250,247,242,.16) 1.2px,transparent 1.2px);background-size:22px 22px"></div><div style="position:absolute;left:-70px;bottom:-70px;width:150px;height:150px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ mCell }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:linear-gradient(rgba(250,247,242,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(250,247,242,.09) 1px,transparent 1px);background-size:44px 44px"></div><div style="position:absolute;left:0;bottom:0;width:44px;height:44px;background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ mX }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:repeating-linear-gradient(45deg,rgba(194,14,89,.22) 0 1px,transparent 1px 26px),repeating-linear-gradient(-45deg,rgba(194,14,89,.22) 0 1px,transparent 1px 26px)"></div><div style="position:absolute;left:-70px;bottom:-70px;width:150px;height:150px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ mDia }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:linear-gradient(45deg,rgba(250,247,242,.05) 25%,transparent 25% 75%,rgba(250,247,242,.05) 75%),linear-gradient(45deg,rgba(250,247,242,.05) 25%,transparent 25% 75%,rgba(250,247,242,.05) 75%);background-size:10px 10px;background-position:0 0,5px 5px"></div><div style="position:absolute;left:-70px;bottom:-70px;width:150px;height:150px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ mFade }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(250,247,242,.18) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(215deg,#000 15%,transparent 65%);mask-image:linear-gradient(215deg,#000 15%,transparent 65%)"></div><div style="position:absolute;left:-70px;bottom:-70px;width:150px;height:150px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ fDown }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(250,247,242,.18) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(#000,transparent 55%);mask-image:linear-gradient(#000,transparent 55%)"></div><div style="position:absolute;left:-70px;bottom:-70px;width:150px;height:150px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ fEdge }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(250,247,242,.18) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(to bottom,#000 0,transparent 25%,transparent 75%,#000 100%);mask-image:linear-gradient(to bottom,#000 0,transparent 25%,transparent 75%,#000 100%)"></div><div style="position:absolute;left:-70px;bottom:-70px;width:150px;height:150px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ fRad }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(250,247,242,.2) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:radial-gradient(circle at 0% 100%,#000 0,transparent 65%);mask-image:radial-gradient(circle at 0% 100%,#000 0,transparent 65%)"></div><div style="position:absolute;left:-70px;bottom:-70px;width:150px;height:150px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ mRule }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:linear-gradient(rgba(250,247,242,.09) 1px,transparent 1px);background-size:100% 26px"></div><div style="position:absolute;left:-70px;bottom:-70px;width:150px;height:150px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ mSparse }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(250,247,242,.18) 1.6px,transparent 1.6px);background-size:44px 44px"></div><div style="position:absolute;left:-70px;bottom:-70px;width:150px;height:150px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <sc-if value="{{ gBands }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;right:-80px;top:40px;width:260px;height:26px;border-radius:999px;background:#C20E59"></div><div style="position:absolute;right:-80px;top:76px;width:200px;height:26px;border-radius:999px;background:rgba(194,14,89,.45)"></div></div></sc-if>
+  <sc-if value="{{ gAxis }}" hint-placeholder-val="{{ false }}"><div aria-hidden="true"><div style="position:absolute;left:50%;top:-40%;width:2px;height:180%;background:repeating-linear-gradient(to bottom,#C20E59 0 8px,transparent 8px 18px);transform:rotate(45deg)"></div><div style="position:absolute;left:40px;top:40px;width:20px;height:20px;transform:rotate(45deg);background:#C20E59"></div></div></sc-if>
+  <div style="position:relative;padding:0 20px;text-align:center">
+    <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:2rem;line-height:1.05;text-transform:uppercase">Your store already has the demand. It's leaking it.</h2>
+    <p style="margin:18px 0 0;font-size:1.0625rem;opacity:.85">3 builds in progress. We cap at 7.</p>
+    <div style="margin-top:28px;display:grid">
+      <sc-if value="{{ wineBtn }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;justify-content:center;min-height:52px;background:#C20E59;color:#FAF7F2;font-weight:700;font-size:15px">Book a Call</span></sc-if>
+      <sc-if value="{{ inkBtn }}" hint-placeholder-val="{{ true }}"><span style="display:flex;align-items:center;justify-content:center;min-height:52px;background:#FAF7F2;color:#111;font-weight:700;font-size:15px">Book a Call</span></sc-if>
+    </div>
+  </div>
+</section>
+
+<footer style="background:#111;color:#FAF7F2;padding:36px 20px;border-top:1px solid rgba(250,247,242,.2)">
+  <span style="display:flex;align-items:center;gap:10px"><img src="assets/logo-duha-01.png" alt="" style="width:24px;height:24px"><span style="font-family:var(--font-display);font-size:14px">DUHA MEDIA</span></span>
+  <div style="display:flex;gap:18px;margin-top:18px;font-size:0.8125rem;font-weight:700"><span>Work</span><span>Services</span><span>About</span><span>FAQ</span></div>
+  <span style="display:block;margin-top:18px;font-size:0.75rem;color:rgba(250,247,242,.55)">© 2026 Duha Media, Chicago</span>
+</footer>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844},&quot;treatment&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;matrix-fade&quot;,&quot;options&quot;:[&quot;matrix-fade&quot;,&quot;fade-down&quot;,&quot;fade-edge&quot;,&quot;fade-radial&quot;,&quot;matrix-dot&quot;,&quot;matrix-diamond&quot;,&quot;matrix-rule&quot;,&quot;matrix-sparse&quot;,&quot;matrix-cell&quot;,&quot;matrix-x&quot;,&quot;grid&quot;,&quot;grid-b&quot;,&quot;grid-c&quot;,&quot;interlock&quot;,&quot;split&quot;,&quot;bands&quot;,&quot;axis&quot;,&quot;outline&quot;,&quot;wash&quot;,&quot;stripes&quot;,&quot;solid&quot;,&quot;field&quot;,&quot;field-accent&quot;,&quot;wash-highlight&quot;,&quot;solid-bold&quot;],&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const t = this.props.treatment ?? 'outline';
+    const geo = ({ 'field-accent': 'field', 'wash-highlight': 'wash', 'solid-bold': 'solid' })[t] || t;
+    const rich = t === 'field-accent' || t === 'wash-highlight' || t === 'solid-bold';
+    return {
+      tO: geo === 'outline', tW: geo === 'wash', tS: geo === 'stripes', tD: geo === 'solid', tF: geo === 'field', tI: t === 'interlock',
+      gSplit: t === 'split', gGrid: t === 'grid', gBands: t === 'bands', gAxis: t === 'axis',
+      gGridHero: t === 'grid' || t === 'grid-b' || t === 'grid-c', gGridB: t === 'grid-b', gGridC: t === 'grid-c',
+      mDot: t === 'matrix-dot', mCell: t === 'matrix-cell', mX: t === 'matrix-x',
+      mDia: t === 'matrix-diamond', mFade: t === 'matrix-fade', mRule: t === 'matrix-rule', mSparse: t === 'matrix-sparse',
+      mFadeHero: ['matrix-fade', 'fade-down', 'fade-edge', 'fade-radial'].includes(t),
+      fDown: t === 'fade-down', fEdge: t === 'fade-edge', fRad: t === 'fade-radial',
+      heroPanel: t === 'solid', heroPanelBold: t === 'solid-bold',
+      heroHl: t === 'wash-highlight', heroAc: t === 'field-accent',
+      heroPlain: ['outline', 'wash', 'stripes', 'field', 'interlock', 'split', 'grid', 'grid-b', 'grid-c', 'bands', 'axis', 'matrix-dot', 'matrix-cell', 'matrix-x', 'matrix-diamond', 'matrix-fade', 'matrix-rule', 'matrix-sparse', 'fade-down', 'fade-edge', 'fade-radial'].includes(t),
+      wineBtn: rich, inkBtn: !rich, accent: rich, plainA: !rich,
+      wineBand: t === 'solid-bold', inkBand: t !== 'solid-bold'
+    };
+  }
+}
+
+</script>
+</body>
+</html>

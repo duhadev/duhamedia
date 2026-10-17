@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+  <script src="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/_ds_bundle.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;}
+    :root{/*fade-edge*/--cream:#FFFFFF;--gray-light:#F5F5F4;--accent-primary:#111111;--ground-accent:#C20E59;--wine:#C20E59;--yellow:#FCE588;}
+    body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--font-body);font-weight:500;}
+    a{color:var(--ink);}
+    a:hover{color:var(--accent-primary);}
+  </style>
+</helmet>
+
+<sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+<dc-import name="SiteHeader" hint-size="100%,72px"></dc-import>
+
+<section data-screen-label="Work hero" style="background:var(--cream);padding:80px 0 48px;position:relative;overflow:hidden">
+  <div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.22) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(215deg,#000 15%,transparent 65%);mask-image:linear-gradient(215deg,#000 15%,transparent 65%);z-index:0"></div>
+  <div aria-hidden="true" style="position:absolute;right:-140px;top:-60px;width:300px;height:300px;background:var(--ground-accent);-webkit-mask-image:url('assets/logo.png');-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;mask-image:url('assets/logo.png');mask-size:contain;mask-repeat:no-repeat"></div>
+  <div style="position:relative;max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad);display:grid;grid-template-columns:1fr 320px;gap:56px;align-items:end">
+    <div>
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" tick="{{ true }}" hint-size="auto,20px">Work — six studies, signed off</x-import>
+      <div style="margin-top:20px">
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.AccentHeadline" level="{{ 1 }}" as="h1" text="The work, in numbers" accent="in numbers" hint-size="100%,90px"></x-import>
+      </div>
+      <p style="margin:20px 0 0;font-size:var(--text-body-size);line-height:var(--leading-body);max-width:52ch">One team built the store, ran the engine, then handed it over. Each row: what was leaking, what we changed, what it returned.</p>
+    </div>
+    <sc-if value="{{ showAggregates }}" hint-placeholder-val="{{ true }}">
+      <div style="border-left:2px solid var(--ink);padding-left:24px;display:flex;flex-direction:column;gap:20px">
+        <div>
+          <span style="display:block;font-family:var(--font-display);font-weight:400;font-size:2.5rem;line-height:1">$3.1M</span>
+          <span style="display:block;margin-top:4px;font-weight:700;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">Client revenue added, 2024–26</span>
+        </div>
+        <div>
+          <span style="display:block;font-family:var(--font-display);font-weight:400;font-size:2.5rem;line-height:1">4</span>
+          <span style="display:block;margin-top:4px;font-weight:700;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">Teams now running it themselves</span>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+</section>
+
+<section data-screen-label="Study ledger" style="background:var(--cream);padding:0 0 24px">
+  <div style="max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad)">
+    <div style="display:grid;grid-template-columns:52px 1.1fr 1.5fr 200px 40px;gap:24px;align-items:end;border-bottom:2px solid var(--ink);padding-bottom:10px">
+      <span style="font:700 10px ui-monospace,Menlo,monospace;letter-spacing:0.12em;color:var(--gray-warm)">№</span>
+      <span style="font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">Client</span>
+      <span style="font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">What was leaking / what we changed</span>
+      <span style="font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">Returned</span>
+      <span></span>
+    </div>
+
+    <a data-anim href="Case Study.dc.html" style="display:grid;grid-template-columns:52px 1.1fr 1.5fr 200px 40px;gap:24px;align-items:center;padding:26px 0;border-bottom:1px solid var(--border-divider);text-decoration:none" style-hover="background:var(--gray-light)">
+      <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">01</span>
+      <span><span style="display:block;font-family:var(--font-display);font-weight:400;font-size:1.375rem;text-transform:uppercase">Northside Goods</span><span style="display:block;margin-top:4px;font-size:12px;color:var(--gray-warm)">Build + engine · 3-location retail</span></span>
+      <span style="font-size:0.9375rem;line-height:1.5">Traffic was fine, checkout wasn't. Rebuilt the theme, then put email and paid on tracking that agreed with Shopify.</span>
+      <span><span style="display:block;font-family:var(--font-display);font-weight:400;font-size:2.25rem;line-height:1;color:var(--wine)">+212%</span><span style="display:block;margin-top:2px;font-weight:700;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-warm)">Revenue, 12 months</span></span>
+      <span style="justify-self:end;font-size:20px"><i class="ph-bold ph-arrow-right"></i></span>
+    </a>
+
+    <a data-anim href="Case Study.dc.html" style="display:grid;grid-template-columns:52px 1.1fr 1.5fr 200px 40px;gap:24px;align-items:center;padding:26px 0;border-bottom:1px solid var(--border-divider);text-decoration:none" style-hover="background:var(--gray-light)">
+      <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">02</span>
+      <span><span style="display:block;font-family:var(--font-display);font-weight:400;font-size:1.375rem;text-transform:uppercase">Halsted Supply</span><span style="display:block;margin-top:4px;font-size:12px;color:var(--gray-warm)">Engine only · online-only</span></span>
+      <span style="font-size:0.9375rem;line-height:1.5">Three freelancers, three versions of the truth. One team, one attribution model, spend moved to what actually closed.</span>
+      <span><span style="display:block;font-family:var(--font-display);font-weight:400;font-size:2.25rem;line-height:1">3.2×</span><span style="display:block;margin-top:2px;font-weight:700;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-warm)">ROAS after restructure</span></span>
+      <span style="justify-self:end;font-size:20px"><i class="ph-bold ph-arrow-right"></i></span>
+    </a>
+
+    <a data-anim href="Case Study.dc.html" style="display:grid;grid-template-columns:52px 1.1fr 1.5fr 200px 40px;gap:24px;align-items:center;padding:26px 0;border-bottom:1px solid var(--border-divider);text-decoration:none" style-hover="background:var(--gray-light)">
+      <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">03</span>
+      <span><span style="display:block;font-family:var(--font-display);font-weight:400;font-size:1.375rem;text-transform:uppercase">Rowan &amp; Field</span><span style="display:block;margin-top:4px;font-size:12px;color:var(--gray-warm)">Handover complete · hybrid retail</span></span>
+      <span style="font-size:0.9375rem;line-height:1.5">Nine months in, their marketing manager took the calendar, the ad account and the playbook. We stopped invoicing.</span>
+      <span><span style="display:block;font-family:var(--font-display);font-weight:400;font-size:2.25rem;line-height:1">$0/mo</span><span style="display:block;margin-top:2px;font-weight:700;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-warm)">Agency fees after handover</span></span>
+      <span style="justify-self:end;font-size:20px"><i class="ph-bold ph-arrow-right"></i></span>
+    </a>
+
+    <a data-anim href="Case Study.dc.html" style="display:grid;grid-template-columns:52px 1.1fr 1.5fr 200px 40px;gap:24px;align-items:center;padding:26px 0;border-bottom:1px solid var(--border-divider);text-decoration:none" style-hover="background:var(--gray-light)">
+      <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">04</span>
+      <span><span style="display:block;font-family:var(--font-display);font-weight:400;font-size:1.375rem;text-transform:uppercase">Lakeview Tile</span><span style="display:block;margin-top:4px;font-size:12px;color:var(--gray-warm)">Build · showroom + online</span></span>
+      <span style="font-size:0.9375rem;line-height:1.5">Two-thirds of sessions were mobile and the cart was a wall. Rebuilt the checkout flow, cut fields, kept the catalog depth.</span>
+      <span><span style="display:block;font-family:var(--font-display);font-weight:400;font-size:2.25rem;line-height:1">62%</span><span style="display:block;margin-top:2px;font-weight:700;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-warm)">Mobile checkout, from 41%</span></span>
+      <span style="justify-self:end;font-size:20px"><i class="ph-bold ph-arrow-right"></i></span>
+    </a>
+
+    <a data-anim href="Case Study.dc.html" style="display:grid;grid-template-columns:52px 1.1fr 1.5fr 200px 40px;gap:24px;align-items:center;padding:26px 0;border-bottom:1px solid var(--border-divider);text-decoration:none" style-hover="background:var(--gray-light)">
+      <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">05</span>
+      <span><span style="display:block;font-family:var(--font-display);font-weight:400;font-size:1.375rem;text-transform:uppercase">Wicker Park Roasters</span><span style="display:block;margin-top:4px;font-size:12px;color:var(--gray-warm)">Build + engine · subscription</span></span>
+      <span style="font-size:0.9375rem;line-height:1.5">Subscriptions churned at month two. Fixed the post-purchase flow first, then paid acquisition had somewhere to land.</span>
+      <span><span style="display:block;font-family:var(--font-display);font-weight:400;font-size:2.25rem;line-height:1">+$480K</span><span style="display:block;margin-top:2px;font-weight:700;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-warm)">Added revenue, 9 months</span></span>
+      <span style="justify-self:end;font-size:20px"><i class="ph-bold ph-arrow-right"></i></span>
+    </a>
+
+    <a data-anim href="Case Study.dc.html" style="display:grid;grid-template-columns:52px 1.1fr 1.5fr 200px 40px;gap:24px;align-items:center;padding:26px 0;border-bottom:2px solid var(--ink);text-decoration:none" style-hover="background:var(--gray-light)">
+      <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">06</span>
+      <span><span style="display:block;font-family:var(--font-display);font-weight:400;font-size:1.375rem;text-transform:uppercase">Ember Home</span><span style="display:block;margin-top:4px;font-size:12px;color:var(--gray-warm)">Engine · online-only</span></span>
+      <span style="font-size:0.9375rem;line-height:1.5">Email was a monthly newsletter and nothing else. Built the lifecycle flows their catalog had earned.</span>
+      <span><span style="display:block;font-family:var(--font-display);font-weight:400;font-size:2.25rem;line-height:1">4.1×</span><span style="display:block;margin-top:2px;font-weight:700;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-warm)">Email revenue share</span></span>
+      <span style="justify-self:end;font-size:20px"><i class="ph-bold ph-arrow-right"></i></span>
+    </a>
+  </div>
+</section>
+
+<section data-screen-label="Proof pull" style="background:var(--cream);padding:72px 0;border-top:1px solid var(--border-divider)">
+  <div style="max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad)">
+    <h2 style="margin:0 0 40px;font-family:var(--font-display);font-weight:400;font-size:2.25rem;line-height:1.05;text-transform:uppercase">In their words.</h2>
+  </div>
+  <div data-anim style="max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad);display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <span style="display:block;font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">What clients say</span>
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Testimonial" quote="They rebuilt the store, ran the ads, then taught my manager to run it. We stopped paying them in month nine — on their schedule." name="J. Alvarez" role="3-location retailer, Chicago" hint-size="100%,220"></x-import>
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Testimonial" quote="Third agency we tried. First one that showed us the dashboard instead of a deck." name="M. Okafor" role="Online-only, home goods" hint-size="100%,200"></x-import>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <span style="display:block;font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">A study in full</span>
+      <a href="Case Study.dc.html" style="display:flex;flex-direction:column;gap:14px;border:2px solid var(--ink);background:var(--cream);padding:28px 28px 26px;text-decoration:none;color:var(--ink)">
+        <span style="font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">Client A · Build + engine, 12 months</span>
+        <span style="font-family:var(--font-display);font-weight:400;font-size:3.5rem;line-height:1;color:var(--ground-accent)">+212%</span>
+        <span style="font-weight:700;font-size:0.875rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--gray-warm);margin-top:-6px">Revenue, 12 months</span>
+        <p style="margin:0;font-size:1rem;line-height:1.6">Rebuild plus engine. The store stopped leaking demand, then the engine scaled what was left.</p>
+        <span style="font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:0.06em;border-bottom:2px solid var(--ink);align-self:flex-start;padding-bottom:4px;margin-top:4px">Read the study →</span>
+      </a>
+      <a href="Work.dc.html" style="font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:0.06em;border-bottom:2px solid var(--ink);align-self:flex-start;padding-bottom:4px;text-decoration:none">All studies →</a>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Newsletter CTA" style="background:var(--cream);padding:56px 0;border-bottom:var(--border-hairline)">
+  <div data-anim style="max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad);display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap">
+    <div>
+      <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:var(--text-h3);text-transform:uppercase">Studies land here first.</h2>
+      <p style="margin:8px 0 0;font-size:0.875rem;color:var(--gray-warm)">One useful email a month. Numbers included.</p>
+    </div>
+    <div style="display:flex;gap:8px">
+      <input placeholder="you@store.com" style="background:transparent;border:2px solid var(--ink);color:var(--ink);padding:12px 14px;font-family:var(--font-body);font-size:14px;width:240px">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="dark" size="md" href="Newsletter.dc.html" hint-size="80px,48px">Join</x-import>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Final CTA" style="background:var(--ink);color:var(--cream);padding:96px 0">
+  <div data-anim style="text-align:center;max-width:760px;margin:0 auto;padding:0 var(--container-pad)">
+    <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:var(--text-h2);line-height:1.05;text-transform:uppercase">See what your row would say.</h2>
+    <p style="margin:20px 0 0;font-size:1.125rem;opacity:.85">{{ ongoingLine }}</p>
+    <p style="margin:4px 0 0;font-size:0.8125rem;opacity:.5">The cap keeps every build senior-staffed — that's the whole reason.</p>
+    <div style="margin-top:32px;display:flex;justify-content:center">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="primary" size="md" href="Book a Call.dc.html" hint-size="160px,52px">Book a Call</x-import>
+    </div>
+  </div>
+</section>
+
+<dc-import name="SiteFooter" variant="standard" hint-size="100%,420px"></dc-import>
+</sc-if>
+
+<sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+<div style="background:#DED9D0;min-height:100vh"><div style="max-width:390px;margin:0 auto;background:var(--cream);overflow-x:hidden;box-shadow:0 0 0 1px rgba(17,17,17,.15)">
+<dc-import name="SiteHeaderMobile" hint-size="100%,60px"></dc-import>
+
+<section data-screen-label="Work hero" style="background:var(--cream);padding:36px 0 28px;position:relative;overflow:hidden">
+  <div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.22) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(215deg,#000 15%,transparent 65%);mask-image:linear-gradient(215deg,#000 15%,transparent 65%)"></div>
+  <div aria-hidden="true" style="position:absolute;right:-100px;top:-50px;width:210px;height:210px;background:var(--ground-accent);-webkit-mask-image:url('assets/logo.png');-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;mask-image:url('assets/logo.png');mask-size:contain;mask-repeat:no-repeat"></div>
+  <div style="position:relative;padding:0 20px">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" tick="{{ true }}" hint-size="auto,20px">Work — six studies, signed off</x-import>
+    <h1 style="margin:14px 0 0;font-family:var(--font-display);font-weight:400;font-size:2.25rem;line-height:.98;text-transform:uppercase">The work, <span style="color:var(--wine)">in numbers</span></h1>
+    <p style="margin:16px 0 0;font-size:1.0625rem;line-height:1.55">One team built the store, ran the engine, then handed it over. Each row: what was leaking, what it returned.</p>
+  </div>
+</section>
+
+<sc-if value="{{ showAggregates }}" hint-placeholder-val="{{ true }}">
+  <div data-screen-label="Aggregates" style="display:flex;border-bottom:2px solid var(--ink)">
+    <div style="flex:1;padding:16px 20px;border-right:1px solid var(--border-divider)"><span style="display:block;font-family:var(--font-display);font-weight:400;font-size:1.75rem;line-height:1">$3.1M</span><span style="display:block;margin-top:2px;font-weight:700;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-warm)">Revenue added</span></div>
+    <div style="flex:1;padding:16px 20px"><span style="display:block;font-family:var(--font-display);font-weight:400;font-size:1.75rem;line-height:1">4</span><span style="display:block;margin-top:2px;font-weight:700;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-warm)">Handovers done</span></div>
+  </div>
+</sc-if>
+
+<section data-screen-label="Study ledger">
+  <a href="Case Study.dc.html" style="display:flex;flex-direction:column;gap:8px;padding:22px 20px;border-bottom:1px solid var(--border-divider);text-decoration:none;color:var(--ink)" style-hover="background:var(--gray-light)">
+    <span style="font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">Northside Goods · Case study</span>
+    <span style="font-family:var(--font-display);font-weight:400;font-size:1.25rem;line-height:1.15;text-transform:uppercase">Checkout lost two of three carts</span>
+    <span style="display:flex;align-items:baseline;gap:8px;font-size:0.8125rem;color:var(--gray-warm)"><span style="font-family:var(--font-display);font-size:1.0625rem;line-height:1;color:var(--wine)">+212%</span>Revenue, 12 months</span>
+    <span style="font-weight:700;font-size:0.8125rem">Read the study →</span>
+  </a>
+  <a href="Case Study.dc.html" style="display:flex;flex-direction:column;gap:8px;padding:22px 20px;border-bottom:1px solid var(--border-divider);text-decoration:none;color:var(--ink)" style-hover="background:var(--gray-light)">
+    <span style="font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">Halsted Supply · Case study</span>
+    <span style="font-family:var(--font-display);font-weight:400;font-size:1.25rem;line-height:1.15;text-transform:uppercase">Three freelancers, three versions of the truth</span>
+    <span style="display:flex;align-items:baseline;gap:8px;font-size:0.8125rem;color:var(--gray-warm)"><span style="font-family:var(--font-display);font-size:1.0625rem;line-height:1;color:var(--ink)">3.2×</span>Blended ROAS</span>
+    <span style="font-weight:700;font-size:0.8125rem">Read the study →</span>
+  </a>
+  <a href="Case Study.dc.html" style="display:flex;flex-direction:column;gap:8px;padding:22px 20px;border-bottom:1px solid var(--border-divider);text-decoration:none;color:var(--ink)" style-hover="background:var(--gray-light)">
+    <span style="font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">Rowan &amp; Field · Case study</span>
+    <span style="font-family:var(--font-display);font-weight:400;font-size:1.25rem;line-height:1.15;text-transform:uppercase">Their manager runs the engine now</span>
+    <span style="display:flex;align-items:baseline;gap:8px;font-size:0.8125rem;color:var(--gray-warm)"><span style="font-family:var(--font-display);font-size:1.0625rem;line-height:1;color:var(--ink)">$0/mo</span>Fees after handover</span>
+    <span style="font-weight:700;font-size:0.8125rem">Read the study →</span>
+  </a>
+  <a href="Case Study.dc.html" style="display:flex;flex-direction:column;gap:8px;padding:22px 20px;border-bottom:1px solid var(--border-divider);text-decoration:none;color:var(--ink)" style-hover="background:var(--gray-light)">
+    <span style="font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">Lakeview Tile · Case study</span>
+    <span style="font-family:var(--font-display);font-weight:400;font-size:1.25rem;line-height:1.15;text-transform:uppercase">Mobile cart was a wall</span>
+    <span style="display:flex;align-items:baseline;gap:8px;font-size:0.8125rem;color:var(--gray-warm)"><span style="font-family:var(--font-display);font-size:1.0625rem;line-height:1;color:var(--ink)">62%</span>Checkout completion, from 41%</span>
+    <span style="font-weight:700;font-size:0.8125rem">Read the study →</span>
+  </a>
+  <a href="Case Study.dc.html" style="display:flex;flex-direction:column;gap:8px;padding:22px 20px;border-bottom:1px solid var(--border-divider);text-decoration:none;color:var(--ink)" style-hover="background:var(--gray-light)">
+    <span style="font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">Wicker Park Roasters · Case study</span>
+    <span style="font-family:var(--font-display);font-weight:400;font-size:1.25rem;line-height:1.15;text-transform:uppercase">Subscriptions churned at month two</span>
+    <span style="display:flex;align-items:baseline;gap:8px;font-size:0.8125rem;color:var(--gray-warm)"><span style="font-family:var(--font-display);font-size:1.0625rem;line-height:1;color:var(--ink)">+$480K</span>Added, 9 months</span>
+    <span style="font-weight:700;font-size:0.8125rem">Read the study →</span>
+  </a>
+  <a href="Case Study.dc.html" style="display:flex;flex-direction:column;gap:8px;padding:22px 20px;border-bottom:2px solid var(--ink);text-decoration:none;color:var(--ink)" style-hover="background:var(--gray-light)">
+    <span style="font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">Ember Home · Case study</span>
+    <span style="font-family:var(--font-display);font-weight:400;font-size:1.25rem;line-height:1.15;text-transform:uppercase">Email was a newsletter and nothing else</span>
+    <span style="display:flex;align-items:baseline;gap:8px;font-size:0.8125rem;color:var(--gray-warm)"><span style="font-family:var(--font-display);font-size:1.0625rem;line-height:1;color:var(--ink)">4.1×</span>Email revenue share</span>
+    <span style="font-weight:700;font-size:0.8125rem">Read the study →</span>
+  </a>
+</section>
+
+<section data-screen-label="Newsletter CTA" style="background:var(--cream);padding:36px 0;border-bottom:var(--border-hairline)">
+  <div data-anim style="padding:0 20px;display:flex;flex-direction:column;gap:16px">
+    <div>
+      <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.375rem;text-transform:uppercase">Studies land here first.</h2>
+      <p style="margin:8px 0 0;font-size:0.875rem;color:var(--gray-warm)">One useful email a month. Numbers included.</p>
+    </div>
+    <div style="display:flex;gap:8px">
+      <input placeholder="you@store.com" style="flex:1;background:transparent;border:2px solid var(--ink);color:var(--ink);padding:12px 14px;font-family:var(--font-body);font-size:15px;min-width:0">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="dark" size="md" href="Newsletter.dc.html" hint-size="80px,48px">Join</x-import>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Final CTA" style="background:var(--ink);color:var(--cream);padding:56px 0 64px;position:relative;overflow:hidden">
+  <div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(250,247,242,.18) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(215deg,#000 15%,transparent 65%);mask-image:linear-gradient(215deg,#000 15%,transparent 65%);z-index:0"></div>
+  <div aria-hidden="true" style="position:absolute;left:-90px;bottom:-80px;width:220px;height:220px;background:var(--ground-accent);opacity:.16;z-index:0;-webkit-mask-image:url('assets/logo.png');-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;mask-image:url('assets/logo.png');mask-size:contain;mask-repeat:no-repeat"></div>
+  <div data-anim style="position:relative;z-index:1;padding:0 20px;text-align:center">
+    <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.875rem;line-height:1.05;text-transform:uppercase">See what your row would say.</h2>
+    <p style="margin:14px 0 0;font-size:1.0625rem;opacity:.85">{{ ongoingLine }}</p>
+    <p style="margin:4px 0 0;font-size:0.8125rem;opacity:.5">The cap keeps every build senior-staffed — that's the whole reason.</p>
+    <div style="margin-top:24px;display:grid">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="primary" size="md" href="Book a Call.dc.html" style="display:flex;align-items:center;justify-content:center;width:100%;min-height:52px" hint-size="100%,52px">Book a Call</x-import>
+    </div>
+  </div>
+</section>
+
+<dc-import name="SiteFooterMobile" variant="standard" hint-size="100%,620px"></dc-import>
+</div></div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showAggregates&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Work page&quot;},&quot;ongoingProjects&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:0,&quot;max&quot;:7,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Work page&quot;},&quot;viewport&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;desktop&quot;,&quot;mobile&quot;],&quot;default&quot;:&quot;desktop&quot;,&quot;tsType&quot;:&quot;'desktop'|'mobile'&quot;,&quot;section&quot;:&quot;Viewport&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const n = this.props.ongoingProjects ?? 3;
+    return { isDesktop: (this.props.viewport ?? 'desktop') !== 'mobile', isMobile: (this.props.viewport ?? 'desktop') === 'mobile',
+      showAggregates: this.props.showAggregates ?? true,
+      ongoingLine: n + ' builds in progress. We cap at 7.'
+    };
+  }
+  componentDidMount() { import('./site-fx.js').then(m => { this._fx = m; m.armAnim(this); }); }
+  componentDidUpdate() { if (this._fx) this._fx.armAnim(this); }
+  componentWillUnmount() { if (this._fx) this._fx.disarmAnim(this); }
+}
+</script>
+</body>
+</html>

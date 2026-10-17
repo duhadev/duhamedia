@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/styles.css">
+  <script src="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/_ds_bundle.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;}
+    body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--font-body);font-weight:500;}
+    :root{/*fade-edge*/--cream:#FFFFFF;--gray-light:#F5F5F4;--accent-primary:#111111;--ground-accent:#C20E59;}
+    a{color:var(--ink);}
+    a:hover{color:var(--accent-primary);}
+  </style>
+</helmet>
+
+<sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+<dc-import name="SiteHeader" hint-size="100%,72px"></dc-import>
+
+<section data-screen-label="Newsletter hero" style="background:var(--cream);padding:96px 0 80px;position:relative;overflow:hidden">
+  <div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.22) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(215deg,#000 15%,transparent 65%);mask-image:linear-gradient(215deg,#000 15%,transparent 65%);z-index:0"></div>
+  <div aria-hidden="true" style="position:absolute;right:-180px;top:-90px;width:420px;height:420px;background:var(--ground-accent);-webkit-mask-image:url('assets/logo.png');-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;mask-image:url('assets/logo.png');mask-size:contain;mask-repeat:no-repeat;z-index:0"></div>
+  <div style="position:relative;z-index:1;max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad);display:grid;grid-template-columns:1.25fr 1fr;gap:56px;align-items:start">
+    <div>
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" tick="{{ true }}" hint-size="auto,20px">The newsletter</x-import>
+      <div style="margin-top:20px">
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.AccentHeadline" level="{{ 1 }}" as="h1" text="One useful email a month. Numbers included." accent="Numbers included." hint-size="100%,180px"></x-import>
+      </div>
+      <p style="margin:24px 0 0;font-size:var(--text-body-size);line-height:var(--leading-body);max-width:52ch">What we're seeing across client stores — what worked, what didn't, with the data attached. Case studies land here before they land anywhere else.</p>
+      <div style="margin-top:32px;padding-top:20px;border-top:2px solid var(--ink);display:flex;flex-wrap:wrap;gap:24px 48px">
+        <div><div style="font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">Cadence</div><div style="margin-top:6px;font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">Monthly</div></div>
+        <div><div style="font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">Length</div><div style="margin-top:6px;font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">4 min read</div></div>
+        <div><div style="font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">Filler</div><div style="margin-top:6px;font-family:var(--font-display);font-size:1.125rem;text-transform:uppercase">None</div></div>
+      </div>
+    </div>
+    <div style="margin-top:312px;background:var(--gray-light);border:2px solid var(--ink);box-shadow:var(--shadow-card);padding:32px">
+      <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.375rem;text-transform:uppercase">Join the list</h2>
+      <p style="margin:10px 0 0;font-size:0.9375rem;line-height:1.6;color:var(--gray-warm)">Unsubscribe anytime. We never sell the list.</p>
+      <div style="margin-top:20px;display:flex;flex-direction:column;gap:12px">
+        <input placeholder="you@store.com" style="background:var(--cream);border:2px solid var(--ink);color:var(--ink);padding:13px 14px;font-family:var(--font-body);font-weight:500;font-size:15px;min-height:48px;width:100%">
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="primary" size="md" style="display:grid;min-height:48px" hint-size="100%,48px">Join</x-import>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Sample content" style="background:var(--gray-light);padding:80px 0">
+  <div data-anim style="max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad)">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">Recent issues</x-import>
+    <div style="margin-top:32px;display:grid;grid-template-columns:1.35fr 1fr;gap:28px;align-items:start">
+      <div style="background:var(--cream);border:2px solid var(--ink);box-shadow:var(--shadow-card);padding:34px 36px;display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px">
+          <span style="font-weight:700;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">Latest — Issue 012</span>
+          <span style="background:var(--ground-accent);color:#FFFFFF;font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:4px 10px">New</span>
+        </div>
+        <h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.875rem;line-height:1.1;text-transform:uppercase">[The email flow that pays the ad bill]</h3>
+        <p style="margin:0;font-size:1rem;line-height:1.65">[Two-line excerpt placeholder — the setup, the number it moved, and what we'd do differently. Written like the issue itself, no teaser copy.]</p>
+        <a href="Newsletter.dc.html" style="margin-top:6px;align-self:flex-start;display:inline-flex;align-items:center;min-height:44px;padding:0 20px;border:2px solid var(--ink);font-weight:700;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">Read issue 012</a>
+      </div>
+      <div style="display:flex;flex-direction:column">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-bottom:10px">
+          <span style="font-weight:700;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">Previously</span>
+          <span style="font:700 11px ui-monospace,Menlo,monospace;color:var(--gray-warm)">11 issues</span>
+        </div>
+        <div style="border-top:2px solid var(--ink);padding:14px 0;display:grid;grid-template-columns:1fr auto;gap:4px 16px;border-bottom:1px solid var(--border-divider)">
+          <span style="font:700 11px ui-monospace,Menlo,monospace;color:var(--gray-warm)">ISSUE 011 · [DATE]</span>
+          <span style="font-family:var(--font-display);font-size:0.9375rem;color:var(--ground-accent);grid-row:span 2;align-self:center">[metric]</span>
+          <span style="font-family:var(--font-display);font-size:1.0625rem;line-height:1.15;text-transform:uppercase">[What broke when the pixel lied]</span>
+          <p style="margin:2px 0 0;grid-column:1 / -1;font-size:0.875rem;line-height:1.55;color:var(--gray-warm)">[One-line summary placeholder.]</p>
+        </div>
+        <div style="padding:14px 0;display:grid;grid-template-columns:1fr auto;gap:4px 16px;border-bottom:2px solid var(--ink)">
+          <span style="font:700 11px ui-monospace,Menlo,monospace;color:var(--gray-warm)">ISSUE 010 · [DATE]</span>
+          <span style="font-family:var(--font-display);font-size:0.9375rem;color:var(--ground-accent);grid-row:span 2;align-self:center">[metric]</span>
+          <span style="font-family:var(--font-display);font-size:1.0625rem;line-height:1.15;text-transform:uppercase">[The handover checklist, published]</span>
+          <p style="margin:2px 0 0;grid-column:1 / -1;font-size:0.875rem;line-height:1.55;color:var(--gray-warm)">[One-line summary placeholder.]</p>
+        </div>
+        <a href="Newsletter.dc.html" style="margin-top:18px;align-self:flex-start;display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border:2px solid var(--ink);font-weight:700;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">Full archive →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Social proof" style="background:var(--cream);padding:80px 0 96px">
+  <div data-anim style="max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad);display:grid;grid-template-columns:1fr 2fr;gap:32px;align-items:stretch">
+    <div style="background:var(--gray-light);padding:32px;display:flex;flex-direction:column;justify-content:center;gap:6px">
+      <span style="font-family:var(--font-display);font-weight:400;font-size:3.5rem;line-height:1;color:var(--ground-accent)">[N]</span>
+      <span style="font-weight:700;font-size:12px;letter-spacing:0.1em;text-transform:uppercase">Subscribers</span>
+      <span style="margin-top:6px;font-size:0.8125rem;line-height:1.5;color:var(--gray-warm)">[Placeholder — real count at launch, marked non-final]</span>
+    </div>
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Testimonial" quote="[Reader quote slot — demonstrative placeholder, non-final.]" name="[Reader name]" role="[Store type]" hint-size="100%,160px"></x-import>
+  </div>
+</section>
+
+<dc-import name="SiteFooter" variant="standard" hint-size="100%,420px"></dc-import>
+</sc-if>
+
+<sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+<div style="background:#DED9D0;min-height:100vh"><div style="max-width:390px;margin:0 auto;background:var(--cream);overflow-x:hidden;box-shadow:0 0 0 1px rgba(17,17,17,.15)">
+<dc-import name="SiteHeaderMobile" hint-size="100%,60px"></dc-import>
+
+<section data-screen-label="Newsletter hero" style="background:var(--cream);padding:48px 0 44px;position:relative;overflow:hidden">
+  <div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.22) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(215deg,#000 15%,transparent 65%);mask-image:linear-gradient(215deg,#000 15%,transparent 65%);z-index:0"></div>
+  <div aria-hidden="true" style="position:absolute;right:-120px;top:-50px;width:240px;height:240px;background:var(--ground-accent);-webkit-mask-image:url('assets/logo.png');-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;mask-image:url('assets/logo.png');mask-size:contain;mask-repeat:no-repeat"></div>
+  <div style="position:relative;padding:0 20px">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" tick="{{ true }}" hint-size="auto,20px">The newsletter</x-import>
+    <h1 style="margin:16px 0 0;font-family:var(--font-display);font-weight:400;font-size:2.25rem;line-height:1.02;text-transform:uppercase">One useful email a month. <span style="color:var(--accent-primary)">Numbers included.</span></h1>
+    <p style="margin:18px 0 0;font-size:1.0625rem;line-height:1.6">What we're seeing across client stores — what worked, what didn't, with the data attached. Case studies land here before they land anywhere else.</p>
+    <div style="margin-top:24px;background:var(--gray-light);border:2px solid var(--ink);box-shadow:var(--shadow-card);padding:22px 20px">
+      <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.25rem;text-transform:uppercase">Join the list</h2>
+      <p style="margin:8px 0 0;font-size:0.9375rem;line-height:1.6;color:var(--gray-warm)">Unsubscribe anytime. We never sell the list.</p>
+      <div style="margin-top:18px;display:flex;flex-direction:column;gap:10px">
+        <input placeholder="you@store.com" style="background:var(--cream);border:2px solid var(--ink);color:var(--ink);padding:14px;font-family:var(--font-body);font-weight:500;font-size:16px;min-height:52px;width:100%">
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="primary" size="md" style="display:grid;min-height:52px" hint-size="100%,52px">Join</x-import>
+      </div>
+    </div>
+    <div style="margin-top:24px;padding-top:16px;border-top:2px solid var(--ink);display:flex;flex-wrap:wrap;gap:16px 32px">
+      <div><div style="font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">Cadence</div><div style="margin-top:4px;font-family:var(--font-display);font-size:1rem;text-transform:uppercase">Monthly</div></div>
+      <div><div style="font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">Length</div><div style="margin-top:4px;font-family:var(--font-display);font-size:1rem;text-transform:uppercase">4 min read</div></div>
+      <div><div style="font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">Filler</div><div style="margin-top:4px;font-family:var(--font-display);font-size:1rem;text-transform:uppercase">None</div></div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Sample content" style="background:var(--gray-light);padding:48px 0">
+  <div data-anim style="padding:0 20px">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">Recent issues</x-import>
+    <div style="margin-top:22px;display:flex;flex-direction:column;gap:24px">
+      <div style="background:var(--cream);border:2px solid var(--ink);box-shadow:var(--shadow-card);padding:22px 20px;display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+          <span style="font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">Latest — Issue 012</span>
+          <span style="background:var(--ground-accent);color:#FFFFFF;font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:4px 9px">New</span>
+        </div>
+        <h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.375rem;line-height:1.1;text-transform:uppercase">[The email flow that pays the ad bill]</h3>
+        <p style="margin:0;font-size:0.9375rem;line-height:1.6">[Two-line excerpt placeholder — the setup, the number it moved, and what we'd do differently.]</p>
+        <a href="Newsletter.dc.html" style="margin-top:4px;display:flex;align-items:center;justify-content:center;min-height:48px;border:2px solid var(--ink);font-weight:700;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">Read issue 012</a>
+      </div>
+      <div style="display:flex;flex-direction:column">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-bottom:10px">
+          <span style="font-weight:700;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">Previously</span>
+          <span style="font:700 11px ui-monospace,Menlo,monospace;color:var(--gray-warm)">11 issues</span>
+        </div>
+        <div style="border-top:2px solid var(--ink);padding:14px 0;display:grid;grid-template-columns:1fr auto;gap:4px 12px;border-bottom:1px solid var(--border-divider)">
+          <span style="font:700 11px ui-monospace,Menlo,monospace;color:var(--gray-warm)">ISSUE 011 · [DATE]</span>
+          <span style="font-family:var(--font-display);font-size:0.9375rem;color:var(--ground-accent);grid-row:span 2;align-self:center">[metric]</span>
+          <span style="font-family:var(--font-display);font-size:1rem;line-height:1.15;text-transform:uppercase">[What broke when the pixel lied]</span>
+          <p style="margin:2px 0 0;grid-column:1 / -1;font-size:0.875rem;line-height:1.55;color:var(--gray-warm)">[One-line summary placeholder.]</p>
+        </div>
+        <div style="padding:14px 0;display:grid;grid-template-columns:1fr auto;gap:4px 12px;border-bottom:2px solid var(--ink)">
+          <span style="font:700 11px ui-monospace,Menlo,monospace;color:var(--gray-warm)">ISSUE 010 · [DATE]</span>
+          <span style="font-family:var(--font-display);font-size:0.9375rem;color:var(--ground-accent);grid-row:span 2;align-self:center">[metric]</span>
+          <span style="font-family:var(--font-display);font-size:1rem;line-height:1.15;text-transform:uppercase">[The handover checklist, published]</span>
+          <p style="margin:2px 0 0;grid-column:1 / -1;font-size:0.875rem;line-height:1.55;color:var(--gray-warm)">[One-line summary placeholder.]</p>
+        </div>
+        <a href="Newsletter.dc.html" style="margin-top:16px;display:flex;align-items:center;justify-content:center;min-height:48px;border:2px solid var(--ink);font-weight:700;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none" style-hover="background:var(--ink);color:var(--cream)">Full archive →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Social proof" style="background:var(--cream);padding:48px 0">
+  <div data-anim style="padding:0 20px;display:flex;flex-direction:column;gap:24px">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Metric" value="[N]" label="Subscribers" sub="[Placeholder — real count at launch, marked non-final]" size="sm" hint-size="auto,90px"></x-import>
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Testimonial" quote="[Reader quote slot — demonstrative placeholder, non-final.]" name="[Reader name]" role="[Store type]" hint-size="100%,160px"></x-import>
+  </div>
+</section>
+
+<dc-import name="SiteFooterMobile" variant="standard" hint-size="100%,620px"></dc-import>
+</div></div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;viewport&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;desktop&quot;,&quot;mobile&quot;],&quot;default&quot;:&quot;desktop&quot;,&quot;tsType&quot;:&quot;'desktop'|'mobile'&quot;,&quot;section&quot;:&quot;Viewport&quot;}}">
+class Component extends DCLogic {
+  renderVals() { return { isDesktop: (this.props.viewport ?? 'desktop') !== 'mobile', isMobile: (this.props.viewport ?? 'desktop') === 'mobile',}; }
+  componentDidMount() { import('./site-fx.js').then(m => { this._fx = m; m.armAnim(this); }); }
+  componentDidUpdate() { if (this._fx) this._fx.armAnim(this); }
+  componentWillUnmount() { if (this._fx) this._fx.disarmAnim(this); }
+}
+</script>
+</body>
+</html>

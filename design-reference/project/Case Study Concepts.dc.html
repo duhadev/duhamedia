@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+  <script src="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/_ds_bundle.js"></script>
+  <script src="image-slot.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;}
+    :root{--cream:#FFFFFF;--gray-light:#F5F5F4;--accent-primary:#111111;--ground-accent:#C20E59;--wine:#C20E59;--yellow:#FCE588;}
+    body{margin:0;background:#DED9D0;color:var(--ink);font-family:var(--font-body);font-weight:500;}
+    a{color:var(--ink);text-decoration:none;}
+    a:hover{color:var(--wine);}
+  </style>
+</helmet>
+
+<section style="padding:56px 48px 80px;display:flex;flex-direction:column;gap:40px">
+  <div style="display:flex;flex-direction:column;gap:10px;max-width:900px">
+    <span style="font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#6B655C">Turn 1 — Case study page, desktop</span>
+    <h1 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:2.25rem;line-height:1.04;text-transform:uppercase">Three ways to write it up.</h1>
+    <p style="margin:0;font-size:1rem;line-height:1.6;max-width:74ch;color:#3A3630">All three read as analysis, not a brag sheet: real prose, a stated method, numbers you can check, and plain image slots you drop screenshots into. <a href="#1a">1a</a> is a single-column article. <a href="#1b">1b</a> keeps the prose narrow with a sticky data rail beside it. <a href="#1c">1c</a> is a findings-first memo with a dated log. Copy below is written out in full (Northside Goods, matching the Work ledger) so you can judge the voice, not lorem.</p>
+  </div>
+
+  <div style="display:flex;gap:56px;align-items:flex-start;flex-wrap:wrap">
+
+    <div id="1a" style="display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;align-items:baseline;gap:12px">
+        <span style="font-family:var(--font-display);font-size:14px;background:var(--ink);color:#fff;padding:6px 10px">1a</span>
+        <span style="font-family:var(--font-display);font-size:1.25rem;text-transform:uppercase">The article</span>
+        <span style="font-size:13px;color:#6B655C">One measure, figures inline, results table at the end</span>
+      </div>
+
+      <div style="width:1200px;background:var(--cream);border:2px solid var(--ink)">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:64px;border-bottom:1px solid var(--border-divider)">
+          <span style="display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-size:1rem;text-transform:uppercase"><span style="width:22px;height:22px;background:var(--wine);-webkit-mask-image:url('assets/logo.png');-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;mask-image:url('assets/logo.png');mask-size:contain;mask-repeat:no-repeat"></span>Duha Media</span>
+          <span style="display:flex;gap:28px;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.06em"><span style="color:#8A857D">Services</span><span style="border-bottom:2px solid var(--ink);padding-bottom:3px">Work</span><span style="color:#8A857D">About</span><span style="color:#8A857D">FAQ</span></span>
+        </div>
+        <div style="height:3px;background:var(--gray-light)"><div style="width:22%;height:3px;background:var(--wine)"></div></div>
+
+        <div style="max-width:760px;margin:0 auto;padding:64px 0 24px">
+          <span style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#6B655C"><a href="Work.dc.html" style="color:#6B655C">Work</a><span>/</span><span>Study 01</span></span>
+          <h1 style="margin:20px 0 0;font-family:var(--font-display);font-weight:400;font-size:3.25rem;line-height:.96;text-transform:uppercase">The demand was already there. The store was leaking it.</h1>
+          <p style="margin:24px 0 0;font-size:1.25rem;line-height:1.55;color:#3A3630">Northside Goods had three stores, healthy search traffic and a checkout that lost roughly two of every three carts. Fixing acquisition first would have cost them $40K to learn nothing. Here is the order we worked in, and why.</p>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:32px;padding:20px 0;border-top:2px solid var(--ink);border-bottom:1px solid var(--border-divider)">
+            <div><span style="display:block;font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#8A857D">Client</span><span style="display:block;margin-top:4px;font-size:0.9375rem">Northside Goods</span></div>
+            <div><span style="display:block;font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#8A857D">Sector</span><span style="display:block;margin-top:4px;font-size:0.9375rem">Hardgoods retail, 3 locations</span></div>
+            <div><span style="display:block;font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#8A857D">Engagement</span><span style="display:block;margin-top:4px;font-size:0.9375rem">Build + engine, 12 months</span></div>
+            <div><span style="display:block;font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#8A857D">Published</span><span style="display:block;margin-top:4px;font-size:0.9375rem">Feb 2026, client-approved</span></div>
+          </div>
+        </div>
+
+        <div style="max-width:760px;margin:0 auto;padding:0 0 24px">
+          <h2 style="margin:32px 0 0;font-family:var(--font-display);font-weight:400;font-size:1.75rem;text-transform:uppercase">01 — What we found</h2>
+          <p style="margin:16px 0 0;font-size:1.0625rem;line-height:1.7;color:#1F1C18">Two weeks of audit, no changes shipped. Sessions were up 31% year over year while revenue was flat, which usually means the leak is after the click. It was: a theme carrying four legacy apps, 2.4s of blocking script before first paint, and a five-field checkout on a store where 68% of sessions were mobile.</p>
+          <p style="margin:16px 0 0;font-size:1.0625rem;line-height:1.7;color:#1F1C18">The second finding mattered more. Their conversion tracking double-counted returning customers, so every channel report they had been buying decisions on was wrong by roughly 40%. Nobody was lying to them. The numbers were just built badly.</p>
+          <figure style="margin:32px 0 0">
+            <div style="border:2px solid var(--ink);aspect-ratio:16/9;background:var(--gray-light)">
+              <image-slot id="cs-1a-fig1" placeholder="Audit screenshot — checkout funnel or PageSpeed panel" style="width:100%;height:100%"></image-slot>
+            </div>
+            <figcaption style="margin-top:10px;font-size:0.8125rem;color:#6B655C">Fig. 1 — Checkout funnel at audit. Drop-off concentrates at the shipping step, not the cart.</figcaption>
+          </figure>
+          <h2 style="margin:44px 0 0;font-family:var(--font-display);font-weight:400;font-size:1.75rem;text-transform:uppercase">02 — The order of work</h2>
+          <p style="margin:16px 0 0;font-size:1.0625rem;line-height:1.7;color:#1F1C18">Tracking first, because every later decision depends on it. Then the theme rebuild, because paid traffic into a leaking store buys more leaks. Only in month four did we touch acquisition, and by then a 2% lift in checkout completion was worth more than any bid change we could have made in month one.</p>
+          <div style="margin:28px 0 0;border-left:4px solid var(--wine);padding:4px 0 4px 24px">
+            <p style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.5rem;line-height:1.2;text-transform:uppercase">Scaling spend into a store that leaks demand just buys more leaks.</p>
+          </div>
+          <p style="margin:28px 0 0;font-size:1.0625rem;line-height:1.7;color:#1F1C18">The tempting alternative — restructure the ad account in week one, show a fast ROAS win — would have worked on paper for about six weeks. It fails because the win is measured on the same broken tracking that caused the problem, and because the checkout ceiling doesn't move.</p>
+          <h2 style="margin:44px 0 0;font-family:var(--font-display);font-weight:400;font-size:1.75rem;text-transform:uppercase">03 — What changed, month by month</h2>
+          <p style="margin:16px 0 0;font-size:1.0625rem;line-height:1.7;color:#1F1C18">Weeks 1–2 audit. Weeks 3–4 tracking rebuild and a clean baseline. Months 2–3 theme rebuild, checkout cut to two fields, 900ms off first paint. Month 4 email lifecycle. Months 5–8 paid, scaled against the new baseline. Month 9 handover: their marketing manager took the calendar, the ad account and the playbook.</p>
+          <figure style="margin:32px 0 0">
+            <div style="border:2px solid var(--ink);aspect-ratio:16/9;background:var(--gray-light)">
+              <image-slot id="cs-1a-fig2" placeholder="After screenshot — rebuilt PDP or checkout" style="width:100%;height:100%"></image-slot>
+            </div>
+            <figcaption style="margin-top:10px;font-size:0.8125rem;color:#6B655C">Fig. 2 — Rebuilt checkout, month 3. Two fields, no app-injected upsell before payment.</figcaption>
+          </figure>
+        </div>
+
+        <div style="background:var(--gray-light);border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);padding:44px 0">
+          <div style="max-width:760px;margin:0 auto">
+            <span style="display:flex;align-items:center;gap:9px;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#6B655C"><span style="width:9px;height:9px;background:var(--yellow);transform:rotate(45deg)"></span>Results — 12 months, client-reported</span>
+            <div style="margin-top:20px;border-top:2px solid var(--ink)">
+              <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:16px;padding:10px 0;border-bottom:1px solid rgba(138,133,125,.5);font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#8A857D"><span>Measure</span><span>Baseline</span><span>Month 12</span><span>Change</span></div>
+              <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:16px;padding:14px 0;border-bottom:1px solid rgba(138,133,125,.35);font-size:0.9375rem"><span>Online revenue</span><span>$780K/yr</span><span>$2.43M/yr</span><span style="font-family:var(--font-display);color:var(--wine)">+212%</span></div>
+              <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:16px;padding:14px 0;border-bottom:1px solid rgba(138,133,125,.35);font-size:0.9375rem"><span>Checkout completion</span><span>34%</span><span>61%</span><span style="font-family:var(--font-display)">+27pt</span></div>
+              <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:16px;padding:14px 0;border-bottom:1px solid rgba(138,133,125,.35);font-size:0.9375rem"><span>Blended ROAS</span><span>1.4×</span><span>3.2×</span><span style="font-family:var(--font-display)">+1.8×</span></div>
+              <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:16px;padding:14px 0;border-bottom:2px solid var(--ink);font-size:0.9375rem"><span>Agency fees, month 10 on</span><span>$4.2K/mo</span><span>$0/mo</span><span style="font-family:var(--font-display)">Handover</span></div>
+            </div>
+            <p style="margin:16px 0 0;font-size:0.8125rem;line-height:1.6;color:#6B655C">Method: baseline is the 12 months before engagement, restated on the corrected tracking so both periods count the same way. Revenue is online only; retail is excluded. Figures supplied by the client and approved for publication.</p>
+          </div>
+        </div>
+
+        <div style="max-width:760px;margin:0 auto;padding:44px 0 0">
+          <div style="border-left:4px solid var(--yellow);padding-left:24px">
+            <p style="margin:0;font-size:1.125rem;line-height:1.6">"They rebuilt the store, ran the ads, then taught my manager to run it. We stopped paying them in month nine — on their schedule."</p>
+            <span style="display:block;margin-top:12px;font-weight:700;font-size:12px;letter-spacing:0.06em;text-transform:uppercase">J. Alvarez</span>
+            <span style="display:block;font-size:12px;color:#6B655C">Owner, Northside Goods</span>
+          </div>
+          <h2 style="margin:44px 0 0;font-family:var(--font-display);font-weight:400;font-size:1.75rem;text-transform:uppercase">04 — What we'd do differently</h2>
+          <p style="margin:16px 0 16px;font-size:1.0625rem;line-height:1.7;color:#1F1C18">We should have started the handover training in month five, not month eight. Their manager was ready earlier than our plan assumed, and two months of shadowing would have been enough.</p>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:32px;padding:32px;margin:32px;border:2px solid var(--ink)">
+          <span style="font-size:0.9375rem;color:#3A3630">Next study — Halsted Supply: three freelancers, one attribution model, 3.2× ROAS.</span>
+          <span style="font-weight:700;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;white-space:nowrap">Read it <i class="ph-bold ph-arrow-right"></i></span>
+        </div>
+
+        <div style="background:var(--ink);color:var(--cream);padding:72px 32px;text-align:center">
+          <h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:2.25rem;line-height:1.05;text-transform:uppercase">Want this written about your store?</h3>
+          <p style="margin:14px 0 0;font-size:1rem;opacity:.85">3 builds in progress. We cap at 7.</p>
+          <span style="display:inline-flex;align-items:center;justify-content:center;min-height:52px;margin-top:24px;padding:0 32px;background:var(--wine);color:#fff;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:0.04em">Book a call</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="1b" style="display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;align-items:baseline;gap:12px">
+        <span style="font-family:var(--font-display);font-size:14px;background:var(--ink);color:#fff;padding:6px 10px">1b</span>
+        <span style="font-family:var(--font-display);font-size:1.25rem;text-transform:uppercase">Prose + data rail</span>
+        <span style="font-size:13px;color:#6B655C">Numbers stay on screen while you read the argument</span>
+      </div>
+
+      <div style="width:1200px;background:var(--cream);border:2px solid var(--ink)">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:64px;border-bottom:1px solid var(--border-divider)">
+          <span style="display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-size:1rem;text-transform:uppercase"><span style="width:22px;height:22px;background:var(--wine);-webkit-mask-image:url('assets/logo.png');-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;mask-image:url('assets/logo.png');mask-size:contain;mask-repeat:no-repeat"></span>Duha Media</span>
+          <span style="display:flex;gap:28px;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.06em"><span style="color:#8A857D">Services</span><span style="border-bottom:2px solid var(--ink);padding-bottom:3px">Work</span><span style="color:#8A857D">About</span><span style="color:#8A857D">FAQ</span></span>
+        </div>
+
+        <div style="padding:48px 32px 36px;border-bottom:2px solid var(--ink)">
+          <span style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#6B655C"><span>Study 01</span><span>/</span><span>Northside Goods</span><span>/</span><span>Build + engine, 12 months</span></span>
+          <h1 style="margin:18px 0 0;font-family:var(--font-display);font-weight:400;font-size:3rem;line-height:.96;text-transform:uppercase;max-width:26ch">Sessions up 31%. Revenue flat. The leak was after the click.</h1>
+          <p style="margin:20px 0 0;font-size:1.1875rem;line-height:1.55;color:#3A3630;max-width:70ch">Two weeks of audit before a single change shipped, then nine months of work in a deliberate order. The rail on the right holds every number in this story so you can check the argument as you read it.</p>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 360px">
+          <div style="padding:44px 40px 44px 32px">
+            <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.625rem;text-transform:uppercase">01 — Diagnosis</h2>
+            <p style="margin:14px 0 0;font-size:1.0625rem;line-height:1.7;color:#1F1C18">Traffic growth with flat revenue is a conversion problem or a measurement problem. Here it was both. The theme carried four legacy apps and 2.4s of blocking script; checkout asked for five fields on a store where 68% of sessions were mobile.</p>
+            <p style="margin:14px 0 0;font-size:1.0625rem;line-height:1.7;color:#1F1C18">Worse, conversion tracking double-counted returning customers. Every channel report the owner had been making decisions on overstated paid performance by about 40%.</p>
+            <figure style="margin:28px 0 0">
+              <div style="border:2px solid var(--ink);aspect-ratio:16/9;background:var(--gray-light)">
+                <image-slot id="cs-1b-fig1" placeholder="Audit screenshot — funnel or tracking discrepancy" style="width:100%;height:100%"></image-slot>
+              </div>
+              <figcaption style="margin-top:10px;font-size:0.8125rem;color:#6B655C">Fig. 1 — Two sources of truth, 40% apart. Reconciled in week 4.</figcaption>
+            </figure>
+
+            <h2 style="margin:40px 0 0;font-family:var(--font-display);font-weight:400;font-size:1.625rem;text-transform:uppercase">02 — Sequence, and the case against the shortcut</h2>
+            <p style="margin:14px 0 0;font-size:1.0625rem;line-height:1.7;color:#1F1C18">Tracking, then theme, then acquisition. The shortcut — restructure ads in week one for a fast ROAS headline — measures the win on the same broken data and leaves the checkout ceiling in place. It looks good for about six weeks.</p>
+            <p style="margin:14px 0 0;font-size:1.0625rem;line-height:1.7;color:#1F1C18">By month four a 2-point gain in checkout completion was worth more than any bid strategy available in month one. That is the whole argument for the order, and it is checkable against the rail.</p>
+
+            <h2 style="margin:40px 0 0;font-family:var(--font-display);font-weight:400;font-size:1.625rem;text-transform:uppercase">03 — Handover</h2>
+            <p style="margin:14px 0 0;font-size:1.0625rem;line-height:1.7;color:#1F1C18">From month six their marketing manager ran the weekly review with us in the room. Month nine she ran it without us: calendar, ad account, playbook, reporting. Fees went to zero on schedule.</p>
+            <p style="margin:14px 0 0;font-size:1.0625rem;line-height:1.7;color:#1F1C18">In hindsight the training should have started in month five. She was ready before our plan assumed she would be.</p>
+
+            <div style="margin:32px 0 0;border-left:4px solid var(--yellow);padding-left:24px">
+              <p style="margin:0;font-size:1.125rem;line-height:1.6">"They rebuilt the store, ran the ads, then taught my manager to run it. We stopped paying them in month nine — on their schedule."</p>
+              <span style="display:block;margin-top:12px;font-weight:700;font-size:12px;letter-spacing:0.06em;text-transform:uppercase">J. Alvarez</span>
+              <span style="display:block;font-size:12px;color:#6B655C">Owner, Northside Goods</span>
+            </div>
+          </div>
+
+          <div style="border-left:2px solid var(--ink);background:var(--gray-light);padding:36px 28px;display:flex;flex-direction:column;gap:28px">
+            <div>
+              <span style="display:block;font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#6B655C">Headline result</span>
+              <span style="display:block;margin-top:8px;font-family:var(--font-display);font-size:3rem;line-height:1;color:var(--wine)">+212%</span>
+              <span style="display:block;margin-top:4px;font-size:0.8125rem;color:#6B655C">Online revenue, 12 months, restated baseline</span>
+            </div>
+            <div style="border-top:1px solid rgba(138,133,125,.5);padding-top:20px">
+              <span style="display:block;font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#6B655C">Before / after</span>
+              <div style="display:flex;justify-content:space-between;gap:12px;margin-top:12px;font-size:0.875rem"><span style="color:#6B655C">Checkout completion</span><span><span style="color:#8A857D">34%</span> → <strong>61%</strong></span></div>
+              <div style="display:flex;justify-content:space-between;gap:12px;margin-top:8px;font-size:0.875rem"><span style="color:#6B655C">First paint</span><span><span style="color:#8A857D">3.6s</span> → <strong>2.7s</strong></span></div>
+              <div style="display:flex;justify-content:space-between;gap:12px;margin-top:8px;font-size:0.875rem"><span style="color:#6B655C">Blended ROAS</span><span><span style="color:#8A857D">1.4×</span> → <strong>3.2×</strong></span></div>
+              <div style="display:flex;justify-content:space-between;gap:12px;margin-top:8px;font-size:0.875rem"><span style="color:#6B655C">Email revenue share</span><span><span style="color:#8A857D">4%</span> → <strong>21%</strong></span></div>
+              <div style="display:flex;justify-content:space-between;gap:12px;margin-top:8px;font-size:0.875rem"><span style="color:#6B655C">Agency fees</span><span><span style="color:#8A857D">$4.2K/mo</span> → <strong>$0</strong></span></div>
+            </div>
+            <div style="border-top:1px solid rgba(138,133,125,.5);padding-top:20px">
+              <span style="display:block;font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#6B655C">Order of work</span>
+              <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px">
+                <div style="display:flex;gap:10px;font-size:0.875rem"><span style="font:700 11px ui-monospace,Menlo,monospace;color:#8A857D;flex:none;width:52px">Wk 1–2</span><span>Audit, no changes shipped</span></div>
+                <div style="display:flex;gap:10px;font-size:0.875rem"><span style="font:700 11px ui-monospace,Menlo,monospace;color:#8A857D;flex:none;width:52px">Wk 3–4</span><span>Tracking rebuilt, baseline restated</span></div>
+                <div style="display:flex;gap:10px;font-size:0.875rem"><span style="font:700 11px ui-monospace,Menlo,monospace;color:#8A857D;flex:none;width:52px">Mo 2–3</span><span>Theme rebuild, checkout to 2 fields</span></div>
+                <div style="display:flex;gap:10px;font-size:0.875rem"><span style="font:700 11px ui-monospace,Menlo,monospace;color:#8A857D;flex:none;width:52px">Mo 4</span><span>Email lifecycle flows</span></div>
+                <div style="display:flex;gap:10px;font-size:0.875rem"><span style="font:700 11px ui-monospace,Menlo,monospace;color:#8A857D;flex:none;width:52px">Mo 5–8</span><span>Paid scaled on new baseline</span></div>
+                <div style="display:flex;gap:10px;font-size:0.875rem"><span style="font:700 11px ui-monospace,Menlo,monospace;color:#8A857D;flex:none;width:52px">Mo 9</span><span>Handover complete</span></div>
+              </div>
+            </div>
+            <div style="border-top:1px solid rgba(138,133,125,.5);padding-top:20px">
+              <span style="display:block;font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#6B655C">Method</span>
+              <p style="margin:10px 0 0;font-size:0.8125rem;line-height:1.6;color:#6B655C">Baseline is the 12 months before engagement, restated on corrected tracking. Online revenue only. Client-supplied, approved for publication.</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:var(--ink);color:var(--cream);padding:64px 32px;display:flex;align-items:center;justify-content:space-between;gap:48px;border-top:2px solid var(--ink)">
+          <div style="max-width:52ch">
+            <h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:2rem;line-height:1.05;text-transform:uppercase">Bring us the store that's leaking.</h3>
+            <p style="margin:12px 0 0;font-size:1rem;opacity:.85">3 builds in progress. We cap at 7 — capacity is our quality gate.</p>
+          </div>
+          <span style="display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 32px;background:var(--wine);color:#fff;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:0.04em;white-space:nowrap">Book a call</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="1c" style="display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;align-items:baseline;gap:12px">
+        <span style="font-family:var(--font-display);font-size:14px;background:var(--ink);color:#fff;padding:6px 10px">1c</span>
+        <span style="font-family:var(--font-display);font-size:1.25rem;text-transform:uppercase">Findings memo</span>
+        <span style="font-size:13px;color:#6B655C">Conclusions first, then the dated log behind them</span>
+      </div>
+
+      <div style="width:1200px;background:var(--cream);border:2px solid var(--ink)">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:64px;border-bottom:1px solid var(--border-divider)">
+          <span style="display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-size:1rem;text-transform:uppercase"><span style="width:22px;height:22px;background:var(--wine);-webkit-mask-image:url('assets/logo.png');-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;mask-image:url('assets/logo.png');mask-size:contain;mask-repeat:no-repeat"></span>Duha Media</span>
+          <span style="display:flex;gap:28px;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.06em"><span style="color:#8A857D">Services</span><span style="border-bottom:2px solid var(--ink);padding-bottom:3px">Work</span><span style="color:#8A857D">About</span><span style="color:#8A857D">FAQ</span></span>
+        </div>
+
+        <div style="background:var(--ink);color:var(--cream);padding:48px 32px">
+          <span style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;opacity:.65"><span>Study 01</span><span>/</span><span>Northside Goods</span><span>/</span><span>Filed Feb 2026</span></span>
+          <h1 style="margin:18px 0 0;font-family:var(--font-display);font-weight:400;font-size:3rem;line-height:.96;text-transform:uppercase;max-width:24ch">What 12 months of fixing this store actually taught us</h1>
+          <p style="margin:18px 0 0;font-size:1.125rem;line-height:1.6;opacity:.85;max-width:66ch">Written as a memo: the four findings up front, then the log they came from. If you only read the top third, you still get the transferable part.</p>
+        </div>
+
+        <div style="padding:44px 32px;border-bottom:2px solid var(--ink)">
+          <span style="display:flex;align-items:center;gap:9px;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#6B655C"><span style="width:9px;height:9px;background:var(--wine);transform:rotate(45deg)"></span>Findings</span>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:24px">
+            <div style="display:flex;gap:16px"><span style="font-family:var(--font-display);font-size:1.5rem;line-height:1;color:var(--wine);flex:none">01</span><div><h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.25rem;text-transform:uppercase">Traffic growth hid a conversion collapse</h3><p style="margin:8px 0 0;font-size:0.9375rem;line-height:1.6;color:#3A3630">Sessions were up 31% year over year while revenue sat flat. When those two diverge, stop buying traffic and go read the funnel.</p></div></div>
+            <div style="display:flex;gap:16px"><span style="font-family:var(--font-display);font-size:1.5rem;line-height:1;color:var(--wine);flex:none">02</span><div><h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.25rem;text-transform:uppercase">Their reports were wrong by 40%</h3><p style="margin:8px 0 0;font-size:0.9375rem;line-height:1.6;color:#3A3630">Tracking double-counted returning customers. Every prior channel decision was made on inflated paid numbers.</p></div></div>
+            <div style="display:flex;gap:16px"><span style="font-family:var(--font-display);font-size:1.5rem;line-height:1;color:var(--wine);flex:none">03</span><div><h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.25rem;text-transform:uppercase">Sequence beat spend</h3><p style="margin:8px 0 0;font-size:0.9375rem;line-height:1.6;color:#3A3630">A 27-point checkout gain in month three made every later ad dollar work. The reverse order would have bought more leaks.</p></div></div>
+            <div style="display:flex;gap:16px"><span style="font-family:var(--font-display);font-size:1.5rem;line-height:1;color:var(--wine);flex:none">04</span><div><h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.25rem;text-transform:uppercase">Handover should start earlier</h3><p style="margin:8px 0 0;font-size:0.9375rem;line-height:1.6;color:#3A3630">We began training in month eight. Their manager was ready in month five. Our plan, not her pace, was the constraint.</p></div></div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);background:var(--gray-light);border-bottom:2px solid var(--ink)">
+          <div style="padding:28px 32px;border-right:1px solid rgba(138,133,125,.5)"><span style="display:block;font-family:var(--font-display);font-size:2.5rem;line-height:1;color:var(--wine)">+212%</span><span style="display:block;margin-top:4px;font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#6B655C">Online revenue, 12 mo</span></div>
+          <div style="padding:28px 32px;border-right:1px solid rgba(138,133,125,.5)"><span style="display:block;font-family:var(--font-display);font-size:2.5rem;line-height:1">34→61%</span><span style="display:block;margin-top:4px;font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#6B655C">Checkout completion</span></div>
+          <div style="padding:28px 32px;border-right:1px solid rgba(138,133,125,.5)"><span style="display:block;font-family:var(--font-display);font-size:2.5rem;line-height:1">3.2×</span><span style="display:block;margin-top:4px;font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#6B655C">Blended ROAS, from 1.4×</span></div>
+          <div style="padding:28px 32px"><span style="display:block;font-family:var(--font-display);font-size:2.5rem;line-height:1">$0/mo</span><span style="display:block;margin-top:4px;font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#6B655C">Fees from month 10</span></div>
+        </div>
+
+        <div style="padding:44px 32px 8px">
+          <span style="display:flex;align-items:center;gap:9px;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#6B655C"><span style="width:9px;height:9px;background:var(--yellow);transform:rotate(45deg)"></span>The log</span>
+        </div>
+
+        <div style="padding:16px 32px 44px;display:flex;flex-direction:column">
+          <div style="display:grid;grid-template-columns:120px 1fr 340px;gap:32px;padding:24px 0;border-top:1px solid var(--border-divider)">
+            <span style="font:700 12px ui-monospace,Menlo,monospace;color:#8A857D">WEEKS 1–2</span>
+            <div><h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.25rem;text-transform:uppercase">Audit. Nothing shipped.</h3><p style="margin:8px 0 0;font-size:0.9375rem;line-height:1.6;color:#3A3630">Four legacy apps in the theme, 2.4s of blocking script, five-field checkout against 68% mobile sessions. Drop-off concentrated at shipping, not cart.</p></div>
+            <div style="border:2px solid var(--ink);aspect-ratio:16/10;background:var(--gray-light)"><image-slot id="cs-1c-fig1" placeholder="Audit screenshot" style="width:100%;height:100%"></image-slot></div>
+          </div>
+          <div style="display:grid;grid-template-columns:120px 1fr 340px;gap:32px;padding:24px 0;border-top:1px solid var(--border-divider)">
+            <span style="font:700 12px ui-monospace,Menlo,monospace;color:#8A857D">WEEKS 3–4</span>
+            <div><h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.25rem;text-transform:uppercase">Tracking rebuilt, baseline restated</h3><p style="margin:8px 0 0;font-size:0.9375rem;line-height:1.6;color:#3A3630">Returning-customer double count removed; the prior 12 months restated so before and after count the same way. Reported paid performance dropped 40% on paper before anything improved.</p></div>
+            <div></div>
+          </div>
+          <div style="display:grid;grid-template-columns:120px 1fr 340px;gap:32px;padding:24px 0;border-top:1px solid var(--border-divider)">
+            <span style="font:700 12px ui-monospace,Menlo,monospace;color:#8A857D">MONTHS 2–3</span>
+            <div><h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.25rem;text-transform:uppercase">Theme rebuild, checkout to two fields</h3><p style="margin:8px 0 0;font-size:0.9375rem;line-height:1.6;color:#3A3630">900ms off first paint, app-injected upsell removed from the payment step. Checkout completion moved 34% → 58% inside six weeks, before any acquisition work.</p></div>
+            <div style="border:2px solid var(--ink);aspect-ratio:16/10;background:var(--gray-light)"><image-slot id="cs-1c-fig2" placeholder="Rebuilt checkout screenshot" style="width:100%;height:100%"></image-slot></div>
+          </div>
+          <div style="display:grid;grid-template-columns:120px 1fr 340px;gap:32px;padding:24px 0;border-top:1px solid var(--border-divider)">
+            <span style="font:700 12px ui-monospace,Menlo,monospace;color:#8A857D">MONTHS 4–8</span>
+            <div><h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.25rem;text-transform:uppercase">Engine on a floor that holds</h3><p style="margin:8px 0 0;font-size:0.9375rem;line-height:1.6;color:#3A3630">Email lifecycle first (share of revenue 4% → 21%), then paid scaled against the corrected baseline to 3.2× blended.</p></div>
+            <div></div>
+          </div>
+          <div style="display:grid;grid-template-columns:120px 1fr 340px;gap:32px;padding:24px 0;border-top:1px solid var(--border-divider);border-bottom:2px solid var(--ink)">
+            <span style="font:700 12px ui-monospace,Menlo,monospace;color:#8A857D">MONTH 9</span>
+            <div><h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.25rem;text-transform:uppercase">Handover</h3><p style="margin:8px 0 0;font-size:0.9375rem;line-height:1.6;color:#3A3630">Their marketing manager took the calendar, the ad account, the reporting and the playbook. Fees to zero from month 10.</p></div>
+            <div></div>
+          </div>
+          <p style="margin:20px 0 0;font-size:0.8125rem;line-height:1.6;color:#6B655C;max-width:80ch">Method: baseline is the 12 months before engagement restated on corrected tracking. Online revenue only; retail excluded. All figures client-supplied and approved for publication.</p>
+        </div>
+
+        <div style="background:var(--gray-light);padding:36px 32px;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink)">
+          <div style="border-left:4px solid var(--yellow);padding-left:24px;max-width:80ch">
+            <p style="margin:0;font-size:1.125rem;line-height:1.6">"They rebuilt the store, ran the ads, then taught my manager to run it. We stopped paying them in month nine — on their schedule."</p>
+            <span style="display:block;margin-top:12px;font-weight:700;font-size:12px;letter-spacing:0.06em;text-transform:uppercase">J. Alvarez</span>
+            <span style="display:block;font-size:12px;color:#6B655C">Owner, Northside Goods</span>
+          </div>
+        </div>
+
+        <div style="padding:64px 32px;text-align:center">
+          <h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:2.25rem;line-height:1.05;text-transform:uppercase">Want the same memo about your store?</h3>
+          <p style="margin:12px 0 0;font-size:1rem;color:#3A3630">The audit comes first, and you keep it either way.</p>
+          <span style="display:inline-flex;align-items:center;justify-content:center;min-height:52px;margin-top:24px;padding:0 32px;background:var(--wine);color:#fff;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:0.04em">Book a call</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</x-dc>
+</body>
+</html>

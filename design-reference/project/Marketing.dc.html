@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+  <script src="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/_ds_bundle.js"></script>
+  <script src="image-slot.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;}
+    :root{/*fade-edge*/--cream:#FFFFFF;--gray-light:#F5F5F4;--accent-primary:#111111;--ground-accent:#C20E59;--yellow:#FCE588;}
+    body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--font-body);font-weight:500;}
+    a{color:var(--ink);}
+    a:hover{color:var(--accent-primary);}
+    summary::-webkit-details-marker{display:none;}
+  </style>
+</helmet>
+
+<sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+<dc-import name="SiteHeader" hint-size="100%,72px"></dc-import>
+
+<div data-screen-label="Breadcrumb" style="background:var(--ink);color:var(--cream)">
+  <div style="max-width:var(--container-max);margin:0 auto;padding:9px var(--container-pad);display:flex;align-items:center;gap:12px;font:700 11px ui-monospace,Menlo,monospace;letter-spacing:0.1em;text-transform:uppercase">
+    <a href="Services Hub.dc.html" style="color:var(--cream);opacity:.55;text-decoration:none">Services</a><span style="opacity:.4">/</span><span style="opacity:.55">Marketing</span><span style="opacity:.4">/</span><span>Phase 02 — operate the engine</span>
+  </div>
+</div>
+
+<section data-screen-label="Marketing hero" style="background:var(--ink);color:var(--cream);padding:56px 0 52px;border-top:1px solid rgba(250,247,242,.2)">
+  <div style="max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad);display:grid;grid-template-columns:1fr 300px;gap:56px;align-items:end">
+    <div>
+      <span style="display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;opacity:.7"><span aria-hidden="true" style="width:9px;height:9px;background:var(--yellow);transform:rotate(45deg)"></span>Phase 02 of three — operate the engine</span>
+      <h1 style="margin:18px 0 0;font-family:var(--font-display);font-weight:400;font-size:4rem;line-height:.92;text-transform:uppercase">The marketing engine</h1>
+      <p style="margin:20px 0 0;font-size:1.0625rem;line-height:1.6;max-width:52ch;opacity:.85">Six channels wired into one dashboard and run by one team. A store with no growth plan is a parked car — this is the machine that drives it.</p>
+    </div>
+    <div style="border-left:1px solid rgba(250,247,242,.3);padding-left:28px">
+      <span style="display:block;font-weight:700;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;opacity:.6">Engines start at</span>
+      <span style="display:block;margin-top:6px;font-family:var(--font-display);font-size:3rem;line-height:1">$1K<span style="font-size:1.5rem">/mo</span></span>
+      <span style="display:block;margin-top:10px;font-size:0.8125rem;opacity:.6">Six-month minimum — the honest window to judge a compounding engine.</span>
+      <a href="Book a Call.dc.html" style="display:flex;align-items:center;justify-content:center;min-height:48px;margin-top:18px;background:var(--ground-accent);color:#fff;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:0.04em;text-decoration:none">Book a call</a>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Signal flow" style="background:var(--gray-light);padding:48px 0 44px;border-bottom:2px solid var(--ink)">
+  <div data-anim style="max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad)">
+    <span style="display:flex;align-items:center;gap:9px;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)"><span aria-hidden="true" style="width:9px;height:9px;background:var(--yellow);transform:rotate(45deg)"></span>How the signal moves</span>
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:24px">
+      <div style="background:var(--cream);border:2px solid var(--ink);padding:16px 14px"><span style="font:700 11px ui-monospace,Menlo,monospace;color:var(--gray-warm)">E-01</span><span style="display:block;margin-top:6px;font-family:var(--font-display);font-size:1.0625rem;text-transform:uppercase">Email</span></div>
+      <div style="background:var(--cream);border:2px solid var(--ink);padding:16px 14px"><span style="font:700 11px ui-monospace,Menlo,monospace;color:var(--gray-warm)">E-02</span><span style="display:block;margin-top:6px;font-family:var(--font-display);font-size:1.0625rem;text-transform:uppercase">Ads</span></div>
+      <div style="background:var(--cream);border:2px solid var(--ink);padding:16px 14px"><span style="font:700 11px ui-monospace,Menlo,monospace;color:var(--gray-warm)">E-03</span><span style="display:block;margin-top:6px;font-family:var(--font-display);font-size:1.0625rem;text-transform:uppercase">Content</span></div>
+      <div style="background:var(--cream);border:2px solid var(--ink);padding:16px 14px"><span style="font:700 11px ui-monospace,Menlo,monospace;color:var(--gray-warm)">E-04</span><span style="display:block;margin-top:6px;font-family:var(--font-display);font-size:1.0625rem;text-transform:uppercase">SEO</span></div>
+      <div style="background:var(--cream);border:2px solid var(--ink);padding:16px 14px"><span style="font:700 11px ui-monospace,Menlo,monospace;color:var(--gray-warm)">E-05</span><span style="display:block;margin-top:6px;font-family:var(--font-display);font-size:1.0625rem;text-transform:uppercase">GBP</span></div>
+      <div style="background:var(--cream);border:2px solid var(--ink);padding:16px 14px"><span style="font:700 11px ui-monospace,Menlo,monospace;color:var(--gray-warm)">E-06</span><span style="display:block;margin-top:6px;font-family:var(--font-display);font-size:1.0625rem;text-transform:uppercase">CRM</span></div>
+    </div>
+    <div aria-hidden="true" style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;height:32px">
+      <span style="border-left:2px solid var(--ink);margin:0 auto;height:100%"></span>
+      <span style="border-left:2px solid var(--ink);margin:0 auto;height:100%"></span>
+      <span style="border-left:2px solid var(--ink);margin:0 auto;height:100%"></span>
+      <span style="border-left:2px solid var(--ink);margin:0 auto;height:100%"></span>
+      <span style="border-left:2px solid var(--ink);margin:0 auto;height:100%"></span>
+      <span style="border-left:2px solid var(--ink);margin:0 auto;height:100%"></span>
+    </div>
+    <div aria-hidden="true" style="height:2px;background:var(--ink)"></div>
+    <div aria-hidden="true" style="width:2px;height:28px;background:var(--ink);margin:0 auto"></div>
+    <div style="border:2px solid var(--ink);background:var(--cream);box-shadow:var(--shadow-card);display:grid;grid-template-columns:1fr 420px">
+      <div style="padding:28px 32px">
+        <span style="font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">Everything reports here</span>
+        <h2 style="margin:12px 0 0;font-family:var(--font-display);font-weight:400;font-size:2rem;line-height:1.02;text-transform:uppercase">One dashboard. You see what we see.</h2>
+        <p style="margin:14px 0 0;font-size:1rem;line-height:1.6;max-width:44ch">Every channel writes to the same place, plus a monthly written readout: what we did, what it returned, what's next. Access from day one, including during the audit.</p>
+        <p style="margin:12px 0 0;font-size:0.875rem;color:var(--gray-warm)">No deck theatre. No assembling five reports yourself.</p>
+      </div>
+      <div style="border-left:2px solid var(--ink);position:relative;min-height:280px">
+        <image-slot id="mkt-dashboard-01" shape="rect" placeholder="mkt-dashboard-01.png — engine dashboard screenshot"></image-slot>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Channel specification" style="background:var(--cream);padding:44px 0">
+  <div data-anim style="max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad)">
+    <span style="font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">Specification — what each channel is for</span>
+    <div style="display:flex;flex-direction:column;margin-top:18px;border-top:2px solid var(--ink)">
+      <details style="border-bottom:1px solid var(--border-divider)" open="">
+        <summary style="display:grid;grid-template-columns:64px 1fr 1.1fr 32px;gap:20px;align-items:baseline;padding:18px 0;cursor:pointer;list-style:none">
+          <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">E-01</span>
+          <span style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase">Email</span>
+          <span style="font-size:0.9375rem">The list you already own — built first because it pays for the rest.</span>
+          <span aria-hidden="true" style="justify-self:end;font-family:var(--font-display);font-size:1.125rem;color:var(--gray-warm)">+</span>
+        </summary>
+        <div style="display:grid;grid-template-columns:64px 1fr 1.1fr 32px;gap:20px;padding:0 0 22px">
+          <span></span>
+          <div><span style="font-weight:700;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">What we run</span><p style="margin:8px 0 0;font-size:0.9375rem;line-height:1.6">Welcome, browse-abandon, cart, post-purchase and win-back flows, plus a campaign calendar built around what actually sells. Segmentation from the CRM, not guesswork.</p></div>
+          <div><span style="font-weight:700;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">What you'll see on the dashboard</span><p style="margin:8px 0 0;font-size:0.9375rem;line-height:1.6">Revenue per send, flow revenue split from campaign revenue, list growth and churn. Email is the first line because it's the cheapest evidence the engine works.</p></div>
+          <span></span>
+        </div>
+      </details>
+      <details style="border-bottom:1px solid var(--border-divider)">
+        <summary style="display:grid;grid-template-columns:64px 1fr 1.1fr 32px;gap:20px;align-items:baseline;padding:18px 0;cursor:pointer;list-style:none">
+          <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">E-02</span>
+          <span style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase">Paid ads</span>
+          <span style="font-size:0.9375rem">Spend scales only on tracking that tells the truth.</span>
+          <span aria-hidden="true" style="justify-self:end;font-family:var(--font-display);font-size:1.125rem;color:var(--gray-warm)">+</span>
+        </summary>
+        <div style="display:grid;grid-template-columns:64px 1fr 1.1fr 32px;gap:20px;padding:0 0 22px">
+          <span></span>
+          <div><span style="font-weight:700;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">What we run</span><p style="margin:8px 0 0;font-size:0.9375rem;line-height:1.6">Meta and Google, structured around your margins. Creative tested against the content we shoot in E-03. If attribution is broken we fix it before a dollar moves.</p></div>
+          <div><span style="font-weight:700;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">What you'll see on the dashboard</span><p style="margin:8px 0 0;font-size:0.9375rem;line-height:1.6">Spend, blended return, and cost per new customer next to repeat revenue — so a "good ROAS" can't hide an unprofitable account.</p></div>
+          <span></span>
+        </div>
+      </details>
+      <details style="border-bottom:1px solid var(--border-divider)">
+        <summary style="display:grid;grid-template-columns:64px 1fr 1.1fr 32px;gap:20px;align-items:baseline;padding:18px 0;cursor:pointer;list-style:none">
+          <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">E-03</span>
+          <span style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase">Social / content</span>
+          <span style="font-size:0.9375rem">We show up with a camera — shot at your business, not stock.</span>
+          <span aria-hidden="true" style="justify-self:end;font-family:var(--font-display);font-size:1.125rem;color:var(--gray-warm)">+</span>
+        </summary>
+        <div style="display:grid;grid-template-columns:64px 1fr 1.1fr 32px;gap:20px;padding:0 0 22px">
+          <span></span>
+          <div><span style="font-weight:700;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">What we run</span><p style="margin:8px 0 0;font-size:0.9375rem;line-height:1.6">Scheduled shoot days on site: product, place, people. One shoot feeds organic posts, ad creative, email and product pages — the same asset working four times.</p></div>
+          <div><span style="font-weight:700;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">What you'll see on the dashboard</span><p style="margin:8px 0 0;font-size:0.9375rem;line-height:1.6">Which assets earned attention and which earned money. Content is judged on the ad account and the store, not on follower count.</p></div>
+          <span></span>
+        </div>
+      </details>
+      <details style="border-bottom:1px solid var(--border-divider)">
+        <summary style="display:grid;grid-template-columns:64px 1fr 1.1fr 32px;gap:20px;align-items:baseline;padding:18px 0;cursor:pointer;list-style:none">
+          <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">E-04</span>
+          <span style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase">SEO</span>
+          <span style="font-size:0.9375rem">Compounding capture on the Phase 01 foundations.</span>
+          <span aria-hidden="true" style="justify-self:end;font-family:var(--font-display);font-size:1.125rem;color:var(--gray-warm)">+</span>
+        </summary>
+        <div style="display:grid;grid-template-columns:64px 1fr 1.1fr 32px;gap:20px;padding:0 0 22px">
+          <span></span>
+          <div><span style="font-weight:700;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">What we run</span><p style="margin:8px 0 0;font-size:0.9375rem;line-height:1.6">Category and product page work first, then the articles that answer what buyers actually ask. Built on the structure and speed shipped in Phase 01, so nothing is retrofitted.</p></div>
+          <div><span style="font-weight:700;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">What you'll see on the dashboard</span><p style="margin:8px 0 0;font-size:0.9375rem;line-height:1.6">Non-brand traffic and the revenue behind it, tracked monthly. Slow by design — the line that makes month twelve cheap.</p></div>
+          <span></span>
+        </div>
+      </details>
+      <details style="border-bottom:1px solid var(--border-divider)">
+        <summary style="display:grid;grid-template-columns:64px 1fr 1.1fr 32px;gap:20px;align-items:baseline;padding:18px 0;cursor:pointer;list-style:none">
+          <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">E-05</span>
+          <span style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase">GBP</span>
+          <span style="font-size:0.9375rem">For hybrid businesses the profile is a storefront. Run like one.</span>
+          <span aria-hidden="true" style="justify-self:end;font-family:var(--font-display);font-size:1.125rem;color:var(--gray-warm)">+</span>
+        </summary>
+        <div style="display:grid;grid-template-columns:64px 1fr 1.1fr 32px;gap:20px;padding:0 0 22px">
+          <span></span>
+          <div><span style="font-weight:700;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">What we run</span><p style="margin:8px 0 0;font-size:0.9375rem;line-height:1.6">Categories, hours, products and photos kept current, posts on a schedule, and a review routine your staff can actually keep. Same discipline as the ads account.</p></div>
+          <div><span style="font-weight:700;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">What you'll see on the dashboard</span><p style="margin:8px 0 0;font-size:0.9375rem;line-height:1.6">Calls, direction requests and profile-driven visits alongside online orders — local demand counted, not assumed.</p></div>
+          <span></span>
+        </div>
+      </details>
+      <details style="border-bottom:2px solid var(--ink)">
+        <summary style="display:grid;grid-template-columns:64px 1fr 1.1fr 32px;gap:20px;align-items:baseline;padding:18px 0;cursor:pointer;list-style:none">
+          <span style="font:700 12px ui-monospace,Menlo,monospace;color:var(--gray-warm)">E-06</span>
+          <span style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase">CRM</span>
+          <span style="font-size:0.9375rem">Repeat purchase decides whether ads are profitable.</span>
+          <span aria-hidden="true" style="justify-self:end;font-family:var(--font-display);font-size:1.125rem;color:var(--gray-warm)">+</span>
+        </summary>
+        <div style="display:grid;grid-template-columns:64px 1fr 1.1fr 32px;gap:20px;padding:0 0 22px">
+          <span></span>
+          <div><span style="font-weight:700;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">What we run</span><p style="margin:8px 0 0;font-size:0.9375rem;line-height:1.6">One customer record wired to the store, email and ads: segments, lifecycle stages, and the lists every other channel targets from.</p></div>
+          <div><span style="font-weight:700;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)">What you'll see on the dashboard</span><p style="margin:8px 0 0;font-size:0.9375rem;line-height:1.6">Repeat rate, time between orders and lifetime value by cohort — the quiet numbers that decide how hard you can afford to spend.</p></div>
+          <span></span>
+        </div>
+      </details>
+    </div>
+    <p style="margin:14px 0 0;font-size:0.875rem;color:var(--gray-warm)">You can't buy ads alone — the mix is priced on the call.</p>
+  </div>
+</section>
+
+<section data-screen-label="Engine rollout" style="background:var(--ink);color:var(--cream);padding:44px 0;border-top:2px solid var(--ink)">
+  <div data-anim style="max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad)">
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:32px;flex-wrap:wrap">
+      <span style="display:flex;align-items:center;gap:9px;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;opacity:.7"><span aria-hidden="true" style="width:9px;height:9px;background:var(--yellow);transform:rotate(45deg)"></span>Rollout after signing</span>
+      <span style="font-family:var(--font-display);font-size:1.5rem;text-transform:uppercase">Order matters more than effort</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:0;margin-top:24px;border-top:2px solid var(--cream)">
+      <div style="padding:20px 18px;border-right:1px solid rgba(250,247,242,.25)"><span style="font:700 11px ui-monospace,Menlo,monospace;opacity:.6">01</span><span style="display:block;margin-top:6px;font-family:var(--font-display);font-size:1.0625rem;text-transform:uppercase">Audit</span><span style="display:block;margin-top:6px;font-size:0.8125rem;opacity:.65">Week 1–2</span></div>
+      <div style="padding:20px 18px;border-right:1px solid rgba(250,247,242,.25)"><span style="font:700 11px ui-monospace,Menlo,monospace;opacity:.6">02</span><span style="display:block;margin-top:6px;font-family:var(--font-display);font-size:1.0625rem;text-transform:uppercase">Foundations</span><span style="display:block;margin-top:6px;font-size:0.8125rem;opacity:.65">Before spend</span></div>
+      <div style="padding:20px 18px;border-right:1px solid rgba(250,247,242,.25)"><span style="font:700 11px ui-monospace,Menlo,monospace;opacity:.6">03</span><span style="display:block;margin-top:6px;font-family:var(--font-display);font-size:1.0625rem;text-transform:uppercase">Email flows</span><span style="display:block;margin-top:6px;font-size:0.8125rem;opacity:.65">Month 1</span></div>
+      <div style="padding:20px 18px;border-right:1px solid rgba(250,247,242,.25)"><span style="font:700 11px ui-monospace,Menlo,monospace;opacity:.6">04</span><span style="display:block;margin-top:6px;font-family:var(--font-display);font-size:1.0625rem;text-transform:uppercase">Ads live</span><span style="display:block;margin-top:6px;font-size:0.8125rem;opacity:.65">Month 1–2</span></div>
+      <div style="padding:20px 18px;border-right:1px solid rgba(250,247,242,.25)"><span style="font:700 11px ui-monospace,Menlo,monospace;opacity:.6">05</span><span style="display:block;margin-top:6px;font-family:var(--font-display);font-size:1.0625rem;text-transform:uppercase">Content + SEO</span><span style="display:block;margin-top:6px;font-size:0.8125rem;opacity:.65">Month 2+</span></div>
+      <div style="padding:20px 18px"><span style="font:700 11px ui-monospace,Menlo,monospace;opacity:.6">06</span><span style="display:block;margin-top:6px;font-family:var(--font-display);font-size:1.0625rem;text-transform:uppercase">Independence</span><span style="display:block;margin-top:6px;font-size:0.8125rem;opacity:.65">Phase 03</span></div>
+    </div>
+    <p style="margin:16px 0 0;font-size:0.875rem;opacity:.6">It ends the same way every time: your team running it without us.</p>
+  </div>
+</section>
+
+<section data-screen-label="Camera work" style="background:var(--cream);padding:44px 0">
+  <div data-anim style="max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad);display:grid;grid-template-columns:1fr 1fr;gap:20px">
+    <div style="border:2px solid var(--ink);display:grid;grid-template-rows:auto 1fr">
+      <div style="padding:24px 28px;border-bottom:2px solid var(--ink)">
+        <h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.25rem;text-transform:uppercase">Shot at your business</h3>
+        <p style="margin:8px 0 0;font-size:0.9375rem;line-height:1.55">Content built from what your store actually sells — no lifestyle stock.</p>
+      </div>
+      <div style="position:relative;min-height:300px">
+        <image-slot id="mkt-camera-01" shape="rect" placeholder="mkt-camera-01.jpg — camera-work slot"></image-slot>
+      </div>
+    </div>
+    <div style="border:2px solid var(--ink);display:grid;grid-template-rows:auto 1fr">
+      <div style="padding:24px 28px;border-bottom:2px solid var(--ink)">
+        <h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.25rem;text-transform:uppercase">GBP, run on numbers</h3>
+        <p style="margin:8px 0 0;font-size:0.9375rem;line-height:1.55">Local demand tracked with the same discipline as the ads account.</p>
+      </div>
+      <div style="position:relative;min-height:300px">
+        <image-slot id="mkt-gbp-01" shape="rect" placeholder="mkt-gbp-01.png — GBP data visual"></image-slot>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="FAQ mini" style="background:var(--cream);padding:96px 0">
+  <div data-anim style="max-width:820px;margin:0 auto;padding:0 var(--container-pad)">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" style="margin-bottom:24px" hint-size="auto,20px">Engine questions</x-import>
+    <div style="margin-top:24px">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.FAQItem" question="Why a 6-month minimum?" hint-size="100%,60px">Engines compound. Email flows, SEO, and creative testing don't return in month one — six months is the honest window to judge the machine.</x-import>
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.FAQItem" question="Can I just get ads?" hint-size="100%,60px">No. Ads without email, tracking, and CRM is how budgets die. If you only want ads, we're the wrong fit — we'll say so on the call.</x-import>
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.FAQItem" question="How do you report?" hint-size="100%,60px">A shared live dashboard, plus a monthly written readout: what we did, what it returned, what's next. Numbers first.</x-import>
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.FAQItem" question="Is this a forever retainer?" hint-size="100%,60px">No — the endgame is your team running it. Phase 3 is a scheduled handover with training, not a renewal pitch.</x-import>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Final CTA" style="background:var(--ink);color:var(--cream);padding:96px 0;position:relative;overflow:hidden">
+  <div aria-hidden="true" style="position:absolute;left:-100px;bottom:-100px;width:240px;height:240px;background:var(--ground-accent);opacity:.16;z-index:0;-webkit-mask-image:url('assets/logo.png');-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;mask-image:url('assets/logo.png');mask-size:contain;mask-repeat:no-repeat"></div>
+  <div data-anim style="position:relative;z-index:1;text-align:center;max-width:760px;margin:0 auto;padding:0 var(--container-pad)">
+    <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:var(--text-h2);line-height:1.05;text-transform:uppercase">Your store already has the demand. It's leaking it.</h2>
+    <p style="margin:20px 0 0;font-size:1.125rem;opacity:.85">3 engines running. We cap at 7 clients.</p>
+    <p style="margin:4px 0 0;font-size:0.8125rem;opacity:.5">The cap keeps every account senior-staffed — that's the whole reason.</p>
+    <div style="margin-top:32px;display:flex;justify-content:center">
+      <div style="outline:2px solid #FFFFFF;outline-offset:0">
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="primary" size="md" href="Book a Call.dc.html" style="display:grid;min-width:220px;min-height:44px" hint-size="220px,52px">Book a Call</x-import>
+      </div>
+    </div>
+  </div>
+</section>
+
+<dc-import name="SiteFooter" variant="standard" hint-size="100%,420px"></dc-import>
+</sc-if>
+
+<sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+<div style="background:#DED9D0;min-height:100vh"><div style="max-width:390px;margin:0 auto;background:var(--cream);overflow-x:hidden;box-shadow:0 0 0 1px rgba(17,17,17,.15)">
+<dc-import name="SiteHeaderMobile" hint-size="100%,60px"></dc-import>
+
+<div data-screen-label="Breadcrumb" style="background:var(--ink);color:var(--cream);padding:8px 20px;display:flex;gap:10px;font:700 10px ui-monospace,Menlo,monospace;letter-spacing:0.1em;text-transform:uppercase">
+  <a href="Services Hub.dc.html" style="color:var(--cream);opacity:.55;text-decoration:none">Services</a><span style="opacity:.4">/</span><span style="opacity:.55">Marketing</span><span style="opacity:.4">/</span><span>Ph. 02</span>
+</div>
+
+<section data-screen-label="Marketing hero" style="background:var(--ink);color:var(--cream);border-top:1px solid rgba(250,247,242,.2)">
+  <div style="padding:32px 20px 20px">
+    <span style="display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;opacity:.7"><span aria-hidden="true" style="width:8px;height:8px;background:var(--yellow);transform:rotate(45deg)"></span>Phase 02 of three</span>
+    <h1 style="margin:12px 0 0;font-family:var(--font-display);font-weight:400;font-size:2.25rem;line-height:.94;text-transform:uppercase">The marketing engine</h1>
+    <p style="margin:12px 0 0;font-size:1rem;line-height:1.6;opacity:.85">Six channels wired into one dashboard, run by one team. A store with no growth plan is a parked car.</p>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;border-top:1px solid rgba(250,247,242,.25)">
+    <div style="padding:16px 20px;border-right:1px solid rgba(250,247,242,.25)">
+      <span style="display:block;font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;opacity:.6">Engines start at</span>
+      <span style="display:block;margin-top:4px;font-family:var(--font-display);font-size:2rem;line-height:1">$1K<span style="font-size:1.125rem">/mo</span></span>
+    </div>
+    <div style="padding:16px 20px">
+      <span style="display:block;font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;opacity:.6">Minimum term</span>
+      <span style="display:block;margin-top:4px;font-family:var(--font-display);font-size:2rem;line-height:1">6 mo</span>
+    </div>
+  </div>
+  <div style="padding:16px 20px 24px;border-top:1px solid rgba(250,247,242,.25)">
+    <a href="Book a Call.dc.html" style="display:flex;align-items:center;justify-content:center;min-height:52px;background:var(--ground-accent);color:#fff;font-weight:700;font-size:15px;text-transform:uppercase;letter-spacing:0.04em;text-decoration:none">Book a call</a>
+    <span style="display:block;margin-top:10px;font-size:0.8125rem;opacity:.6;text-align:center">The honest window to judge a compounding engine.</span>
+  </div>
+</section>
+
+<section data-screen-label="Signal flow" style="background:var(--gray-light);padding:28px 20px;border-bottom:2px solid var(--ink)">
+  <div data-anim>
+    <span style="display:flex;align-items:center;gap:8px;font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)"><span aria-hidden="true" style="width:8px;height:8px;background:var(--yellow);transform:rotate(45deg)"></span>How the signal moves</span>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:16px">
+      <div style="background:var(--cream);border:2px solid var(--ink);padding:12px 10px"><span style="font:700 10px ui-monospace,Menlo,monospace;color:var(--gray-warm)">E-01</span><span style="display:block;margin-top:4px;font-family:var(--font-display);font-size:0.9375rem;text-transform:uppercase">Email</span></div>
+      <div style="background:var(--cream);border:2px solid var(--ink);padding:12px 10px"><span style="font:700 10px ui-monospace,Menlo,monospace;color:var(--gray-warm)">E-02</span><span style="display:block;margin-top:4px;font-family:var(--font-display);font-size:0.9375rem;text-transform:uppercase">Ads</span></div>
+      <div style="background:var(--cream);border:2px solid var(--ink);padding:12px 10px"><span style="font:700 10px ui-monospace,Menlo,monospace;color:var(--gray-warm)">E-03</span><span style="display:block;margin-top:4px;font-family:var(--font-display);font-size:0.9375rem;text-transform:uppercase">Content</span></div>
+      <div style="background:var(--cream);border:2px solid var(--ink);padding:12px 10px"><span style="font:700 10px ui-monospace,Menlo,monospace;color:var(--gray-warm)">E-04</span><span style="display:block;margin-top:4px;font-family:var(--font-display);font-size:0.9375rem;text-transform:uppercase">SEO</span></div>
+      <div style="background:var(--cream);border:2px solid var(--ink);padding:12px 10px"><span style="font:700 10px ui-monospace,Menlo,monospace;color:var(--gray-warm)">E-05</span><span style="display:block;margin-top:4px;font-family:var(--font-display);font-size:0.9375rem;text-transform:uppercase">GBP</span></div>
+      <div style="background:var(--cream);border:2px solid var(--ink);padding:12px 10px"><span style="font:700 10px ui-monospace,Menlo,monospace;color:var(--gray-warm)">E-06</span><span style="display:block;margin-top:4px;font-family:var(--font-display);font-size:0.9375rem;text-transform:uppercase">CRM</span></div>
+    </div>
+    <div aria-hidden="true" style="width:2px;height:22px;background:var(--ink);margin:0 auto"></div>
+    <div aria-hidden="true" style="height:2px;background:var(--ink)"></div>
+    <div aria-hidden="true" style="width:2px;height:22px;background:var(--ink);margin:0 auto"></div>
+    <div style="border:2px solid var(--ink);background:var(--cream);box-shadow:var(--shadow-card)">
+      <div style="padding:18px 16px">
+        <span style="font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">Everything reports here</span>
+        <h2 style="margin:8px 0 0;font-family:var(--font-display);font-weight:400;font-size:1.375rem;line-height:1.04;text-transform:uppercase">One dashboard. You see what we see.</h2>
+        <p style="margin:10px 0 0;font-size:0.9375rem;line-height:1.55">Plus a monthly written readout. Access from day one, including during the audit.</p>
+      </div>
+      <div style="border-top:2px solid var(--ink);position:relative;aspect-ratio:16/11">
+        <image-slot id="mkt-dashboard-01" shape="rect" placeholder="mkt-dashboard-01.png — engine dashboard screenshot"></image-slot>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Channel specification" style="background:var(--cream);padding:26px 20px">
+  <div data-anim>
+    <span style="font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)">Specification — what each channel is for</span>
+    <div style="display:flex;flex-direction:column;margin-top:14px;border-top:2px solid var(--ink)">
+      <details style="border-bottom:1px solid var(--border-divider)" open="">
+        <summary style="display:flex;align-items:baseline;gap:10px;padding:14px 0;cursor:pointer;list-style:none;min-height:44px">
+          <span style="font:700 10px ui-monospace,Menlo,monospace;color:var(--gray-warm)">E-01</span>
+          <span style="flex:1;font-family:var(--font-display);font-size:1.0625rem;text-transform:uppercase">Email</span>
+          <span aria-hidden="true" style="font-family:var(--font-display);font-size:1.0625rem;color:var(--gray-warm)">+</span>
+        </summary>
+        <div style="padding:0 0 16px">
+          <p style="margin:0;font-size:0.9375rem;line-height:1.55">Welcome, cart, post-purchase and win-back flows plus a campaign calendar, segmented from the CRM.</p>
+          <p style="margin:8px 0 0;font-size:0.875rem;line-height:1.5;color:var(--gray-warm)">Dashboard: revenue per send, flow vs. campaign revenue, list growth.</p>
+        </div>
+      </details>
+      <details style="border-bottom:1px solid var(--border-divider)">
+        <summary style="display:flex;align-items:baseline;gap:10px;padding:14px 0;cursor:pointer;list-style:none;min-height:44px">
+          <span style="font:700 10px ui-monospace,Menlo,monospace;color:var(--gray-warm)">E-02</span>
+          <span style="flex:1;font-family:var(--font-display);font-size:1.0625rem;text-transform:uppercase">Paid ads</span>
+          <span aria-hidden="true" style="font-family:var(--font-display);font-size:1.0625rem;color:var(--gray-warm)">+</span>
+        </summary>
+        <div style="padding:0 0 16px">
+          <p style="margin:0;font-size:0.9375rem;line-height:1.55">Meta and Google structured around your margins, creative tested against the content we shoot. Broken attribution gets fixed first.</p>
+          <p style="margin:8px 0 0;font-size:0.875rem;line-height:1.5;color:var(--gray-warm)">Dashboard: spend, blended return, cost per new customer.</p>
+        </div>
+      </details>
+      <details style="border-bottom:1px solid var(--border-divider)">
+        <summary style="display:flex;align-items:baseline;gap:10px;padding:14px 0;cursor:pointer;list-style:none;min-height:44px">
+          <span style="font:700 10px ui-monospace,Menlo,monospace;color:var(--gray-warm)">E-03</span>
+          <span style="flex:1;font-family:var(--font-display);font-size:1.0625rem;text-transform:uppercase">Social / content</span>
+          <span aria-hidden="true" style="font-family:var(--font-display);font-size:1.0625rem;color:var(--gray-warm)">+</span>
+        </summary>
+        <div style="padding:0 0 16px">
+          <p style="margin:0;font-size:0.9375rem;line-height:1.55">Shoot days on site — product, place, people. One shoot feeds organic, ads, email and product pages.</p>
+          <p style="margin:8px 0 0;font-size:0.875rem;line-height:1.5;color:var(--gray-warm)">Dashboard: which assets earned attention, and which earned money.</p>
+        </div>
+      </details>
+      <details style="border-bottom:1px solid var(--border-divider)">
+        <summary style="display:flex;align-items:baseline;gap:10px;padding:14px 0;cursor:pointer;list-style:none;min-height:44px">
+          <span style="font:700 10px ui-monospace,Menlo,monospace;color:var(--gray-warm)">E-04</span>
+          <span style="flex:1;font-family:var(--font-display);font-size:1.0625rem;text-transform:uppercase">SEO</span>
+          <span aria-hidden="true" style="font-family:var(--font-display);font-size:1.0625rem;color:var(--gray-warm)">+</span>
+        </summary>
+        <div style="padding:0 0 16px">
+          <p style="margin:0;font-size:0.9375rem;line-height:1.55">Category and product pages first, then articles that answer what buyers ask — on the Phase 01 foundations.</p>
+          <p style="margin:8px 0 0;font-size:0.875rem;line-height:1.5;color:var(--gray-warm)">Dashboard: non-brand traffic and the revenue behind it.</p>
+        </div>
+      </details>
+      <details style="border-bottom:1px solid var(--border-divider)">
+        <summary style="display:flex;align-items:baseline;gap:10px;padding:14px 0;cursor:pointer;list-style:none;min-height:44px">
+          <span style="font:700 10px ui-monospace,Menlo,monospace;color:var(--gray-warm)">E-05</span>
+          <span style="flex:1;font-family:var(--font-display);font-size:1.0625rem;text-transform:uppercase">GBP</span>
+          <span aria-hidden="true" style="font-family:var(--font-display);font-size:1.0625rem;color:var(--gray-warm)">+</span>
+        </summary>
+        <div style="padding:0 0 16px">
+          <p style="margin:0;font-size:0.9375rem;line-height:1.55">Categories, hours, photos and posts kept current, plus a review routine your staff can keep.</p>
+          <p style="margin:8px 0 0;font-size:0.875rem;line-height:1.5;color:var(--gray-warm)">Dashboard: calls, direction requests, profile-driven visits.</p>
+        </div>
+      </details>
+      <details style="border-bottom:2px solid var(--ink)">
+        <summary style="display:flex;align-items:baseline;gap:10px;padding:14px 0;cursor:pointer;list-style:none;min-height:44px">
+          <span style="font:700 10px ui-monospace,Menlo,monospace;color:var(--gray-warm)">E-06</span>
+          <span style="flex:1;font-family:var(--font-display);font-size:1.0625rem;text-transform:uppercase">CRM</span>
+          <span aria-hidden="true" style="font-family:var(--font-display);font-size:1.0625rem;color:var(--gray-warm)">+</span>
+        </summary>
+        <div style="padding:0 0 16px">
+          <p style="margin:0;font-size:0.9375rem;line-height:1.55">One customer record wired to the store, email and ads — the lists every other channel targets from.</p>
+          <p style="margin:8px 0 0;font-size:0.875rem;line-height:1.5;color:var(--gray-warm)">Dashboard: repeat rate, time between orders, lifetime value by cohort.</p>
+        </div>
+      </details>
+    </div>
+    <p style="margin:14px 0 0;font-size:0.875rem;color:var(--gray-warm)">You can't buy ads alone — the mix is priced on the call.</p>
+  </div>
+</section>
+
+<section data-screen-label="Engine rollout" style="background:var(--ink);color:var(--cream);padding:28px 0 26px;border-top:2px solid var(--ink)">
+  <div data-anim>
+    <div style="padding:0 20px">
+      <span style="display:flex;align-items:center;gap:8px;font-weight:700;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;opacity:.7"><span aria-hidden="true" style="width:8px;height:8px;background:var(--yellow);transform:rotate(45deg)"></span>Rollout after signing</span>
+      <span style="display:block;margin-top:10px;font-family:var(--font-display);font-size:1.5rem;line-height:1.06;text-transform:uppercase">Order matters more than effort</span>
+      <span style="display:block;margin-top:8px;font-size:0.875rem;opacity:.6">Swipe →</span>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:18px;padding:0 20px;overflow-x:auto;scrollbar-width:none">
+      <div style="min-width:200px;border:2px solid var(--cream);padding:18px 16px"><span style="font-family:var(--font-display);font-size:2.5rem;line-height:.85;opacity:.4">01</span><span style="display:block;margin-top:12px;font-family:var(--font-display);font-size:1.25rem;text-transform:uppercase">Audit</span><span style="display:block;margin-top:6px;font-size:0.9375rem;opacity:.75">Tracking, list, spend history. Week 1–2.</span></div>
+      <div style="min-width:200px;border:2px solid var(--cream);padding:18px 16px"><span style="font-family:var(--font-display);font-size:2.5rem;line-height:.85;opacity:.4">02</span><span style="display:block;margin-top:12px;font-family:var(--font-display);font-size:1.25rem;text-transform:uppercase">Foundations</span><span style="display:block;margin-top:6px;font-size:0.9375rem;opacity:.75">Attribution and CRM wired — before any spend.</span></div>
+      <div style="min-width:200px;border:2px solid var(--cream);padding:18px 16px"><span style="font-family:var(--font-display);font-size:2.5rem;line-height:.85;opacity:.4">03</span><span style="display:block;margin-top:12px;font-family:var(--font-display);font-size:1.25rem;text-transform:uppercase">Email flows</span><span style="display:block;margin-top:6px;font-size:0.9375rem;opacity:.75">The owned channel goes first. Month 1.</span></div>
+      <div style="min-width:200px;border:2px solid var(--cream);padding:18px 16px"><span style="font-family:var(--font-display);font-size:2.5rem;line-height:.85;opacity:.4">04</span><span style="display:block;margin-top:12px;font-family:var(--font-display);font-size:1.25rem;text-transform:uppercase">Ads live</span><span style="display:block;margin-top:6px;font-size:0.9375rem;opacity:.75">Budget follows evidence. Month 1–2.</span></div>
+      <div style="min-width:200px;border:2px solid var(--cream);padding:18px 16px"><span style="font-family:var(--font-display);font-size:2.5rem;line-height:.85;opacity:.4">05</span><span style="display:block;margin-top:12px;font-family:var(--font-display);font-size:1.25rem;text-transform:uppercase">Content + SEO</span><span style="display:block;margin-top:6px;font-size:0.9375rem;opacity:.75">The compounding layers. Month 2 onward.</span></div>
+      <div style="min-width:200px;border:2px solid var(--cream);padding:18px 16px"><span style="font-family:var(--font-display);font-size:2.5rem;line-height:.85;opacity:.4">06</span><span style="display:block;margin-top:12px;font-family:var(--font-display);font-size:1.25rem;text-transform:uppercase">Independence</span><span style="display:block;margin-top:6px;font-size:0.9375rem;opacity:.75">Phase 03 — your team takes over.</span></div>
+    </div>
+    <div style="display:flex;gap:6px;padding:0 20px;margin-top:16px">
+      <span aria-hidden="true" style="height:3px;flex:1;background:var(--cream)"></span>
+      <span aria-hidden="true" style="height:3px;flex:1;background:rgba(250,247,242,.3)"></span>
+      <span aria-hidden="true" style="height:3px;flex:1;background:rgba(250,247,242,.3)"></span>
+      <span aria-hidden="true" style="height:3px;flex:1;background:rgba(250,247,242,.3)"></span>
+      <span aria-hidden="true" style="height:3px;flex:1;background:rgba(250,247,242,.3)"></span>
+      <span aria-hidden="true" style="height:3px;flex:1;background:rgba(250,247,242,.3)"></span>
+    </div>
+    <p style="margin:18px 20px 0;font-size:0.875rem;opacity:.6">It ends the same way every time: your team running it without us.</p>
+  </div>
+</section>
+
+<section data-screen-label="Camera work" style="background:var(--cream);padding:26px 20px">
+  <div data-anim style="display:flex;flex-direction:column;gap:16px">
+    <div style="border:2px solid var(--ink)">
+      <div style="padding:18px 16px;border-bottom:2px solid var(--ink)">
+        <h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.125rem;text-transform:uppercase">Shot at your business</h3>
+        <p style="margin:6px 0 0;font-size:0.9375rem;line-height:1.5">Built from what your store actually sells — no lifestyle stock.</p>
+      </div>
+      <div style="position:relative;aspect-ratio:4/3">
+        <image-slot id="mkt-camera-01" shape="rect" placeholder="mkt-camera-01.jpg — camera-work slot"></image-slot>
+      </div>
+    </div>
+    <div style="border:2px solid var(--ink)">
+      <div style="padding:18px 16px;border-bottom:2px solid var(--ink)">
+        <h3 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.125rem;text-transform:uppercase">GBP, run on numbers</h3>
+        <p style="margin:6px 0 0;font-size:0.9375rem;line-height:1.5">Local demand tracked like the ads account.</p>
+      </div>
+      <div style="position:relative;aspect-ratio:4/3">
+        <image-slot id="mkt-gbp-01" shape="rect" placeholder="mkt-gbp-01.png — GBP data visual"></image-slot>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="FAQ mini" style="background:var(--cream);padding:56px 0">
+  <div data-anim style="padding:0 20px">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">Engine questions</x-import>
+    <div style="margin-top:20px">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.FAQItem" question="Why a 6-month minimum?" hint-size="100%,60px">Engines compound. Email flows, SEO, and creative testing don't return in month one — six months is the honest window to judge the machine.</x-import>
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.FAQItem" question="Can I just get ads?" hint-size="100%,60px">No. Ads without email, tracking, and CRM is how budgets die. If you only want ads, we're the wrong fit — we'll say so on the call.</x-import>
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.FAQItem" question="How do you report?" hint-size="100%,60px">A shared live dashboard, plus a monthly written readout: what we did, what it returned, what's next. Numbers first.</x-import>
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.FAQItem" question="Is this a forever retainer?" hint-size="100%,60px">No — the endgame is your team running it. Phase 3 is a scheduled handover with training, not a renewal pitch.</x-import>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Final CTA" style="background:var(--ink);color:var(--cream);padding:64px 0 72px;position:relative;overflow:hidden">
+  <div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(250,247,242,.18) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(215deg,#000 15%,transparent 65%);mask-image:linear-gradient(215deg,#000 15%,transparent 65%);z-index:0"></div>
+  <div aria-hidden="true" style="position:absolute;left:-90px;bottom:-80px;width:220px;height:220px;background:var(--ground-accent);opacity:.16;z-index:0;-webkit-mask-image:url('assets/logo.png');-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;mask-image:url('assets/logo.png');mask-size:contain;mask-repeat:no-repeat"></div>
+  <div data-anim style="position:relative;z-index:1;padding:0 20px;text-align:center">
+    <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:2rem;line-height:1.05;text-transform:uppercase">Your store already has the demand. It's leaking it.</h2>
+    <p style="margin:18px 0 0;font-size:1.0625rem;opacity:.85">3 engines running. We cap at 7 clients.</p>
+    <div style="margin-top:28px;display:flex;justify-content:center">
+      <div style="outline:2px solid #FFFFFF;outline-offset:0">
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="primary" size="md" href="Book a Call.dc.html" style="display:grid;min-width:220px;min-height:44px" hint-size="220px,52px">Book a Call</x-import>
+      </div>
+    </div>
+  </div>
+</section>
+
+<dc-import name="SiteFooterMobile" variant="standard" hint-size="100%,620px"></dc-import>
+</div></div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;caseStudiesLive&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Launch state&quot;},&quot;viewport&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;desktop&quot;,&quot;mobile&quot;],&quot;default&quot;:&quot;desktop&quot;,&quot;tsType&quot;:&quot;'desktop'|'mobile'&quot;,&quot;section&quot;:&quot;Viewport&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const live = this.props.caseStudiesLive ?? false;
+    return { isDesktop: (this.props.viewport ?? 'desktop') !== 'mobile', isMobile: (this.props.viewport ?? 'desktop') === 'mobile',
+      csLive: live, csFallback: !live,
+      fallbackStrip: {
+        style: { justifyContent: 'center', textAlign: 'center' },
+        items: [
+          { value: '$1K/MO', label: 'Engines start', sub: 'Email, ads, content, SEO, GBP, CRM — one team', accent: true },
+          { value: '6 MO', label: 'Minimum term', sub: 'The honest window to judge a compounding engine' },
+          { value: '1', label: 'Dashboard', sub: 'You see what we see, always' }
+        ]
+      }
+    };
+  }
+  componentDidMount() { import('./site-fx.js').then(m => { this._fx = m; m.armAnim(this); }); }
+  componentDidUpdate() { if (this._fx) this._fx.armAnim(this); }
+  componentWillUnmount() { if (this._fx) this._fx.disarmAnim(this); }
+}
+</script>
+</body>
+</html>

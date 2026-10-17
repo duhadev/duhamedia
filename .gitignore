@@ -43,3 +43,6 @@ next-env.d.ts
 
 # Payload local media (MEDIA_DIR default in dev)
 /media
+
+# Playwright MCP output (snapshots, console logs)
+/.playwright-mcp

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/styles.css">
+  <script src="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/_ds_bundle.js"></script>
+  <style>:root{/*fade-edge*/--cream:#FFFFFF;--gray-light:#F5F5F4;--accent-primary:#111111;--ground-accent:#C20E59;}</style>
+</helmet>
+<header style="position:sticky;top:0;z-index:50;background:var(--cream);border-bottom:1px solid var(--border-divider);font-family:var(--font-body)">
+  <div style="display:flex;align-items:center;justify-content:space-between;height:60px;padding:0 20px">
+    <a href="Homepage.dc.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink)">
+      <img src="assets/logo-duha-01.png" alt="Duha Media" style="width:28px;height:28px">
+      <span style="font-family:var(--font-display);font-size:16px;letter-spacing:-0.01em">DUHA MEDIA</span>
+    </a>
+    <button type="button" onClick="{{ toggle }}" aria-label="Menu" style="display:flex;flex-direction:column;justify-content:center;gap:5px;width:44px;height:44px;margin-right:-10px;padding:0 10px;background:transparent;border:0;cursor:pointer">
+      <span style="display:block;height:2px;background:var(--ink)"></span>
+      <span style="display:block;height:2px;background:var(--ink)"></span>
+      <span style="display:block;height:2px;background:var(--ink)"></span>
+    </button>
+  </div>
+  <sc-if value="{{ open }}" hint-placeholder-val="{{ false }}">
+    <nav style="display:flex;flex-direction:column;border-top:1px solid var(--border-divider);background:var(--cream);padding:8px 20px 20px">
+      <a href="Work.dc.html" style="display:flex;align-items:center;min-height:48px;font-size:16px;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--border-divider)">Work</a>
+      <a href="Services Hub.dc.html" style="display:flex;align-items:center;min-height:48px;font-size:16px;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--border-divider)">Services</a>
+      <a href="Testimonials.dc.html" style="display:flex;align-items:center;min-height:48px;font-size:16px;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--border-divider)">Testimonials</a>
+      <a href="About.dc.html" style="display:flex;align-items:center;min-height:48px;font-size:16px;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--border-divider)">About</a>
+      <a href="FAQ.dc.html" style="display:flex;align-items:center;min-height:48px;font-size:16px;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--border-divider)">FAQ</a>
+      <a href="Book a Call.dc.html" style="display:flex;align-items:center;justify-content:center;min-height:52px;margin-top:16px;background:var(--ink);color:var(--cream);font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:0.06em;text-decoration:none">Book a Call</a>
+    </nav>
+  </sc-if>
+</header>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:60}}">
+class Component extends DCLogic {
+  state = { open: false };
+  renderVals() {
+    return {
+      open: this.state.open,
+      toggle: () => this.setState(s => ({ open: !s.open })),
+    };
+  }
+}
+</script>
+</body>
+</html>

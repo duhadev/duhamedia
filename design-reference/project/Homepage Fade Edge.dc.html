@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/effects.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/styles.css">
+  <script src="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/_ds_bundle.js"></script>
+  <script src="image-slot.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;}
+    body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--font-body);font-weight:500;}
+    a{color:var(--ink);}
+    a:hover{color:var(--accent-primary);}
+  </style>
+</helmet>
+
+<header data-screen-label="Header" style="position:sticky;top:0;z-index:50;background:var(--cream);border-bottom:1px solid var(--border-divider)">
+  <div style="max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad);display:flex;align-items:center;justify-content:space-between;height:72px">
+    <a href="Homepage.dc.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)">
+      <img src="assets/logo-duha-01.png" alt="Duha Media" style="width:34px;height:34px">
+      <span style="font-family:var(--font-display);font-size:18px;letter-spacing:-0.01em">DUHA MEDIA</span>
+    </a>
+    <nav style="display:flex;align-items:center;gap:28px">
+      <a href="Work.dc.html" style="font-weight:500;font-size:15px;text-decoration:none;padding-bottom:2px">Work</a>
+      <a href="Services Hub.dc.html" style="font-weight:500;font-size:15px;text-decoration:none;padding-bottom:2px">Services</a>
+      <a href="Testimonials.dc.html" style="font-weight:500;font-size:15px;text-decoration:none;padding-bottom:2px">Testimonials</a>
+      <a href="About.dc.html" style="font-weight:500;font-size:15px;text-decoration:none;padding-bottom:2px">About</a>
+      <a href="FAQ.dc.html" style="font-weight:500;font-size:15px;text-decoration:none;padding-bottom:2px">FAQ</a>
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="primary" size="sm" href="Book a Call.dc.html" hint-size="120px,44px">Book a Call</x-import>
+    </nav>
+  </div>
+</header>
+
+<section data-screen-label="Hero" style="position:relative;overflow:hidden;background:var(--cream)">
+  <div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.3) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(215deg,#000 15%,transparent 60%);mask-image:linear-gradient(215deg,#000 15%,transparent 60%);z-index:0"></div>
+  <div aria-hidden="true" style="position:absolute;right:-6%;top:50%;width:440px;height:440px;transform:translateY(-50%) rotate(45deg);background:var(--ground-accent);z-index:0"></div>
+  <span aria-hidden="true" style="position:absolute;left:28px;top:50%;transform:rotate(-90deg) translateX(50%);transform-origin:left;font-weight:700;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gray-warm);white-space:nowrap">Build · Operate · Hand over</span>
+  <div style="position:relative;z-index:1;max-width:var(--container-max);margin:0 auto;padding:96px var(--container-pad) 88px">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" tick="{{ true }}" hint-size="auto,20px">Integrated ecommerce growth partner — Chicago</x-import>
+    <div style="display:flex;align-items:flex-start;gap:24px;margin-top:20px;flex-wrap:wrap">
+      <h1 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:var(--text-h1);line-height:var(--leading-h1);text-transform:uppercase;letter-spacing:-0.01em;max-width:14ch">Your ecommerce growth team, <span style="color:var(--accent-primary)">until you don't need one.</span></h1>
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Badge" tone="fill" style="margin-top:8px;flex-shrink:0" hint-size="auto,30px">$X.XM client revenue tracked</x-import>
+    </div>
+    <p style="margin:24px 0 0;font-size:var(--text-body-size);line-height:var(--leading-body);max-width:52ch">One team builds your store, runs your marketing, and trains yours to take over. Builds from $5K. Engines from $1K/mo.</p>
+    <p style="margin:6px 0 0;font-size:12px;color:var(--gray-warm)">[STRATEGIC PLACEHOLDER — final copy TBD]</p>
+    <div style="display:flex;gap:14px;margin-top:32px;flex-wrap:wrap">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="primary" size="md" href="Book a Call.dc.html" hint-size="160px,52px">Book a Call</x-import>
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="ghost" size="md" href="Work.dc.html" hint-size="160px,52px">See the Work</x-import>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Scarcity strip" style="border-top:var(--border-hairline);border-bottom:var(--border-hairline)">
+  <div data-anim style="max-width:var(--container-max);margin:0 auto;padding:28px var(--container-pad);display:flex;gap:96px;flex-wrap:wrap">
+    <div style="display:flex;gap:14px">
+      <span aria-hidden="true" style="width:9px;height:9px;background:var(--ground-accent);transform:rotate(45deg);flex-shrink:0;margin-top:11px"></span>
+      <div>
+        <span style="font-family:var(--font-display);font-size:1.75rem;text-transform:uppercase">{{ ongoingCount }} projects ongoing</span>
+        <span style="display:block;margin-top:4px;font-size:0.8125rem;color:var(--gray-warm)">Current load, shown transparently.</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:14px">
+      <span aria-hidden="true" style="width:9px;height:9px;background:var(--ground-accent);transform:rotate(45deg);flex-shrink:0;margin-top:11px"></span>
+      <div>
+        <span style="font-family:var(--font-display);font-size:1.75rem;text-transform:uppercase">Max 7 client capacity</span>
+        <span style="display:block;margin-top:4px;font-size:0.8125rem;color:var(--gray-warm)">The cap is our quality gate, not a countdown.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Client logos" style="background:var(--cream);padding:64px 0">
+  <div data-anim style="max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad)">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" style="margin-bottom:24px" hint-size="auto,20px">Stores we've run numbers for</x-import>
+    <div style="display:flex;gap:56px;align-items:center;flex-wrap:wrap;opacity:.55;margin-top:24px">
+      <span style="font-family:var(--font-display);font-size:20px;letter-spacing:0.02em">NORTHSIDE GOODS</span>
+      <span style="font-family:var(--font-display);font-size:20px;letter-spacing:0.02em">KEDZIE &amp; CO</span>
+      <span style="font-family:var(--font-display);font-size:20px;letter-spacing:0.02em">LAKE SUPPLY</span>
+      <span style="font-family:var(--font-display);font-size:20px;letter-spacing:0.02em">MARROW</span>
+      <span style="font-family:var(--font-display);font-size:20px;letter-spacing:0.02em">FIELDHOUSE</span>
+      <span style="font-family:var(--font-display);font-size:20px;letter-spacing:0.02em">WICKER &amp; PINE</span>
+    </div>
+    <p style="margin:14px 0 0;font-size:12px;color:var(--gray-warm)">[Demonstrative wordmarks — replace with logo-client-01..06.png when attached]</p>
+  </div>
+</section>
+
+<section data-screen-label="Featured case studies" style="background:var(--gray-light);padding:64px 0">
+  <div style="max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad)">
+    <sc-if value="{{ csLive }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.AccentHeadline" level="{{ 2 }}" text="The work, in numbers." accent="in numbers." hint-size="100%,60px"></x-import>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;align-items:start;margin-top:36px">
+          <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.CaseStudyCard" client="Client A" metric="+212%" metric-label="Revenue, 12 months" summary="Rebuild plus engine. Store stopped leaking demand." href="Case Study.dc.html" hint-size="100%,380px"></x-import>
+          <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.CaseStudyCard" client="Client B" metric="3.2×" metric-label="ROAS after restructure" summary="Ads rebuilt on tracking that finally told the truth." href="Case Study.dc.html" hint-size="100%,380px"></x-import>
+          <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.CaseStudyCard" client="Client C" metric="$0/mo" metric-label="Agency fees after handover" summary="Their team runs it now. That was the plan." href="Case Study.dc.html" hint-size="100%,380px"></x-import>
+        </div>
+        <p style="margin:14px 0 0;font-size:12px;color:var(--gray-warm)">[Toggle live only with signed-off client studies — cards shown are structural placeholders]</p>
+      </div>
+    </sc-if>
+    <sc-if value="{{ csFallback }}" hint-placeholder-val="{{ true }}">
+      <div>
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.AccentHeadline" level="{{ 2 }}" text="No case studies live yet. Numbers anyway." accent="Numbers anyway." hint-size="100%,60px"></x-import>
+        <p style="margin:16px 0 32px;font-size:1rem;color:var(--gray-warm);max-width:56ch">Case studies publish here as clients sign off. Until then: how we price and how we cap our load. No demo studies, no "coming soon."</p>
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.MetricStrip" dc-props="{{ fallbackStrip }}" hint-size="100%,180px"></x-import>
+      </div>
+    </sc-if>
+  </div>
+</section>
+
+<section data-screen-label="Mini CTA" style="background:var(--cream);border-bottom:var(--border-hairline)">
+  <div data-anim style="max-width:var(--container-max);margin:0 auto;padding:32px var(--container-pad);display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap">
+    <span style="font-family:var(--font-display);font-size:1.375rem;text-transform:uppercase">One team. One dashboard. A handover date.</span>
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="primary" size="md" href="Book a Call.dc.html" hint-size="140px,48px">Book a Call</x-import>
+  </div>
+</section>
+
+<section data-screen-label="What we do" style="background:var(--gray-light);padding:96px 0;position:relative;overflow:hidden">
+  <div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.22) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(to bottom,#000 0,transparent 25%,transparent 75%,#000 100%);mask-image:linear-gradient(to bottom,#000 0,transparent 25%,transparent 75%,#000 100%);z-index:0"></div>
+  <div data-anim style="position:relative;z-index:1;max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad)">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">What we do</x-import>
+    <div style="margin-top:16px">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.AccentHeadline" level="{{ 2 }}" text="We build it. Then we grow it." accent="Then we grow it." hint-size="100%,60px"></x-import>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:40px">
+      <a href="Shopify Theme Development.dc.html" style="background:var(--cream);border:2px solid var(--ink);padding:32px;display:flex;flex-direction:column;gap:12px;text-decoration:none;color:var(--ink);transition:box-shadow 180ms,transform 180ms" style-hover="box-shadow:0 6px 0 0 #111;transform:translateY(-2px);color:var(--ink)">
+        <span style="font-family:var(--font-display);font-size:1.5rem;text-transform:uppercase">01 — We build it</span>
+        <p style="margin:0;font-size:1rem;line-height:1.6">Shopify store, built or rebuilt to convert. Half-built and not working? That's where most clients start. Builds from $5K.</p>
+        <span style="font-weight:700;font-size:14px;border-bottom:2px solid var(--ink);align-self:flex-start">Shopify Theme Development →</span>
+      </a>
+      <a href="Marketing.dc.html" style="background:var(--cream);border:2px solid var(--ink);padding:32px;display:flex;flex-direction:column;gap:12px;text-decoration:none;color:var(--ink);transition:box-shadow 180ms,transform 180ms" style-hover="box-shadow:0 6px 0 0 #111;transform:translateY(-2px);color:var(--ink)">
+        <span style="font-family:var(--font-display);font-size:1.5rem;text-transform:uppercase">02 — Then we grow it</span>
+        <p style="margin:0;font-size:1rem;line-height:1.6">Email, ads, content, SEO, GBP, CRM — one team runs the whole engine, on one dashboard. Engines from $1K/mo.</p>
+        <span style="font-weight:700;font-size:14px;border-bottom:2px solid var(--ink);align-self:flex-start">Marketing →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Process" style="background:var(--cream);padding:96px 0;position:relative;overflow:hidden">
+  <div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(17,17,17,.22) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(to bottom,#000 0,transparent 25%,transparent 75%,#000 100%);mask-image:linear-gradient(to bottom,#000 0,transparent 25%,transparent 75%,#000 100%);z-index:0"></div>
+  <div aria-hidden="true" style="position:absolute;right:-140px;bottom:-140px;width:300px;height:300px;transform:rotate(45deg);background:var(--ground-accent)"></div>
+  <div data-anim style="position:relative;max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad)">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">How it runs</x-import>
+    <div style="margin-top:16px">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.AccentHeadline" level="{{ 2 }}" text="Eight steps. The last one is the point." accent="the point." hint-size="100%,60px"></x-import>
+    </div>
+    <div style="margin-top:40px">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.PhaseTimeline" dc-props="{{ processProps }}" hint-size="100%,220px"></x-import>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Founder" style="background:var(--gray-light);padding:64px 0">
+  <div data-anim style="max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad);display:grid;grid-template-columns:320px 1fr;gap:48px;align-items:center">
+    <div style="aspect-ratio:4/5;position:relative">
+      <image-slot id="team-founder-01" shape="rect" placeholder="team-founder-01.jpg — founder photo (camera-work slot)"></image-slot>
+    </div>
+    <div>
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">Who you'd work with</x-import>
+      <div style="margin-top:16px">
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.AccentHeadline" level="{{ 2 }}" text="Chicago operators, not account managers." hint-size="100%,60px"></x-import>
+      </div>
+      <p style="margin:20px 0 0;font-size:1.125rem;line-height:1.6;max-width:52ch">You've managed five freelancers who never talked to each other. You've had an agency disappear after launch. We built Duha to be the opposite: one team, one dashboard, and a handover date.</p>
+      <a href="About.dc.html" style="display:inline-block;margin-top:20px;font-weight:700;font-size:15px;border-bottom:2px solid var(--ink);text-decoration:none">More about us →</a>
+    </div>
+  </div>
+</section>
+
+<section data-screen-label="Testimonials" style="background:var(--cream);padding:64px 0">
+  <div data-anim style="max-width:var(--container-max);margin:0 auto;padding:0 var(--container-pad)">
+    <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" style="margin-bottom:32px" hint-size="auto,20px">What clients say</x-import>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;align-items:start;margin-top:32px">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Testimonial" quote="They rebuilt the store, ran the ads, then taught my manager to run it. We stopped paying them in month nine — on their schedule." name="J. Alvarez" role="3-location retailer, Chicago" hint-size="100%,220px"></x-import>
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Testimonial" quote="Third agency we tried. First one that showed us the dashboard instead of a deck." name="M. Okafor" role="Online-only, home goods" hint-size="100%,220px"></x-import>
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Testimonial" quote="I'd spent $10k with nothing to show. Duha started with what that money should have bought." name="R. Patel" role="Hybrid retail, 2 locations" hint-size="100%,220px"></x-import>
+    </div>
+    <p style="margin:14px 0 0;font-size:12px;color:var(--gray-warm)">[Demonstrative quotes — replace with signed-off client testimonials]</p>
+  </div>
+</section>
+
+<section data-screen-label="Final CTA" style="background:var(--ink);color:var(--cream);padding:96px 0;position:relative;overflow:hidden">
+  <div aria-hidden="true" style="position:absolute;left:0;top:0;right:0;bottom:0;background-image:radial-gradient(rgba(250,247,242,.18) 1.2px,transparent 1.2px);background-size:22px 22px;-webkit-mask-image:linear-gradient(to bottom,#000 0,transparent 25%,transparent 75%,#000 100%);mask-image:linear-gradient(to bottom,#000 0,transparent 25%,transparent 75%,#000 100%);z-index:0"></div>
+  <div aria-hidden="true" style="position:absolute;left:-100px;bottom:-100px;width:220px;height:220px;transform:rotate(45deg);background:var(--ground-accent);z-index:0"></div>
+  <div data-anim style="position:relative;z-index:1;text-align:center;max-width:760px;margin:0 auto;padding:0 var(--container-pad)">
+    <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:var(--text-h2);line-height:1.05;text-transform:uppercase">Your store already has the demand. It's leaking it.</h2>
+    <p style="margin:20px 0 0;font-size:1.125rem;opacity:.85">{{ ongoingCount }} builds in progress. We cap at 7.</p>
+    <p style="margin:4px 0 0;font-size:0.8125rem;opacity:.5">The cap keeps every build senior-staffed — that's the whole reason.</p>
+    <div style="margin-top:32px;display:flex;justify-content:center">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="ghost-light" size="md" href="Book a Call.dc.html" hint-size="160px,52px">Book a Call</x-import>
+    </div>
+  </div>
+</section>
+
+<footer data-screen-label="Footer" style="background:var(--ink);color:var(--cream);border-top:1px solid rgba(250,247,242,.2)">
+  <div style="max-width:var(--container-max);margin:0 auto;padding:64px var(--container-pad) 32px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1.5fr;gap:40px">
+    <div style="display:flex;flex-direction:column;gap:10px;font-size:14px">
+      <span style="display:flex;align-items:center;gap:10px"><img src="assets/logo-duha-01.png" alt="" style="width:30px;height:30px"><span style="font-family:var(--font-display);font-size:16px">DUHA MEDIA</span></span>
+      <span style="opacity:.75;max-width:28ch">One team. Store, engine, then yours to run. Chicago.</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;font-size:14px">
+      <span style="font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Pages</span>
+      <a href="Work.dc.html" style="color:var(--cream);text-decoration:none;opacity:.75">Work</a>
+      <a href="About.dc.html" style="color:var(--cream);text-decoration:none;opacity:.75">About</a>
+      <a href="Testimonials.dc.html" style="color:var(--cream);text-decoration:none;opacity:.75">Testimonials</a>
+      <a href="Book a Call.dc.html" style="color:var(--cream);text-decoration:none;opacity:.75">Book a Call</a>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;font-size:14px">
+      <span style="font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Services</span>
+      <a href="Shopify Theme Development.dc.html" style="color:var(--cream);text-decoration:none;opacity:.75">Shopify Theme Development</a>
+      <a href="Marketing.dc.html" style="color:var(--cream);text-decoration:none;opacity:.75">Marketing</a>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;font-size:14px">
+      <span style="font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Resources</span>
+      <a href="Newsletter.dc.html" style="color:var(--cream);text-decoration:none;opacity:.75">Newsletter</a>
+      <a href="Review Hub.dc.html" style="color:var(--cream);text-decoration:none;opacity:.75">Review Hub</a>
+      <a href="FAQ.dc.html" style="color:var(--cream);text-decoration:none;opacity:.75">FAQ</a>
+      <a href="Contact.dc.html" style="color:var(--cream);text-decoration:none;opacity:.75">Contact</a>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;font-size:14px">
+      <span style="font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Newsletter</span>
+      <span style="opacity:.75">One useful email a month. Numbers included.</span>
+      <div style="display:flex;gap:8px">
+        <input placeholder="you@store.com" style="flex:1;background:transparent;border:2px solid var(--cream);color:var(--cream);padding:10px 12px;font-family:var(--font-body);font-size:14px;min-width:0">
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="ghost-light" size="sm" href="Newsletter.dc.html" hint-size="70px,44px">Join</x-import>
+      </div>
+    </div>
+  </div>
+  <div style="border-top:1px solid rgba(250,247,242,.2)">
+    <div style="max-width:var(--container-max);margin:0 auto;padding:16px var(--container-pad);display:flex;justify-content:space-between;font-size:13px;opacity:.6;flex-wrap:wrap;gap:12px">
+      <span>© 2026 Duha Media LLC</span>
+      <span style="display:flex;gap:20px">
+        <a href="Legal.dc.html" style="color:var(--cream);text-decoration:none">Privacy</a>
+        <a href="Legal.dc.html" style="color:var(--cream);text-decoration:none">Terms</a>
+        <a href="Legal.dc.html" style="color:var(--cream);text-decoration:none">Cookies</a>
+        <a href="Legal.dc.html" style="color:var(--cream);text-decoration:none">GDPR</a>
+      </span>
+    </div>
+  </div>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;caseStudiesLive&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Launch state&quot;},&quot;ongoingProjects&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:0,&quot;max&quot;:7,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Capacity&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const live = this.props.caseStudiesLive ?? false;
+    const n = this.props.ongoingProjects ?? 3;
+    return {
+      csLive: live,
+      csFallback: !live,
+      ongoingCount: n,
+      fallbackStrip: {
+        items: [
+          { value: '$5K', label: 'Builds start', sub: 'Fixed-scope Phase 1 — store, tracking, SEO foundations' },
+          { value: '$1K/MO', label: 'Engines start', sub: 'Email, ads, content, SEO, GBP, CRM — one team' },
+          { value: '7', label: 'Client cap', sub: 'Capacity is the quality gate, not a countdown', accent: true }
+        ]
+      },
+      processProps: {
+        phases: [
+          { n: '01', name: 'Intake' }, { n: '02', name: 'Research' }, { n: '03', name: 'Branding' },
+          { n: '04', name: 'Design' }, { n: '05', name: 'Development' }, { n: '06', name: 'Onboarding' },
+          { n: '07', name: 'Engine launch' }, { n: '08', name: 'Independence handover' }
+        ],
+        active: 7
+      }
+    };
+  }
+  componentDidMount() { this._applyTheme(); this._armAnim(); }
+  componentDidUpdate() { this._applyTheme(); this._armAnim(); }
+  _applyTheme() {
+    const r = document.documentElement.style;
+    r.setProperty('--accent-primary', '#111111');
+    r.setProperty('--ground-accent', '#C20E59');
+  }
+  _armAnim() {
+    if (!this._io) {
+      this._io = new IntersectionObserver(es => es.forEach(e => {
+        if (e.isIntersecting) this._reveal(e.target);
+      }), { threshold: 0.12 });
+    }
+    document.querySelectorAll('[data-anim]').forEach(el => {
+      if (el.dataset.animArmed) return;
+      el.dataset.animArmed = '1';
+      const r = el.getBoundingClientRect();
+      // only hide elements strictly below the viewport; anything visible or above stays shown
+      if (r.top > window.innerHeight * 0.95) {
+        el.style.opacity = '0'; el.style.transform = 'translateY(24px)';
+        el.style.transition = 'opacity 450ms cubic-bezier(.16,1,.3,1),transform 450ms cubic-bezier(.16,1,.3,1)';
+        this._io.observe(el);
+        // safety: never leave content hidden
+        setTimeout(() => this._reveal(el), 4000);
+      }
+    });
+  }
+  _reveal(el) {
+    el.style.opacity = '1'; el.style.transform = 'none';
+    if (this._io) this._io.unobserve(el);
+  }
+  componentWillUnmount() { if (this._io) this._io.disconnect(); }
+}
+</script>
+</body>
+</html>

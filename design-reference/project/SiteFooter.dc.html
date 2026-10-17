@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/styles.css">
+  <script src="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/_ds_bundle.js"></script>
+  <style>:root{/*fade-edge*/--cream:#FFFFFF;--gray-light:#F5F5F4;--accent-primary:#111111;--ground-accent:#C20E59;}</style>
+</helmet>
+<footer style="background:var(--ink);color:var(--cream);font-family:var(--font-body);font-weight:500">
+  <sc-if value="{{ isStandard }}" hint-placeholder-val="{{ true }}">
+    <div style="max-width:var(--container-max);margin:0 auto;padding:64px var(--container-pad) 32px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1.5fr;gap:40px">
+      <div style="display:flex;flex-direction:column;gap:10px;font-size:14px">
+        <span style="display:flex;align-items:center;gap:10px"><img src="assets/logo-duha-01.png" alt="" style="width:30px;height:30px"><span style="font-family:var(--font-display);font-size:16px">DUHA MEDIA</span></span>
+        <span style="opacity:.75;max-width:28ch">One team. Store, engine, then yours to run. Chicago.</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;font-size:14px">
+        <span style="font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Pages</span>
+        <a href="Work.dc.html" style="color:var(--cream);text-decoration:none;opacity:.75">Work</a>
+        <a href="About.dc.html" style="color:var(--cream);text-decoration:none;opacity:.75">About</a>
+        <a href="Testimonials.dc.html" style="color:var(--cream);text-decoration:none;opacity:.75">Testimonials</a>
+        <a href="Book a Call.dc.html" style="color:var(--cream);text-decoration:none;opacity:.75">Book a Call</a>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;font-size:14px">
+        <span style="font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Services</span>
+        <a href="Shopify Theme Development.dc.html" style="color:var(--cream);text-decoration:none;opacity:.75">Shopify Theme Development</a>
+        <a href="Marketing.dc.html" style="color:var(--cream);text-decoration:none;opacity:.75">Marketing</a>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;font-size:14px">
+        <span style="font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Resources</span>
+        <a href="Newsletter.dc.html" style="color:var(--cream);text-decoration:none;opacity:.75">Newsletter</a>
+        <a href="Review Hub.dc.html" style="color:var(--cream);text-decoration:none;opacity:.75">Review Hub</a>
+        <a href="FAQ.dc.html" style="color:var(--cream);text-decoration:none;opacity:.75">FAQ</a>
+        <a href="Contact.dc.html" style="color:var(--cream);text-decoration:none;opacity:.75">Contact</a>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;font-size:14px">
+        <span style="font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Newsletter</span>
+        <span style="opacity:.75">One useful email a month. Numbers included.</span>
+        <div style="display:flex;gap:8px">
+          <input placeholder="you@store.com" style="flex:1;background:transparent;border:2px solid var(--cream);color:var(--cream);padding:10px 12px;font-family:var(--font-body);font-size:14px;min-width:0">
+          <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="ghost-light" size="sm" href="Newsletter.dc.html" hint-size="70px,44px">Join</x-import>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ isReduced }}" hint-placeholder-val="{{ false }}">
+    <div style="max-width:var(--container-max);margin:0 auto;padding:40px var(--container-pad);display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap">
+      <span style="display:flex;align-items:center;gap:10px"><img src="assets/logo-duha-01.png" alt="" style="width:30px;height:30px"><span style="font-family:var(--font-display);font-size:16px">DUHA MEDIA</span></span>
+      <span style="display:flex;gap:24px;font-size:14px">
+        <a href="Homepage.dc.html" style="color:var(--cream);text-decoration:none;opacity:.75">Home</a>
+        <a href="Work.dc.html" style="color:var(--cream);text-decoration:none;opacity:.75">Work</a>
+        <a href="FAQ.dc.html" style="color:var(--cream);text-decoration:none;opacity:.75">FAQ</a>
+        <a href="Contact.dc.html" style="color:var(--cream);text-decoration:none;opacity:.75">Contact</a>
+      </span>
+    </div>
+  </sc-if>
+  <div style="border-top:1px solid rgba(250,247,242,.2)">
+    <div style="max-width:var(--container-max);margin:0 auto;padding:16px var(--container-pad);display:flex;justify-content:space-between;font-size:13px;opacity:.6;flex-wrap:wrap;gap:12px">
+      <span>© 2026 Duha Media LLC</span>
+      <span style="display:flex;gap:20px">
+        <a href="Legal.dc.html" style="color:var(--cream);text-decoration:none">Privacy</a>
+        <a href="Legal.dc.html" style="color:var(--cream);text-decoration:none">Terms</a>
+        <a href="Legal.dc.html" style="color:var(--cream);text-decoration:none">Cookies</a>
+        <a href="Legal.dc.html" style="color:var(--cream);text-decoration:none">GDPR</a>
+      </span>
+    </div>
+  </div>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:420},&quot;variant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;standard&quot;,&quot;reduced&quot;,&quot;legal&quot;],&quot;default&quot;:&quot;standard&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const v = this.props.variant ?? 'standard';
+    return { isStandard: v === 'standard', isReduced: v === 'reduced' };
+  }
+}
+</script>
+</body>
+</html>

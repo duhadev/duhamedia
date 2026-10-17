@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/styles.css">
+  <script src="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/_ds_bundle.js"></script>
+  <style>
+    body{margin:0;background:#f0eee9;font-family:system-ui,sans-serif}
+    .dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}
+    .dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 20px}
+    .dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}
+    .dv-tname{font:600 13px/1.2 system-ui,sans-serif;color:#1a1a1a}
+    .dv-opts{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}
+    .dv-opt{flex:none;display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px}
+    .dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}
+    .dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.55)}
+    .dv-card{max-width:100%;background:var(--cream);border:1px solid rgba(0,0,0,.12);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden;color:var(--ink);font-family:var(--font-body);font-weight:500}
+    .dv-card a{color:var(--ink)} .dv-card a:hover{color:var(--accent-primary)}
+    .dv-opt:target .dv-oid{background:#2a78d6;color:#fff}
+    .dv-next{margin:22px 0 0;font:12px/1.5 system-ui,sans-serif;color:rgba(0,0,0,.5)}
+  </style>
+</helmet>
+
+<section class="dv-turn" id="t2">
+<div class="dv-thd"><a class="dv-tid" href="#t2">2</a><span class="dv-tname">Readability riffs on <a class="dv-oid" href="#1a">1a</a> — type scale, measure, rhythm</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="2a">
+  <div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a>Reading-first — 18px body, 1.75 line-height, smaller quieter H1, sentence-case H2s</div>
+  <div class="dv-card" style="width:390px">
+    <dc-import name="SiteHeaderMobile" hint-size="100%,60px"></dc-import>
+    <div data-screen-label="2a Article header" style="padding:36px 20px 0">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" tick="{{ true }}" hint-size="auto,20px">Education — integrated growth</x-import>
+      <h1 style="margin:16px 0 0;font-family:var(--font-display);font-weight:400;font-size:1.625rem;line-height:1.12;text-transform:uppercase">The real cost of managing <span style="color:var(--accent-primary)">five marketing freelancers.</span></h1>
+      <div style="margin-top:20px;padding:12px 0;border-top:1px solid var(--border-divider);border-bottom:1px solid var(--border-divider);display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+          <span style="font-size:0.875rem;font-weight:700">By [Author], Duha Media</span>
+          <span style="font-size:0.8125rem;color:var(--gray-warm)">9 min read</span>
+        </div>
+        <div style="font-size:0.8125rem;color:var(--gray-warm)">Published Jun 12, 2026 · Updated Jul 24, 2026</div>
+      </div>
+    </div>
+    <div data-screen-label="2a Article body" style="padding:28px 20px 48px;display:flex;flex-direction:column;gap:22px;font-size:1.125rem;line-height:1.75">
+      <p style="margin:0">The invoices are the small part. When we audit a fragmented setup, the freelancer fees are usually the third-largest cost — behind the owner's coordination hours and the revenue lost in the gaps between channels.</p>
+      <p style="margin:0">This is the full ledger. Real math, and a worksheet you can run on your own setup this week.</p>
+      <h2 style="margin:14px 0 0;font-size:1.25rem;font-weight:700;line-height:1.3">The visible cost: five invoices</h2>
+      <p style="margin:0">[Placeholder — typical freelancer rates per channel, summed against an integrated retainer. Honest numbers, sources cited.]</p>
+      <h2 style="margin:14px 0 0;font-size:1.25rem;font-weight:700;line-height:1.3">The hidden cost: you're the project manager</h2>
+      <p style="margin:0">[Placeholder — coordination hours quantified: briefs written five times, channel conflicts, the email designer who never sees the ad data.]</p>
+      <blockquote style="margin:6px 0;padding:4px 0 4px 18px;border-left:4px solid var(--ground-accent);font-family:var(--font-display);font-weight:400;font-size:1.125rem;line-height:1.3;text-transform:uppercase">You're not paying five invoices. You're paying six — the sixth is your calendar.</blockquote>
+      <h2 style="margin:14px 0 0;font-size:1.25rem;font-weight:700;line-height:1.3">The expensive cost: nobody owns the number</h2>
+      <p style="margin:0">[Placeholder — attribution gaps between vendors; when revenue dips, five people each prove it wasn't their channel.]</p>
+      <h2 style="margin:14px 0 0;font-size:1.25rem;font-weight:700;line-height:1.3">Run the audit on your own setup</h2>
+      <p style="margin:0">[Placeholder — a genuinely usable worksheet: hours, invoices, and the three questions that expose fragmentation cost.]</p>
+      <div style="margin-top:8px;border:2px solid var(--ink);padding:18px">
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">How we do it</x-import>
+        <p style="margin:10px 0 0;font-size:0.9375rem;line-height:1.6">Email, ads, content, SEO, GBP, and CRM run as one engine from $1K/mo — one owner of the revenue number, and the engagement ends with a handover.</p>
+        <div style="margin-top:14px">
+          <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="ghost" size="md" href="Marketing.dc.html" style="display:grid" hint-size="100%,48px">See the engine</x-import>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--gray-light);padding:36px 20px;font-size:0.75rem;color:var(--gray-warm)">[Tail sections unchanged]</div>
+  </div>
+</div>
+
+<div class="dv-opt" id="2b">
+  <div class="dv-olabel"><a class="dv-oid" href="#2b">2b</a>Documented — 17px body, keyed section numbers in margin, lead paragraph enlarged, key-takeaway box up top</div>
+  <div class="dv-card" style="width:390px">
+    <dc-import name="SiteHeaderMobile" hint-size="100%,60px"></dc-import>
+    <div data-screen-label="2b Article header" style="padding:36px 20px 0">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" tick="{{ true }}" hint-size="auto,20px">Education — integrated growth</x-import>
+      <h1 style="margin:16px 0 0;font-family:var(--font-display);font-weight:400;font-size:1.875rem;line-height:1.08;text-transform:uppercase">The real cost of managing <span style="color:var(--accent-primary)">five marketing freelancers.</span></h1>
+      <div style="margin-top:20px;padding:12px 0;border-top:1px solid var(--border-divider);border-bottom:1px solid var(--border-divider);display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+          <span style="font-size:0.875rem;font-weight:700">By [Author], Duha Media</span>
+          <span style="font-size:0.8125rem;color:var(--gray-warm)">9 min read</span>
+        </div>
+        <div style="font-size:0.8125rem;color:var(--gray-warm)">Published Jun 12, 2026 · Updated Jul 24, 2026</div>
+      </div>
+      <div style="margin-top:20px;background:var(--gray-light);padding:16px 18px">
+        <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-warm)">In short</div>
+        <p style="margin:8px 0 0;font-size:0.9375rem;line-height:1.6">Freelancer invoices are usually the third-largest cost of a fragmented setup. The bigger two: your coordination hours, and revenue lost between channels. There's a worksheet at the end to run your own numbers.</p>
+      </div>
+    </div>
+    <div data-screen-label="2b Article body" style="padding:28px 20px 48px;display:flex;flex-direction:column;gap:20px;font-size:1.0625rem;line-height:1.7">
+      <p style="margin:0">The invoices are the small part. When we audit a fragmented setup, the freelancer fees are usually the third-largest cost.</p>
+      <p style="margin:0">This is the full ledger. Real math, and a worksheet you can run on your own setup this week.</p>
+      <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
+        <span style="font-family:var(--font-display);font-size:0.875rem;color:var(--accent-primary)">01</span>
+        <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.25rem;line-height:1.15;text-transform:uppercase">The visible cost: five invoices</h2>
+      </div>
+      <p style="margin:0">[Placeholder — typical freelancer rates per channel, summed against an integrated retainer. Honest numbers, sources cited.]</p>
+      <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
+        <span style="font-family:var(--font-display);font-size:0.875rem;color:var(--accent-primary)">02</span>
+        <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.25rem;line-height:1.15;text-transform:uppercase">The hidden cost: you're the project manager</h2>
+      </div>
+      <p style="margin:0">[Placeholder — coordination hours quantified: briefs written five times, channel conflicts, the email designer who never sees the ad data.]</p>
+      <blockquote style="margin:6px 0;padding:4px 0 4px 18px;border-left:4px solid var(--ground-accent);font-family:var(--font-display);font-weight:400;font-size:1.125rem;line-height:1.3;text-transform:uppercase">You're not paying five invoices. You're paying six.</blockquote>
+      <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
+        <span style="font-family:var(--font-display);font-size:0.875rem;color:var(--accent-primary)">03</span>
+        <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.25rem;line-height:1.15;text-transform:uppercase">Nobody owns the number</h2>
+      </div>
+      <p style="margin:0">[Placeholder — attribution gaps between vendors; when revenue dips, five people each prove it wasn't their channel.]</p>
+      <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
+        <span style="font-family:var(--font-display);font-size:0.875rem;color:var(--accent-primary)">04</span>
+        <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.25rem;line-height:1.15;text-transform:uppercase">Run the audit yourself</h2>
+      </div>
+      <p style="margin:0">[Placeholder — a genuinely usable worksheet: hours, invoices, and the three questions that expose fragmentation cost.]</p>
+      <div style="margin-top:8px;border:2px solid var(--ink);padding:18px">
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">How we do it</x-import>
+        <p style="margin:10px 0 0;font-size:0.9375rem;line-height:1.6">One engine from $1K/mo — one owner of the revenue number, and the engagement ends with a handover.</p>
+        <div style="margin-top:14px">
+          <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="ghost" size="md" href="Marketing.dc.html" style="display:grid" hint-size="100%,48px">See the engine</x-import>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--gray-light);padding:36px 20px;font-size:0.75rem;color:var(--gray-warm)">[Tail sections unchanged]</div>
+  </div>
+</div>
+
+<div class="dv-opt" id="2c">
+  <div class="dv-olabel"><a class="dv-oid" href="#2c">2c</a>Compact-dense — 16px body, tighter rhythm, bold inline lead-ins instead of H2s where sections are short</div>
+  <div class="dv-card" style="width:390px">
+    <dc-import name="SiteHeaderMobile" hint-size="100%,60px"></dc-import>
+    <div data-screen-label="2c Article header" style="padding:32px 20px 0">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" tick="{{ true }}" hint-size="auto,20px">Education — integrated growth</x-import>
+      <h1 style="margin:14px 0 0;font-family:var(--font-display);font-weight:400;font-size:1.75rem;line-height:1.08;text-transform:uppercase">The real cost of managing <span style="color:var(--accent-primary)">five marketing freelancers.</span></h1>
+      <div style="margin-top:18px;padding:10px 0;border-top:1px solid var(--border-divider);border-bottom:1px solid var(--border-divider);display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:0.8125rem">
+        <span style="font-weight:700;font-size:0.875rem">By [Author], Duha Media</span>
+        <span style="color:var(--gray-warm)">Updated Jul 24, 2026 · 9 min</span>
+      </div>
+    </div>
+    <div data-screen-label="2c Article body" style="padding:24px 20px 44px;display:flex;flex-direction:column;gap:16px;font-size:1rem;line-height:1.6">
+      <p style="margin:0">The invoices are the small part. When we audit a fragmented setup, the freelancer fees are usually the third-largest cost — behind the owner's coordination hours and the revenue lost between channels. This is the full ledger, with a worksheet at the end.</p>
+      <h2 style="margin:10px 0 0;font-size:1.125rem;font-weight:700;line-height:1.3">The visible cost: five invoices</h2>
+      <p style="margin:0">[Placeholder — typical freelancer rates per channel, summed against an integrated retainer. Honest numbers, sources cited.]</p>
+      <h2 style="margin:10px 0 0;font-size:1.125rem;font-weight:700;line-height:1.3">The hidden cost: you're the project manager</h2>
+      <p style="margin:0">[Placeholder — coordination hours quantified: briefs written five times, channel conflicts, the email designer who never sees the ad data.]</p>
+      <p style="margin:0"><strong>The expensive cost — nobody owns the number.</strong> [Placeholder — attribution gaps between vendors; when revenue dips, five people each prove it wasn't their channel.]</p>
+      <blockquote style="margin:4px 0;padding:2px 0 2px 16px;border-left:4px solid var(--ground-accent);font-family:var(--font-display);font-weight:400;font-size:1.0625rem;line-height:1.3;text-transform:uppercase">You're not paying five invoices. You're paying six.</blockquote>
+      <h2 style="margin:10px 0 0;font-size:1.125rem;font-weight:700;line-height:1.3">Run the audit on your own setup</h2>
+      <p style="margin:0">[Placeholder — a genuinely usable worksheet: hours, invoices, and the three questions that expose fragmentation cost.]</p>
+      <div style="margin-top:6px;border:2px solid var(--ink);padding:16px">
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">How we do it</x-import>
+        <p style="margin:10px 0 0;font-size:0.9375rem;line-height:1.6">One engine from $1K/mo — one owner of the revenue number, and the engagement ends with a handover.</p>
+        <div style="margin-top:12px">
+          <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="ghost" size="md" href="Marketing.dc.html" style="display:grid" hint-size="100%,48px">See the engine</x-import>
+        </div>
+      </div>
+    </div>
+    <div style="background:var(--gray-light);padding:36px 20px;font-size:0.75rem;color:var(--gray-warm)">[Tail sections unchanged]</div>
+  </div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "lock in <a class="dv-oid" href="#2a">2a</a>" · "<a class="dv-oid" href="#2a">2a</a> with <a class="dv-oid" href="#2b">2b</a>'s In-short box" · "bigger H1 on <a class="dv-oid" href="#2a">2a</a>"</p>
+</section>
+
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">MKT-SEO as a real article — byline meta instead of dek. Mid-page sections (DIY vs. done, proof, FAQ) carry over unchanged once locked.</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="1a">
+  <div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Editorial — hairline byline row, flowing prose, pull quote</div>
+  <div class="dv-card" style="width:390px">
+    <dc-import name="SiteHeaderMobile" hint-size="100%,60px"></dc-import>
+    <div data-screen-label="1a Article header" style="padding:36px 20px 0">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" tick="{{ true }}" hint-size="auto,20px">Education — integrated growth</x-import>
+      <h1 style="margin:16px 0 0;font-family:var(--font-display);font-weight:400;font-size:2rem;line-height:1.05;text-transform:uppercase">The real cost of managing <span style="color:var(--accent-primary)">five marketing freelancers.</span></h1>
+      <div style="margin-top:22px;padding:12px 0;border-top:1px solid var(--border-divider);border-bottom:1px solid var(--border-divider);display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+          <span style="font-size:0.875rem;font-weight:700">By [Author], Duha Media</span>
+          <span style="font-size:0.8125rem;color:var(--gray-warm)">9 min read</span>
+        </div>
+        <div style="font-size:0.8125rem;color:var(--gray-warm)">Published Jun 12, 2026 · Updated Jul 24, 2026</div>
+      </div>
+    </div>
+    <div data-screen-label="1a Article body" style="padding:28px 20px 48px;display:flex;flex-direction:column;gap:20px;font-size:1.0625rem;line-height:1.65">
+      <p style="margin:0">The invoices are the small part. When we audit a fragmented setup, the freelancer fees are usually the third-largest cost — behind the owner's coordination hours and the revenue lost in the gaps between channels.</p>
+      <p style="margin:0">This is the full ledger. Real math, and a worksheet you can run on your own setup this week.</p>
+      <h2 style="margin:12px 0 0;font-family:var(--font-display);font-weight:400;font-size:1.375rem;line-height:1.1;text-transform:uppercase">The visible cost: five invoices</h2>
+      <p style="margin:0">[Placeholder — typical freelancer rates per channel, summed against an integrated retainer. Honest numbers, sources cited.]</p>
+      <h2 style="margin:12px 0 0;font-family:var(--font-display);font-weight:400;font-size:1.375rem;line-height:1.1;text-transform:uppercase">The hidden cost: you're the project manager</h2>
+      <p style="margin:0">[Placeholder — coordination hours quantified: briefs written five times, channel conflicts, the email designer who never sees the ad data.]</p>
+      <blockquote style="margin:6px 0;padding:4px 0 4px 18px;border-left:4px solid var(--ground-accent);font-family:var(--font-display);font-weight:400;font-size:1.25rem;line-height:1.25;text-transform:uppercase">You're not paying five invoices. You're paying six — the sixth is your calendar.</blockquote>
+      <h2 style="margin:12px 0 0;font-family:var(--font-display);font-weight:400;font-size:1.375rem;line-height:1.1;text-transform:uppercase">The expensive cost: nobody owns the number</h2>
+      <p style="margin:0">[Placeholder — attribution gaps between vendors; when revenue dips, five people each prove it wasn't their channel.]</p>
+      <h2 style="margin:12px 0 0;font-family:var(--font-display);font-weight:400;font-size:1.375rem;line-height:1.1;text-transform:uppercase">Run the audit on your own setup</h2>
+      <p style="margin:0">[Placeholder — a genuinely usable worksheet: hours, invoices, and the three questions that expose fragmentation cost.]</p>
+      <div style="margin-top:8px;border:2px solid var(--ink);padding:18px">
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">How we do it</x-import>
+        <p style="margin:10px 0 0;font-size:0.9375rem;line-height:1.6">Email, ads, content, SEO, GBP, and CRM run as one engine from $1K/mo — one owner of the revenue number, and the engagement ends with a handover.</p>
+        <div style="margin-top:14px">
+          <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="ghost" size="md" href="Marketing.dc.html" style="display:grid" hint-size="100%,48px">See the engine</x-import>
+        </div>
+      </div>
+    </div>
+    <div data-screen-label="1a Tail" style="background:var(--gray-light);padding:36px 20px;font-size:0.75rem;color:var(--gray-warm)">[DIY vs. done → proof → FAQ → newsletter → final CTA → footer, unchanged from current page]</div>
+  </div>
+</div>
+
+<div class="dv-opt" id="1b">
+  <div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Ledger — bordered meta table + numbered sections + "In this article"</div>
+  <div class="dv-card" style="width:390px">
+    <dc-import name="SiteHeaderMobile" hint-size="100%,60px"></dc-import>
+    <div data-screen-label="1b Article header" style="padding:36px 20px 0;position:relative;overflow:hidden">
+      <div aria-hidden="true" style="position:absolute;right:-110px;top:-60px;width:200px;height:200px;transform:rotate(45deg);background:var(--ground-accent)"></div>
+      <div style="position:relative">
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" tick="{{ true }}" hint-size="auto,20px">Education — integrated growth</x-import>
+        <h1 style="margin:16px 0 0;font-family:var(--font-display);font-weight:400;font-size:2rem;line-height:1.05;text-transform:uppercase">The real cost of managing <span style="color:var(--accent-primary)">five marketing freelancers.</span></h1>
+        <div style="margin-top:22px;border:2px solid var(--ink);font-size:0.8125rem">
+          <div style="display:flex;justify-content:space-between;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border-divider)"><span style="font-weight:700;text-transform:uppercase;letter-spacing:0.04em">Author</span><span>[Author], Duha Media</span></div>
+          <div style="display:flex;justify-content:space-between;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border-divider)"><span style="font-weight:700;text-transform:uppercase;letter-spacing:0.04em">Updated</span><span>Jul 24, 2026</span></div>
+          <div style="display:flex;justify-content:space-between;gap:12px;padding:10px 14px"><span style="font-weight:700;text-transform:uppercase;letter-spacing:0.04em">Reading time</span><span>9 min</span></div>
+        </div>
+        <div style="margin-top:20px">
+          <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--gray-warm)">In this article</div>
+          <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px;font-size:0.9375rem">
+            <a href="#1b" style="text-decoration:none;display:flex;gap:10px"><span style="font-family:var(--font-display);font-size:0.8125rem">01</span>The visible cost: five invoices</a>
+            <a href="#1b" style="text-decoration:none;display:flex;gap:10px"><span style="font-family:var(--font-display);font-size:0.8125rem">02</span>The hidden cost: you're the project manager</a>
+            <a href="#1b" style="text-decoration:none;display:flex;gap:10px"><span style="font-family:var(--font-display);font-size:0.8125rem">03</span>Nobody owns the number</a>
+            <a href="#1b" style="text-decoration:none;display:flex;gap:10px"><span style="font-family:var(--font-display);font-size:0.8125rem">04</span>Run the audit yourself</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div data-screen-label="1b Article body" style="padding:32px 20px 48px;display:flex;flex-direction:column;gap:20px;font-size:1.0625rem;line-height:1.65">
+      <p style="margin:0">The invoices are the small part. When we audit a fragmented setup, the freelancer fees are usually the third-largest cost — behind the owner's coordination hours and the revenue lost between channels.</p>
+      <div style="margin-top:8px;display:flex;align-items:baseline;gap:12px;border-top:2px solid var(--ink);padding-top:16px">
+        <span style="font-family:var(--font-display);font-size:1.75rem;color:var(--accent-primary)">01</span>
+        <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.375rem;line-height:1.1;text-transform:uppercase">The visible cost: five invoices</h2>
+      </div>
+      <p style="margin:0">[Placeholder — typical freelancer rates per channel, summed against an integrated retainer. Honest numbers, sources cited.]</p>
+      <div style="margin-top:8px;display:flex;align-items:baseline;gap:12px;border-top:2px solid var(--ink);padding-top:16px">
+        <span style="font-family:var(--font-display);font-size:1.75rem;color:var(--accent-primary)">02</span>
+        <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.375rem;line-height:1.1;text-transform:uppercase">The hidden cost: you're the PM</h2>
+      </div>
+      <p style="margin:0">[Placeholder — coordination hours quantified: briefs written five times, channel conflicts, the email designer who never sees the ad data.]</p>
+      <div style="margin-top:8px;display:flex;align-items:baseline;gap:12px;border-top:2px solid var(--ink);padding-top:16px">
+        <span style="font-family:var(--font-display);font-size:1.75rem;color:var(--accent-primary)">03</span>
+        <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.375rem;line-height:1.1;text-transform:uppercase">Nobody owns the number</h2>
+      </div>
+      <p style="margin:0">[Placeholder — attribution gaps between vendors; when revenue dips, five people each prove it wasn't their channel.]</p>
+      <div style="margin-top:8px;display:flex;align-items:baseline;gap:12px;border-top:2px solid var(--ink);padding-top:16px">
+        <span style="font-family:var(--font-display);font-size:1.75rem;color:var(--accent-primary)">04</span>
+        <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.375rem;line-height:1.1;text-transform:uppercase">Run the audit yourself</h2>
+      </div>
+      <p style="margin:0">[Placeholder — a genuinely usable worksheet: hours, invoices, and the three questions that expose fragmentation cost.]</p>
+      <div style="margin-top:8px;background:var(--gray-light);padding:18px">
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">How we do it</x-import>
+        <p style="margin:10px 0 0;font-size:0.9375rem;line-height:1.6">One engine from $1K/mo — one owner of the revenue number, and the engagement ends with a handover.</p>
+        <div style="margin-top:14px">
+          <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="ghost" size="md" href="Marketing.dc.html" style="display:grid" hint-size="100%,48px">See the engine</x-import>
+        </div>
+      </div>
+    </div>
+    <div data-screen-label="1b Tail" style="background:var(--gray-light);padding:36px 20px;font-size:0.75rem;color:var(--gray-warm)">[DIY vs. done → proof → FAQ → newsletter → final CTA → footer, unchanged from current page]</div>
+  </div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "lock in <a class="dv-oid" href="#1a">1a</a>" · "<a class="dv-oid" href="#1b">1b</a> but with <a class="dv-oid" href="#1a">1a</a>'s hairline byline instead of the table" · "add a share row"</p>
+</section>
+
+</x-dc>
+</body>
+</html>

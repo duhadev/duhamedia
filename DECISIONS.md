@@ -265,7 +265,8 @@ Non-plugin dependencies proposed: `@payloadcms/richtext-lexical`, `@payloadcms/e
 
 - GitHub Free: **2,000 Actions minutes/month** on private repos; 500 MB artifact/package storage for non-container packages.
 - GHCR: "Container image storage and bandwidth for the Container registry is **currently free**", with at least one month's notice before any change.
-- **Decision:** measure CI build minutes in Phase 1 and record here. Flag immediately if GHCR billing changes. Fallback (server agent's call): capped on-server build under `/run/lock/duha-heavy.lock`.
+- **Decision:** measure CI build minutes in Phase 1 and record here.
+- **Measured 2026-10-17 (run 39058172732, first run, cold cache):** check job 37 s + image job 3 m 16 s ≈ **5 billed minutes per push** (per-job rounding) → ~400 pushes/month inside the free tier. Flag immediately if GHCR billing changes. Fallback (server agent's call): capped on-server build under `/run/lock/duha-heavy.lock`.
 - Sources: https://docs.github.com/en/billing/concepts/product-billing/github-actions · https://docs.github.com/en/billing/concepts/product-billing/github-packages
 
 ---

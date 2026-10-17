@@ -1,0 +1,103 @@
+/*
+ * GENERATED from design-reference sources by PM merge 2026-10-17 — do not hand-edit; regenerate from MERGED.md
+ *
+ * Source 2 = design-reference/project/ (Claude Design project; gold standard)
+ *   _ds = project/_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/
+ * Source 1 = design-reference/design-system/ (April 2026 brand guide; gap-fill only)
+ *
+ * VALUES ARE THE *EFFECTIVE* VALUES THE FINAL PAGES RENDER WITH.
+ * Every final page (and SiteHeader/SiteFooter) overrides four _ds tokens in its <helmet>
+ * ("/*fade-edge*\/" :root block) or in JS (_applyTheme in Homepage.dc.html). The _ds base
+ * value is kept in the comment beside each overridden token. This override is listed as
+ * Conflict 1 in MERGED.md — if the human picks the _ds values instead, swap the four lines.
+ * Breakpoints: undefined in both sources (pages ship a separate 390px mobile build).
+ */
+:root {
+  /* ---------- Colour: base palette (_ds tokens/colors.css) ---------- */
+  --cream: #FFFFFF;          /* EFFECTIVE (page override). _ds base #FAF7F2 (colors.css:3) */
+  --ink: #111111;            /* colors.css:4 */
+  --accent: #C20E59;         /* colors.css:5 — deep wine; client sign-off on hex still open (_ds readme:50) */
+  --accent-bright: #E82561;  /* colors.css:6 — logo/brand contexts only, never UI */
+  --gold: #F5C842;           /* colors.css:7 — logo band, brand contexts only */
+  --gold-pale: #FCE588;      /* colors.css:8 */
+  --gray-warm: #8A857D;      /* colors.css:9 — secondary text, dividers (3.66:1 on white — see MERGED.md conflicts) */
+  --gray-light: #F5F5F4;     /* EFFECTIVE (page override). _ds base #EDE9E2 (colors.css:10) */
+
+  /* page-level aliases declared by final pages (Case Study, Work, About, DEV-SEO, Link-in-Bio, ...) */
+  --wine: #C20E59;
+  --yellow: #FCE588;
+
+  /* ---------- Colour: semantic (_ds tokens/colors.css:12-21) ---------- */
+  --surface-page: var(--cream);
+  --surface-card: var(--gray-light);
+  --surface-inverse: var(--ink);
+  --text-body: var(--ink);
+  --text-secondary: var(--gray-warm);
+  --text-on-dark: var(--cream);
+  --text-on-accent: #FAF7F2;          /* literal in _ds (colors.css:18); NOT affected by the --cream override */
+  --accent-primary: #111111;          /* EFFECTIVE (page override). _ds base var(--accent) = #C20E59 (colors.css:19) */
+  --ground-accent: #C20E59;           /* EFFECTIVE (page override; Homepage prop geometryColor default). _ds base var(--gold-pale) = #FCE588 (colors.css:20) */
+  --border-divider: rgba(138,133,125,.35);
+  --border-strong: var(--ink);
+
+  /* page-local state colours (source 2 final pages only; not in _ds) */
+  --success: #1E8E5A;        /* Book a Call mobile — booked badge */
+  --success-strong: #1B7A4B; /* Thank You mobile — confirmation toast fill */
+  --success-edge: #0F5433;   /* Thank You mobile — toast bottom border */
+  --success-deep: #0F4D2F;   /* Thank You */
+  --success-tint: #EAF4EE;   /* Thank You */
+
+  /* geometry: dot-matrix "fade-edge" ground (every final page hero / Final CTA) */
+  --geo-dot: rgba(17,17,17,.22);        /* light grounds (hero variants also use .3 / .15) */
+  --geo-dot-on-dark: rgba(250,247,242,.18);
+  --geo-dot-size: 1.2px;
+  --geo-dot-pitch: 22px;
+
+  /* ---------- Typography (_ds tokens/typography.css, fonts.css) ---------- */
+  --font-display: "Archivo Black","Arial Black",sans-serif;   /* typography.css:2 — single 900 cut, set font-weight:400 */
+  --font-body: "DM Sans","Helvetica Neue",Arial,sans-serif;   /* typography.css:3 */
+  --font-mono: ui-monospace,'SF Mono',Menlo,monospace;        /* source 2 inline (Testimonial.jsx "Google review" tag, maps, Sitemap). Not a _ds token. Source 1 IBM Plex Mono NOT adopted — see MERGED.md */
+
+  --text-h1: 4.5rem;  --text-h1-mobile: 2.5rem;  --leading-h1: 1.0;
+  --text-h2: 3rem;    --text-h2-mobile: 2rem;    --leading-h2: 1.05;
+  --text-h3: 1.75rem; --text-h3-mobile: 1.375rem; --leading-h3: 1.15;
+  --text-body-size: 1.125rem; --text-body-mobile: 1rem; --leading-body: 1.6;
+  --text-small: 0.875rem; --text-small-mobile: 0.8125rem; --leading-small: 1.5;
+  --text-metric: 4.5rem; --text-metric-mobile: 2.75rem;
+  --text-label: 0.8125rem;      /* observed: Badge, Input label, Metric label, CaseStudyCard client (_ds_bundle.js) */
+  --weight-body: 500;
+  --weight-emphasis: 700;
+  --tracking-eyebrow: 0.08em;
+  --tracking-headline: -0.01em; /* observed: AccentHeadline, all page h1/h2 (uppercase) */
+
+  /* ---------- Spacing / layout (_ds tokens/spacing.css) ---------- */
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 24px;
+  --space-6: 32px; --space-7: 48px; --space-8: 64px; --space-9: 96px; --space-10: 128px;
+  --section-pad: var(--space-9);
+  --section-pad-tight: var(--space-8);
+  --container-max: 1200px;
+  --container-pad: 24px;
+  --target-min: 44px;
+  --header-height: 72px;         /* SiteHeader.dc.html */
+  --header-height-mobile: 60px;  /* SiteHeaderMobile.dc.html */
+  --mobile-frame: 390px;         /* width of every page's mobile build */
+
+  /* ---------- Shape / effects (_ds tokens/effects.css) ---------- */
+  --radius-none: 0;
+  --radius-sm: 2px;      /* inputs only (source 1 said 3px — overridden) */
+  --radius-badge: 999px;
+  --border-hairline: 1px solid var(--border-divider);
+  --border-heavy: 2px solid var(--ink);
+  --shadow-card: 0 2px 0 0 var(--ink);
+  --shadow-lift: 0 6px 0 0 var(--ink);
+  --shadow-ring: 0 0 0 1px rgba(17,17,17,.15);  /* observed 28x in final pages (cards/frames); not a _ds token */
+  --focus-ring: 2px solid var(--ink);           /* SOURCE 1 gap-fill (components/Button/README.md:14), offset 2px; undefined in source 2 */
+  --focus-ring-offset: 2px;
+
+  /* ---------- Motion (_ds tokens/effects.css:8-9, site-fx.js) ---------- */
+  --ease-out: cubic-bezier(.16,1,.3,1);
+  --dur-fast: 180ms;
+  --dur-enter: 450ms;
+  --enter-distance: 24px;      /* site-fx.js:13 translateY(24px) */
+  --reading-progress-width: 4px; /* site-fx.js:29 */
+}

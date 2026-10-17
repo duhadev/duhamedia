@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/styles.css">
+  <script src="_ds/duha-media-design-system-a9da4886-8cd2-4a89-bc2c-d8fe2794aeca/_ds_bundle.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+  <script src="image-slot.js"></script>
+  <style>
+    body{margin:0;background:#f0eee9;font-family:system-ui,sans-serif}
+    .dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}
+    .dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 20px}
+    .dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}
+    .dv-tname{font:600 13px/1.2 system-ui,sans-serif;color:#1a1a1a}
+    .dv-opts{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}
+    .dv-opt{flex:none;display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px}
+    .dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}
+    .dv-olabel{display:flex;align-items:baseline;gap:8px;max-width:900px;font:400 11px/1.35 system-ui,sans-serif;color:rgba(0,0,0,.55)}
+    .dv-card{background:#FFFFFF;border:1px solid rgba(0,0,0,.12);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden;color:var(--ink);font-family:var(--font-body);font-weight:500;--cream:#FFFFFF;--gray-light:#F5F5F4;--accent-primary:#111111;--ground-accent:#C20E59;--wine:#C20E59}
+    .dv-card a{color:var(--ink)} .dv-card a:hover{color:var(--accent-primary)}
+    .dv-opt:target .dv-oid{background:#2a78d6;color:#fff}
+    .dv-crumb{display:flex;align-items:center;gap:10px;font-weight:700;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-warm)}
+    .dv-h2{margin:0;font-family:var(--font-display);font-weight:400;font-size:1.375rem;line-height:1.15;text-transform:uppercase}
+    .dv-num{font-family:var(--font-display);font-weight:400;font-size:0.875rem;color:var(--wine)}
+    .dv-next{margin:22px 0 0;font:12px/1.5 system-ui,sans-serif;color:rgba(0,0,0,.5)}
+  </style>
+</helmet>
+
+<section class="dv-turn" id="t2">
+<div class="dv-thd"><a class="dv-tid" href="#t2">2</a><span class="dv-tname">Mobile pair for <a class="dv-oid" href="#1a">1a</a> — 390px</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="2a">
+  <div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a>1a on mobile — hero H1 drops to 1.75rem, body to 20px gutters, the scope table becomes stacked keep/price rows, everything else unchanged.</div>
+  <div class="dv-card" style="width:390px">
+    <dc-import name="SiteHeaderMobile" hint-size="100%,60px"></dc-import>
+    <div data-screen-label="2a Article header" style="padding:32px 0 0;border-bottom:2px solid var(--ink)">
+      <div style="padding:0 20px 28px">
+        <span class="dv-crumb" style="font-size:10px"><a href="Services Hub.dc.html" style="color:var(--gray-warm);text-decoration:none">Services</a><span>/</span><span>Shopify dev — Chicago</span></span>
+        <h1 style="margin:16px 0 0;font-family:var(--font-display);font-weight:400;font-size:1.75rem;line-height:1.06;text-transform:uppercase">Shopify development in Chicago, scoped <span style="color:var(--wine)">in writing</span></h1>
+        <p style="margin:16px 0 0;font-size:1rem;line-height:1.6">Most stores we see don't need a rebuild — they need the leak found first. Two-week audit, fixed price after it, from $5K.</p>
+        <div style="margin-top:20px;padding:12px 0 0;border-top:1px solid var(--border-divider);display:flex;flex-direction:column;gap:4px;font-size:0.8125rem;color:var(--gray-warm)">
+          <span style="font-weight:700;color:var(--ink)">Duha Media · Chicago</span>
+          <span>Updated Jul 2026 · 7 min read · Builds from $5K</span>
+        </div>
+      </div>
+    </div>
+    <div data-screen-label="2a Article body" style="padding:28px 20px 44px;display:flex;flex-direction:column;gap:20px;font-size:1.0625rem;line-height:1.7">
+      <div style="display:flex;flex-direction:column;gap:6px"><span class="dv-num">01</span><h2 class="dv-h2" style="font-size:1.1875rem">Why you're searching this</h2></div>
+      <p style="margin:0">The pattern behind this page is consistent: a business netting $500K–$5M offline, a Shopify store someone half-built, and no appetite for wasting another $10k. You aren't shopping for a web design agency. You want the store to convert and one name accountable when it doesn't.</p>
+      <p style="margin:0">Two things usually went wrong before us. The build was scoped by taste instead of by funnel, and nobody wired the numbers, so there's no way to tell whether the last spend worked.</p>
+      <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px"><span class="dv-num">02</span><h2 class="dv-h2" style="font-size:1.1875rem">Revision before rebuild</h2></div>
+      <p style="margin:0">Our default is the Revision, not the scratch build. We keep what converts, replace what leaks, and only propose a full theme when the platform itself is the constraint.</p>
+      <blockquote style="margin:4px 0;padding:4px 0 4px 18px;border-left:4px solid var(--ground-accent);font-family:var(--font-display);font-weight:400;font-size:1.125rem;line-height:1.3;text-transform:uppercase">A rebuild you didn't need is the most expensive thing a developer can sell you.</blockquote>
+      <figure style="margin:4px 0 0">
+        <div style="border:2px solid var(--ink);aspect-ratio:4/3;background:var(--gray-light)"><image-slot id="dev-a-m-fig1" placeholder="Fig. 1 — audit sheet: keep, fix, replace" style="width:100%;height:100%"></image-slot></div>
+        <figcaption style="margin-top:8px;font-size:0.8125rem;color:var(--gray-warm)">Fig. 1 — Revision audit. Every line is keep, fix, or replace, with a price against it.</figcaption>
+      </figure>
+      <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px"><span class="dv-num">03</span><h2 class="dv-h2" style="font-size:1.1875rem">The order of work</h2></div>
+      <p style="margin:0">Positioning, then tracking, then design. SEO foundations sit inside the build — URL structure, collection architecture, redirects — because those are the decisions you cannot cheaply undo later.</p>
+      <p style="margin:0">You approve at three dated checkpoints and watch the same dashboard we do. Nothing goes live on a Friday.</p>
+    </div>
+    <div data-screen-label="2a Scope table" style="background:var(--gray-light);padding:36px 20px;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink)">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">What's in scope — every build</x-import>
+      <div style="margin-top:16px;border-top:2px solid var(--ink)">
+        <div style="display:grid;grid-template-columns:1fr 68px 68px;gap:10px;padding:8px 0;border-bottom:1px solid rgba(138,133,125,.5);font-weight:700;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-warm)"><span>Line item</span><span>Revision</span><span>Scratch</span></div>
+        <div style="display:grid;grid-template-columns:1fr 68px 68px;gap:10px;padding:12px 0;border-bottom:1px solid var(--border-divider);font-size:0.875rem"><span>Starting price</span><span style="font-family:var(--font-display);color:var(--wine)">$5K</span><span style="font-family:var(--font-display)">$12K</span></div>
+        <div style="display:grid;grid-template-columns:1fr 68px 68px;gap:10px;padding:12px 0;border-bottom:1px solid var(--border-divider);font-size:0.875rem"><span>Typical timeline</span><span>4–6 wks</span><span>8–12 wks</span></div>
+        <div style="display:grid;grid-template-columns:1fr 68px 68px;gap:10px;padding:12px 0;border-bottom:1px solid var(--border-divider);font-size:0.875rem"><span>Tracking + GA4 + server events</span><span>Yes</span><span>Yes</span></div>
+        <div style="display:grid;grid-template-columns:1fr 68px 68px;gap:10px;padding:12px 0;border-bottom:1px solid var(--border-divider);font-size:0.875rem"><span>SEO foundations, redirects</span><span>Yes</span><span>Yes</span></div>
+        <div style="display:grid;grid-template-columns:1fr 68px 68px;gap:10px;padding:12px 0;border-bottom:2px solid var(--ink);font-size:0.875rem"><span>Team training at handover</span><span>2 sessions</span><span>4 sessions</span></div>
+      </div>
+      <p style="margin:14px 0 0;font-size:0.8125rem;line-height:1.6;color:var(--gray-warm)">Prices are floors, not averages. The written scope after the audit is the number you pay; if the audit says you don't need us, we say so and invoice nothing.</p>
+    </div>
+    <div data-screen-label="2a Proof + FAQ" style="padding:36px 20px 44px">
+      <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Testimonial" quote="I'd spent $10k with nothing to show. Duha started with what that money should have bought." name="R. Patel" role="Hybrid retail, 2 locations" hint-size="100%,200px"></x-import>
+      <div style="margin-top:32px">
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">Common questions</x-import>
+        <div style="margin-top:14px">
+          <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.FAQItem" question="What does Shopify development cost in Chicago?" hint-size="100%,60px">Our builds start at $5K fixed-scope. Freelancers run cheaper, agencies run higher — the difference is who's accountable in month three.</x-import>
+          <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.FAQItem" question="Can you fix a store another developer built?" hint-size="100%,60px">That's the default starting point. We audit first, keep what converts, and quote the rest in writing.</x-import>
+          <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.FAQItem" question="Do you only work with Chicago businesses?" hint-size="100%,60px">Chicago is home and where we shoot content. The engine runs anywhere; local clients get the camera crew.</x-import>
+        </div>
+      </div>
+    </div>
+    <div data-screen-label="2a Final CTA" style="background:var(--ink);color:var(--cream);padding:48px 20px">
+      <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:1.625rem;line-height:1.06;text-transform:uppercase">Get the build scoped in writing.</h2>
+      <p style="margin:14px 0 0;font-size:1rem;opacity:.85">3 builds in progress. We cap at 7.</p>
+      <p style="margin:4px 0 0;font-size:0.8125rem;opacity:.5">The cap keeps every build senior-staffed — that's the whole reason.</p>
+      <div style="margin-top:22px">
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="primary" size="md" href="Book a Call.dc.html" hint-size="100%,48px">Book a Call</x-import>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+</section>
+
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">DEV-SEO page, rebuilt as an article on the case-study template — three versions</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="1a">
+  <div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Straight port — case-study article, one-for-one: breadcrumb, accent H1, meta rule, In-short box, numbered sections with figures, spec table where the results table sat.</div>
+  <div class="dv-card" style="width:940px">
+    <dc-import name="SiteHeader" hint-size="100%,72px"></dc-import>
+    <div data-screen-label="1a Article header" style="padding:56px 0 0;border-bottom:2px solid var(--ink)">
+      <div style="max-width:840px;margin:0 auto;padding:0 32px 40px">
+        <span class="dv-crumb"><a href="Services Hub.dc.html" style="color:var(--gray-warm);text-decoration:none">Services</a><span>/</span><span>Shopify development — Chicago</span></span>
+        <h1 style="margin:20px 0 0;font-family:var(--font-display);font-weight:400;font-size:3rem;line-height:1.03;text-transform:uppercase;max-width:20ch">Shopify development in Chicago, scoped <span style="color:var(--wine)">in writing</span></h1>
+        <p style="margin:20px 0 0;font-size:1.125rem;line-height:1.6;max-width:58ch">Most stores we see don't need a rebuild — they need the leak found first. Two-week audit, fixed price after it, from $5K.</p>
+        <div style="margin-top:24px;padding:12px 0;border-top:1px solid var(--border-divider);display:flex;gap:24px;flex-wrap:wrap;font-size:0.8125rem;color:var(--gray-warm)">
+          <span style="font-weight:700;color:var(--ink)">Duha Media · Chicago</span><span>Updated Jul 2026</span><span>7 min read</span><span>Builds from $5K</span>
+        </div>
+      </div>
+    </div>
+    <div data-screen-label="1a Article body" style="padding:40px 0 56px">
+      <div style="max-width:760px;margin:0 auto;padding:0 32px"><div style="max-width:66ch;display:flex;flex-direction:column;gap:22px;font-size:1.0625rem;line-height:1.7">
+        <div style="display:flex;flex-direction:column;gap:8px"><span class="dv-num">01</span><h2 class="dv-h2">Why you're searching this</h2></div>
+        <p style="margin:0">The pattern behind this page is consistent: a business netting $500K–$5M offline, a Shopify store someone half-built, and no appetite for wasting another $10k. You aren't shopping for a web design agency. You want the store to convert and one name accountable when it doesn't.</p>
+        <p style="margin:0">Two things usually went wrong before us. The build was scoped by taste instead of by funnel, and nobody wired the numbers, so there's no way to tell whether the last spend worked.</p>
+        <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px"><span class="dv-num">02</span><h2 class="dv-h2">Revision before rebuild</h2></div>
+        <p style="margin:0">Our default is the Revision, not the scratch build. We keep what converts, replace what leaks, and only propose a full theme when the platform itself is the constraint. It is cheaper for you and it makes the before-and-after honest.</p>
+        <blockquote style="margin:6px 0;padding:6px 0 6px 20px;border-left:4px solid var(--ground-accent);font-family:var(--font-display);font-weight:400;font-size:1.25rem;line-height:1.3;text-transform:uppercase">A rebuild you didn't need is the most expensive thing a developer can sell you.</blockquote>
+        <figure style="margin:6px 0 0">
+          <div style="border:2px solid var(--ink);aspect-ratio:16/9;background:var(--gray-light)"><image-slot id="dev-a-fig1" placeholder="Fig. 1 — audit sheet: what stays, what gets replaced" style="width:100%;height:100%"></image-slot></div>
+          <figcaption style="margin-top:10px;font-size:0.8125rem;color:var(--gray-warm)">Fig. 1 — Revision audit. Every line is keep, fix, or replace, with a price against it.</figcaption>
+        </figure>
+        <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px"><span class="dv-num">03</span><h2 class="dv-h2">The order of work</h2></div>
+        <p style="margin:0">Positioning, then tracking, then design. SEO foundations sit inside the build — URL structure, collection architecture, redirects — because those are the decisions you cannot cheaply undo later. Tracking ships before the theme does, so month three has a baseline that agrees with Shopify.</p>
+        <p style="margin:0">You approve at three dated checkpoints and watch the same dashboard we do. Nothing goes live on a Friday.</p>
+      </div></div>
+    </div>
+    <div data-screen-label="1a Scope table" style="background:var(--gray-light);padding:48px 0;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink)">
+      <div style="max-width:760px;margin:0 auto;padding:0 32px">
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">What's in scope — every build</x-import>
+        <div style="margin-top:20px;border-top:2px solid var(--ink)">
+          <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:16px;padding:10px 0;border-bottom:1px solid rgba(138,133,125,.5);font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)"><span>Line item</span><span>Revision</span><span>Scratch build</span></div>
+          <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:16px;padding:14px 0;border-bottom:1px solid var(--border-divider);font-size:0.9375rem"><span>Starting price</span><span style="font-family:var(--font-display);color:var(--wine)">$5K</span><span style="font-family:var(--font-display)">$12K</span></div>
+          <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:16px;padding:14px 0;border-bottom:1px solid var(--border-divider);font-size:0.9375rem"><span>Typical timeline</span><span>4–6 weeks</span><span>8–12 weeks</span></div>
+          <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:16px;padding:14px 0;border-bottom:1px solid var(--border-divider);font-size:0.9375rem"><span>Tracking + GA4 + server events</span><span>Included</span><span>Included</span></div>
+          <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:16px;padding:14px 0;border-bottom:1px solid var(--border-divider);font-size:0.9375rem"><span>SEO foundations, redirects</span><span>Included</span><span>Included</span></div>
+          <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:16px;padding:14px 0;border-bottom:2px solid var(--ink);font-size:0.9375rem"><span>Team training at handover</span><span>2 sessions</span><span>4 sessions</span></div>
+        </div>
+        <p style="margin:16px 0 0;font-size:0.8125rem;line-height:1.6;color:var(--gray-warm);max-width:80ch">Prices are floors, not averages. The written scope after the audit is the number you pay; if the audit says you don't need us, we say so and invoice nothing.</p>
+      </div>
+    </div>
+    <div data-screen-label="1a Proof + FAQ" style="padding:48px 0 56px">
+      <div style="max-width:760px;margin:0 auto;padding:0 32px">
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Testimonial" quote="I'd spent $10k with nothing to show. Duha started with what that money should have bought." name="R. Patel" role="Hybrid retail, 2 locations" hint-size="100%,180px"></x-import>
+        <div style="margin-top:40px">
+          <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">Common questions</x-import>
+          <div style="margin-top:16px">
+            <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.FAQItem" question="What does Shopify development cost in Chicago?" hint-size="100%,60px">Our builds start at $5K fixed-scope. Freelancers run cheaper, agencies run higher — the difference is who's accountable in month three.</x-import>
+            <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.FAQItem" question="Can you fix a store another developer built?" hint-size="100%,60px">That's the default starting point. We audit first, keep what converts, and quote the rest in writing.</x-import>
+            <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.FAQItem" question="Do you only work with Chicago businesses?" hint-size="100%,60px">Chicago is home and where we shoot content. The engine runs anywhere; local clients get the camera crew.</x-import>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div data-screen-label="1a Final CTA" style="background:var(--ink);color:var(--cream);padding:72px 0">
+      <div style="text-align:center;max-width:640px;margin:0 auto;padding:0 32px">
+        <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:2rem;line-height:1.05;text-transform:uppercase">Get the build scoped in writing.</h2>
+        <p style="margin:18px 0 0;font-size:1.125rem;opacity:.85">3 builds in progress. We cap at 7.</p>
+        <p style="margin:4px 0 0;font-size:0.8125rem;opacity:.5">The cap keeps every build senior-staffed — that's the whole reason.</p>
+        <div style="margin-top:28px;display:flex;justify-content:center">
+          <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="primary" size="md" href="Book a Call.dc.html" hint-size="160px,48px">Book a Call</x-import>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="opt-spacer" style="display:none"></div>
+
+<div class="dv-opt" id="1b">
+  <div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Documented build — same article spine plus a left contents rail and a checkpoint ledger; reads like a spec you could hand to a developer.</div>
+  <div class="dv-card" style="width:940px">
+    <dc-import name="SiteHeader" hint-size="100%,72px"></dc-import>
+    <div data-screen-label="1b Article header" style="padding:56px 0 0;border-bottom:2px solid var(--ink)">
+      <div style="max-width:840px;margin:0 auto;padding:0 32px 40px">
+        <span class="dv-crumb"><a href="Services Hub.dc.html" style="color:var(--gray-warm);text-decoration:none">Services</a><span>/</span><span>Shopify development — Chicago</span></span>
+        <h1 style="margin:20px 0 0;font-family:var(--font-display);font-weight:400;font-size:3rem;line-height:1.03;text-transform:uppercase;max-width:20ch">Hiring a Shopify developer in <span style="color:var(--wine)">Chicago</span></h1>
+        <p style="margin:20px 0 0;font-size:1.125rem;line-height:1.6;max-width:58ch">What the build should include, what it should cost, and the questions to ask any developer — including us.</p>
+        <div style="margin-top:24px;padding:12px 0;border-top:1px solid var(--border-divider);display:flex;gap:24px;flex-wrap:wrap;font-size:0.8125rem;color:var(--gray-warm)">
+          <span style="font-weight:700;color:var(--ink)">Duha Media · Chicago</span><span>Updated Jul 2026</span><span>9 min read</span><span>Sources at the end</span>
+        </div>
+      </div>
+    </div>
+    <div data-screen-label="1b Body with contents" style="padding:44px 0 56px">
+      <div style="max-width:900px;margin:0 auto;padding:0 32px;display:grid;grid-template-columns:200px 1fr;gap:56px;align-items:start">
+        <nav style="display:flex;flex-direction:column;gap:2px;border-left:2px solid var(--ink);padding-left:14px">
+          <span style="font-size:0.6875rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm);margin-bottom:8px">Contents</span>
+          <a href="#1b" style="font-size:0.875rem;text-decoration:none;padding:5px 0;font-weight:700">01 &nbsp;What breaks first</a>
+          <a href="#1b" style="font-size:0.875rem;text-decoration:none;padding:5px 0">02 &nbsp;The build checklist</a>
+          <a href="#1b" style="font-size:0.875rem;text-decoration:none;padding:5px 0">03 &nbsp;What it costs</a>
+          <a href="#1b" style="font-size:0.875rem;text-decoration:none;padding:5px 0">04 &nbsp;Checkpoints</a>
+          <a href="#1b" style="font-size:0.875rem;text-decoration:none;padding:5px 0">05 &nbsp;Questions to ask</a>
+        </nav>
+        <div style="max-width:64ch;display:flex;flex-direction:column;gap:22px;font-size:1.0625rem;line-height:1.7">
+          <div style="display:flex;flex-direction:column;gap:8px"><span class="dv-num">01</span><h2 class="dv-h2">What breaks first</h2></div>
+          <p style="margin:0">Your store already has demand — offline revenue proves it. What leaks it is rarely the homepage. In audits it's the checkout step count, blocking app scripts before first paint, and tracking that double-counts returning customers so the reports overstate paid by a third or more.</p>
+          <p style="margin:0">None of those are design problems. That is why a developer hired on portfolio alone tends to hand back a prettier version of the same leak.</p>
+          <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px"><span class="dv-num">02</span><h2 class="dv-h2">The build checklist</h2></div>
+          <p style="margin:0">Demand this list in writing from anyone you hire. Three items on it are routinely left out, and all three are expensive to retrofit.</p>
+          <div style="display:flex;flex-direction:column;border-top:1px solid var(--border-divider)">
+            <div style="display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--border-divider)"><i class="ph-bold ph-check-square" style="color:var(--wine);font-size:1.125rem;line-height:1.5"></i><span style="font-size:0.9375rem;line-height:1.55"><strong>Theme decision on the record.</strong> Customized $300 theme or custom build, with the revenue threshold that justifies the difference.</span></div>
+            <div style="display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--border-divider)"><i class="ph-bold ph-check-square" style="color:var(--wine);font-size:1.125rem;line-height:1.5"></i><span style="font-size:0.9375rem;line-height:1.55"><strong>Tracking before traffic.</strong> GA4, pixel, server-side events, tested with real orders before launch — not after the first campaign.</span></div>
+            <div style="display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--border-divider)"><i class="ph-bold ph-check-square" style="color:var(--wine);font-size:1.125rem;line-height:1.5"></i><span style="font-size:0.9375rem;line-height:1.55"><strong>SEO decisions you can't undo cheaply.</strong> URL structure, collection architecture, migration redirects, mapped before build.</span></div>
+            <div style="display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--border-divider)"><i class="ph-bold ph-check-square" style="color:var(--wine);font-size:1.125rem;line-height:1.5"></i><span style="font-size:0.9375rem;line-height:1.55"><strong>Performance budget.</strong> A stated first-paint target, with the app audit that keeps it.</span></div>
+            <div style="display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--border-divider)"><i class="ph-bold ph-check-square" style="color:var(--wine);font-size:1.125rem;line-height:1.5"></i><span style="font-size:0.9375rem;line-height:1.55"><strong>Handover.</strong> Documentation and training so your team edits the store without a ticket.</span></div>
+          </div>
+          <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px"><span class="dv-num">03</span><h2 class="dv-h2">What it costs</h2></div>
+          <p style="margin:0">Chicago rates spread wide. Freelancers land $2–6K and disappear at launch; full agencies quote $25K+ and staff you juniors. We start at $5K for a Revision and $12K for a scratch build, fixed after the audit.</p>
+          <blockquote style="margin:6px 0;padding:6px 0 6px 20px;border-left:4px solid var(--ground-accent);font-family:var(--font-display);font-weight:400;font-size:1.25rem;line-height:1.3;text-transform:uppercase">The cheapest build is the one you don't pay for twice.</blockquote>
+          <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px"><span class="dv-num">04</span><h2 class="dv-h2">Checkpoints</h2></div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:2px solid var(--ink)">
+            <div style="padding:18px 16px;border-right:1px solid var(--border-divider)"><span class="dv-num">CP1</span><h3 style="margin:6px 0 6px;font-family:var(--font-display);font-weight:400;font-size:1rem;text-transform:uppercase">Audit signed</h3><p style="margin:0;font-size:0.8125rem;line-height:1.5;color:var(--gray-warm)">Week 2. Written scope, fixed price, keep/fix/replace list.</p></div>
+            <div style="padding:18px 16px;border-right:1px solid var(--border-divider)"><span class="dv-num">CP2</span><h3 style="margin:6px 0 6px;font-family:var(--font-display);font-weight:400;font-size:1rem;text-transform:uppercase">Tracking live</h3><p style="margin:0;font-size:0.8125rem;line-height:1.5;color:var(--gray-warm)">Week 3. Numbers agree with Shopify before design ships.</p></div>
+            <div style="padding:18px 16px"><span class="dv-num">CP3</span><h3 style="margin:6px 0 6px;font-family:var(--font-display);font-weight:400;font-size:1rem;text-transform:uppercase">Launch + training</h3><p style="margin:0;font-size:0.8125rem;line-height:1.5;color:var(--gray-warm)">Week 6. Your team edits the store the same week it goes live.</p></div>
+          </div>
+          <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px"><span class="dv-num">05</span><h2 class="dv-h2">Questions to ask</h2></div>
+          <p style="margin:0">Ask who is accountable in month three, ask to see the tracking test plan, and ask what happens if the audit says you don't need a rebuild. The answers sort the field fast.</p>
+        </div>
+      </div>
+    </div>
+    <div data-screen-label="1b Proof strip" style="background:var(--gray-light);padding:40px 0;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink)">
+      <div style="max-width:840px;margin:0 auto;padding:0 32px">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:32px">
+          <div><div style="font-family:var(--font-display);font-weight:400;font-size:2.25rem;line-height:1;color:var(--wine)">$5K</div><div style="margin-top:8px;font-size:0.8125rem;line-height:1.4;color:var(--gray-warm)">Build floor, fixed after audit</div></div>
+          <div><div style="font-family:var(--font-display);font-weight:400;font-size:2.25rem;line-height:1">4–6 wks</div><div style="margin-top:8px;font-size:0.8125rem;line-height:1.4;color:var(--gray-warm)">Typical revision timeline</div></div>
+          <div><div style="font-family:var(--font-display);font-weight:400;font-size:2.25rem;line-height:1">3</div><div style="margin-top:8px;font-size:0.8125rem;line-height:1.4;color:var(--gray-warm)">Dated checkpoints you approve</div></div>
+        </div>
+      </div>
+    </div>
+    <div data-screen-label="1b Final CTA" style="background:var(--ink);color:var(--cream);padding:72px 0">
+      <div style="max-width:840px;margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:space-between;gap:40px;flex-wrap:wrap">
+        <div>
+          <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:2rem;line-height:1.05;text-transform:uppercase;max-width:22ch">Start with the audit, not the invoice.</h2>
+          <p style="margin:14px 0 0;font-size:1rem;opacity:.85">3 builds in progress. We cap at 7 — capacity is our quality gate.</p>
+        </div>
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="primary" size="md" href="Book a Call.dc.html" hint-size="160px,48px">Book a Call</x-import>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="dv-opt" id="1c">
+  <div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Answer-first — the search question as H1 with the answer in an ink block above the fold, then the article as evidence for it. Built for AI answers and snippets.</div>
+  <div class="dv-card" style="width:940px">
+    <dc-import name="SiteHeader" hint-size="100%,72px"></dc-import>
+    <div data-screen-label="1c Answer header" style="padding:56px 0 0">
+      <div style="max-width:760px;margin:0 auto;padding:0 32px">
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" tick="{{ true }}" hint-size="auto,20px">Shopify development — Chicago</x-import>
+        <h1 style="margin:18px 0 0;font-family:var(--font-display);font-weight:400;font-size:2.5rem;line-height:1.06;text-transform:uppercase;max-width:26ch">How much does Shopify development cost in Chicago?</h1>
+        <div style="margin-top:26px;background:var(--ink);color:var(--cream);padding:26px 28px">
+          <div style="font-size:0.6875rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;opacity:.55">Short answer</div>
+          <p style="margin:10px 0 0;font-size:1.1875rem;line-height:1.5">Between <strong style="font-family:var(--font-display);font-weight:400">$5K and $25K</strong> for a build worth having. Revisions of an existing store start at $5K; scratch builds start at $12K. Below $2K you are buying a theme install, and above $25K you are usually paying for account management, not engineering.</p>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:24px;flex-wrap:wrap;font-size:0.8125rem;color:var(--gray-warm)">
+          <span style="font-weight:700;color:var(--ink)">Duha Media · Chicago</span><span>Updated Jul 2026</span><span>6 min read</span>
+        </div>
+      </div>
+    </div>
+    <div data-screen-label="1c Price bands" style="padding:44px 0 0">
+      <div style="max-width:760px;margin:0 auto;padding:0 32px">
+        <div style="border-top:2px solid var(--ink)">
+          <div style="display:grid;grid-template-columns:1fr 1.1fr 1.6fr;gap:16px;padding:10px 0;border-bottom:1px solid rgba(138,133,125,.5);font-weight:700;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray-warm)"><span>Band</span><span>What you get</span><span>What's missing</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1.1fr 1.6fr;gap:16px;padding:14px 0;border-bottom:1px solid var(--border-divider);font-size:0.9375rem;line-height:1.5"><span style="font-family:var(--font-display)">$1–2K</span><span>Theme install</span><span style="color:var(--gray-warm)">Tracking, SEO structure, anyone accountable at launch</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1.1fr 1.6fr;gap:16px;padding:14px 0;border-bottom:1px solid var(--border-divider);font-size:0.9375rem;line-height:1.5"><span style="font-family:var(--font-display)">$2–5K</span><span>Freelance customization</span><span style="color:var(--gray-warm)">Continuity — the common "disappeared after launch" band</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1.1fr 1.6fr;gap:16px;padding:14px 0;border-bottom:1px solid var(--border-divider);font-size:0.9375rem;line-height:1.5"><span style="font-family:var(--font-display);color:var(--wine)">$5–12K</span><span>Revision, fully wired</span><span style="color:var(--gray-warm)">Nothing structural. Our floor sits here.</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1.1fr 1.6fr;gap:16px;padding:14px 0;border-bottom:1px solid var(--border-divider);font-size:0.9375rem;line-height:1.5"><span style="font-family:var(--font-display)">$12–25K</span><span>Scratch build</span><span style="color:var(--gray-warm)">Justified only when the platform is the constraint</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1.1fr 1.6fr;gap:16px;padding:14px 0;border-bottom:2px solid var(--ink);font-size:0.9375rem;line-height:1.5"><span style="font-family:var(--font-display)">$25K+</span><span>Agency programme</span><span style="color:var(--gray-warm)">Senior time — you're often staffed juniors</span></div>
+        </div>
+      </div>
+    </div>
+    <div data-screen-label="1c Evidence body" style="padding:40px 0 56px">
+      <div style="max-width:760px;margin:0 auto;padding:0 32px"><div style="max-width:66ch;display:flex;flex-direction:column;gap:22px;font-size:1.0625rem;line-height:1.7">
+        <div style="display:flex;flex-direction:column;gap:8px"><span class="dv-num">01</span><h2 class="dv-h2">Why the range is that wide</h2></div>
+        <p style="margin:0">Two builds at the same price can differ by everything that isn't visible. The band you land in is set by whether tracking, SEO structure and a performance budget are inside the scope, or quoted later as extras once you're committed.</p>
+        <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px"><span class="dv-num">02</span><h2 class="dv-h2">What actually moves the number</h2></div>
+        <p style="margin:0">Product catalogue size and variant logic. Migration redirects from an old platform. Whether checkout can stay standard. Custom apps or subscriptions. Everything else — page count, "design rounds" — is smaller than it sounds in a proposal.</p>
+        <figure style="margin:6px 0 0">
+          <div style="border:2px solid var(--ink);aspect-ratio:16/9;background:var(--gray-light)"><image-slot id="dev-c-fig1" placeholder="Fig. 1 — written scope, line-priced" style="width:100%;height:100%"></image-slot></div>
+          <figcaption style="margin-top:10px;font-size:0.8125rem;color:var(--gray-warm)">Fig. 1 — A real scope sheet. Every line priced before anything is built.</figcaption>
+        </figure>
+        <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px"><span class="dv-num">03</span><h2 class="dv-h2">What we charge, and why</h2></div>
+        <p style="margin:0">$5K Revision, $12K scratch build, fixed after a two-week audit. We build stores we then have to run growth on, so anything we skip becomes our problem in month four. That's the whole accountability argument.</p>
+        <blockquote style="margin:6px 0;padding:6px 0 6px 20px;border-left:4px solid var(--ground-accent);font-family:var(--font-display);font-weight:400;font-size:1.25rem;line-height:1.3;text-transform:uppercase">We build the store we'll have to market. It makes shortcuts expensive for us.</blockquote>
+      </div></div>
+    </div>
+    <div data-screen-label="1c FAQ" style="background:var(--gray-light);padding:48px 0;border-top:2px solid var(--ink)">
+      <div style="max-width:760px;margin:0 auto;padding:0 32px">
+        <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Eyebrow" muted="{{ true }}" hint-size="auto,20px">Related questions</x-import>
+        <div style="margin-top:16px">
+          <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.FAQItem" question="How long does a Shopify build take?" hint-size="100%,60px">Four to six weeks for a revision, eight to twelve for a scratch build, from signed scope to launch.</x-import>
+          <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.FAQItem" question="Is a custom theme worth it over a paid theme?" hint-size="100%,60px">Below roughly $1M online, rarely. A well-customized theme with correct tracking beats a custom build with neither.</x-import>
+          <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.FAQItem" question="Can you fix a store another developer built?" hint-size="100%,60px">That's the default. We audit first, keep what converts, and quote the rest in writing.</x-import>
+        </div>
+      </div>
+    </div>
+    <div data-screen-label="1c Final CTA" style="background:var(--ink);color:var(--cream);padding:72px 0">
+      <div style="text-align:center;max-width:640px;margin:0 auto;padding:0 32px">
+        <h2 style="margin:0;font-family:var(--font-display);font-weight:400;font-size:2rem;line-height:1.05;text-transform:uppercase">Get your number in writing.</h2>
+        <p style="margin:18px 0 0;font-size:1.125rem;opacity:.85">Two-week audit. Fixed scope after it. 3 builds in progress, we cap at 7.</p>
+        <div style="margin-top:28px;display:flex;justify-content:center">
+          <x-import component-from-global-scope="DuhaMediaDesignSystem_a9da48.Button" variant="primary" size="md" href="Book a Call.dc.html" hint-size="160px,48px">Book a Call</x-import>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+<p class="dv-next">Pick one and I'll replace <strong>DEV-SEO Article.dc.html</strong> with it and build the mobile pair. <a href="#1a">1a</a> is the safest system fit; <a href="#1b">1b</a> is the strongest for a hire-a-developer keyword; <a href="#1c">1c</a> is the best bet for AI answers and snippets.</p>
+</section>
+
+</x-dc>
+</body>
+</html>
