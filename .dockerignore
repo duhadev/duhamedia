@@ -1,0 +1,21 @@
+# Keep the build context small and secret-free
+.git
+.github
+.next
+node_modules
+media
+.env
+.env.*
+!.env.example
+.vercel
+.claude
+design-reference
+docs
+*.md
+!README.md
+Dockerfile
+.dockerignore
+docker-compose.yml
+*.tsbuildinfo
+npm-debug.log*
+.pnpm-debug.log*

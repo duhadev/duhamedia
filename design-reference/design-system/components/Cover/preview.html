@@ -1,0 +1,37 @@
+<!-- @dsCard height=288 -->
+<!doctype html><html><head><meta charset="utf-8"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;700&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;background:var(--bg)}
+.cover{position:relative;width:960px;height:288px;overflow:hidden;background:var(--bg);font-family:var(--font-sans)}
+svg{position:absolute;left:0;top:0}
+.slab{fill:var(--text)}
+.b1{fill:var(--crimson)}.b2{fill:var(--magenta)}.b3{fill:var(--gold)}.b4{fill:var(--cream)}
+.bar{rx:var(--radius-none)}
+.dot{fill:var(--bg)}
+.txt{position:absolute;left:40px;bottom:40px;max-width:440px}
+.name{margin:0;font-size:72px;line-height:.95;font-weight:700;letter-spacing:-.02em;color:var(--text)}
+.tag{margin:16px 0 0;font-size:14px;line-height:1.4;color:var(--text-muted)}
+</style></head><body>
+<div class="cover">
+<svg width="960" height="288" viewBox="0 0 960 288" aria-hidden="true">
+<!--
+blocks: slab = text (ink; white in Dark section) 440×288 bleeding top/right; bars crimson 360, magenta 304, gold 240, cream 160 × 32 (space-6+space-2), gaps space-4
+arrangement: one tall slab with a stacked bar chart inside, bands ordered like the mark (cream top → crimson bottom), lengths rising toward the bottom
+pattern: precise/technical/mono row — "the mark reads as a stacked bar chart, a nod to CRO and data"; dot grid cut from the ground, pitch space-6 (24px), r 1.5
+scales: space-4 16, space-6 24, space-12 48 left inset; radius-none on every bar (sharp corners signal precision)
+-->
+<rect class="slab" x="520" y="0" width="440" height="288"/>
+<rect class="bar b4" x="568" y="56" width="160" height="32"/>
+<rect class="bar b3" x="568" y="104" width="240" height="32"/>
+<rect class="bar b2" x="568" y="152" width="304" height="32"/>
+<rect class="bar b1" x="568" y="200" width="360" height="32"/>
+<g>
+<circle class="dot" cx="760" cy="24" r="1.5"/><circle class="dot" cx="784" cy="24" r="1.5"/><circle class="dot" cx="808" cy="24" r="1.5"/><circle class="dot" cx="832" cy="24" r="1.5"/><circle class="dot" cx="856" cy="24" r="1.5"/><circle class="dot" cx="880" cy="24" r="1.5"/><circle class="dot" cx="904" cy="24" r="1.5"/><circle class="dot" cx="928" cy="24" r="1.5"/>
+<circle class="dot" cx="760" cy="48" r="1.5"/><circle class="dot" cx="784" cy="48" r="1.5"/><circle class="dot" cx="808" cy="48" r="1.5"/><circle class="dot" cx="832" cy="48" r="1.5"/><circle class="dot" cx="856" cy="48" r="1.5"/><circle class="dot" cx="880" cy="48" r="1.5"/><circle class="dot" cx="904" cy="48" r="1.5"/><circle class="dot" cx="928" cy="48" r="1.5"/>
+<circle class="dot" cx="760" cy="72" r="1.5"/><circle class="dot" cx="784" cy="72" r="1.5"/><circle class="dot" cx="808" cy="72" r="1.5"/><circle class="dot" cx="832" cy="72" r="1.5"/><circle class="dot" cx="856" cy="72" r="1.5"/><circle class="dot" cx="880" cy="72" r="1.5"/><circle class="dot" cx="904" cy="72" r="1.5"/><circle class="dot" cx="928" cy="72" r="1.5"/>
+</g>
+</svg>
+<div class="txt"><h1 class="name">duha media</h1><p class="tag">We engineer the foundation. Then we prove it works.</p></div>
+</div>
+<script>/* static cover */</script>
+</body></html>

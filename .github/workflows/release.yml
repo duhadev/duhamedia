@@ -1,0 +1,53 @@
+# Tag vX.Y.Z (created ONLY when the human orders a production release) ->
+# re-tag the image already built for that commit as vX.Y.Z and production.
+# Never rebuilds: production always runs an image that already ran on staging.
+# Rollback = re-run this for the previous tag (workflow_dispatch below).
+name: release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing release tag to point :production at (rollback), e.g. v1.2.3'
+        required: true
+
+env:
+  IMAGE: ghcr.io/duhadev/duhamedia
+
+jobs:
+  retag:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Re-tag existing image
+        env:
+          EVENT: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
+          SHA: ${{ github.sha }}
+          INPUT_TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT" = "workflow_dispatch" ]; then
+            # Rollback: :production -> an existing vX.Y.Z image
+            case "$INPUT_TAG" in v*) ;; *) echo "tag must start with v"; exit 1;; esac
+            docker buildx imagetools inspect "$IMAGE:$INPUT_TAG" >/dev/null
+            docker buildx imagetools create -t "$IMAGE:production" "$IMAGE:$INPUT_TAG"
+            echo "production -> $INPUT_TAG"
+          else
+            # Release: the commit's sha-<commit> image must already exist (built on main)
+            if ! docker buildx imagetools inspect "$IMAGE:sha-$SHA" >/dev/null; then
+              echo "No image $IMAGE:sha-$SHA - push the commit to main and let it build first."; exit 1
+            fi
+            docker buildx imagetools create -t "$IMAGE:$REF_NAME" -t "$IMAGE:production" "$IMAGE:sha-$SHA"
+            echo "$REF_NAME + production -> sha-$SHA"
+          fi
