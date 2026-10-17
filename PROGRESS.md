@@ -15,14 +15,14 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 |---|---|---|---|---|
 | collection | C1 access helpers + `users` (roles→role, pipeline user, lockout) | all | documented | Gate 1 approved 2026-10-17 (batched w/ C2); Gate 2 n/a; dev + marketing docs done |
 | collection | C2 `media` (final) + `downloads` | all, p18 | documented | Gate 1 approved 2026-10-17; alt pattern widened; Gate 2 n/a; dev + marketing docs done |
-| collection | C3 `clients` | 1, 8, 15 | coding | |
-| collection | C4 `team-members` | 1, 8, posts | queued | |
-| collection | C5 `testimonials` (+GBP source) | 1, 7, 9, 15, 19 | queued | |
-| collection | C6 `faqs` | 4, 5, 6, 11, 13, 14 | queued | |
-| collection | C7 `case-studies` | 2, 3 + pulls | queued | drafts at launch; figuresApproved gate |
+| collection | C3 `clients` | 1, 8, 15 | cleared | Gate 1 approved 2026-10-17; Gate 2 n/a; marketing-docs next |
+| collection | C4 `team-members` | 1, 8, posts | cleared | Gate 1 approved 2026-10-17; Gate 2 n/a; marketing-docs next |
+| collection | C5 `testimonials` (+GBP source) | 1, 7, 9, 15, 19 | cleared | Gate 1 approved 2026-10-17; Gate 2 n/a; marketing-docs next |
+| collection | C6 `faqs` | 4, 5, 6, 11, 13, 14 | cleared | Gate 1 approved 2026-10-17; Gate 2 n/a; marketing-docs next |
+| collection | C7 `case-studies` | 2, 3 + pulls | coding | drafts at launch; figuresApproved gate; **+ add `testimonials.caseStudy` rel (own migration)** |
 | collection | C8 `posts` | 13, 14, 16 | queued | pipeline user drafts only |
 | collection | C9 `lead-magnets` | 18 | queued | |
-| collection | C10 `pages` (shell; layout grows per block) | all | queued | |
+| collection | C10 `pages` (shell; layout grows per block) | all | queued | **+ enable FAQ answer internal links to pages** (editor config) |
 | global | G1 `site-settings` · G2 `scarcity` · G3 `navigation` · G4 `seo-defaults` | all | queued | one unit each |
 | plugin | P1 form-builder (overrides + delivery fields) · P2 redirects · P3 seo | all | queued | one unit each |
 | block | 23 blocks in page build order (SCHEMA.md §8–9) | — | queued after collections/globals | appended to /_showcase on Gate 1 |
@@ -35,6 +35,7 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 ## Migrations log
 | Date | Migration file | What it changes | Applied in dev / staging / prod |
 |---|---|---|---|
+| 2026-10-17 | `src/migrations/20261017_202453_c3_c6_clients_team_testimonials_faqs.ts` | + clients, team_members(+socials), testimonials, faqs and their `_v` version tables, enums, FKs; locked_documents_rels cols (down hand-fixed: FKs before tables) | scratch proofs; dev via push / no / no |
 | 2026-10-17 | `src/migrations/20261017_195538_c2_media_downloads.ts` | + downloads table; media + caption, sizes browser/og; locked_documents_rels + downloads_id (down hand-fixed: drop FK before table) | scratch proofs (from-zero, down/up); dev via push / no / no |
 | 2026-10-17 | `src/migrations/20261017_193341_c1_users_role.ts` | users: + name, role (enum admin/marketing/pipeline), API-key cols; data step keeps admins; drops users_roles | scratch proofs (up/down/from-zero); dev DB via same SQL / no / no |
 | 2026-10-17 | `src/migrations/20261017_181819_initial.ts` | Boot scaffolding: users (+roles, sessions), media, payload_kv, locked_documents, preferences, migrations | scratch + image-check DBs only (dev uses push) / no / no |
@@ -88,6 +89,15 @@ Append-only. New sessions: read this before asking the human anything.
 | 2026-10-17 | Accepted stock Payload admin quirks (C2 QA): list thumbnail `<img alt>` = filename; "Edit Image" (crop/focal) hidden below tablet width in admin; `/favicon.ico` 404 on admin pages (frontend icon is `(frontend)/icon.svg`) — revisit favicon when the layout lands | PM |
 | 2026-10-17 | **Gate 1 approved: C1 users, C2 media+downloads** (Gate 2 n/a) | Human: "approve" |
 | 2026-10-17 | C3–C6 built by one schema-architect dispatch, strictly one unit after another with a report per unit (independent small collections) | PM |
+| 2026-10-17 | Conditional required fields use custom `validate` (types stay optional; admin shows "Required for …" text, no asterisk). Drafts collections use `drafts.validate: false` → "required" = required to publish | schema-architect C3–C6 |
+| 2026-10-17 | FAQ answer editor restricted to paragraphs/bold/italic/lists/links (default Lexical Relationship/Upload could reference any collection incl. users) | schema-architect C6 |
+| 2026-10-17 | Shared helpers: `src/fields/index.ts` (contentVersions, sortOrderField, https/YouTube validators), `src/lib/youtube.ts`, `staffContentAccess`. §3 block factories come with the first block that needs them | schema-architect C3–C6 |
+| 2026-10-17 | C3–C6 share **one** migration (all additive, built together) | PM |
+| 2026-10-17 | Revalidation helper `src/hooks/revalidateTag.ts`: `revalidateTag(tag,'max')` (Next 16 signature); fires on publish/unpublish/delete, skipped with `context.disableRevalidate`; swallows the outside-Next invariant. Seed script must pass `disableRevalidate: true` | integrator C3–C6 |
+| 2026-10-17 | Payload's generated `down()` drops tables before FKs → hand-fix every migration that adds a collection | integrator |
+| 2026-10-17 | **Incident (local dev only):** integrator's script deleted dev admin (id 1) by email collision; recreated as id 7 from `.env` DEV_ADMIN_*. Rule for all agents: throwaway users use unique `test+gate-<purpose>@duhamedia.com` addresses and are deleted by returned id only, never by email | PM |
+| 2026-10-17 | C3–C6 Gate 1 QA: all 9 checks pass ×4. Fixing D8 (socials row labels). Accepted: D1 no asterisk on conditional-required (descriptions say so), D2/D3/D4/D9 stock layout/autosave (Create New makes a blank draft; edit right before failed publish may not autosave), D5 Lexical console warning, D10 single link type until C10. D6 frontend CSS preloaded in admin + D7 favicon → fix with frontend layout | PM |
+| 2026-10-17 | **Gate 1 approved: C3 clients, C4 team-members, C5 testimonials, C6 faqs** (Gate 2 n/a; D8 row-label fix verified in browser by PM) | Human: "approve" |
 | 2026-10-17 | Local Postgres image provisional `postgres:17-alpine` until server major is known; local port 5433 | OPS #6 open |
 
 ## Session handoff

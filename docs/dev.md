@@ -33,6 +33,11 @@ Entry format for every unit: **Files** / **Fields & schema** / **Wiring** (regis
   - [Collections](#collections)
     - [Access helpers + `users` (C1)](#access-helpers--users-unit-c1)
     - [`media` + `downloads` (C2)](#media--downloads-unit-c2)
+    - [Shared helpers for content collections (C3–C6)](#shared-helpers-for-content-collections-c3c6)
+    - [`clients` (C3)](#clients-unit-c3)
+    - [`team-members` (C4)](#team-members-unit-c4)
+    - [`testimonials` (C5)](#testimonials-unit-c5)
+    - [`faqs` (C6)](#faqs-unit-c6)
 - [Block showcase sandbox (`/_showcase`)](#block-showcase-sandbox-_showcase)
 - [Deploy](#deploy)
 - [Integrations](#integrations)
@@ -255,6 +260,161 @@ Access (both collections):
 - A request for a missing file returns **500** "Something went wrong." (stock 3.91.0 behaviour, not 404). The `site_error` reporter must ignore or rate-limit these.
 - Non-image assets never go in `media`, so every `media` document has a meaningful alt.
 
+#### Shared helpers for content collections (C3–C6)
+
+Introduced with C3–C6 and reused by later content collections.
+
+- `src/fields/index.ts`:
+  - `contentVersions`: `drafts.autosave.interval: 375`, `drafts.schedulePublish: false`, `drafts.validate: false`, `maxPerDoc: 50`. With `validate: false`, draft saves skip all field validation (built-in and custom), so "required" means "required to publish".
+  - `sortOrderField(description?)`: `sortOrder` number field, indexed, sidebar, step 1. Lower numbers first. Used instead of `orderable` (experimental in 3.91.0).
+  - `validateHttpsUrl`: text validator; runs `text()` from `payload/shared` first (a custom `validate` replaces the built-in one); empty passes unless `required`; otherwise must parse as an `https:` URL.
+  - `validateYouTubeUrl`: same pattern; non-empty value must yield a video id from `youtubeVideoId`.
+- `src/lib/youtube.ts`: `youtubeVideoId(input)` returns the 11-character id or `null`. Accepts https only; hosts `youtube.com`, `www.`/`m.youtube.com`, `youtu.be`, `youtube-nocookie.com`, `www.youtube-nocookie.com`; paths `watch?v=`, `youtu.be/<id>`, `/embed/`, `/shorts/`, `/live/`. Video components must reuse this function, so validation and rendering share one definition.
+- `src/access/index.ts`: `staffContentAccess` preset = `read: publishedOrStaff`, `readVersions: staffOnly`, `create`/`update`/`delete: staffOnly`. Public and pipeline get published docs only and no writes; `readVersions` staff-only keeps drafts out of `/api/<slug>/versions`.
+- `src/hooks/revalidateTag.ts`: `revalidateTagHooks(tag)` returns `{ afterChange, afterDelete }`.
+  - Calls Next 16 `revalidateTag(tag, 'max')` (the profile argument is required in next@16.3.8).
+  - `afterChange` fires only when the saved doc is published or the previous doc was published (publish, re-publish, unpublish). Draft/autosave edits of an unpublished doc do nothing.
+  - `afterDelete` always fires.
+  - Skipped when `context.disableRevalidate` is set. The seed script must pass `context: { disableRevalidate: true }`.
+  - Outside a Next request (Local API scripts, seed, migrations) Next throws "Invariant: static generation store missing"; that case is logged at debug and swallowed. Any other error is logged at error level and swallowed, so a revalidation failure never fails a save.
+  - Pattern from the Payload website template at v3.91.0 (`templates/website/src/collections/Posts/hooks/revalidatePost.ts`).
+- `src/app/(payload)/admin/importMap.js`: regenerated; now includes the `@payloadcms/richtext-lexical` client components (first `richText` field is `faqs.answer`).
+
+#### `clients` (unit C3)
+
+**Files**
+- `src/collections/Clients.ts`
+- Migration shared with C4–C6: `src/migrations/20261017_202453_c3_c6_clients_team_testimonials_faqs.ts` (+ `.json` snapshot), registered in `src/migrations/index.ts`.
+
+**Fields & schema**
+
+Drafts on (`contentVersions`); `useAsTitle: 'name'`; `defaultSort: 'sortOrder'`; default columns `name`, `showInLogoStrip`, `sortOrder`, `_status`, `updatedAt`.
+
+| Field | Type | Notes |
+|---|---|---|
+| `name` | text, required | Shown as text in the logo strip when there is no logo |
+| `logo` | upload → `media`, `maxDepth: 1`, optional | Monochrome logo |
+| `website` | text, `validateHttpsUrl` | Optional |
+| `showInLogoStrip` | checkbox, default `false`, sidebar | Include in logo strips |
+| `sortOrder` | `sortOrderField` | Order in the logo strip |
+
+- Access: `staffContentAccess`.
+
+**Wiring**
+- Registration: `src/payload.config.ts` → `collections: [Users, Media, Downloads, Clients, TeamMembers, Testimonials, Faqs]`.
+- Pages using it (per `SCHEMA.md`): p1 proof-strip logo row, p8 logo strip (via the CaseStudyCards fallback), p15 proof strip, p19 review-wall name tiles; attribution target for `testimonials.client` and (C7) case studies. Linked from block entries as they land.
+- Revalidation: tag `clients` (`revalidateTagHooks('clients')` on `afterChange` / `afterDelete`).
+- Migration: `20261017_202453_c3_c6_clients_team_testimonials_faqs` (see C6 entry for the combined summary). Tables `clients`, `_clients_v`; enums `enum_clients_status`, `enum__clients_v_version_status`; FK `logo_id` → `media` (ON DELETE set null).
+
+**Notes**
+- All client names are placeholders at launch; the seed labels them as such.
+
+#### `team-members` (unit C4)
+
+**Files**
+- `src/collections/TeamMembers.ts`
+- Migration: shared C3–C6 migration (see C6).
+
+**Fields & schema**
+
+Drafts on (`contentVersions`); `useAsTitle: 'name'`; default columns `name`, `role`, `_status`, `updatedAt`.
+
+| Field | Type | Notes |
+|---|---|---|
+| `name` | text, required | Site display name and byline |
+| `role` | text, required | Short title line |
+| `bio` | textarea, `maxLength: 400` | Optional |
+| `photo` | upload → `media`, `maxDepth: 1` | Optional portrait |
+| `socials` | array (`platform` select required: `linkedin` / `x` / `github` / `instagram` / `youtube` / `facebook`; `url` text required, `validateHttpsUrl`) | Reorderable; `initCollapsed` |
+
+- Access: `staffContentAccess`.
+
+**Wiring**
+- Registration: `src/payload.config.ts` `collections` array (as C3).
+- Pages using it (per `SCHEMA.md`): p1 founder/team, p8 team/founder (via `TeamIntro.member`), p13/p14 post bylines (C8).
+- Revalidation: tag `team-members`.
+- Migration: shared C3–C6 migration. Tables `team_members`, `team_members_socials`, `_team_members_v`, `_team_members_v_version_socials`; enums `enum_team_members_socials_platform`, `enum_team_members_status`, `enum__team_members_v_version_socials_platform`, `enum__team_members_v_version_status`; FK `photo_id` → `media` (set null); socials `_parent_id` FKs ON DELETE cascade.
+
+**Notes**
+- A collection rather than a global (Gate S §2.3): post bylines need a public relationship target, and a global cannot be one.
+- No "latest posts" field (R12).
+- The bio stays placeholder until the founder writes it; no invented founder facts.
+
+#### `testimonials` (unit C5)
+
+**Files**
+- `src/collections/Testimonials.ts`
+- Uses `validateHttpsUrl`, `validateYouTubeUrl` (`src/fields/index.ts`) and `number`, `upload` validators from `payload/shared`.
+- Migration: shared C3–C6 migration (see C6).
+
+**Fields & schema**
+
+Drafts on (`contentVersions`); `useAsTitle: 'authorName'`; `defaultSort: 'sortOrder'`; default columns `authorName`, `source`, `format`, `client`, `sortOrder`, `_status`.
+
+| Field | Type | Notes |
+|---|---|---|
+| `quote` | textarea, required | |
+| `authorName` | text, required | |
+| `authorRole` | text | Optional |
+| `client` | relationship → `clients`, `maxDepth: 1` | Optional brand pairing |
+| `source` | select `direct` / `google-review` / `linkedin`, required, default `direct`, sidebar | Drives source label |
+| `sourceUrl` | text | Shown when `source` ≠ `direct`; custom validate: required when shown, then `validateHttpsUrl` |
+| `verbatim` | checkbox, default `false` | Shown when `source` = `google-review`; custom validate: must be `true` |
+| `rating` | number, `min: 1`, `max: 5`, step 1, sidebar | Optional; custom validate: `number()` then integer only. Empty = no stars (never defaulted) |
+| `format` | select `text` / `video`, required, default `text`, sidebar | Named `format`, not `type` (X14) |
+| `video` | group, shown when `format` = `video` | `url` (custom validate: required, then `validateYouTubeUrl`); `poster` upload → `media`, `maxDepth: 1` (custom validate: required, then `upload()`); `durationLabel` text, optional |
+| `metric` | group | `value` text, `label` text; both optional. Value is a result, never a price |
+| `reviewDate` | date, `dayOnly`, sidebar | Optional |
+| `sortOrder` | `sortOrderField` | Order in feed and review wall |
+
+- Conditional requirements use custom `validate` functions instead of `required: true`, so generated types stay optional. They run on publish only (`drafts.validate: false`), and a field hidden by `admin.condition` (or inside a hidden group) is not validated (payload@3.91.0 `fields/hooks/beforeChange/promise.js:44`).
+- Access: `staffContentAccess`.
+
+**Wiring**
+- Registration: `src/payload.config.ts` `collections` array (as C3).
+- Pages using it (per `SCHEMA.md`): p1 testimonials, p2 client voice, p3 proof pull, p4 featured proof, p5 proof fallback, p7 testimonial feed, p9 social proof, p15 testimonial, p16 social proof, p19 review wall.
+- Revalidation: tag `testimonials`.
+- Migration: shared C3–C6 migration. Tables `testimonials`, `_testimonials_v`; enums `enum_testimonials_source`, `enum_testimonials_format`, `enum_testimonials_status` and the `_v` equivalents; FKs `client_id` → `clients`, `video_poster_id` → `media` (both ON DELETE set null). Group fields are flattened columns (`video_url`, `video_poster_id`, `video_duration_label`, `metric_value`, `metric_label`).
+
+**Notes**
+- Google-Business-Profile-style reviews are merged into this collection via `source` (Gate S §2.2), so p7 and p19 feeds are one query.
+- Video = unlisted YouTube; poster stored locally in `media` (Gate S Q5).
+- Deferred: `caseStudy` relationship → `case-studies` (`maxDepth: 1`, SCHEMA §6.4) is added in C7 with its own migration (`TODO(C7)` in the file).
+- All reviewers, quotes and metrics are placeholders at launch.
+
+#### `faqs` (unit C6)
+
+**Files**
+- `src/collections/Faqs.ts`
+- `src/migrations/20261017_202453_c3_c6_clients_team_testimonials_faqs.ts` (+ `.json` snapshot), registered in `src/migrations/index.ts`.
+
+**Fields & schema**
+
+Drafts on (`contentVersions`); `useAsTitle: 'question'`; `defaultSort: ['category', 'sortOrder']`; default columns `question`, `category`, `listOnFaqPage`, `sortOrder`, `_status`.
+
+| Field | Type | Notes |
+|---|---|---|
+| `question` | text, required | |
+| `answer` | richText, required | Field-level `lexicalEditor` with only `ParagraphFeature`, `BoldFeature`, `ItalicFeature`, `UnorderedListFeature`, `OrderedListFeature`, `LinkFeature({ enabledCollections: [] })`, `InlineToolbarFeature`. Stored as `jsonb` |
+| `category` | select `pricing-contracts` / `builds` / `marketing` / `process-trust`, required, sidebar | FAQ page group |
+| `listOnFaqPage` | checkbox, default `true`, sidebar | Untick for mini-block-only questions |
+| `sortOrder` | `sortOrderField` | Order within category; first Pricing & Contracts question opens by default |
+
+- Access: `staffContentAccess`.
+
+**Wiring**
+- Registration: `src/payload.config.ts` `collections` array (as C3).
+- Pages using it (per `SCHEMA.md`): p11 FAQ page; FAQ mini-blocks on p4, p5, p6. Placement lives on the `AccordionFAQ` block (ordered hasMany → `faqs`, X10), not on this collection.
+- Revalidation: tag `faqs`.
+- Migration `20261017_202453_c3_c6_clients_team_testimonials_faqs` (one combined migration for C3–C6, additive only):
+  - Up: creates 10 tables (`clients`, `_clients_v`, `team_members`, `team_members_socials`, `_team_members_v`, `_team_members_v_version_socials`, `testimonials`, `_testimonials_v`, `faqs`, `_faqs_v`), 16 enums, their FKs and indexes; adds `clients_id`, `team_members_id`, `testimonials_id`, `faqs_id` to `payload_locked_documents_rels` with FKs (ON DELETE cascade) and indexes.
+  - Down: hand-reordered to drop the four `payload_locked_documents_rels_*_fk` constraints before the `DROP TABLE … CASCADE` statements (same fix as C2), then drops the added indexes, columns and enums.
+
+**Notes**
+- The restricted editor excludes headings, uploads and relationship features (the default editor's Relationship/Upload features could reference any collection, including `users`).
+- Links are external/relative URLs only for now. Deferred to C10: internal links to `pages` via `LinkFeature({ enabledCollections: ['pages'] })` (`TODO(C10)` in the file).
+- Post FAQs (p13/p14) are an inline array on `posts` (X11), not documents here.
+
 ## Block showcase sandbox (`/_showcase`)
 
 Renders every block and every variant back to back, for review at Gate K. Hidden from navigation, sitemap and search (noindex), and returns 404 when `APP_ENV=production`. Visible on local dev and staging only.
@@ -326,6 +486,8 @@ Every lead, signup and site error is sent to the OpenClaw secretary as a signed 
   - Generate against a scratch DB migrated to HEAD (all committed migrations applied), never the push-managed dev DB.
   - `migrate:create` is interactive on enum/column renames (drizzle create-vs-rename prompts). Run it under a pty and answer each prompt explicitly.
   - Hand-edited data steps (e.g. the C1 admin-preserving `UPDATE`) must be applied to the dev DB by running the migration's SQL before the next push, because push cannot run them.
+  - Whenever a migration adds a collection, Payload's generated `down()` emits `DROP TABLE … CASCADE` before the `DROP CONSTRAINT` for the new `payload_locked_documents_rels_*_fk`, so `down` fails (the CASCADE already removed the FK). Hand-reorder `down()` to drop those FKs first (done in C2 and C3–C6).
+- Script safety: throwaway users created by scripts or tests must use a unique `test+gate-<purpose>@duhamedia.com` address and be deleted by the returned id only.
 - Local image test: `docker build .` then `docker run --network host --env-file .env …`.
 - `next.config.ts` sets `agentRules: false`: Next 16.3 otherwise appends an agent-rules block to `CLAUDE.md` on `next dev`.
 

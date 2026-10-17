@@ -70,6 +70,10 @@ export interface Config {
     users: User;
     media: Media;
     downloads: Download;
+    clients: Client;
+    'team-members': TeamMember;
+    testimonials: Testimonial;
+    faqs: Faq;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -80,6 +84,10 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     downloads: DownloadsSelect<false> | DownloadsSelect<true>;
+    clients: ClientsSelect<false> | ClientsSelect<true>;
+    'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
+    testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
+    faqs: FaqsSelect<false> | FaqsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -246,6 +254,202 @@ export interface Download {
   height?: number | null;
 }
 /**
+ * Client brands shown in logo strips and credited on testimonials and case studies.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "clients".
+ */
+export interface Client {
+  id: number;
+  /**
+   * Brand name. Shown as text in the logo strip when there is no logo.
+   */
+  name: string;
+  /**
+   * Optional monochrome logo (single colour on transparent). Without one, the name is shown.
+   */
+  logo?: (number | null) | Media;
+  /**
+   * Optional, full https:// address of the client site.
+   */
+  website?: string | null;
+  /**
+   * Show this client in the logo strips (Homepage, About, campaign pages).
+   */
+  showInLogoStrip?: boolean | null;
+  /**
+   * Order in the logo strip. Lower numbers come first.
+   */
+  sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * People shown in the founder/team sections and as article authors.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-members".
+ */
+export interface TeamMember {
+  id: number;
+  /**
+   * Full name as it should appear on the site and in bylines.
+   */
+  name: string;
+  /**
+   * Short title line, e.g. "Founder · Chicago".
+   */
+  role: string;
+  /**
+   * One or two sentences, written by the person. Max 400 characters.
+   */
+  bio?: string | null;
+  /**
+   * Portrait for the founder/team card.
+   */
+  photo?: (number | null) | Media;
+  /**
+   * Icons on the founder card. Drag to reorder.
+   */
+  socials?:
+    | {
+        platform: 'linkedin' | 'x' | 'github' | 'instagram' | 'youtube' | 'facebook';
+        /**
+         * Full https:// profile address.
+         */
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Client quotes, video testimonials and public reviews (Google, LinkedIn).
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials".
+ */
+export interface Testimonial {
+  id: number;
+  /**
+   * The words of the testimonial or review.
+   */
+  quote: string;
+  /**
+   * e.g. "J. Alvarez".
+   */
+  authorName: string;
+  /**
+   * e.g. "3-location retailer, Chicago".
+   */
+  authorRole?: string | null;
+  /**
+   * Optional brand pairing. Its logo shows on video cards.
+   */
+  client?: (number | null) | Client;
+  /**
+   * Where this lives. Sets the source label shown on the card.
+   */
+  source: 'direct' | 'google-review' | 'linkedin';
+  /**
+   * Public link where a visitor can verify this review. Required for Google and LinkedIn.
+   */
+  sourceUrl?: string | null;
+  /**
+   * Required for Google reviews: never paraphrase them.
+   */
+  verbatim?: boolean | null;
+  /**
+   * Stars, 1 to 5. Leave empty for no stars.
+   */
+  rating?: number | null;
+  /**
+   * Video shows a playable tile with the quote beneath.
+   */
+  format: 'text' | 'video';
+  video?: {
+    /**
+     * The (unlisted) YouTube link. Required for video testimonials.
+     */
+    url?: string | null;
+    /**
+     * Still image shown before play. Required for video.
+     */
+    poster?: (number | null) | Media;
+    /**
+     * Optional, e.g. "1:42".
+     */
+    durationLabel?: string | null;
+  };
+  /**
+   * Optional headline result shown on the card, e.g. "+212%" / "Revenue, 12 mo".
+   */
+  metric?: {
+    /**
+     * A result, never a price.
+     */
+    value?: string | null;
+    label?: string | null;
+  };
+  /**
+   * When the review or quote was given.
+   */
+  reviewDate?: string | null;
+  /**
+   * Order in the feed and review wall. Lower numbers come first.
+   */
+  sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Questions and answers for the FAQ page and the FAQ sections on service pages.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faqs".
+ */
+export interface Faq {
+  id: number;
+  question: string;
+  /**
+   * Keep it direct. Links are allowed, e.g. to Book a Call or Contact.
+   */
+  answer: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * The FAQ page group this question sits in.
+   */
+  category: 'pricing-contracts' | 'builds' | 'marketing' | 'process-trust';
+  /**
+   * Untick for questions that should only appear in a service-page FAQ section.
+   */
+  listOnFaqPage?: boolean | null;
+  /**
+   * Order inside its category on the FAQ page. Lower numbers come first; the first Pricing & Contracts question opens by default.
+   */
+  sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -280,6 +484,22 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'downloads';
         value: number | Download;
+      } | null)
+    | ({
+        relationTo: 'clients';
+        value: number | Client;
+      } | null)
+    | ({
+        relationTo: 'team-members';
+        value: number | TeamMember;
+      } | null)
+    | ({
+        relationTo: 'testimonials';
+        value: number | Testimonial;
+      } | null)
+    | ({
+        relationTo: 'faqs';
+        value: number | Faq;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -440,6 +660,87 @@ export interface DownloadsSelect<T extends boolean = true> {
   filesize?: T;
   width?: T;
   height?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "clients_select".
+ */
+export interface ClientsSelect<T extends boolean = true> {
+  name?: T;
+  logo?: T;
+  website?: T;
+  showInLogoStrip?: T;
+  sortOrder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-members_select".
+ */
+export interface TeamMembersSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  bio?: T;
+  photo?: T;
+  socials?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials_select".
+ */
+export interface TestimonialsSelect<T extends boolean = true> {
+  quote?: T;
+  authorName?: T;
+  authorRole?: T;
+  client?: T;
+  source?: T;
+  sourceUrl?: T;
+  verbatim?: T;
+  rating?: T;
+  format?: T;
+  video?:
+    | T
+    | {
+        url?: T;
+        poster?: T;
+        durationLabel?: T;
+      };
+  metric?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+      };
+  reviewDate?: T;
+  sortOrder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faqs_select".
+ */
+export interface FaqsSelect<T extends boolean = true> {
+  question?: T;
+  answer?: T;
+  category?: T;
+  listOnFaqPage?: T;
+  sortOrder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

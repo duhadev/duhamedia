@@ -1,4 +1,4 @@
-import type { Access, FieldAccess, Where } from 'payload'
+import type { Access, CollectionConfig, FieldAccess, Where } from 'payload'
 
 import { isAdmin, isPipeline, isStaff } from './roles'
 
@@ -75,3 +75,19 @@ export const staffOrPipelineDrafts: Access = ({ req }) => {
   if (isPipeline(req.user)) return draftOnly
   return false
 }
+
+/**
+ * Access preset for the drafts-enabled content collections that only staff
+ * write (SCHEMA.md §4.3 row "pages, testimonials, clients, team-members, faqs,
+ * lead-magnets"). Public and the pipeline user get published docs only; the
+ * pipeline gets NO write anywhere here. `readVersions` (collections/config/
+ * types.d.ts:462, payload@3.91.0) is staff-only so drafts never leak through
+ * /api/<slug>/versions.
+ */
+export const staffContentAccess = {
+  read: publishedOrStaff,
+  readVersions: staffOnly,
+  create: staffOnly,
+  update: staffOnly,
+  delete: staffOnly,
+} satisfies NonNullable<CollectionConfig['access']>
