@@ -6,10 +6,12 @@ import type {
   GroupField,
   NumberField,
   RelationshipFieldSingleValidation,
+  TextField,
   TextFieldSingleValidation,
 } from 'payload'
 import { relationship, text } from 'payload/shared'
 
+import { accentPhraseError } from '../lib/accentPhrase'
 import { youtubeVideoId } from '../lib/youtube'
 
 /**
@@ -17,8 +19,9 @@ import { youtubeVideoId } from '../lib/youtube'
  *
  * §3 factories are added with the first unit that uses them. C7
  * (case-studies) added `metricFields`, `linkField` and `validateAccentPhrase`
- * (the substring rule `headlineFields()` will reuse). Still to come with their
- * first block: `pricingNote`, `scarcityRef`, `headlineFields`, `eyebrowField`.
+ * (the substring rule `headlineFields()` will reuse). C8 (posts) added
+ * `pricingNote`. Still to come with their first block: `scarcityRef`,
+ * `headlineFields`, `eyebrowField`.
  *
  * Verified against payload@3.91.0 (installed `payload/dist`):
  * - versions options: versions/types.d.ts (`drafts.autosave.interval`,
@@ -139,22 +142,27 @@ export const validateAccentPhrase =
   (value, options) => {
     const base = text(value, options)
     if (base !== true) return base
-    if (typeof value !== 'string' || value.trim() === '') return true
-    const heading = (options.siblingData as Record<string, unknown> | undefined)?.[headingField]
-    if (typeof heading === 'string' && heading.toLowerCase().includes(value.trim().toLowerCase())) {
-      return true
-    }
-    return 'The accent phrase must be copied exactly from the headline (same words, any capitals).'
+    return accentPhraseError(value, (options.siblingData as Record<string, unknown> | undefined)?.[headingField])
   }
 
 /**
- * Collections an internal link may point at. SCHEMA §3 lists `pages`,
- * `case-studies`, `posts`, `lead-magnets`; only `case-studies` exists today.
- * The relationship is polymorphic from day one so adding the others later is
- * additive (new `*_id` columns in the `_rels` table, same value shape).
- * TODO(C8): add 'posts' · TODO(C9): add 'lead-magnets' · TODO(C10): add 'pages'.
+ * `admin.components.Field` for an accent-phrase field: the same rule runs in the
+ * browser (src/components/admin/AccentPhraseField.tsx), which is what makes the
+ * error show inline on Publish. Use together with `validate: validateAccentPhrase(h)`.
  */
-const LINK_TARGETS = ['case-studies'] as const satisfies CollectionSlug[]
+export const accentPhraseAdminField = (headingField: string) => ({
+  path: '/components/admin/AccentPhraseField#AccentPhraseField',
+  clientProps: { headingField },
+})
+
+/**
+ * Collections an internal link may point at. SCHEMA §3 lists `pages`,
+ * `case-studies`, `posts`, `lead-magnets`. The relationship is polymorphic
+ * from day one so adding the others is additive (new `*_id` columns in the
+ * `_rels` tables, same value shape). C8 added 'posts'.
+ * TODO(C9): add 'lead-magnets' · TODO(C10): add 'pages'.
+ */
+const LINK_TARGETS = ['case-studies', 'posts'] as const satisfies CollectionSlug[]
 
 const isInternal: Condition = (_data, siblingData) => (siblingData?.type ?? 'internal') === 'internal'
 const isCustom: Condition = (_data, siblingData) => siblingData?.type === 'custom'
@@ -293,3 +301,17 @@ export const linkField = ({
     ],
   }
 }
+
+/**
+ * SCHEMA §3 `pricingNote()`: CLAUDE.md rule 5 + R13 — prices appear only as a
+ * small inline note. There is no price field anywhere else and no pricing block.
+ */
+export const pricingNote = (name = 'pricingNote'): TextField => ({
+  name,
+  type: 'text',
+  label: 'Pricing note',
+  maxLength: 80,
+  admin: {
+    description: "Small inline note only, e.g. 'Builds start at $5K'. Never put a price in a headline or metric.",
+  },
+})

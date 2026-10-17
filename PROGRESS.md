@@ -19,9 +19,9 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 | collection | C4 `team-members` | 1, 8, posts | documented | Gate 1 approved 2026-10-17; Gate 2 n/a; dev + marketing docs done |
 | collection | C5 `testimonials` (+GBP source) | 1, 7, 9, 15, 19 | documented | Gate 1 approved 2026-10-17; Gate 2 n/a; dev + marketing docs done |
 | collection | C6 `faqs` | 4, 5, 6, 11, 13, 14 | documented | Gate 1 approved 2026-10-17; Gate 2 n/a; dev + marketing docs done |
-| collection | C7 `case-studies` | 2, 3 + pulls | documented | Gate 1 approved 2026-10-17; dev + marketing docs done; (cosmetic: a few fields still auto-labelled — later sweep); coded 43/43; migration c7 proven; reworks verified (errors together, labels, "1 Result", day-only date); awaiting human Gate 1; revalidation of /work + /work/<old|new slug> proven in a real request (PM); QA next; testimonials.caseStudy added; drafts at launch; figuresApproved gate; **+ add `testimonials.caseStudy` rel (own migration)** |
-| collection | C8 `posts` | 13, 14, 16 | coding | pipeline user drafts only; **slug must auto-generate server-side for REST creates** (slugField only fills in the admin UI; REST create without slug fails) |
-| collection | C9 `lead-magnets` | 18 | queued | |
+| collection | C7 `case-studies` | 2, 3 + pulls | documented | Gate 1 approved 2026-10-17; dev + marketing docs done; (cosmetic: a few fields still auto-labelled — later sweep); server-side unique slug applied 2026-10-17 (9/9 smoke); coded 43/43; migration c7 proven; reworks verified (errors together, labels, "1 Result", day-only date); awaiting human Gate 1; revalidation of /work + /work/<old|new slug> proven in a real request (PM); QA next; testimonials.caseStudy added; drafts at launch; figuresApproved gate; **+ add `testimonials.caseStudy` rel (own migration)** |
+| collection | C8 `posts` | 13, 14, 16 | cleared | Gate 1 cleared 2026-10-17 under standing approval: QA core pass; reworks verified in browser by PM (accent inline error posts+case-studies, FAQ question labels; badge +1 per failing group/array is stock); marketing-docs next; pipeline user drafts only; **slug must auto-generate server-side for REST creates** (slugField only fills in the admin UI; REST create without slug fails) |
+| collection | C9 `lead-magnets` | 18 | coding | standing Gate 1 approval |
 | collection | C10 `pages` (shell; layout grows per block) | all | queued | **+ enable FAQ answer internal links to pages** (editor config) |
 | global | G1 `site-settings` · G2 `scarcity` · G3 `navigation` · G4 `seo-defaults` | all | queued | one unit each |
 | plugin | P1 form-builder (overrides + delivery fields) · P2 redirects · P3 seo | all | queued | one unit each |
@@ -35,6 +35,7 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 ## Migrations log
 | Date | Migration file | What it changes | Applied in dev / staging / prod |
 |---|---|---|---|
+| 2026-10-17 | `src/migrations/20261017_215325_c8_posts.ts` | + posts (+rels, faq, diy facts, fallback metrics) and `_v` tables, enums; posts_id on case_studies_rels(+_v) and locked rels (down hand-fixed) | scratch proofs; dev via push / no / no |
 | 2026-10-17 | `src/migrations/20261017_210942_c7_case_studies.ts` | + case_studies (+rels, results rows) and `_v` tables, enums; testimonials.case_study_id; locked rels col (down hand-fixed). One FK name auto-truncated to 63 chars (harmless) | scratch proofs; dev via push / no / no |
 | 2026-10-17 | `src/migrations/20261017_202453_c3_c6_clients_team_testimonials_faqs.ts` | + clients, team_members(+socials), testimonials, faqs and their `_v` version tables, enums, FKs; locked_documents_rels cols (down hand-fixed: FKs before tables) | scratch proofs; dev via push / no / no |
 | 2026-10-17 | `src/migrations/20261017_195538_c2_media_downloads.ts` | + downloads table; media + caption, sizes browser/og; locked_documents_rels + downloads_id (down hand-fixed: drop FK before table) | scratch proofs (from-zero, down/up); dev via push / no / no |
@@ -109,6 +110,14 @@ Append-only. New sessions: read this before asking the human anything.
 | 2026-10-17 | C7 re-check: error flow + labels pass. Accepted: admin list honours a user's saved sort over `defaultSort` (fresh users get published-first); Payload's "shorter than the max length of 160" wording; approval column shows true/false chips; possible autosave overwrite at automation speed only (unconfirmed for humans). Fixing: rows labels ("Results"), publishedAt day-only display | PM |
 | 2026-10-17 | **Gate 1 approved: C7 case-studies (+ testimonials.caseStudy)** (Gate 2 deferred to template/blocks) | Human: "approve" |
 | 2026-10-17 | **Standing approval (human):** Gate 1 pre-approved for the next two units — C8 `posts` and C9 `lead-magnets` — provided QA passes and findings are reworked + re-verified as usual. Anything needing human input is deferred and batched to the **third checkpoint (C10 `pages` gate)**. Not covered: schema deltas needing a mini Gate S, production/credentials/DNS, new dependencies — those are held for C10 too | Human |
+| 2026-10-17 | **Security fix (C8):** in 3.91.0 updates match a doc's latest version, so the pipeline's draft rule could match a published post with a staff draft on top and unpublish it. Guard `forbidPipelineOnPublished` (reads live row → 403) + `pipelineNeverPublishes` afterChange backstop. C1 comment corrected | schema-architect C8 |
+| 2026-10-17 | Slug root cause: `slugField()` writes the slug from a parallel field hook after the required check reads it. `src/hooks/uniqueSlug.ts` fills/uniquifies server-side (`-2`, `-3`…); explicit colliding slugs still 400. **Apply to case-studies too** (small rework after C8 integration) | schema-architect C8 |
+| 2026-10-17 | Pipeline should always send `?draft=true` (documented for the content pipeline) | C8 |
+| 2026-10-17 | **Deferred to C10 checkpoint (human):** the pipeline can READ a staff draft sitting on top of a published post (cannot write it). Matches SCHEMA "pipeline reads drafts"; tighten? | C8 |
+| 2026-10-17 | Note for C10: renaming/unpublishing a post linked from a case study doesn't purge `/work/<slug>`; handle with C10 internal links + routes (no effect while frontend is force-dynamic) | integrator C8 |
+| 2026-10-17 | **Deferred to C10 checkpoint (human):** marketing can delete *published* posts (case studies block this). Neither SCHEMA nor CLAUDE.md requires it for posts — keep or align? | C8 dev-docs |
+| 2026-10-17 | C8 QA accepted stock: stale tab badges until next attempt; Sections/FAQ tabs appear only once a track is picked (no default track, by SCHEMA); newsletter issues hide Sections too; autosave can leave empty required FAQ rows in a draft | PM |
+| 2026-10-17 | Accent-phrase check also runs in the browser (custom `AccentPhraseField` passes `validate`), because Payload strips custom validators from the client config and server-only errors on custom-validated fields could be lost | C8 rework |
 | 2026-10-17 | Local Postgres image provisional `postgres:17-alpine` until server major is known; local port 5433 | OPS #6 open |
 
 ## Session handoff

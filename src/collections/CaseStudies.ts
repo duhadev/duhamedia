@@ -24,9 +24,10 @@ import {
 import { checkbox } from 'payload/shared'
 
 import { isAdmin, isMarketing, publishedOrStaff, staffOnly } from '../access'
-import { contentVersions, linkField, metricFields, validateAccentPhrase } from '../fields'
+import { contentVersions, linkField, metricFields, validateAccentPhrase, accentPhraseAdminField } from '../fields'
 import { setPublishedAtOnPublish } from '../hooks/publishedAt'
 import { revalidateTagHooks } from '../hooks/revalidateTag'
+import { uniqueSlugHooks } from '../hooks/uniqueSlug'
 import { lexicalWordCount, readTimeMinutes } from '../lib/lexicalText'
 
 /**
@@ -122,6 +123,9 @@ const fillReadTime: CollectionBeforeChangeHook = ({ data, originalDoc }) => {
   const minutes = readTimeMinutes(words)
   return minutes ? { ...data, readTime: minutes } : data
 }
+
+/** Server-side unique slug from the title (src/hooks/uniqueSlug.ts; same mechanism as posts). */
+const slug = uniqueSlugHooks('case-studies')
 
 /** SCHEMA §10 revalidation map: `/work`, `/work/<slug>`, tag `case-studies`. */
 const revalidate = revalidateTagHooks<{ id: number | string; _status?: 'draft' | 'published' | null; slug?: string | null }>(
@@ -231,6 +235,7 @@ export const CaseStudies: CollectionConfig = {
   },
   versions: contentVersions,
   hooks: {
+    beforeValidate: [slug.beforeValidate],
     beforeChange: [setPublishedAtOnPublish, fillReadTime],
     afterChange: [blockUnapprovedPublish, revalidate.afterChange],
     afterDelete: [revalidate.afterDelete],
@@ -253,7 +258,7 @@ export const CaseStudies: CollectionConfig = {
               type: 'text',
               label: 'Accent phrase',
               validate: validateAccentPhrase('title'),
-              admin: { description: 'Optional: one word or phrase from the headline to show in the accent colour.' },
+              admin: { components: { Field: accentPhraseAdminField('title') }, description: 'Optional: one word or phrase from the headline to show in the accent colour.' },
             },
             {
               type: 'row',
@@ -485,7 +490,7 @@ export const CaseStudies: CollectionConfig = {
         },
       ],
     },
-    slugField(),
+    slugField({ overrides: slug.slugFieldOverrides }),
     {
       name: 'featured',
       type: 'checkbox',

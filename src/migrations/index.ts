@@ -3,6 +3,7 @@ import * as migration_20261017_193341_c1_users_role from './20261017_193341_c1_u
 import * as migration_20261017_195538_c2_media_downloads from './20261017_195538_c2_media_downloads';
 import * as migration_20261017_202453_c3_c6_clients_team_testimonials_faqs from './20261017_202453_c3_c6_clients_team_testimonials_faqs';
 import * as migration_20261017_210942_c7_case_studies from './20261017_210942_c7_case_studies';
+import * as migration_20261017_215325_c8_posts from './20261017_215325_c8_posts';
 
 export const migrations = [
   {
@@ -29,5 +30,10 @@ export const migrations = [
     up: migration_20261017_210942_c7_case_studies.up,
     down: migration_20261017_210942_c7_case_studies.down,
     name: '20261017_210942_c7_case_studies',
+  },
+  {
+    up: migration_20261017_215325_c8_posts.up,
+    down: migration_20261017_215325_c8_posts.down,
+    name: '20261017_215325_c8_posts',
   },
 ];

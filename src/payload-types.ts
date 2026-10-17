@@ -75,6 +75,7 @@ export interface Config {
     testimonials: Testimonial;
     faqs: Faq;
     'case-studies': CaseStudy;
+    posts: Post;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -90,6 +91,7 @@ export interface Config {
     testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
     faqs: FaqsSelect<false> | FaqsSelect<true>;
     'case-studies': CaseStudiesSelect<false> | CaseStudiesSelect<true>;
+    posts: PostsSelect<false> | PostsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -625,10 +627,15 @@ export interface CaseStudy {
     link: {
       type: 'internal' | 'custom';
       newTab?: boolean | null;
-      reference?: {
-        relationTo: 'case-studies';
-        value: number | CaseStudy;
-      } | null;
+      reference?:
+        | ({
+            relationTo: 'case-studies';
+            value: number | CaseStudy;
+          } | null)
+        | ({
+            relationTo: 'posts';
+            value: number | Post;
+          } | null);
       /**
        * https://…, mailto:…, or a site path like /book-a-call.
        */
@@ -667,6 +674,275 @@ export interface CaseStudy {
    * Set automatically on first publish. Orders the Work page and "Next study".
    */
   publishedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Articles (DEV-SEO and MKT-SEO, /insights) and newsletter issues (/newsletter). The content pipeline drafts here; publishing is always a person.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts".
+ */
+export interface Post {
+  id: number;
+  /**
+   * Keyword-targeted headline (H1), e.g. "Shopify development in Chicago, scoped and priced in writing."
+   */
+  title: string;
+  /**
+   * Required for newsletter issues. Shown as "ISSUE 011".
+   */
+  issueNumber?: number | null;
+  sentAt?: string | null;
+  /**
+   * The number shown on the issue row.
+   */
+  issueMetric?: string | null;
+  /**
+   * Small line above the headline, e.g. "Shopify Theme Development — Chicago".
+   */
+  eyebrow?: string | null;
+  /**
+   * The paragraph under the headline. Also the excerpt on newsletter cards (max 300 characters).
+   */
+  dek: string;
+  /**
+   * Optional. Set by staff (the pipeline cannot upload or pick images).
+   */
+  heroImage?: (number | null) | Media;
+  /**
+   * The article. H2 headings are numbered 01, 02 … on the site. Type "/" to add an image with a caption.
+   */
+  body: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Small inline note only, e.g. 'Builds start at $5K'. Never put a price in a headline or metric.
+   */
+  pricingNote?: string | null;
+  /**
+   * e.g. "Some stores should just hire a freelancer."
+   */
+  diyBridge?: {
+    eyebrow?: string | null;
+    heading?: string | null;
+    /**
+     * Optional: one word or phrase from the heading to show in the accent colour.
+     */
+    accentPhrase?: string | null;
+    body?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    /**
+     * Up to 3 short facts, e.g. "4–6 / Weeks". Never a price: use the pricing note. Drag to reorder.
+     */
+    facts?:
+      | {
+          /**
+           * A result or count, never a price. e.g. "+212%".
+           */
+          value: string;
+          /**
+           * What the number measures, e.g. "Revenue, 12 months".
+           */
+          label: string;
+          /**
+           * Optional quiet line under the metric.
+           */
+          sub?: string | null;
+          /**
+           * Show the number in the accent colour.
+           */
+          accent?: boolean | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * DEV-SEO: the box at the end of the body. MKT-SEO: its own section after the DIY bridge.
+   */
+  howWeDoIt?: {
+    eyebrow?: string | null;
+    body?: string | null;
+    /**
+     * Optional link under this box.
+     */
+    link: {
+      type: 'internal' | 'custom';
+      newTab?: boolean | null;
+      reference?:
+        | ({
+            relationTo: 'case-studies';
+            value: number | CaseStudy;
+          } | null)
+        | ({
+            relationTo: 'posts';
+            value: number | Post;
+          } | null);
+      /**
+       * https://…, mailto:…, or a site path like /book-a-call.
+       */
+      url?: string | null;
+      label?: string | null;
+    };
+  };
+  /**
+   * DEV-SEO only: after Proof, before the FAQ.
+   */
+  educational?: {
+    eyebrow?: string | null;
+    heading?: string | null;
+    body?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+  };
+  /**
+   * Case studies shown as proof. While none is published, the fallback below shows instead.
+   */
+  proof?: {
+    source?: ('featured' | 'track' | 'manual') | null;
+    /**
+     * In display order. Only published studies show.
+     */
+    caseStudies?: (number | CaseStudy)[] | null;
+    /**
+     * Shown while no case study is published. Empty = the track default (DEV-SEO: testimonials, MKT-SEO: metric strip).
+     */
+    fallbackMode?: ('testimonials' | 'metricStrip') | null;
+    fallbackTestimonials?: (number | Testimonial)[] | null;
+    /**
+     * e.g. "5 / Vendors" → "1 / Team". Drag to reorder.
+     */
+    fallbackMetrics?:
+      | {
+          /**
+           * A result or count, never a price. e.g. "+212%".
+           */
+          value: string;
+          /**
+           * What the number measures, e.g. "Revenue, 12 months".
+           */
+          label: string;
+          /**
+           * Optional quiet line under the metric.
+           */
+          sub?: string | null;
+          /**
+           * Show the number in the accent colour.
+           */
+          accent?: boolean | null;
+          id?: string | null;
+        }[]
+      | null;
+    fallbackNote?: string | null;
+  };
+  /**
+   * e.g. "On consolidating your marketing".
+   */
+  faqHeading?: string | null;
+  /**
+   * Up to 8. Drag to reorder.
+   */
+  faq?:
+    | {
+        question: string;
+        answer: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional per-post headings. Empty = the site-wide defaults.
+   */
+  closing?: {
+    /**
+     * e.g. "More like this, monthly."
+     */
+    newsletterHeading?: string | null;
+    /**
+     * e.g. "Run the numbers on your setup with us."
+     */
+    finalCtaHeading?: string | null;
+  };
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  /**
+   * Decides the page template and which sections appear.
+   */
+  track: 'dev-seo' | 'mkt-seo' | 'newsletter-issue';
+  /**
+   * e.g. "Shopify development Chicago". Feeds the SEO title and FAQ eyebrow.
+   */
+  targetKeyword?: string | null;
+  /**
+   * "By …, Duha Media". Set by staff in review.
+   */
+  author?: (number | null) | TeamMember;
+  /**
+   * Minutes. Leave empty to calculate from the body when publishing.
+   */
+  readTime?: number | null;
+  /**
+   * Set automatically on first publish.
+   */
+  publishedAt?: string | null;
+  /**
+   * Optional "Updated …" date shown on the article.
+   */
+  updatedAtDisplay?: string | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -769,6 +1045,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'case-studies';
         value: number | CaseStudy;
+      } | null)
+    | ({
+        relationTo: 'posts';
+        value: number | Post;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1107,6 +1387,103 @@ export interface CaseStudiesSelect<T extends boolean = true> {
   figuresApproved?: T;
   readTime?: T;
   publishedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts_select".
+ */
+export interface PostsSelect<T extends boolean = true> {
+  title?: T;
+  issueNumber?: T;
+  sentAt?: T;
+  issueMetric?: T;
+  eyebrow?: T;
+  dek?: T;
+  heroImage?: T;
+  body?: T;
+  pricingNote?: T;
+  diyBridge?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        accentPhrase?: T;
+        body?: T;
+        facts?:
+          | T
+          | {
+              value?: T;
+              label?: T;
+              sub?: T;
+              accent?: T;
+              id?: T;
+            };
+      };
+  howWeDoIt?:
+    | T
+    | {
+        eyebrow?: T;
+        body?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+      };
+  educational?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        body?: T;
+      };
+  proof?:
+    | T
+    | {
+        source?: T;
+        caseStudies?: T;
+        fallbackMode?: T;
+        fallbackTestimonials?: T;
+        fallbackMetrics?:
+          | T
+          | {
+              value?: T;
+              label?: T;
+              sub?: T;
+              accent?: T;
+              id?: T;
+            };
+        fallbackNote?: T;
+      };
+  faqHeading?: T;
+  faq?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
+  closing?:
+    | T
+    | {
+        newsletterHeading?: T;
+        finalCtaHeading?: T;
+      };
+  generateSlug?: T;
+  slug?: T;
+  track?: T;
+  targetKeyword?: T;
+  author?: T;
+  readTime?: T;
+  publishedAt?: T;
+  updatedAtDisplay?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;

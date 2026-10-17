@@ -11,6 +11,7 @@ import { Clients } from './collections/Clients'
 import { Downloads } from './collections/Downloads'
 import { Faqs } from './collections/Faqs'
 import { Media } from './collections/Media'
+import { Posts } from './collections/Posts'
 import { TeamMembers } from './collections/TeamMembers'
 import { Testimonials } from './collections/Testimonials'
 import { Users } from './collections/Users'
@@ -28,7 +29,7 @@ export default buildConfig({
     },
   },
   serverURL: process.env.SITE_URL || '',
-  collections: [Users, Media, Downloads, Clients, TeamMembers, Testimonials, Faqs, CaseStudies],
+  collections: [Users, Media, Downloads, Clients, TeamMembers, Testimonials, Faqs, CaseStudies, Posts],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

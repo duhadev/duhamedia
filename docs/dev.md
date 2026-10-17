@@ -39,6 +39,7 @@ Entry format for every unit: **Files** / **Fields & schema** / **Wiring** (regis
     - [`testimonials` (C5)](#testimonials-unit-c5)
     - [`faqs` (C6)](#faqs-unit-c6)
     - [`case-studies` (C7)](#case-studies-unit-c7)
+    - [`posts` (C8)](#posts-unit-c8)
 - [Block showcase sandbox (`/_showcase`)](#block-showcase-sandbox-_showcase)
 - [Deploy](#deploy)
 - [Integrations](#integrations)
@@ -98,11 +99,11 @@ Data source: the [`case-studies` collection (C7)](#case-studies-unit-c7) (site-w
 
 ## 13. DEV-SEO template
 
-*No units documented yet.*
+Data source: the [`posts` collection (C8)](#posts-unit-c8), `track = dev-seo`, route `/insights/<slug>` (site-wide section). No blocks documented yet.
 
 ## 14. MKT-SEO template
 
-*No units documented yet.*
+Data source: the [`posts` collection (C8)](#posts-unit-c8), `track = mkt-seo`, route `/insights/<slug>` (site-wide section). No blocks documented yet.
 
 ## 15. Campaign LP template
 
@@ -110,7 +111,7 @@ Data source: the [`case-studies` collection (C7)](#case-studies-unit-c7) (site-w
 
 ## 16. Newsletter
 
-*No units documented yet.*
+Issue rows and issue pages come from the [`posts` collection (C8)](#posts-unit-c8), `track = newsletter-issue`, route `/newsletter/<slug>`. No blocks documented yet.
 
 ## 17. Link-in-Bio
 
@@ -151,8 +152,8 @@ Entries are in build order (C1, C2, C3 …), not `SCHEMA.md` §6 order (PM decis
   - `adminOnlyField`, `staffOnlyField` (field `FieldAccess`, boolean only).
   - `publishedOrStaff`: staff → `true`; everyone else (public and pipeline) → `{ _status: { equals: 'published' } }`.
   - `turnstileVerifiedOrAdmin`: `req.context.turnstileVerified === true` or admin. For `form-submissions` create; the flag is set only by the server-side form handler after Turnstile siteverify.
-  - `posts`-only helpers, written for unit C8 and not yet attached: `postsRead` (staff all · pipeline drafts · public published), `staffOrPipeline` (create), `staffOrPipelineDrafts` (update: staff all · pipeline drafts · public none).
-- `src/access/pipeline.ts`: `forbidPipelinePublish`, a collection `beforeChange` hook for `posts` (attached in C8). For a pipeline user, any `_status` other than `draft` throws `Forbidden` (403); otherwise forces `_status: 'draft'`.
+  - `posts`-only helpers, attached to `posts` in [C8](#posts-unit-c8): `postsRead` (staff all · pipeline drafts · public published), `staffOrPipeline` (create), `staffOrPipelineDrafts` (update: staff all · pipeline drafts · public none).
+- `src/access/pipeline.ts`: the `posts` pipeline guards, all attached in [C8](#posts-unit-c8) (details there): `forbidPipelinePublish` (`beforeChange`: for a pipeline user, any `_status` other than `draft` throws `Forbidden` (403); otherwise forces `_status: 'draft'`), `forbidPipelineOnPublished` (`beforeChange`), `pipelineNeverPublishes` (`afterChange` backstop).
 - `src/collections/Users.ts`: the `users` collection.
 - `src/migrations/20261017_193341_c1_users_role.ts` (+ `.json` snapshot), registered in `src/migrations/index.ts`.
 
@@ -182,7 +183,7 @@ Entries are in build order (C1, C2, C3 …), not `SCHEMA.md` §6 order (PM decis
 - Pipeline authentication: header `Authorization: users API-Key <key>` only.
 
 **Wiring**
-- Registration: `src/payload.config.ts` → `collections` array (the latest collection entry, currently [C7](#case-studies-unit-c7), lists it), `admin.user: Users.slug`.
+- Registration: `src/payload.config.ts` → `collections` array (the latest collection entry, currently [C8](#posts-unit-c8), lists it), `admin.user: Users.slug`.
 - Pages using it: none (not publicly rendered).
 - Revalidation: n/a.
 - Migration: `20261017_193341_c1_users_role`. Up: creates `enum_users_role`, adds `name`, `role` (default `marketing`, not null), `enable_a_p_i_key`, `api_key`, `api_key_index`; data step sets `role = 'admin'` for every user holding `admin` in `users_roles`; drops `users_roles` and `enum_users_roles`. Down (best-effort): restores one `users_roles` row per admin/marketing user; pipeline users get no row and lose their key; a user who held both roles comes back admin only; `name` values are lost.
@@ -501,7 +502,7 @@ Outside the tabs:
 - Slug behaviour:
   - Admin: the slug box opens locked with an Unlock button (Generate / Lock controls of Payload's `SlugField` client component).
   - Because `contentVersions` enables autosave, the `generateSlug` hook stops regenerating the slug from the title once the doc is published (or the slug was edited by hand); the slug is not hard-locked and can still be changed by hand.
-  - REST creates without `slug` fail with "Slug required" (observed in the C7 rework; `slugField` only fills the slug in the admin UI in practice). REST callers creating case studies must pass `slug` and `generateSlug: false`. (`posts`, C8, generates slugs server-side.)
+  - REST creates without `slug` fail with "Slug required" (observed in the C7 rework; `slugField` only fills the slug in the admin UI in practice). REST callers creating case studies must pass `slug` and `generateSlug: false`. (`posts`, C8, generates slugs server-side; see [C8 Slugs](#posts-unit-c8).)
 
 - `defaultPopulate` (card fields only, used when another doc populates a case study): `title`, `slug`, `client`, `track`, `headlineMetric`, `cardSummary`, `heroMedia`, `publishedAt`.
 - Access:
@@ -545,6 +546,113 @@ Outside the tabs:
   - SEO `meta` tab (plugin-seo unit, `collections: ['case-studies']`).
   - Live preview URL and draft mode for `/work/<slug>` (when the route lands).
 - Reading progress on p2 is a template behaviour of `/work/<slug>`, not a field (R10).
+
+#### `posts` (unit C8)
+
+One collection for three tracks: `dev-seo` (p13) and `mkt-seo` (p14) at `/insights/<slug>`, and `newsletter-issue` (p16 rows) at `/newsletter/<slug>`. It is the only collection the pipeline user can write.
+
+**Files**
+- `src/collections/Posts.ts`: the collection, access, hooks, two Lexical editor configs (`bodyEditor`, `shortEditor`), `validateIssueNumber`, `fillReadTime`, revalidation config.
+- `src/hooks/uniqueSlug.ts`: `uniqueSlug`, `uniqueSlugHooks(collection)` (`beforeValidate` + `slugFieldOverrides`). Written generically; attached to `posts` only so far.
+- `src/access/pipeline.ts`: `forbidPipelinePublish`, `forbidPipelineOnPublished`, `pipelineNeverPublishes` (the first written in C1, all attached here).
+- `src/access/index.ts`: `postsRead`, `staffOrPipeline`, `staffOrPipelineDrafts` (written in C1), attached here.
+- `src/fields/index.ts`: `LINK_TARGETS` is now `['case-studies', 'posts']` (`linkField` internal references may point at posts). Reuses `contentVersions`, `metricFields`, `linkField`, `pricingNote`, `validateAccentPhrase`.
+- Reused hooks/libs: `src/hooks/publishedAt.ts`, `src/hooks/revalidateTag.ts`, `src/lib/lexicalText.ts`.
+- `src/payload.config.ts`: `Posts` registered. `src/payload-types.ts` and `src/app/(payload)/admin/importMap.js` regenerated.
+- `src/migrations/20261017_215325_c8_posts.ts` (+ `.json`), registered in `src/migrations/index.ts`.
+
+**Fields & schema**
+
+Drafts on (`contentVersions`); labels "Post" / "Posts"; `useAsTitle: 'title'`; `defaultColumns`: `title`, `track`, `_status`, `publishedAt`, `updatedAt`.
+
+- `defaultSort: ['-_status', '-publishedAt']` (same reasoning as [C7](#case-studies-unit-c7): no nulls-last in `@payloadcms/drizzle@3.91.0`).
+- `defaultPopulate`: `title`, `slug`, `track`, `dek`, `publishedAt`, `issueNumber`.
+- Track-specific fields are hidden with `admin.condition` on `track` (a hidden field is not validated).
+  - `isArticle` = `dev-seo` or `mkt-seo`; `isDevSeo`; `isIssue` = `newsletter-issue`.
+
+Tab **Article** (always shown):
+
+| Field | Type | Notes |
+|---|---|---|
+| `title` | text, required | H1 |
+| `issueNumber` | number, `min: 1`, `validate: validateIssueNumber` | Issue track only; required when `track` = `newsletter-issue` (message "Required for newsletter issues."), ignored otherwise |
+| `sentAt` | date (day only) | Issue track only |
+| `issueMetric` | text | Issue track only; number on the issue row |
+| `eyebrow` | text | |
+| `dek` | textarea ("Standfirst"), required, `maxLength: 300` | Also the excerpt on newsletter cards |
+| `heroImage` | upload → `media`, `maxDepth: 1` | Staff-only write |
+| `body` | richText, required, `bodyEditor` | |
+| `pricingNote` | `pricingNote()` factory | Inline price note only (R13) |
+
+- `bodyEditor`: paragraph, `HeadingFeature` (h2, h3 only), bold, italic, lists, blockquote, `LinkFeature({ enabledCollections: [] })`, `UploadFeature` (media only, `maxDepth: 1`, extra `caption` text field), fixed + inline toolbar.
+- `shortEditor`: paragraph, bold, italic, lists, `LinkFeature({ enabledCollections: [] })`, inline toolbar.
+
+Tab **Sections** (articles only; tab `admin.condition: isArticle`):
+
+| Field | Type | Notes |
+|---|---|---|
+| `diyBridge` | group: `eyebrow`, `heading` (text), `accentPhrase` (`validateAccentPhrase('heading')`), `body` (richText, `shortEditor`), `facts` (array, `maxRows: 3`, `metricFields()`) | Facts are never prices |
+| `howWeDoIt` | group: `eyebrow` (text), `body` (textarea), `link` (`linkField`, optional) | |
+| `educational` | group: `eyebrow`, `heading` (text), `body` (richText, `shortEditor`) | `dev-seo` only |
+| `proof` | group, staff-only write | See below |
+
+`proof` (article tracks): `source` select `featured` / `track` / `manual` (default `track`); `caseStudies` relationship → `case-studies`, `hasMany`, `maxDepth: 1` (shown when `source` = `manual`); `fallbackMode` select `testimonials` / `metricStrip` (empty = track default: dev-seo testimonials, mkt-seo metric strip, per field description); `fallbackTestimonials` relationship → `testimonials`, `hasMany`, `maxDepth: 2` (hidden when mode is `metricStrip`); `fallbackMetrics` array of `metricFields()` (hidden when mode is `testimonials`); `fallbackNote` textarea.
+
+Tab **FAQ** (articles only): `faqHeading` (text); `faq` array "Questions" (`maxRows: 8`), each `question` (text, required) + `answer` (richText, required, `shortEditor`). Inline array (SCHEMA X11); feeds FAQPage JSON-LD and the AccordionFAQ component (not built yet).
+
+Tab **Closing**: `closing` group: `newsletterHeading`, `finalCtaHeading` (text). Empty = site-wide defaults.
+
+Outside the tabs:
+
+| Field | Type | Notes |
+|---|---|---|
+| `slug` (+ hidden `generateSlug`) | `slugField({ overrides: slug.slugFieldOverrides })` | Unique index; see Slugs below |
+| `track` | select `dev-seo` / `mkt-seo` / `newsletter-issue`, required, indexed, sidebar | |
+| `targetKeyword` | text, sidebar | |
+| `author` | relationship → `team-members`, `maxDepth: 1`, sidebar | Staff-only write |
+| `readTime` | number, `min: 1`, sidebar | Empty = filled on publish from the body word count (`fillReadTime`) |
+| `publishedAt` | date, indexed, sidebar | Staff-only write; set on first publish by `setPublishedAtOnPublish` |
+| `updatedAtDisplay` | date ("Updated (shown)"), sidebar | Staff-only write |
+
+Pipeline-dropped fields (field access create/update = `staffOnlyField`; values sent by the pipeline are silently dropped): `author`, `heroImage`, `publishedAt`, `updatedAtDisplay`, `proof`.
+
+Access:
+
+| Who | read | readVersions | create | update | delete |
+|---|---|---|---|---|---|
+| admin, marketing | all | yes | yes | yes | yes (`staffOnly`; no published-status restriction, unlike case-studies) |
+| pipeline | `_status = draft` only | no | yes (forced draft) | drafts only, and never a post whose live row is published | no |
+| public | published only | no | no | no | no |
+
+**Pipeline guards** (in order; auth header `Authorization: users API-Key <key>`; the pipeline should always send `?draft=true`, otherwise Payload validates the save as complete — required fields — though it is still stored as a draft):
+1. Access: `postsRead` / `staffOrPipelineDrafts` restrict the pipeline to `_status = draft`.
+2. `beforeChange` `forbidPipelinePublish`: any non-draft `_status` from the pipeline throws `Forbidden` (403); otherwise `_status` is forced to `draft`.
+3. `beforeChange` `forbidPipelineOnPublished`: on update by the pipeline, the main row is read directly (`payload.db.findOne`, no hooks, same transaction); if it is published, or the id is unknown, 403. Reason: in payload@3.91.0 `updateByID` looks the doc up through `getLatestCollectionVersion`, which applies the access query to the LATEST VERSION. A published post with a newer staff draft on top would match `_status = draft`, and a pipeline save would overwrite the main row with `draft`, unpublishing the live post. A post staff have unpublished is a draft again and is editable.
+4. `afterChange` `pipelineNeverPublishes` (first in the list): throws `Forbidden` inside the transaction if a pipeline write ends up `published` (rollback backstop; no known 3.91.0 path reaches it).
+5. No delete, no `readVersions` for the pipeline.
+
+**Slugs**
+- Root cause: `slugField()` generates the slug in a field `beforeChange` hook on the hidden `generateSlug` checkbox. Sibling fields are processed in parallel and the generator awaits before writing `data.slug`, so on a validated save the `required` check reads the slug while it is still empty ("Slug required"). It also never de-duplicates and, on autosave collections, re-derives the slug from the title on later saves of an unpublished doc.
+- `uniqueSlugHooks('posts')`:
+  - `beforeValidate`: when the resulting slug is empty and a title exists, fills `slugify(title)`; on collision tries `-2`, `-3` … up to `-50`, then appends an 8-character UUID fragment. Uniqueness is checked with `payload.count` against the main table (`overrideAccess: true`, same transaction), excluding the doc itself on update.
+  - `slugFieldOverrides`: wraps the `generateSlug` field's `beforeChange` hook. After Payload's generator runs on update, a slug it re-derived from the title is made unique, and a partial update without `title` cannot wipe an existing slug.
+  - An explicit slug is not renamed; it is normalised by the field and a collision returns 400 (unique index).
+- Known limits: a duplicate of a duplicate collides; two concurrent creates with the same title can race (the loser gets the unique-index error and can retry).
+
+**Wiring**
+- Registration: `src/payload.config.ts` → `collections: [Users, Media, Downloads, Clients, TeamMembers, Testimonials, Faqs, CaseStudies, Posts]`.
+- Hooks: `beforeValidate: [slug.beforeValidate]`; `beforeChange: [forbidPipelinePublish, forbidPipelineOnPublished, setPublishedAtOnPublish, fillReadTime]`; `afterChange: [pipelineNeverPublishes, revalidate.afterChange]`; `afterDelete: [revalidate.afterDelete]`. Publish-rule convention from C7 applies (hooks after the first do not throw validation errors); `validateIssueNumber` is a field validator.
+- Pages using it: p13 (`dev-seo`), p14 (`mkt-seo`) at `/insights/<slug>`; p16 (`newsletter-issue` rows, PostList) and `/newsletter/<slug>` issue pages. Routes and blocks are not built yet.
+- Revalidation: `revalidateTagHooks('posts', { paths })`. Tag `posts`, plus `/insights/<slug>` for article tracks or `/newsletter` and `/newsletter/<slug>` for issues, for both `doc` and `previousDoc` (a slug or track change purges the old URL). Behaviour of the hook is as in C7. Proven live 2026-10-17 (create, track change, delete). Queries that render posts must use the `posts` tag.
+- Migration: `20261017_215325_c8_posts`. Additive.
+  - Up: enums `enum_posts_*` and `enum__posts_v_version_*` (track, status, `how_we_do_it_link_type`, `proof_source`, `proof_fallback_mode`); tables `posts`, `posts_diy_bridge_facts`, `posts_proof_fallback_metrics`, `posts_faq`, `posts_rels`, and the `_posts_v*` equivalents; FKs `hero_image_id` → `media` and `author_id` → `team_members` (set null), rels FKs to `case-studies`, `posts`, `testimonials` (cascade); adds `posts_id` to `case_studies_rels`, `_case_studies_v_rels` (new `linkField` target) and `payload_locked_documents_rels`.
+  - Down: hand-fixed (drops the added FKs and columns on the other tables before dropping the posts tables).
+
+**Notes**
+- SEO `meta` tab is deferred (plugin-seo with `collections: ['posts']`, editable by staff and pipeline).
+- Deferred: live preview and draft mode with the `/insights/<slug>` and `/newsletter/<slug>` routes; rich-text internal links in `bodyEditor`/`shortEditor` (C10, `TODO(C10)`); `linkField` targets `lead-magnets` (C9) and `pages` (C10).
+- `/work/<slug>` is not purged when a post linked from a case study changes (C10).
+- Reading progress (p11/p13/p14) is a template behaviour, not a field (R10). The FAQ renders through the AccordionFAQ component when it exists.
 
 ## Block showcase sandbox (`/_showcase`)
 

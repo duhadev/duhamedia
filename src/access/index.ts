@@ -47,16 +47,16 @@ export const turnstileVerifiedOrAdmin: Access = ({ req }) =>
 
 /* -------------------------------------------------------------------------- */
 /* Pipeline API user: drafts in `posts` only (CLAUDE.md, SCHEMA.md §4.1/§4.3). */
-/* `posts` does not exist yet (unit C8). These helpers are written for it and   */
-/* must ONLY be attached to `posts`; every other collection uses the staff/    */
+/* These helpers must ONLY be attached to `posts` (C8);                        */
+/* every other collection uses the staff/    */
 /* published helpers above, which give the pipeline nothing beyond public read. */
 /*                                                                            */
-/* Why a `_status = draft` constraint is enough on update: with drafts on,    */
-/* saving a draft over a published doc leaves the main row `_status:          */
-/* published` (payload/dist/collections/operations/utilities/update.js,       */
-/* `isSavingDraft` skips `db.updateOne`), so the pipeline can only ever match */
-/* never-published docs. Publishing itself is blocked by                      */
-/* `forbidPipelinePublish` (./pipeline.ts), attached as a posts beforeChange. */
+/* The `_status = draft` constraint alone is NOT enough on update (verified */
+/* C8, payload@3.91.0): updates look the doc up via its LATEST VERSION       */
+/* (versions/getLatestCollectionVersion.js), so a published post with a      */
+/* newer staff draft on top matches it. `forbidPipelineOnPublished`          */
+/* (./pipeline.ts) therefore re-reads the main row and rejects any pipeline  */
+/* write to a live post; `forbidPipelinePublish` blocks publishing itself.   */
 /* -------------------------------------------------------------------------- */
 
 /** posts.read: staff → all · pipeline → drafts · public → published. */
