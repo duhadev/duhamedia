@@ -23,6 +23,9 @@ Sections are added here as each part of the site is finished and approved.
 | Change the social-share (OG) image | [fill in once built] |
 | Upload an image | **Admin → Collections → Media → Create New** → choose the file → write the **Alt** text (required) → **Save**. See [Media library](#media-library-images). |
 | Upload a lead-magnet file (PDF, CSV, Excel, ZIP) | **Admin → Collections → Downloads → Create New** → choose the file → give it a **Title** → **Save**. See [Downloads](#downloads-lead-magnet-files). |
+| Add a client logo to the logo strip | **Admin → Collections → Clients → Create New** (or open the client) → **Name**, **Logo** → tick **Show In Logo Strip** → set **Sort Order** → **Publish**. See [Clients](#clients-logo-strips). |
+| Add a testimonial or Google review | **Admin → Collections → Testimonials → Create New** → **Quote**, **Author Name** → pick **Source** (Google needs its link and the "word for word" tick) → **Publish**. See [Testimonials and reviews](#testimonials-and-reviews). |
+| Add an FAQ | **Admin → Collections → FAQs → Create New** → **Question**, **Answer**, **Category** → set **Sort Order** → **Publish**. See [FAQs](#faqs). |
 | Someone is locked out after wrong passwords | Wait 10 minutes, or ask an Admin to open **Admin → Collections → Users → (person) → Force Unlock**. See [Users and roles](#users-and-roles). |
 
 ## Table of contents
@@ -31,6 +34,11 @@ Sections are added here as each part of the site is finished and approved.
   - [Users and roles](#users-and-roles)
   - [Media library (images)](#media-library-images)
   - [Downloads (lead-magnet files)](#downloads-lead-magnet-files)
+- [Content libraries (site-wide)](#content-libraries-site-wide)
+  - [Clients (logo strips)](#clients-logo-strips)
+  - [Team members](#team-members)
+  - [Testimonials and reviews](#testimonials-and-reviews)
+  - [FAQs](#faqs)
 1. [Homepage](#1-homepage)
 2. [Case Study template](#2-case-study-template)
 3. [Work hub](#3-work-hub)
@@ -129,6 +137,113 @@ A **lead magnet** is a free resource (a guide, checklist or worksheet) that visi
 
 **Other**
 - Each file gets a **public web link**: anyone with the link can download it. Never upload anything confidential.
+
+## Content libraries (site-wide)
+
+These four collections hold reusable content: client brands, team members, testimonials and reviews, and FAQs. You write each item once here, and the page sections that show it (logo strips, testimonial rows, FAQ lists) pull it in automatically. Those page sections are built later and are described under each page as they land.
+
+**How drafts work in these four libraries** (the same for all of them):
+- **Save draft** stores your work at any time, even when required fields (marked with a red asterisk) are still empty. Visitors never see drafts.
+- **Publish** checks that every required field is filled, then makes the item live on the site. Only published items ever appear to visitors. Publishing is always done by a person.
+- **Autosave:** as soon as you click **Create New**, the admin saves a blank draft for you and keeps saving as you type. If you start an item and abandon it, delete that blank draft so the list stays tidy.
+- **Sort Order** (right-hand sidebar): a number that sets the display order. Lower numbers come first. To reorder items, change their numbers (tip: use 10, 20, 30… so you can slot a new one in between later, e.g. 15).
+- Some fields are only required in certain cases (for example a link to a Google review). Those show **no red asterisk**; their grey help text under the field says when they are needed, and **Publish** tells you if one is missing.
+
+### Clients (logo strips)
+
+**SEO:** n/a here. A client's logo uses the **Alt** text you wrote for that image in the [Media library](#media-library-images).
+
+**Editable by marketing**
+- **Add a client:** **Admin → Collections → Clients → Create New** → fill in the fields below → **Publish**.
+  - **Name** (required): the brand name. If there is no logo, the name is shown as text in the logo strip instead.
+  - **Logo** (optional): pick or upload an image from Media. Use a **monochrome** logo (one colour on a transparent background).
+  - **Website** (optional): the full address, starting with `https://`.
+  - **Show In Logo Strip** (right-hand sidebar): **off by default**. Tick it to show this client in the logo strips (Homepage, About, campaign pages).
+  - **Sort Order** (sidebar): position in the logo strip; lower numbers first.
+- **Remove a client from the logo strip** without deleting it: untick **Show In Logo Strip** and **Publish**.
+- **Reorder the strip:** change each client's **Sort Order** and **Publish**.
+- **Delete a client:** open it and delete it. Any testimonial linked to that client simply loses its brand pairing.
+
+**Forms & leads:** n/a.
+
+**Social share:** n/a.
+
+**Other**
+- Testimonials (and later case studies) can be linked to a client, so add the client here first.
+
+### Team members
+
+**SEO:** n/a here. The portrait uses the **Alt** text of the image in the [Media library](#media-library-images).
+
+**Editable by marketing**
+- **Add a person:** **Admin → Collections → Team members → Create New** → fill in the fields below → **Publish**.
+  - **Name** (required): full name, as it should appear on the site and as an article author.
+  - **Role** (required): a short title line, for example "Founder · Chicago".
+  - **Bio** (optional): one or two sentences, written by the person themselves. Maximum 400 characters.
+  - **Photo** (optional): a portrait from Media.
+  - **Social links:** click **Add Social link**, choose the **Platform** (LinkedIn, X (Twitter), GitHub, Instagram, YouTube or Facebook) and paste the full `https://` profile address in **URL**. Each row is labelled with its platform. **Drag** rows by their handle to reorder the icons; use the row's menu to remove one.
+- **Edit or remove:** open the person in **Admin → Collections → Team members**, change and **Publish**, or delete.
+
+**Forms & leads:** n/a.
+
+**Social share:** n/a.
+
+**Other**
+- Never write invented facts about the founder or team. The bio stays a placeholder until the person writes it.
+
+### Testimonials and reviews
+
+Every client quote, video testimonial and public review (Google, LinkedIn) lives in this one list.
+
+**SEO:** n/a here. A video's poster image uses the **Alt** text of that image in the [Media library](#media-library-images).
+
+**Editable by marketing**
+- **Add a testimonial or review:** **Admin → Collections → Testimonials → Create New** → fill in the fields below → **Publish**.
+  - **Quote** (required): the words of the testimonial or review.
+  - **Author Name** (required), for example "J. Alvarez", and **Author Role** (optional), for example "3-location retailer, Chicago".
+  - **Client** (optional): link it to a brand from [Clients](#clients-logo-strips). Its logo shows on video cards.
+  - **Source** (sidebar, required): **Direct (client quote)**, **Google review** or **LinkedIn**. This sets the source label shown on the card.
+    - For **Google review** or **LinkedIn**, a **Source URL** field appears: paste the public link where a visitor can check the review. Required to publish.
+    - For **Google review**, a **Copied word for word from Google** box also appears. You must tick it to publish.
+  - **Rating** (sidebar, optional): stars, a whole number from 1 to 5. Leave it empty and no stars are shown (it never defaults to 5).
+  - **Format** (sidebar): **Text** or **Video**. Choosing **Video** shows the **Video** fields:
+    - **YouTube URL**: the link to the video, uploaded to YouTube as **unlisted** (only people with the link can find it). Required to publish.
+    - **Poster**: a still image from Media, shown before the video plays. Required to publish.
+    - **Duration Label** (optional), for example "1:42".
+  - **Metric** (optional): a headline result shown on the card, as a **Value** (for example "+212%") and a **Label** (for example "Revenue, 12 mo"). A result, never a price.
+  - **Review Date** (sidebar, optional): when the review or quote was given.
+  - **Sort Order** (sidebar): position in the testimonial feed and review wall; lower numbers first.
+- **Reorder:** change **Sort Order** and **Publish**.
+- **Remove from the site:** delete it (or unpublish it, if you want to keep it for later).
+
+**Forms & leads:** n/a.
+
+**Social share:** n/a.
+
+**Other**
+- **Never invent a review, and never change a real review's words.** Google reviews are copied exactly as written on Google; that is what the "word for word" tick confirms.
+- Until real testimonials exist, the site shows clearly labelled placeholders.
+
+### FAQs
+
+**SEO:** n/a here. How the FAQ page presents these questions to search engines is covered under [FAQ](#11-faq) once that page is built.
+
+**Editable by marketing**
+- **Add a question:** **Admin → Collections → FAQs → Create New** → fill in the fields below → **Publish**.
+  - **Question** (required).
+  - **Answer** (required): keep it direct. You can use paragraphs, **bold**, *italic*, bulleted and numbered lists, and links (for example to `/book-a-call` or `/contact`). Select text to see the formatting toolbar.
+  - **Category** (sidebar, required): **Pricing & Contracts**, **Builds**, **Marketing** or **Process & Trust**. This is the group the question sits in on the FAQ page.
+  - **List on the FAQ page** (sidebar): **on by default**. Untick it for questions that should only appear in the small FAQ sections on the service pages (Services Hub, Shopify Theme Development, Marketing), not on the main FAQ page.
+  - **Sort Order** (sidebar): order within its category on the FAQ page; lower numbers first. The first **Pricing & Contracts** question opens by default, so it should be the direct pricing answer.
+- **Reorder within a category:** change **Sort Order** and **Publish**.
+- **Choosing which FAQs appear on a service page** is done on that page's FAQ section, not here. That section is built later and will be described under the page.
+
+**Forms & leads:** n/a.
+
+**Social share:** n/a.
+
+**Other**
+- The FAQs at the bottom of articles are not stored here; they are written inside each article. That is covered under the article templates once they are built.
 
 ## 1. Homepage
 

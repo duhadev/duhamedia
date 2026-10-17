@@ -15,10 +15,10 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 |---|---|---|---|---|
 | collection | C1 access helpers + `users` (roles→role, pipeline user, lockout) | all | documented | Gate 1 approved 2026-10-17 (batched w/ C2); Gate 2 n/a; dev + marketing docs done |
 | collection | C2 `media` (final) + `downloads` | all, p18 | documented | Gate 1 approved 2026-10-17; alt pattern widened; Gate 2 n/a; dev + marketing docs done |
-| collection | C3 `clients` | 1, 8, 15 | cleared | Gate 1 approved 2026-10-17; Gate 2 n/a; marketing-docs next |
-| collection | C4 `team-members` | 1, 8, posts | cleared | Gate 1 approved 2026-10-17; Gate 2 n/a; marketing-docs next |
-| collection | C5 `testimonials` (+GBP source) | 1, 7, 9, 15, 19 | cleared | Gate 1 approved 2026-10-17; Gate 2 n/a; marketing-docs next |
-| collection | C6 `faqs` | 4, 5, 6, 11, 13, 14 | cleared | Gate 1 approved 2026-10-17; Gate 2 n/a; marketing-docs next |
+| collection | C3 `clients` | 1, 8, 15 | documented | Gate 1 approved 2026-10-17; Gate 2 n/a; dev + marketing docs done |
+| collection | C4 `team-members` | 1, 8, posts | documented | Gate 1 approved 2026-10-17; Gate 2 n/a; dev + marketing docs done |
+| collection | C5 `testimonials` (+GBP source) | 1, 7, 9, 15, 19 | documented | Gate 1 approved 2026-10-17; Gate 2 n/a; dev + marketing docs done |
+| collection | C6 `faqs` | 4, 5, 6, 11, 13, 14 | documented | Gate 1 approved 2026-10-17; Gate 2 n/a; dev + marketing docs done |
 | collection | C7 `case-studies` | 2, 3 + pulls | coding | drafts at launch; figuresApproved gate; **+ add `testimonials.caseStudy` rel (own migration)** |
 | collection | C8 `posts` | 13, 14, 16 | queued | pipeline user drafts only |
 | collection | C9 `lead-magnets` | 18 | queued | |
