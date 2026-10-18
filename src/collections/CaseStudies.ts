@@ -4,7 +4,6 @@ import {
   FixedToolbarFeature,
   InlineToolbarFeature,
   ItalicFeature,
-  LinkFeature,
   OrderedListFeature,
   ParagraphFeature,
   UnorderedListFeature,
@@ -24,7 +23,7 @@ import {
 import { checkbox } from 'payload/shared'
 
 import { isAdmin, isMarketing, publishedOrStaff, staffOnly } from '../access'
-import { contentVersions, linkField, metricFields, validateAccentPhrase, accentPhraseAdminField } from '../fields'
+import { accentPhraseAdminField, contentVersions, linkField, metricFields, richTextLinkFeature, validateAccentPhrase } from '../fields'
 import { setPublishedAtOnPublish } from '../hooks/publishedAt'
 import { revalidateTagHooks } from '../hooks/revalidateTag'
 import { uniqueSlugHooks } from '../hooks/uniqueSlug'
@@ -49,8 +48,8 @@ import { lexicalWordCount, readTimeMinutes } from '../lib/lexicalText'
  *
  * Deferred (not built yet): `meta` plugin-seo tab (TODO(plugins): plugin-seo
  * `collections: ['case-studies']`), live preview URL + draft mode (integrator,
- * with the `/work/<slug>` route), `linkField` targets pages/posts/lead-magnets
- * (TODO in src/fields), richText internal links (TODO(C10)).
+ * with the `/work/<slug>` route). `linkField` targets and richText internal
+ * links cover pages / case-studies / posts / lead-magnets since C10.
  *
  * Verified against payload@3.91.0: `slugField` (fields/baseFields/slug, marked
  * @experimental but the SCHEMA-mandated helper), `defaultPopulate`
@@ -142,8 +141,7 @@ const narrativeEditor = lexicalEditor({
     UnorderedListFeature(),
     OrderedListFeature(),
     BlockquoteFeature(),
-    // TODO(C10): internal links to pages (and case-studies/posts) once routes exist.
-    LinkFeature({ enabledCollections: [] }),
+    richTextLinkFeature(),
     UploadFeature({
       enabledCollections: ['media'],
       maxDepth: 1,
@@ -172,7 +170,7 @@ const asideEditor = lexicalEditor({
     ItalicFeature(),
     UnorderedListFeature(),
     OrderedListFeature(),
-    LinkFeature({ enabledCollections: [] }),
+    richTextLinkFeature(),
     InlineToolbarFeature(),
   ],
 })

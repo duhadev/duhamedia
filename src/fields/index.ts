@@ -1,3 +1,4 @@
+import { LinkFeature } from '@payloadcms/richtext-lexical'
 import type {
   CollectionConfig,
   CollectionSlug,
@@ -156,13 +157,24 @@ export const accentPhraseAdminField = (headingField: string) => ({
 })
 
 /**
- * Collections an internal link may point at. SCHEMA §3 lists `pages`,
- * `case-studies`, `posts`, `lead-magnets`. The relationship is polymorphic
- * from day one so adding the others is additive (new `*_id` columns in the
- * `_rels` tables, same value shape). C8 added 'posts', C9 'lead-magnets'.
- * TODO(C10): add 'pages'.
+ * Collections an internal link may point at: every routable collection
+ * (SCHEMA §3): `pages` (/<slug>), `case-studies` (/work/<slug>), `posts`
+ * (/insights/<slug>, /newsletter/<slug>), `lead-magnets` (/resources/<slug>).
+ * Used by `linkField` (polymorphic relationship; C7 case-studies, C8 posts,
+ * C9 lead-magnets, C10 pages) and by the rich-text `LinkFeature` of every
+ * editor that allows links (`richTextLinkFeature` below).
  */
-const LINK_TARGETS = ['case-studies', 'posts', 'lead-magnets'] as const satisfies CollectionSlug[]
+export const LINK_TARGETS = ['pages', 'case-studies', 'posts', 'lead-magnets'] as const satisfies CollectionSlug[]
+
+/**
+ * Lexical `LinkFeature` with internal links to the routable collections
+ * (C10). Verified in @payloadcms/richtext-lexical@3.91.0
+ * (dist/features/link/server/index.d.ts, baseFields.js): `enabledCollections`
+ * becomes the `doc` relationship's `relationTo`; `maxDepth` caps its
+ * population. Population runs through the reader's access, so a link to a
+ * draft stays an unpopulated ID for the public.
+ */
+export const richTextLinkFeature = () => LinkFeature({ enabledCollections: [...LINK_TARGETS], maxDepth: 1 })
 
 const isInternal: Condition = (_data, siblingData) => (siblingData?.type ?? 'internal') === 'internal'
 const isCustom: Condition = (_data, siblingData) => siblingData?.type === 'custom'

@@ -12,6 +12,7 @@ import { Downloads } from './collections/Downloads'
 import { Faqs } from './collections/Faqs'
 import { LeadMagnets } from './collections/LeadMagnets'
 import { Media } from './collections/Media'
+import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
 import { TeamMembers } from './collections/TeamMembers'
 import { Testimonials } from './collections/Testimonials'
@@ -30,7 +31,7 @@ export default buildConfig({
     },
   },
   serverURL: process.env.SITE_URL || '',
-  collections: [Users, Media, Downloads, Clients, TeamMembers, Testimonials, Faqs, CaseStudies, Posts, LeadMagnets],
+  collections: [Users, Pages, Media, Downloads, Clients, TeamMembers, Testimonials, Faqs, CaseStudies, Posts, LeadMagnets],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

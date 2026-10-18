@@ -2,7 +2,6 @@ import {
   BoldFeature,
   InlineToolbarFeature,
   ItalicFeature,
-  LinkFeature,
   OrderedListFeature,
   ParagraphFeature,
   UnorderedListFeature,
@@ -11,7 +10,7 @@ import {
 import type { CollectionConfig } from 'payload'
 
 import { staffContentAccess } from '../access'
-import { contentVersions, sortOrderField } from '../fields'
+import { contentVersions, richTextLinkFeature, sortOrderField } from '../fields'
 import { revalidateTagHooks } from '../hooks/revalidateTag'
 
 /** SCHEMA §10: public reads are cached under the `faqs` tag. */
@@ -32,11 +31,8 @@ const revalidate = revalidateTagHooks('faqs')
  * italic, lists, links): an accordion answer has no designed headings,
  * images or embedded documents, and the default editor's Relationship /
  * Upload features could reference any collection (incl. `users`).
- * Links are external/relative URLs for now (e.g. "/book-a-call");
- * TODO(C10): enable internal links to `pages` via
- * `LinkFeature({ enabledCollections: ['pages'] })` once pages exists.
- * Feature exports and `enabledCollections` verified in
- * @payloadcms/richtext-lexical@3.91.0 dist/features/link/server/baseFields.js.
+ * Links: custom URLs or internal links to pages, case studies, posts and
+ * lead magnets (`richTextLinkFeature`, C10; src/fields).
  *
  * Drafts on (SCHEMA §5.1). Revalidation (tag `faqs`) is the integrator's.
  */
@@ -72,7 +68,7 @@ export const Faqs: CollectionConfig = {
           ItalicFeature(),
           UnorderedListFeature(),
           OrderedListFeature(),
-          LinkFeature({ enabledCollections: [] }),
+          richTextLinkFeature(),
           InlineToolbarFeature(),
         ],
       }),

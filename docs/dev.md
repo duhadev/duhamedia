@@ -41,6 +41,7 @@ Entry format for every unit: **Files** / **Fields & schema** / **Wiring** (regis
     - [`case-studies` (C7)](#case-studies-unit-c7)
     - [`posts` (C8)](#posts-unit-c8)
     - [`lead-magnets` (C9)](#lead-magnets-unit-c9)
+    - [`pages` (C10)](#pages-unit-c10)
 - [Block showcase sandbox (`/_showcase`)](#block-showcase-sandbox-_showcase)
 - [Deploy](#deploy)
 - [Integrations](#integrations)
@@ -417,7 +418,7 @@ Drafts on (`contentVersions`); `useAsTitle: 'question'`; `defaultSort: ['categor
 
 **Notes**
 - The restricted editor excludes headings, uploads and relationship features (the default editor's Relationship/Upload features could reference any collection, including `users`).
-- Links are external/relative URLs only for now. Deferred to C10: internal links to `pages` via `LinkFeature({ enabledCollections: ['pages'] })` (`TODO(C10)` in the file).
+- Answer links: done in [C10](#pages-unit-c10). The answer editor uses `richTextLinkFeature()` (internal links to `LINK_TARGETS` plus external URLs).
 - Post FAQs (p13/p14) are an inline array on `posts` (X11), not documents here.
 
 #### `case-studies` (unit C7)
@@ -542,8 +543,8 @@ Outside the tabs:
 **Notes**
 - Launch state: all case studies are drafts at launch; every surface derives its fallback from an empty published set. There is no "live" toggle field.
 - Deferred:
-  - `linkField` targets: `posts` (added C8) and `lead-magnets` (added C9) are now present; `pages` (C10) is a `TODO` in `src/fields/index.ts`; adding it is additive (new `*_id` columns in the `_rels` tables).
-  - Rich-text internal links in `narrativeEditor` / `asideEditor` (C10).
+  - `linkField` targets: `posts` (C8), `lead-magnets` (C9) and `pages` (C10) are present (done in [C10](#pages-unit-c10); additive `pages_id` columns on the `_rels` tables).
+  - Rich-text internal links in `narrativeEditor` / `asideEditor`: done in C10 (`richTextLinkFeature()`).
   - SEO `meta` tab (plugin-seo unit, `collections: ['case-studies']`).
   - Live preview URL and draft mode for `/work/<slug>` (when the route lands).
 - Reading progress on p2 is a template behaviour of `/work/<slug>`, not a field (R10).
@@ -651,8 +652,8 @@ Access:
 
 **Notes**
 - SEO `meta` tab is deferred (plugin-seo with `collections: ['posts']`, editable by staff and pipeline).
-- Deferred: live preview and draft mode with the `/insights/<slug>` and `/newsletter/<slug>` routes; rich-text internal links in `bodyEditor`/`shortEditor` (C10, `TODO(C10)`); `linkField` target `pages` (C10) (`lead-magnets` added in [C9](#lead-magnets-unit-c9)).
-- `/work/<slug>` is not purged when a post linked from a case study changes (C10).
+- Deferred: live preview and draft mode with the `/insights/<slug>` and `/newsletter/<slug>` routes; rich-text internal links in `bodyEditor`/`shortEditor` and `linkField` target `pages`: done in [C10](#pages-unit-c10) (`lead-magnets` added in [C9](#lead-magnets-unit-c9)).
+- `/work/<slug>` is not purged when a post linked from a case study changes (open; not addressed in C10).
 - Reading progress (p11/p13/p14) is a template behaviour, not a field (R10). The FAQ renders through the AccordionFAQ component when it exists.
 
 #### `lead-magnets` (unit C9)
@@ -728,6 +729,68 @@ Slug: `uniqueSlugHooks('lead-magnets')` (`beforeValidate` fills from title, `-2`
 - Open, held for the human at C10:
   - The public API exposes the asset link and delivery email text of published lead magnets (no gate).
   - The "What's inside" heading is template text, not a field.
+
+#### `pages` (unit C10)
+
+The single-document pages (all 21 page types except the templates p2, p13, p14, p18, which are their own collections): p1 `home`, p3 `work`, p4 `services`, p5 `services/shopify-theme-development`, p6 `services/marketing`, p7 `testimonials`, p8 `about`, p9 `book-a-call`, p10 `thank-you`, p11 `faq`, p12 `contact`, p15 `lp/<campaign>`, p16 `newsletter`, p17 `links`, p19 `reviews`, p20 `privacy`/`terms`/`cookies`/`gdpr`, p21 `404`. Shell only: `layout` has no blocks registered yet.
+
+**Files**
+- `src/collections/Pages.ts`: collection, access, hooks, slug and layout validators, `NEWSLETTER_BAND_BLOCK_SLUG`.
+- `src/lib/pagePath.ts`: URL rules shared by the collection and the future router (`HOME_SLUG`, `NOT_FOUND_SLUG`, `TEMPLATE_PREFIXES`, `slugifyPath`, `pageSlugError`, `pagePath`).
+- `src/fields/index.ts`: `LINK_TARGETS` is now `['pages', 'case-studies', 'posts', 'lead-magnets']`; new `richTextLinkFeature()` = `LinkFeature({ enabledCollections: [...LINK_TARGETS], maxDepth: 1 })`.
+- `src/collections/Faqs.ts` (answer editor), `src/collections/CaseStudies.ts` (`narrativeEditor`, `asideEditor`), `src/collections/Posts.ts` (`bodyEditor`, `shortEditor`): now include `richTextLinkFeature()`.
+- `src/payload.config.ts` (registered), `src/payload-types.ts` and `src/app/(payload)/admin/importMap.js` (regenerated).
+- `src/migrations/20261017_223525_c10_pages.ts` (+ `.json`), registered in `src/migrations/index.ts`.
+
+**Fields & schema**
+
+Drafts on (`contentVersions`). Labels "Page" / "Pages"; `useAsTitle: 'title'`; `defaultColumns`: `title`, `slug`, `footerVariant`, `_status`, `updatedAt`; `defaultPopulate: { title: true, slug: true }`.
+
+| Field | Type | Notes |
+|---|---|---|
+| `title` | text, required | Admin title and default tab title |
+| `layout` | blocks, required, `minRows: 1`, label "Sections", `blocks: []`, `validate: validateLayout` | Hero is the first block (X2). Empty block list is valid in payload@3.91.0 (typed `unknown[]`) |
+| `slug` | `slugField({ slugify: slugifyPath, overrides })` | See slug rules. Hidden `generateSlug` from `slugField` |
+| `headerVariant` | select `standard` / `logo-only` / `none`, required, default `standard`, sidebar | Logo-only: p15 (and p18 template); none: p17 |
+| `footerVariant` | select `standard` / `reduced-nav` / `legal-only`, required, default `standard`, sidebar | Reduced-nav: p9, p10; legal-only: p15, p17 |
+| `zeroLeakage` | checkbox, default `false`, sidebar | p15 |
+| `readingProgress` | checkbox, default `false`, sidebar | p8, p11 (R10, X6: flag, not a block) |
+| `noindex` | checkbox, default `false`, sidebar | p10, p15, p17, p21 |
+| `publishedAt` | date, indexed, sidebar, day only | Set automatically on first publish (`setPublishedAtOnPublish`) |
+
+Slug rules (`uniqueSlugHooks('pages')` for server-side unique fill from title; plus `normaliseSlug` field `beforeValidate` and `validateSlug`, which runs the built-in `text()` first, then `pageSlugError`):
+- The slug is the path without the leading `/`. Each `/`-separated segment is slugified; empty segments are dropped. Pattern: lowercase letters, digits, `-`, `_`, with `/` between segments.
+- `home` renders at `/`. `404` is the reserved not-found document and has no path of its own (`pagePath` returns `null`). Neither can have sub-pages (`home/…`, `404/…` rejected).
+- Reserved first segments: `admin`, `api`. Any segment starting with `_` is rejected.
+- `work`, `insights`, `newsletter`, `resources` as a first segment with sub-paths are rejected (they belong to case studies, posts, lead magnets); the bare hubs `work` and `newsletter` are allowed.
+- Slug-rule errors surface as a toast only: the `slugField` `SlugField` component has no client-side `validate`.
+
+Zero leakage:
+- `enforceZeroLeakage` (collection `beforeValidate`, runs on every save, draft or publish): when `zeroLeakage` is true (from `data`, else `originalDoc`), forces `headerVariant: 'logo-only'` and `footerVariant: 'legal-only'`.
+- `validateLayout`: runs the built-in `blocks()` check, then returns a field error on `layout` if `zeroLeakage` is true and any block has `blockType === 'newsletterBand'`.
+- `blockLeakyPublish` (first `afterChange` hook): backstop on publish with `zeroLeakage`; throws `ValidationError` (rolls back the publish) if `layout` has a NewsletterBand or the header/footer variant is not logo-only/legal-only.
+- The NewsletterBand block's slug must be exactly `newsletterBand` (`NEWSLETTER_BAND_BLOCK_SLUG` in `Pages.ts`), or the unit must update the constant.
+
+Access: `staffContentAccess` (SCHEMA §4.3). Public and the pipeline user read published documents only; only staff write; versions staff-only.
+
+**Wiring**
+- Registration: `src/payload.config.ts` → `collections: [Users, Pages, Media, Downloads, Clients, TeamMembers, Testimonials, Faqs, CaseStudies, Posts, LeadMagnets]`.
+- Hooks: `beforeValidate: [slug.beforeValidate, enforceZeroLeakage]`; `beforeChange: [setPublishedAtOnPublish]`; `afterChange: [blockLeakyPublish, revalidate.afterChange]`; `afterDelete: [revalidate.afterDelete]`.
+- Layout: `TODO(blocks)` in `Pages.ts`; the integrator appends each block to `layout.blocks` as it clears its gates. Because `layout` is required (min 1), no page can be published until the first block is registered; drafts save.
+- Pages using it: all single-document pages listed above. The router is not built yet.
+- Revalidation: `revalidateTagHooks('pages', { paths: (doc) => [pagePath(doc?.slug)] })`. Tag `pages` plus the page path for `doc` and `previousDoc` (old and new slug); `home` → `/`; `404` → tag only. Live proof is deferred until a page can publish (first block registered). Anything that reads pages must fetch with the `pages` tag.
+- `richTextLinkFeature()` on FAQ answers, case-study editors and post editors: internal links to `pages`, `case-studies`, `posts`, `lead-magnets` (`maxDepth: 1`), plus external URLs. Population runs through the reader's access, so an internal link to a draft stays an unpopulated ID for the public.
+- Migration: `20261017_223525_c10_pages`. Additive.
+  - Up: enums `enum_pages_header_variant`, `enum_pages_footer_variant`, `enum_pages_status` and the three `enum__pages_v_version_*`; tables `pages`, `_pages_v` (parent FK ON DELETE set null); adds `pages_id` (FK cascade) to `case_studies_rels`, `_case_studies_v_rels`, `posts_rels`, `_posts_v_rels` (new `linkField` target) and `payload_locked_documents_rels`.
+  - Down: hand-fixed (drops those FKs/columns before dropping the pages tables).
+
+**Notes**
+- Deferred: SEO `meta` tab (`TODO(P3)`, plugin-seo `collections: ['pages']`); live preview and draft mode.
+- Router checklist (for the router unit):
+  - `[...slug]` route and `not-found.tsx` (reads the `404` doc), both fetching with the `pages` tag.
+  - Handle a request for `/home` (404 or 301 to `/`).
+  - Live preview and draft mode for `pages`, `posts`, `case-studies`, `lead-magnets`, with URLs built from server-side `SITE_URL` via `pagePath`.
+- Frontend rule (SCHEMA §5.2): public queries use `draft: false`.
 
 ## Block showcase sandbox (`/_showcase`)
 

@@ -808,6 +808,8 @@ Order = the final design's `data-screen-label` order, with CLAUDE.md-required se
 
 ## 11. Phase 3 notes (for the PM's unit queue)
 
+*Erratum 2026-10-17 (C10): `pages.layout` cannot ship empty in Payload 3.91.0 (admin crashes on `blocks: []`). It is added with the first block via `pageLayoutField([...])`; same intent, starts absent rather than empty.*
+
 - Suggested unit order: access helpers + `users` → `media` + `downloads` → `clients`, `team-members`, `testimonials`, `faqs` → `case-studies` → `posts` → `lead-magnets` → `pages` (needs blocks registered progressively; the `layout` field starts with the first cleared block) → globals → plugin configs (form-builder overrides, redirects, seo).
 - Each unit: `pnpm payload generate:types` (clean), then `pnpm payload migrate:create <unit-name>` before commit. Expected non-trivial migration: `users.roles` → `users.role` (§6.11).
 - Postgres identifier length: nested block selects inside `pages_blocks_*` tables can exceed 63 characters; set `enumName`/`dbName` where the generated migration shows truncation.
@@ -822,3 +824,14 @@ Order = the final design's `data-screen-label` order, with CLAUDE.md-required se
 4. **Scarcity counts:** the design says "3 builds in progress", "3 engines running" and "Slots open 3/7" as if they were one number. Is the cap of 7 counted per **client** (one client with a build and an engine takes one slot)? The schema keeps three counts (active clients, builds, engines) and one cap; confirm that's how you count.
 5. **Video hosting:** p7 video testimonials and the p15 VSL need a video source. Media is local disk behind a Cloudflare tunnel, and Cloudflare's terms limit serving video through its CDN outside Stream. Proposal: videos are linked from a host you choose (YouTube unlisted, Vimeo, or similar), with the poster image on our disk. Which host?
 6. **Thank You copy with link-out booking:** the original tab reaches `/thank-you` the moment the visitor clicks "Book your call", **before** they actually book in Nextcloud. So "Call booked. Invite's in your inbox." (p10 design) may be untrue. Is reworded copy fine, e.g. "Finish booking in the new tab — then do the homework"? This is copy only; no schema change.
+
+---
+
+## Delta log
+
+### 2026-10-18 — mini Gate S (approved by the human)
+1. `lead-magnets.asset` and `lead-magnets.deliveryEmail`: field-level read access = staff only (public and pipeline never see the file link or email text; the lead-magnet delivery job reads with `overrideAccess`).
+2. `lead-magnets.whatsInsideHeading`: new text field for the "What's inside" heading (design default copy as `defaultValue`).
+3. Delete access on `posts`, `lead-magnets`, `pages`: admin any; marketing only when the doc is not published (same rule as `case-studies`). Supersedes §4.3 "staff delete" for these three.
+4. No change: the pipeline keeps read access to staff drafts layered on its own `posts`.
+

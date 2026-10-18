@@ -5,7 +5,6 @@ import {
   HeadingFeature,
   InlineToolbarFeature,
   ItalicFeature,
-  LinkFeature,
   OrderedListFeature,
   ParagraphFeature,
   UnorderedListFeature,
@@ -24,7 +23,7 @@ import { number } from 'payload/shared'
 
 import { postsRead, staffOnly, staffOnlyField, staffOrPipeline, staffOrPipelineDrafts } from '../access'
 import { forbidPipelineOnPublished, forbidPipelinePublish, pipelineNeverPublishes } from '../access/pipeline'
-import { contentVersions, linkField, metricFields, pricingNote, validateAccentPhrase, accentPhraseAdminField } from '../fields'
+import { accentPhraseAdminField, contentVersions, linkField, metricFields, pricingNote, richTextLinkFeature, validateAccentPhrase } from '../fields'
 import { setPublishedAtOnPublish } from '../hooks/publishedAt'
 import { revalidateTagHooks } from '../hooks/revalidateTag'
 import { uniqueSlugHooks } from '../hooks/uniqueSlug'
@@ -67,7 +66,7 @@ import { lexicalWordCount, readTimeMinutes } from '../lib/lexicalText'
  * Deferred: `meta` plugin-seo tab (TODO(plugins): plugin-seo
  * `collections: ['posts']`, editable by staff and pipeline); live preview +
  * draft mode with the `/insights/<slug>` and `/newsletter/<slug>` routes
- * (integrator); richText internal links (TODO(C10)).
+ * (integrator). richText internal links: `richTextLinkFeature` (C10).
  *
  * Verified against payload@3.91.0: `slugField({ overrides })`
  * (fields/baseFields/slug/index.d.ts), tab `admin.condition` (TabBase has
@@ -146,8 +145,7 @@ const bodyEditor = lexicalEditor({
     UnorderedListFeature(),
     OrderedListFeature(),
     BlockquoteFeature(),
-    // TODO(C10): internal links to pages / case-studies / posts once routes exist.
-    LinkFeature({ enabledCollections: [] }),
+    richTextLinkFeature(),
     UploadFeature({
       enabledCollections: ['media'],
       maxDepth: 1,
@@ -176,7 +174,7 @@ const shortEditor = lexicalEditor({
     ItalicFeature(),
     UnorderedListFeature(),
     OrderedListFeature(),
-    LinkFeature({ enabledCollections: [] }),
+    richTextLinkFeature(),
     InlineToolbarFeature(),
   ],
 })

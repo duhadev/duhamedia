@@ -68,6 +68,7 @@ export interface Config {
   blocks: {};
   collections: {
     users: User;
+    pages: Page;
     media: Media;
     downloads: Download;
     clients: Client;
@@ -85,6 +86,7 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     downloads: DownloadsSelect<false> | DownloadsSelect<true>;
     clients: ClientsSelect<false> | ClientsSelect<true>;
@@ -170,6 +172,54 @@ export interface User {
     | null;
   password?: string | null;
   collection: 'users';
+}
+/**
+ * Site pages built from sections. Case studies, posts and lead magnets have their own collections.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: number;
+  /**
+   * Admin title and the default browser-tab title.
+   */
+  title: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  /**
+   * The page address. "home" is the homepage (/). "404" is the not-found page. Use "/" between parts, e.g. services/marketing or lp/spring-offer.
+   */
+  slug: string;
+  /**
+   * Logo only: campaign landing pages. None: Link-in-Bio. Forced to Logo only when Zero leakage is on.
+   */
+  headerVariant: 'standard' | 'logo-only' | 'none';
+  /**
+   * Reduced: Book a Call, Thank You. Legal only: campaign landing pages, Link-in-Bio. Forced to Legal only when Zero leakage is on.
+   */
+  footerVariant: 'standard' | 'reduced-nav' | 'legal-only';
+  /**
+   * Campaign landing pages: logo-only header, legal-only footer, no newsletter band. Visitors can only take the page’s offer.
+   */
+  zeroLeakage?: boolean | null;
+  /**
+   * Thin progress bar on long pages (About, FAQ).
+   */
+  readingProgress?: boolean | null;
+  /**
+   * Adds noindex and leaves the page out of the sitemap. For Thank You, landing pages, Link-in-Bio, 404.
+   */
+  noindex?: boolean | null;
+  /**
+   * Set automatically on first publish.
+   */
+  publishedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -631,6 +681,10 @@ export interface CaseStudy {
       newTab?: boolean | null;
       reference?:
         | ({
+            relationTo: 'pages';
+            value: number | Page;
+          } | null)
+        | ({
             relationTo: 'case-studies';
             value: number | CaseStudy;
           } | null)
@@ -802,6 +856,10 @@ export interface Post {
       type: 'internal' | 'custom';
       newTab?: boolean | null;
       reference?:
+        | ({
+            relationTo: 'pages';
+            value: number | Page;
+          } | null)
         | ({
             relationTo: 'case-studies';
             value: number | CaseStudy;
@@ -1128,6 +1186,10 @@ export interface PayloadLockedDocument {
         value: number | User;
       } | null)
     | ({
+        relationTo: 'pages';
+        value: number | Page;
+      } | null)
+    | ({
         relationTo: 'media';
         value: number | Media;
       } | null)
@@ -1233,6 +1295,24 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages_select".
+ */
+export interface PagesSelect<T extends boolean = true> {
+  title?: T;
+  generateSlug?: T;
+  slug?: T;
+  headerVariant?: T;
+  footerVariant?: T;
+  zeroLeakage?: T;
+  readingProgress?: T;
+  noindex?: T;
+  publishedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

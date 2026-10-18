@@ -5,6 +5,7 @@ import * as migration_20261017_202453_c3_c6_clients_team_testimonials_faqs from 
 import * as migration_20261017_210942_c7_case_studies from './20261017_210942_c7_case_studies';
 import * as migration_20261017_215325_c8_posts from './20261017_215325_c8_posts';
 import * as migration_20261017_221725_c9_lead_magnets from './20261017_221725_c9_lead_magnets';
+import * as migration_20261017_223525_c10_pages from './20261017_223525_c10_pages';
 
 export const migrations = [
   {
@@ -41,5 +42,10 @@ export const migrations = [
     up: migration_20261017_221725_c9_lead_magnets.up,
     down: migration_20261017_221725_c9_lead_magnets.down,
     name: '20261017_221725_c9_lead_magnets',
+  },
+  {
+    up: migration_20261017_223525_c10_pages.up,
+    down: migration_20261017_223525_c10_pages.down,
+    name: '20261017_223525_c10_pages',
   },
 ];
