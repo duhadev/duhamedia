@@ -8,7 +8,7 @@ import type {
 } from 'payload'
 import { date, number, text } from 'payload/shared'
 
-import { staffOnly } from '../access'
+import { staffOnly, staffOnlyField } from '../access'
 import { linkField, validateHttpsUrl } from '../fields'
 import { revalidateGlobalHook } from '../hooks/revalidateTag'
 
@@ -475,6 +475,9 @@ export const SiteSettings: GlobalConfig = {
               name: 'postalAddress',
               type: 'group',
               label: 'Postal address (newsletter emails)',
+              // Flag F6 (Gate S delta 2026-10-21): hidden from the public API. The newsletter
+              // broadcast job reads it server-side with overrideAccess (default Local API).
+              access: { read: staffOnlyField },
               admin: {
                 description:
                   'US law requires a postal address at the bottom of every newsletter email. Not shown on the website pages. The first newsletter cannot be sent until this is filled in.',

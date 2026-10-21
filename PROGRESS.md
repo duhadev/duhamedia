@@ -29,7 +29,7 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 | global | G3 `navigation` | all | documented | Gate 1 cleared 2026-10-21 under standing approval. QA 8 checks: all validation inline; max rows hide Add; keyboard reorder persists. Rework done: shared linkField type select `isClearable: false` (PM browser-verified, no clear control; tsc 0). Cosmetic accepted (stock): collapsed new rows hide inline msg (badge shows); stale tab error badge until reload. migration `g3_navigation`; integrator: chrome fetch should carry `pages` + linked-collection tags |
 | global | G4 `seo-defaults` | all | documented | Gate 1 cleared 2026-10-21 under standing approval (QA 8/8, no discrepancies; all errors inline). migration `g4_seo_defaults`; exports TITLE_PLACEHOLDER / DEFAULT_DESCRIPTION_MAX / LOCAL_BUSINESS_TYPES for P3; seed must upload ≥1200×630 OG image before first save; dev DB: placeholder description + media id 11 as OG |
 | plugin | P1 form-builder (overrides + delivery fields + lead-magnets.form + site-settings.newsletterForm) | all | documented | Gate 1 cleared 2026-10-21 under standing approval (QA 8/8: only allowed field types offered; formKey format/unique + event rule inline; small rich-text editor; drag reorder persists; eventId stamped, delivery fields read-only; shared preset create/apply/delete; Capture form + newsletterForm pickers). Coded: src/plugins/formBuilder.ts, hooks/formSubmissions.ts; payment/country/state/upload off; forms + submissions staff read, submissions create `turnstileVerifiedOrAdmin` (public POST 403 until integration handler); eventId/deliveryStatus stamping; migration `p1_form_builder` proven; 51/51 smoke; TODO(integration): handler, enqueue, jobs, re-send ui field + endpoint, seed 'Failed deliveries' shared preset (preset is a doc, not config); frontend reads forms server-side with overrideAccess and never passes `emails` to client |
-| plugin | P2 redirects | all | coding | schema-architect (opus) dispatched 2026-10-21 |
+| plugin | P2 redirects | all | gate1 | coded: src/plugins/redirects.ts + src/lib/docPath.ts (public path for any link target; router reuses); 301/302 (default 301); from tidied + validated (no /, /admin, /api, _-segments, ?/#); self-loop + 404-target rejected; staff write (plugin left create/update/delete open to any user — overridden); migration `p2_redirects` proven; 45/45 smoke; QA running; TODO(router) list in report → dev-docs |
 | plugin | P3 seo | all | queued | |
 | block | 23 blocks in page build order (SCHEMA.md §8–9) | — | queued after collections/globals | appended to /_showcase on Gate 1 |
 | integration | contact · newsletter (DOI) · lead_magnet · site_error | — | queued after triggering units clear | Gate A |
@@ -41,6 +41,7 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 ## Migrations log
 | Date | Migration file | What it changes | Applied in dev / staging / prod |
 |---|---|---|---|
+| 2026-10-21 | `src/migrations/20261021_235030_p2_redirects.ts` | + redirects, redirects_rels (pages/case-studies/posts/lead-magnets), 2 enums (type default 301); locked rels redirects_id (down hand-fixed) | scratch proofs; dev via push / no / no |
 | 2026-10-21 | `src/migrations/20261021_233028_p1_form_builder.ts` | + forms (+blocks, rels, emails), form_submissions (+data), payload_query_presets (+rels); 10 enums; nullable lead_magnets.form_id, _lead_magnets_v.version_form_id, site_settings.newsletter_form_id, locked rels cols (down hand-fixed) | scratch proofs; dev via push / no / no |
 | 2026-10-21 | `src/migrations/20261021_231646_g4_seo_defaults.ts` | + seo_defaults (default_og_image_id NOT NULL, 2 media FKs set null), enum_seo_defaults_local_business_type | scratch proofs; dev via push / no / no |
 | 2026-10-21 | `src/migrations/20261021_224808_g3_navigation.ts` | + navigation, navigation_rels, header_links, footer_standard_columns(+_links), footer_reduced_links, footer_legal_links; 5 enums (down hand-fixed) | scratch proofs; dev via push / no / no |
@@ -154,6 +155,10 @@ Append-only. New sessions: read this before asking the human anything.
 | 2026-10-21 | marketing.md scarcity page-per-type mapping (Projects ongoing/Client cap → p1 strip; Builds line → most FinalCTAs; Engines line → p6/p14) is from config comments — re-verify when ProofStrip/FinalCTA/OfferBlock/LinkStack clear Gate 1 | marketing-docs G2 |
 | 2026-10-21 | New folder `src/plugins/` holds plugin configs (formBuilder.ts; redirects/seo next) — not in CLAUDE.md file list; adopted | schema-architect P1 |
 | 2026-10-21 | **Legal name = "Al-Amanah LLC"** (footer © line, site-settings.legalName; seed value) | Human, F1 |
+| 2026-10-21 | **Contact email = hello@duhamedia.com** (site-settings.contactEmail; seed value) | Human, F2 |
+| 2026-10-21 | Copy decisions: reply note "We reply within 1 business day"; footer tagline "First we build. Then we scale."; default final CTA = free ecommerce consultation (placeholder wording, labelled) | Human, F5 |
+| 2026-10-21 | **Mini Gate S approved: `site-settings.postalAddress` read = staff only** (F6 a) | Human |
+| 2026-10-21 | **Mini Gate S approved: `scarcity.capacity` defaultValue 7** (real cap; F7 a). Needs migration — unit S2, after P2 commit | Human |
 | 2026-10-21 | **Standing approval (big step 2):** run G1–G4 globals + P1–P3 plugins autonomously; PM clears Gate 1 on QA + browser proof; every decision needing the human is **flagged and deferred** to one big checkpoint at the end of the step (before blocks). Supersedes "present each global's gate" | Human: "delay… put a flag on it… continue autonomously… next big step" |
 | 2026-10-17 | Local Postgres image provisional `postgres:17-alpine` until server major is known; local port 5433 | OPS #6 open |
 
@@ -162,12 +167,12 @@ Decisions deferred to the human; each has a safe default applied so work continu
 | # | Unit | Flag | Default applied |
 |---|---|---|---|
 | F1 | G1 | ~~Real registered legal name~~ **RESOLVED 2026-10-21: "Al-Amanah LLC"** (human). Seed uses it; dev DB updated | — |
-| F2 | G1 | Real contact email (`contactEmail`, required) | none; seed uses placeholder |
-| F3 | G1 | Service radius 30 mi — real? | 30 (per SCHEMA §7.1) |
-| F4 | G1 | Lombard lat/long for map | empty; map block needs fallback |
-| F5 | G1 | Response-time promise, footer tagline, final-CTA heading copy | empty |
-| F6 | G1 | `postalAddress` publicly readable via `/api/globals/site-settings` (not rendered). Rec: staff-only field read (mini Gate S, no DB change) | left public; field is empty |
-| F7 | G2 | `capacity` default 7 ("We cap at 7" in design)? | no default; seed placeholder (default later = migration + mini Gate S) |
+| F2 | G1 | ~~Real contact email~~ **RESOLVED 2026-10-21: hello@duhamedia.com** (human). Seed uses it; dev DB updated | — |
+| F3 | G1 | ~~Service radius~~ **RESOLVED 2026-10-21: 30 mi confirmed** (human) | — |
+| F4 | G1 | ~~Map lat/long~~ **RESOLVED 2026-10-21: Lombard village centre 41.880, -88.008** (public point, no private address; human chose a). Seed uses it; dev DB updated | — |
+| F5 | G1 | ~~Copy~~ **RESOLVED 2026-10-21** (human): responseTimeNote "We reply within 1 business day"; footerTagline "First we build. Then we scale."; finalCtaHeading = placeholder about a **free consultation** on their ecommerce business (offer framed as lead magnet; final copy TBD). Seed uses these; dev DB updated | — |
+| F6 | G1 | ~~postalAddress public~~ **RESOLVED 2026-10-21 (human: a): staff-only field read**; broadcast job reads with overrideAccess. No DB change | — |
+| F7 | G2 | ~~capacity default~~ **RESOLVED 2026-10-21 (human: a): default 7 (real)** — queued as unit S2 (migration) after P2 commits | — |
 | F8 | G2 | SCHEMA §12 Q4: cap per client? must builds/engines ≤ capacity? | only activeClients ≤ capacity enforced (validation-only to add) |
 | F9 | G3 | Nav link rows not pre-filled with design labels (a label needs a target page; pages not seeded yet) | all arrays empty; seed fills after pages; nudge copy has defaults |
 | F10 | G3 | Deleting a page linked from navigation blocks the next nav save until that link is fixed (error names the link) | accepted; frontend skips null/unpopulated refs; marketing guide to explain |
@@ -182,6 +187,10 @@ Decisions deferred to the human; each has a safe default applied so work continu
 | F19 | P1 | Deleting a page used as a form redirect silently clears that redirect | accepted |
 | F20 | P1 | Plugin's notification email is awaited inside the submit request (visitor waits on Resend). CLAUDE.md wants it parallel/not blocking. Rec: integration unit moves it off the request path | plugin default for now; fix in contact integration unit |
 | F21 | all | Opening a drafts-enabled collection's create view autosaves a blank draft (stray drafts pile up if the editor leaves). Rec: accept (stock) + marketing note, or disable autosave on create | stock; strays deleted by id during QA |
+| F22 | P2 | Should a redirect override a LIVE page at the same address? | no — router applies redirects only on not-found (website-template pattern) |
+| F23 | P2 | Deleting a redirect's target page leaves a dead redirect (reference emptied) | router skips it → 404; alternative = block delete while redirects point at it (hook, mini Gate S) |
+| F24 | P2 | Two-step loops (A→B, B→A) not blocked, only self-loops | accepted; router never chains server-side |
+| F25 | P2 | Old address is case-sensitive (/Old ≠ /old) | exact match kept |
 
 ## Session handoff
 - **In flight:** big step 2 — G1 site-settings (schema-architect, opus), then G2 scarcity, G3 navigation, G4 seo-defaults, P1 form-builder, P2 redirects, P3 seo. Serial (shared payload.config.ts / types / migrations).

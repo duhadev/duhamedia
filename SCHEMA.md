@@ -837,3 +837,5 @@ Order = the final design's `data-screen-label` order, with CLAUDE.md-required se
 
 ### 2026-10-21 — mini Gate S (approved by the human)
 1. `downloads` read access = staff only (supersedes §6.10 "read public"). Lead-magnet files are sent as email attachments by the lead_magnet job (`overrideAccess`); no public list or file URL.
+2. `site-settings.postalAddress` field read access = staff only (F6). Not rendered on the site; the broadcast footer job reads it with `overrideAccess`. No DB change.
+3. `scarcity.capacity` default 7 (real client cap; F7). Restores SCHEMA §7.2's "default 7". Column default via migration.
