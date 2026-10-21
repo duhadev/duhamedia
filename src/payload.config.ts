@@ -24,6 +24,7 @@ import { SiteSettings } from './globals/SiteSettings'
 import { migrations } from './migrations'
 import { staffOnly } from './access'
 import { formBuilder } from './plugins/formBuilder'
+import { redirects } from './plugins/redirects'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -71,5 +72,5 @@ export default buildConfig({
   },
   sharp,
   telemetry: false,
-  plugins: [formBuilder],
+  plugins: [formBuilder, redirects],
 })

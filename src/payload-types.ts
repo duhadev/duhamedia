@@ -80,6 +80,7 @@ export interface Config {
     'lead-magnets': LeadMagnet;
     forms: Form;
     'form-submissions': FormSubmission;
+    redirects: Redirect;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -101,6 +102,7 @@ export interface Config {
     'lead-magnets': LeadMagnetsSelect<false> | LeadMagnetsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
+    redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -1415,6 +1417,55 @@ export interface FormSubmission {
   createdAt: string;
 }
 /**
+ * Send visitors from an old address to a new one. Changes apply straight away; there is no draft step.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "redirects".
+ */
+export interface Redirect {
+  id: number;
+  /**
+   * The address visitors arrive at, starting with "/", e.g. /old-services. Each old address can be redirected only once.
+   */
+  from: string;
+  to?: {
+    /**
+     * Prefer "A page on this site": the redirect keeps working if that page's address changes later.
+     */
+    type?: ('reference' | 'custom') | null;
+    /**
+     * A page, case study, post or free download. Visitors are only redirected once it is published.
+     */
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'case-studies';
+          value: number | CaseStudy;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null)
+      | ({
+          relationTo: 'lead-magnets';
+          value: number | LeadMagnet;
+        } | null);
+    /**
+     * A full https:// address, or a path on this site starting with "/".
+     */
+    url?: string | null;
+  };
+  /**
+   * Use 301 (permanent) unless the old address will be used again. Search engines move rankings to the new address only with 301.
+   */
+  type: '301' | '302';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -1489,6 +1540,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'form-submissions';
         value: number | FormSubmission;
+      } | null)
+    | ({
+        relationTo: 'redirects';
+        value: number | Redirect;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -2203,6 +2258,23 @@ export interface FormSubmissionsSelect<T extends boolean = true> {
         confirmExpiresAt?: T;
         confirmedAt?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "redirects_select".
+ */
+export interface RedirectsSelect<T extends boolean = true> {
+  from?: T;
+  to?:
+    | T
+    | {
+        type?: T;
+        reference?: T;
+        url?: T;
+      };
+  type?: T;
   updatedAt?: T;
   createdAt?: T;
 }
