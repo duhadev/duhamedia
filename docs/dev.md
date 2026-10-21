@@ -46,6 +46,7 @@ Entry format for every unit: **Files** / **Fields & schema** / **Wiring** (regis
     - [`site-settings` (G1)](#site-settings-unit-g1)
     - [`scarcity` (G2)](#scarcity-unit-g2)
     - [`navigation` (G3)](#navigation-unit-g3)
+    - [`seo-defaults` (G4)](#seo-defaults-unit-g4)
 - [Block showcase sandbox (`/_showcase`)](#block-showcase-sandbox-_showcase)
 - [Deploy](#deploy)
 - [Integrations](#integrations)
@@ -1033,6 +1034,62 @@ Access:
 - Open flag F10: deleting a page (or other linked document) that is referenced in navigation leaves a dangling relationship row; the next save of this global is blocked by the foreign key until that link is fixed or removed.
 - Open flag F9: no default navigation rows (see Fields). Open flag F11: the p17/p18 legal links are a subset of the global's legal links.
 - Shared change: `linkField`'s `type` select has `admin.isClearable: false`, because an emptied required `type` blocked saving. Affects every `linkField` use (see [C7](#case-studies-unit-c7)).
+
+#### `seo-defaults` (unit G4)
+
+Site-wide search and social fallbacks, plus Organization / LocalBusiness JSON-LD inputs (SCHEMA §7.4, §4.3, §10). Consumed by P3 (`@payloadcms/plugin-seo`, not installed in this unit).
+
+**Files**
+- `src/globals/SeoDefaults.ts`: global config, validators, and exports `TITLE_PLACEHOLDER` (`'%s'`), `DEFAULT_DESCRIPTION_MAX` (`155`), `LOCAL_BUSINESS_TYPES` (`['ProfessionalService', 'MarketingAgency']`) for P3.
+- `src/payload.config.ts`: `globals: [SiteSettings, Scarcity, Navigation, SeoDefaults]`.
+- `src/payload-types.ts`: regenerated.
+- `src/migrations/20261021_231646_g4_seo_defaults.ts` (+ `.json`), registered in `src/migrations/index.ts`.
+
+**Fields & schema**
+
+Slug `seo-defaults`, label "SEO defaults". No drafts: a save is live immediately.
+
+| Path | Type | Notes |
+|---|---|---|
+| `titleTemplate` | text, required | Default `%s — Duha Media`. Trimmed. Must contain exactly one `%s` (zero or more than one rejected; blank rejected) |
+| `defaultDescription` | textarea, required | `maxLength` 155 (`DEFAULT_DESCRIPTION_MAX`). Trimmed. Whitespace-only rejected |
+| `defaultOgImage` | upload → `media`, required, `maxDepth: 1` | Column is NOT NULL. Custom validator runs the built-in `upload` check, then loads the media doc and rejects it if `sizes.og.url` is absent (image too small to produce the `og` 1200×630 size) |
+| `organization.name` | text, default `Duha Media`, `maxLength` 80 | Trimmed |
+| `organization.foundingDate` | text, optional | ISO date text: `YYYY`, `YYYY-MM` or `YYYY-MM-DD`. Trimmed. No default |
+| `organization.logo` | upload → `media`, optional, `maxDepth: 1` | |
+| `localBusiness.type` | select, optional | Options from `LOCAL_BUSINESS_TYPES`: `ProfessionalService`, `MarketingAgency`. No default |
+| `localBusiness.areaServed` | text, default `Chicago metropolitan area`, `maxLength` 120 | Trimmed |
+| `localBusiness.openingHours` | text, optional | schema.org format, e.g. `Mo-Fr 09:00-17:00`; several entries separated by `;`, e.g. `Mo-Fr 09:00-17:00; Sa 10:00-14:00`. Each entry validated (day list/ranges, 24h `HH:MM-HH:MM`). Trimmed. No default |
+
+- Custom validators call the `payload/shared` built-in first, because a custom `validate` replaces the built-in one in payload@3.91.0.
+- Not stored here: Organization `url` (server-side `SITE_URL`), `sameAs` (`site-settings.socials`), LocalBusiness address/geo (`site-settings.location`).
+
+Access:
+- `read`: public (`() => true`).
+- `update`, `readVersions`: `staffOnly`. The pipeline user is denied.
+
+**Wiring**
+- Registration: `src/payload.config.ts` → `globals: [SiteSettings, Scarcity, Navigation, SeoDefaults]`.
+- Revalidation: `afterChange: [revalidateGlobalHook('seo-defaults')]` calls `revalidateTag('seo-defaults', 'max')` and `revalidatePath('/', 'layout')`. Skipped when `context.disableRevalidate` is set (seed).
+- Pages using it: all (fallbacks for any document without its own SEO values). No consumer exists yet.
+- P3 plan:
+  - `generateTitle`: replace `%s` in `titleTemplate` with the document title.
+  - `generateDescription`: fall back to `defaultDescription`.
+  - `generateImage`: `defaultOgImage` → `sizes.og.url`.
+  - `generateURL`: built from server-side `SITE_URL`.
+  - Organization JSON-LD: `url` from `SITE_URL`, `sameAs` from `site-settings.socials`.
+  - LocalBusiness JSON-LD: address/geo from `site-settings.location`; split `openingHours` on `;`.
+- Migration: `20261021_231646_g4_seo_defaults`. Additive.
+  - Up: enum `enum_seo_defaults_local_business_type` (`ProfessionalService`, `MarketingAgency`); table `seo_defaults` with `default_og_image_id` integer NOT NULL; FKs `seo_defaults_default_og_image_id_media_id_fk` and `seo_defaults_organization_logo_id_media_id_fk` to `media(id)`, both `ON DELETE set null`; two indexes on the media columns.
+  - Down: `DROP TABLE "seo_defaults" CASCADE`, then `DROP TYPE` for the enum (order verified; no child tables).
+
+**Notes**
+- A global has no stored row until its first save (payload@3.91.0). `findGlobal` on an unsaved global returns `{}`: consumers must treat every field as optional.
+- First save requires a `defaultOgImage` at least 1200×630. The seed must upload a ≥1200×630 placeholder OG image before the first save.
+- Open flag F12: `MarketingAgency` is not a schema.org type. P3 emits `ProfessionalService` when `localBusiness.type` is empty or `MarketingAgency`.
+- Open flag F13: whether `localBusiness.type` should default to `ProfessionalService` (currently empty; adding a default is a small migration).
+- Open flag F14: deleting the media document used as `defaultOgImage` fails with a raw foreign-key error (the column is NOT NULL while the FK is `set null`).
+- Open flag F15: the validator (not in SCHEMA) rejects a `defaultOgImage` that does not produce the `og` (1200×630) size, i.e. images too small for social previews. Validation only, no DB change; keep or drop is a human call.
 
 ## Block showcase sandbox (`/_showcase`)
 

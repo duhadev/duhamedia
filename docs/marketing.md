@@ -20,7 +20,7 @@ Sections are added here as each part of the site is finished and approved.
 | Find form submissions and failed deliveries | [fill in once built] |
 | Change the booking link | **Admin → Globals → Site settings → Booking tab → Booking page address** → paste the full `https://` address → **Save**. Live straight away. See [Site settings](#site-settings). |
 | Send a newsletter broadcast (Resend dashboard steps) | [fill in once built] |
-| Change the social-share (OG) image | [fill in once built] |
+| Change the social-share (OG) image | **Admin → Globals → SEO defaults → Default social share image** → choose or upload an image (at least 1200 × 630 pixels) → **Save**. Live straight away. This is the fallback for every page; individual pages will be able to override it once the SEO tab is added to Pages (a later release). See [SEO defaults](#seo-defaults). |
 | Upload an image | **Admin → Collections → Media → Create New** → choose the file → write the **Alt** text (required) → **Save**. See [Media library](#media-library-images). |
 | Upload a lead-magnet file (PDF, CSV, Excel, ZIP) | **Admin → Collections → Downloads → Create New** → choose the file → give it a **Title** → **Save**. See [Downloads](#downloads-lead-magnet-files). |
 | Add a client logo to the logo strip | **Admin → Collections → Clients → Create New** (or open the client) → **Name**, **Logo** → tick **Show In Logo Strip** → set **Sort Order** → **Publish**. See [Clients](#clients-logo-strips). |
@@ -72,6 +72,7 @@ Sections are added here as each part of the site is finished and approved.
   - [Site settings](#site-settings)
   - [Capacity & scarcity](#capacity--scarcity)
   - [Navigation (header menu and footers)](#navigation-header-menu-and-footers)
+  - [SEO defaults](#seo-defaults)
 
 Each entry below covers: **SEO** (what is set, and where to change it) · **Editable by marketing** (what you can change, including adding, removing and reordering items) · **Forms & leads** (where submissions go, what gets announced, what "failed" means and how to re-send) · **Social share** · **Other**.
 
@@ -124,7 +125,7 @@ These parts of the admin are not tied to one page. They are the accounts people 
 
 **Forms & leads:** n/a.
 
-**Social share:** the 1200 × 630 share size is generated from every uploaded image. Where you choose the default share image is covered under [Site-wide settings](#site-wide-settings) once that part is built.
+**Social share:** the 1200 × 630 share size is generated from every uploaded image. Where you choose the default share image is covered under [SEO defaults](#seo-defaults).
 
 **Other**
 - Images have no draft stage: once saved, the file is live at a public web address. Only upload images that are fine for anyone to see.
@@ -590,7 +591,7 @@ Open **Admin → Collections → Lead magnets** and click **Create New**, or ope
 
 Header, footers, contact details, social handles, booking link and default share image.
 
-A **global** is a single settings screen that exists once for the whole site (unlike a collection, which is a list of many items). Globals are listed in the left-hand menu under **Globals**. **Site settings**, **Capacity & scarcity** and **Navigation** (the header menu and footer links) are built so far; the default share image is *not built yet*.
+A **global** is a single settings screen that exists once for the whole site (unlike a collection, which is a list of many items). Globals are listed in the left-hand menu under **Globals**. All four are now built: **Site settings**, **Capacity & scarcity**, **Navigation** (the header menu and footer links) and **SEO defaults** (how the site appears in Google and in social shares, including the default share image).
 
 ### Site settings
 
@@ -646,7 +647,7 @@ Facts the whole site shares: the company name in the footer, contact email, soci
 
 **Forms & leads:** n/a here. The postal address is read when a newsletter is sent; see the Quick reference once newsletter sending is documented. The newsletter sign-up form itself is chosen here in a later release.
 
-**Social share:** the social profile links are for the profile icons on the site, not for share previews. The default share image is not set here; it will be covered under the SEO unit.
+**Social share:** the social profile links are for the profile icons on the site, not for share previews. The default share image is not set here; it is set under [SEO defaults](#seo-defaults).
 
 **Other**
 - Defaults are filled in the first time the screen is saved; until the first save some fields show their placeholders only.
@@ -760,3 +761,50 @@ What you edit for each footer:
 - **Deleted or unpublished pages:** the site simply hides any link to a page that has been deleted or is not published, so visitors never hit a dead link. If you **delete a page that a menu links to**, the next time you save Navigation it will ask you to fix or remove that link. Do that, then Save.
 - Nothing is pre-filled yet: the lists start empty, so a header or footer with no links shows nothing in that area until you add them. Add the links once the pages exist.
 - Changes appear on the site as soon as you save; no rebuild or developer is needed.
+
+### SEO defaults
+
+**SEO** (search engine optimisation) means helping Google and similar search engines understand the site and show it well. This screen holds the site-wide **fallbacks**: the settings used whenever a page has not got its own. Today that is every page, because the per-page SEO tab arrives in a later release. Once it does, any page that fills in its own title, description or share image will use that instead, and anything it leaves empty falls back to what you set here.
+
+**Where:** **Admin → Globals → SEO defaults** (address `duhamedia.com/admin/globals/seo-defaults`). Click **Save** when done. Both Admins and Marketing can edit it.
+
+**There is no draft stage here.** A save is live straight away, with no Publish step and no developer needed. Check spelling before you click Save.
+
+**SEO**
+- **Title template** (required, starts as `%s — Duha Media`): how a page's name appears in the browser tab and as the blue headline in Google results.
+  - `%s` is a placeholder that the site swaps for the page's own title. With the template `%s — Duha Media`, a page titled "About" shows as "About — Duha Media".
+  - Use `%s` **exactly once**. Save is refused with a message if it is missing or appears twice.
+- **Default description** (required, up to 155 characters): the grey text under the title in Google results (called the **meta description**), also used in social share cards. It is used for any page that has no description of its own. Keep to 155 characters so Google does not cut it off; the box will not accept more. One or two real sentences about what Duha Media does.
+- **Company (for Google)** and **Local business (for Google)** (below) feed what is called **structured data**: facts written in a form Google can read directly. Visitors never see it on the page. It helps Google recognise the business and can improve how it appears in search results.
+
+**Editable by marketing**
+
+All on **Admin → Globals → SEO defaults**; there are no tabs, just one screen of fields.
+- **Default social share image** (required): see **Social share** below.
+- **Company (for Google)**
+  - **Company name**: starts as "Duha Media". Change only if the brand name changes.
+  - **Founded**: optional. A real year (`2021`), year and month (`2021-04`) or full date (`2021-04-15`). **Leave it empty unless you know the real date**; a wrong date is refused only for format, not for truth.
+  - **Logo**: optional. The logo Google may show beside the company in search results. Pick or upload a square or near-square image, at least 112 × 112 pixels, on a plain background.
+- **Local business (for Google)**
+  - **Business type**: pick from **Professional service** (recommended) or **Marketing agency**. It starts empty; choose Professional service.
+  - **Area served**: starts as "Chicago metropolitan area". Where clients are served.
+  - **Opening hours**: optional. **Leave empty unless there are real, set hours.** If you enter some, use the format `Mo-Fr 09:00-17:00` (days Mo Tu We Th Fr Sa Su, 24-hour times). Separate several entries with `;`, for example `Mo-Fr 09:00-17:00; Sa 10:00-14:00`. A wrong format is refused with a message.
+  - The business **address** is not entered here. It comes from [Site settings](#site-settings) (**Location** tab), and the company's social profiles come from Site settings (**Brand & contact** tab).
+- This screen has no lists, so there is nothing to add, remove or reorder.
+
+**Forms & leads:** n/a.
+
+**Social share**
+- When someone shares a link to the site on LinkedIn, Facebook, X or in a message, a preview card appears with a picture. That picture is the **share image** (also called the **OG image**, from "Open Graph", the standard that makes these cards work).
+- **Default social share image** is the picture used for any page without its own share image. It is **required**, so the screen cannot be saved without one.
+- **Change it:** **Admin → Globals → SEO defaults → Default social share image** → choose an image from Media or upload a new one → **Save**.
+- **Size:** at least **1200 × 630 pixels**, landscape. The site crops it to that shape around the image's focal point (see [Media library](#media-library-images)). An image that is too small is refused with a message ("too small for social previews"); upload a bigger one.
+- Remember the image needs **Alt** text like any other upload.
+- Individual pages will be able to set their own share image once the SEO tab is added to Pages (a later release). Until then this default is used everywhere.
+- **Social networks remember previews.** After you change the image, a link that has already been shared may keep showing the old picture for a while. That is the social network's memory, not a fault on the site.
+
+**Other**
+- **The image currently used as the default share image cannot be deleted from Media.** Trying shows an error. To remove it, first choose a different image here and Save, then delete the old one in Media.
+- Only enter real facts. Company name, area served and business type are the only things filled in or suggested; founding date and opening hours start empty on purpose.
+- Changes appear on the site as soon as you save; no rebuild or developer is needed.
+- Before the first save, the screen may show only its starting values; the share image has to be chosen before it can be saved.
