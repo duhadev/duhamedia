@@ -296,7 +296,7 @@ export interface Media {
 export interface Download {
   id: number;
   /**
-   * Shown in the admin and used as the link text in the delivery email.
+   * Shown in the admin. Used as the attachment name/label in the delivery email (no longer link text).
    */
   title: string;
   updatedAt: string;
@@ -1044,6 +1044,10 @@ export interface LeadMagnet {
    */
   formNote?: string | null;
   /**
+   * The small heading above the bullets.
+   */
+  whatsInsideHeading?: string | null;
+  /**
    * 3 to 6 concrete things the asset gives the reader. Drag to reorder.
    */
   valueBullets: {
@@ -1691,6 +1695,7 @@ export interface LeadMagnetsSelect<T extends boolean = true> {
   accentPhrase?: T;
   pitch?: T;
   formNote?: T;
+  whatsInsideHeading?: T;
   valueBullets?:
     | T
     | {

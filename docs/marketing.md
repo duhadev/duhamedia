@@ -29,6 +29,7 @@ Sections are added here as each part of the site is finished and approved.
 | Publish a case study | **Admin → Collections → Case studies → (study)** → tick **Client approved the figures** (right-hand sidebar) → **Publish changes**. Only once the client has signed off every number. See [Case studies](#case-studies-the-collection). |
 | Create a lead magnet (free download page) | Upload the file first: **Admin → Collections → Downloads → Create New**. Then **Admin → Collections → Lead magnets → Create New** → fill the **Capture**, **What's inside**, **Asset & email** and **Delivered state** tabs → **Publish changes**. See [Lead magnets](#lead-magnets-the-collection). |
 | Review and publish a pipeline draft (article) | **Admin → Collections → Posts** → filter **Status: Draft** → open the draft → check the copy, set **Author** and **Hero image** → **Publish changes**. See [Posts](#posts-articles-and-newsletter-issues). |
+| Create a page, or change its header/footer | **Admin → Collections → Pages → Create New** (or open the page) → set **Header** and **Footer** in the right-hand sidebar → **Publish changes**. See [Pages](#pages-site-pages). |
 | Someone is locked out after wrong passwords | Wait 10 minutes, or ask an Admin to open **Admin → Collections → Users → (person) → Force Unlock**. See [Users and roles](#users-and-roles). |
 
 ## Table of contents
@@ -42,6 +43,7 @@ Sections are added here as each part of the site is finished and approved.
   - [Team members](#team-members)
   - [Testimonials and reviews](#testimonials-and-reviews)
   - [FAQs](#faqs)
+  - [Pages (site pages)](#pages-site-pages)
 1. [Homepage](#1-homepage)
 2. [Case Study template](#2-case-study-template)
    - [Case studies (the collection)](#case-studies-the-collection)
@@ -154,6 +156,7 @@ Case studies are a library too, but because each one is a full page of its own, 
 - **Save draft** stores your work at any time, even when required fields (marked with a red asterisk) are still empty. Visitors never see drafts.
 - **Publish** checks that every required field is filled, then makes the item live on the site. Only published items ever appear to visitors. Publishing is always done by a person.
 - **Autosave:** as soon as you click **Create New**, the admin saves a blank draft for you and keeps saving as you type. If you start an item and abandon it, delete that blank draft so the list stays tidy.
+- **Internal links:** wherever an answer or story has a link button (FAQ answers, case-study stories, articles), choose **Internal link** to pick a page, case study, article or lead magnet from a list instead of typing its address. A link to something not yet published is simply not shown to visitors. **External link** is for other websites.
 - **Sort Order** (right-hand sidebar): a number that sets the display order. Lower numbers come first. To reorder items, change their numbers (tip: use 10, 20, 30… so you can slot a new one in between later, e.g. 15).
 - Some fields are only required in certain cases (for example a link to a Google review). Those show **no red asterisk**; their grey help text under the field says when they are needed, and **Publish** tells you if one is missing.
 
@@ -254,9 +257,46 @@ Every client quote, video testimonial and public review (Google, LinkedIn) lives
 **Other**
 - The FAQs at the bottom of articles are not stored here; they are written inside each article. That is covered under the article templates once they are built.
 
+### Pages (site pages)
+
+Every ordinary page of the site is a **Page**: Homepage, About, Services pages, FAQ, Contact, Book a Call, Thank You, the legal pages, the 404 ("page not found") page, campaign landing pages, Link-in-Bio and so on. Case studies, articles and newsletter issues, and lead magnets are **not** Pages; they have their own collections ([case studies](#case-studies-the-collection), [posts](#posts-articles-and-newsletter-issues), [lead magnets](#lead-magnets-the-collection)).
+
+**Sections are not available yet.** A page's content is made of **blocks** (sections such as a hero or a testimonial row). Those arrive as each block is built, and each is described under its page. For now a Page is just a title plus the settings below.
+
+**SEO**
+- **Title** doubles as the default browser-tab title. Search-engine title, description and share image are not set here yet; they arrive with the SEO unit.
+- **Hide from search engines** (right-hand sidebar): tick it to keep the page out of Google and out of the sitemap. Used for Thank You, campaign landing pages, Link-in-Bio and 404.
+
+**Editable by marketing**
+- **Create a page:** **Admin → Collections → Pages → Create New** → **Title** → **Save draft** or **Publish**. The list shows title, web address, footer, status (Draft / Published) and last update.
+- **Web address (slug):** made automatically from the title and kept unique. To type your own, click **Unlock**, edit, then **Lock**. Use `/` between parts, e.g. `services/marketing`.
+  - `home` is the homepage (`/`). `404` is the "page not found" page.
+  - Some addresses are reserved and refused: `admin`, `api`, anything starting with `_`, and anything starting with `work/`, `insights/`, `newsletter/` or `resources/` (those belong to case studies, articles, newsletter issues and lead magnets). A refused address shows an error under the Slug field and the page stays a draft until you fix it.
+  - **Changing the address of a published page changes its link**, so old links stop working; add a redirect (see the Quick reference once that feature is built).
+- **Header** (sidebar): **Standard**, **Logo only** (campaign landing pages) or **None** (Link-in-Bio).
+- **Footer** (sidebar): **Standard**, **Reduced navigation** (Book a Call, Thank You) or **Legal only** (campaign pages, Link-in-Bio).
+- **Zero leakage** (sidebar tick, for campaign landing pages): forces the Logo-only header and Legal-only footer (you cannot choose otherwise while it is on). Once sections exist it also blocks the newsletter band, so visitors can only take the page's offer.
+- **Reading progress bar** (sidebar tick): a thin progress bar for long pages (About, FAQ).
+- **Published** (date): set automatically the first time you publish.
+- Adding, removing and reordering sections: described here once blocks exist (they will be drag-to-reorder).
+
+*Saving and publishing*
+- The admin autosaves your draft as you type. Clicking **Create New** saves a blank draft straight away, so delete any you abandon.
+- Edits to a published page only reach visitors after you click **Publish changes** again. Publishing is always done by a person.
+
+*Removing a page*
+- **Marketing can delete drafts only.** To take a published page off the site, open it, use the **⋯ (three dots) menu → Unpublish**; it returns to being a draft, which you can then delete. Or ask an Admin.
+
+**Forms & leads:** n/a here (forms are sections, covered with their blocks).
+
+**Social share:** not set here yet; arrives with the SEO unit.
+
+**Other**
+- Changes appear on the site as soon as they are published; no developer is needed.
+
 ## 1. Homepage
 
-*Not built yet.*
+*Not built yet.* The Homepage is a Page with the web address `home`; see [Pages (site pages)](#pages-site-pages).
 
 ## 2. Case Study template
 
@@ -439,7 +479,7 @@ Open **Admin → Collections → Posts** and click **Create New**, or open an ex
 - Edits to a published post only reach visitors after you click **Publish changes** again.
 
 *Removing a post*
-- Marketing can delete posts, **including published ones**. To keep a post but take it offline, use the **⋯ (three dots) menu → Unpublish** instead.
+- **Marketing can delete drafts only.** To take a published post off the site, open it, use the **⋯ (three dots) menu → Unpublish**; it returns to being a draft, which you can then delete if you wish. Or ask an Admin.
 
 **Forms & leads:** n/a. (The newsletter sign-up and final call-to-action at the end of each article are covered under their own blocks once built.)
 
@@ -518,7 +558,7 @@ Open **Admin → Collections → Lead magnets** and click **Create New**, or ope
 - Edits to a published lead magnet only reach visitors after you click **Publish changes** again. Publishing is always done by a person.
 
 *Removing a lead magnet*
-- Marketing can delete lead magnets, **including published ones**. To keep one but take it offline, use the **⋯ (three dots) menu → Unpublish** instead.
+- **Marketing can delete drafts only.** To take a published lead magnet off the site, open it, use the **⋯ (three dots) menu → Unpublish**; it returns to being a draft, which you can then delete if you wish. Or ask an Admin.
 
 **Forms & leads:** not wired up yet. The sign-up form (name/email, with an optional newsletter opt-in tick box) and where its submissions land arrive with the forms unit, and will be described here then, including how to spot and re-send a failed delivery.
 

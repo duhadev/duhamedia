@@ -14,7 +14,7 @@ import {
 } from 'payload'
 import { blocks, text } from 'payload/shared'
 
-import { staffContentAccess } from '../access'
+import { staffContentAccessDraftDelete } from '../access'
 import { contentVersions } from '../fields'
 import { setPublishedAtOnPublish } from '../hooks/publishedAt'
 import { revalidateTagHooks } from '../hooks/revalidateTag'
@@ -55,8 +55,9 @@ import { pagePath, pageSlugError, slugifyPath } from '../lib/pagePath'
  * then: pages save and publish without sections, and the zero-leakage
  * NewsletterBand check is dormant (header/footer forcing stays live).
  *
- * Access: `staffContentAccess` (SCHEMA §4.3): public and the pipeline user
- * read published docs only; only staff write; versions staff-only.
+ * Access: `staffContentAccessDraftDelete` (SCHEMA §4.3 + Delta 2026-10-18):
+ * public and the pipeline user read published docs only; only staff write;
+ * versions staff-only; marketing deletes drafts only, admin deletes any.
  *
  * Deferred: `meta` plugin-seo tab (TODO(P3): plugin-seo `collections:
  * ['pages']`); live preview + draft mode (integrator, URL from server-side
@@ -201,7 +202,7 @@ export const Pages: CollectionConfig = {
   },
   // Link targets (linkField → pages, rich-text internal links) need only these.
   defaultPopulate: { title: true, slug: true },
-  access: staffContentAccess,
+  access: staffContentAccessDraftDelete,
   versions: contentVersions,
   hooks: {
     beforeValidate: [slug.beforeValidate, enforceZeroLeakage],

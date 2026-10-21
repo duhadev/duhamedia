@@ -13,7 +13,6 @@ import {
 import {
   ValidationError,
   slugField,
-  type Access,
   type CheckboxFieldValidation,
   type CollectionAfterChangeHook,
   type CollectionBeforeChangeHook,
@@ -22,7 +21,7 @@ import {
 } from 'payload'
 import { checkbox } from 'payload/shared'
 
-import { isAdmin, isMarketing, publishedOrStaff, staffOnly } from '../access'
+import { adminOrMarketingUnpublished, publishedOrStaff, staffOnly } from '../access'
 import { accentPhraseAdminField, contentVersions, linkField, metricFields, richTextLinkFeature, validateAccentPhrase } from '../fields'
 import { setPublishedAtOnPublish } from '../hooks/publishedAt'
 import { revalidateTagHooks } from '../hooks/revalidateTag'
@@ -58,13 +57,6 @@ import { lexicalWordCount, readTimeMinutes } from '../lib/lexicalText'
  * collections: { media: { fields } }, maxDepth })` in
  * @payloadcms/richtext-lexical@3.91.0 dist/features/upload/server/index.d.ts.
  */
-
-/** SCHEMA §4.3: admin deletes any; marketing deletes only never/no-longer-published. */
-const deleteCaseStudy: Access = ({ req }) => {
-  if (isAdmin(req.user)) return true
-  if (isMarketing(req.user)) return { _status: { not_equals: 'published' } }
-  return false
-}
 
 const FIGURES_ERROR = 'Tick this before publishing.'
 
@@ -229,7 +221,7 @@ export const CaseStudies: CollectionConfig = {
     readVersions: staffOnly,
     create: staffOnly,
     update: staffOnly,
-    delete: deleteCaseStudy,
+    delete: adminOrMarketingUnpublished, // SCHEMA §4.3: marketing never deletes a published case study
   },
   versions: contentVersions,
   hooks: {

@@ -21,7 +21,7 @@ import {
 } from 'payload'
 import { number } from 'payload/shared'
 
-import { postsRead, staffOnly, staffOnlyField, staffOrPipeline, staffOrPipelineDrafts } from '../access'
+import { adminOrMarketingUnpublished, postsRead, staffOnly, staffOnlyField, staffOrPipeline, staffOrPipelineDrafts } from '../access'
 import { forbidPipelineOnPublished, forbidPipelinePublish, pipelineNeverPublishes } from '../access/pipeline'
 import { accentPhraseAdminField, contentVersions, linkField, metricFields, pricingNote, richTextLinkFeature, validateAccentPhrase } from '../fields'
 import { setPublishedAtOnPublish } from '../hooks/publishedAt'
@@ -205,7 +205,7 @@ export const Posts: CollectionConfig = {
     readVersions: staffOnly,
     create: staffOrPipeline,
     update: staffOrPipelineDrafts,
-    delete: staffOnly,
+    delete: adminOrMarketingUnpublished, // Delta 2026-10-18: marketing drafts only; pipeline never
   },
   versions: contentVersions,
   hooks: {

@@ -835,3 +835,5 @@ Order = the final design's `data-screen-label` order, with CLAUDE.md-required se
 3. Delete access on `posts`, `lead-magnets`, `pages`: admin any; marketing only when the doc is not published (same rule as `case-studies`). Supersedes §4.3 "staff delete" for these three.
 4. No change: the pipeline keeps read access to staff drafts layered on its own `posts`.
 
+### 2026-10-21 — mini Gate S (approved by the human)
+1. `downloads` read access = staff only (supersedes §6.10 "read public"). Lead-magnet files are sent as email attachments by the lead_magnet job (`overrideAccess`); no public list or file URL.

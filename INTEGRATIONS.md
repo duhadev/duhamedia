@@ -137,6 +137,7 @@ Sources: `CLAUDE.md` → "Integration architecture" (locked, Oct 2026); `DECISIO
 
 - **Status:** not built.
 - **Trigger:** capture form on the Lead Magnet template (18). `fields` names the asset. If the newsletter opt-in toggle is ticked, the newsletter flow runs as well.
+- **Delivery (mini Gate S 2026-10-21):** an uploaded asset is sent as an **email attachment** (Resend), read from disk server-side with `overrideAccess` — `downloads` is staff-only, so there is no public file URL. External-URL assets are linked in the email body.
 
 ### `site_error`
 

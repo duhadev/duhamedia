@@ -7,7 +7,7 @@ import {
 } from 'payload'
 import { text, upload } from 'payload/shared'
 
-import { staffContentAccess } from '../access'
+import { staffContentAccessDraftDelete, staffOnlyField } from '../access'
 import { accentPhraseAdminField, contentVersions, validateAccentPhrase } from '../fields'
 import { setPublishedAtOnPublish } from '../hooks/publishedAt'
 import { revalidateTagHooks } from '../hooks/revalidateTag'
@@ -24,8 +24,10 @@ import { assetFileError, assetUrlError } from '../lib/leadMagnetAsset'
  * Gated template → noindexed by the template itself (SCHEMA §6.8 "flag in the
  * template"; seo-auditor page scope), so there is no `noindex` field here.
  *
- * Access: `staffContentAccess` (SCHEMA §4.3): public and the pipeline user read
- * published docs only; only staff write; versions staff-only. Drafts (§5.1):
+ * Access: `staffContentAccessDraftDelete` (SCHEMA §4.3 + Delta 2026-10-18):
+ * public and the pipeline user read published docs only; only staff write;
+ * versions staff-only; marketing deletes drafts only, admin deletes any.
+ * `asset` and `deliveryEmail` are staff-only on READ (field access, see below). Drafts (§5.1):
  * "required" means required to publish (`drafts.validate: false`).
  *
  * Asset rule (SCHEMA §6.8/§10): exactly one of `asset.file` (→ `downloads`)
@@ -91,6 +93,28 @@ const revalidate = revalidateTagHooks<LeadMagnetDoc>('lead-magnets', {
 
 const slug = uniqueSlugHooks('lead-magnets')
 
+/**
+ * Delta 2026-10-18 (1): `asset` and `deliveryEmail` are staff-only on READ.
+ * Public visitors and the pipeline user must never receive the file link, the
+ * external URL or the delivery email text: the asset is only ever sent by
+ * email after a Turnstile-verified sign-up.
+ *
+ * Mechanism (payload@3.91.0): field `access.read` runs in the afterRead field
+ * traversal (fields/hooks/afterRead/promise.js:223, `delete siblingDoc[name]`
+ * and no defaultValue backfill), which every read path goes through: REST and
+ * GraphQL find/findByID, relationship population of a lead magnet from another
+ * doc (incl. `populate`/`select` overrides) and versions. Query paths are
+ * checked too: `where`/`sort` on a field the caller cannot read is rejected
+ * (database/queryValidation/validateSearchParams.js → getEntityPermissions),
+ * so the values cannot be probed by filtering either. Write access is
+ * untouched (staff only through `staffContentAccessDraftDelete`).
+ *
+ * NOTE for the lead-magnet delivery job (automation-engineer): it runs without
+ * a staff user, so it MUST read the doc with `overrideAccess: true` (the Local
+ * API default) or these groups come back empty.
+ */
+const staffReadOnly = { read: staffOnlyField }
+
 export const LeadMagnets: CollectionConfig = {
   slug: 'lead-magnets',
   labels: { singular: 'Lead magnet', plural: 'Lead magnets' },
@@ -104,7 +128,7 @@ export const LeadMagnets: CollectionConfig = {
   defaultSort: ['-_status', '-publishedAt'],
   // Link targets (linkField → lead-magnets) need only these. Never the asset or the delivery email.
   defaultPopulate: { title: true, slug: true },
-  access: staffContentAccess,
+  access: staffContentAccessDraftDelete,
   versions: contentVersions,
   hooks: {
     beforeValidate: [slug.beforeValidate],
@@ -165,6 +189,14 @@ export const LeadMagnets: CollectionConfig = {
           label: "What's inside",
           fields: [
             {
+              // Delta 2026-10-18 (2). Default = the design's section heading (design-reference/project/Lead Magnet.dc.html, "What's inside" eyebrow).
+              name: 'whatsInsideHeading',
+              type: 'text',
+              label: 'Heading',
+              defaultValue: "What's inside",
+              admin: { description: 'The small heading above the bullets.' },
+            },
+            {
               name: 'valueBullets',
               type: 'array',
               label: 'Value bullets',
@@ -196,6 +228,7 @@ export const LeadMagnets: CollectionConfig = {
               name: 'asset',
               type: 'group',
               label: 'Asset',
+              access: staffReadOnly,
               admin: { description: 'Upload the file OR link to it. Exactly one is needed to publish.' },
               fields: [
                 {
@@ -225,6 +258,7 @@ export const LeadMagnets: CollectionConfig = {
               name: 'deliveryEmail',
               type: 'group',
               label: 'Delivery email',
+              access: staffReadOnly,
               admin: { description: 'The single email that sends the asset. No follow-up sequence.' },
               fields: [
                 {

@@ -1,6 +1,6 @@
 import type { Access, CollectionConfig, FieldAccess, Where } from 'payload'
 
-import { isAdmin, isPipeline, isStaff } from './roles'
+import { isAdmin, isMarketing, isPipeline, isStaff } from './roles'
 
 /**
  * Shared access helpers (SCHEMA.md §4.2). Every collection and global sets
@@ -35,6 +35,25 @@ export const staffOnlyField: FieldAccess = ({ req }) => isStaff(req.user)
  * else (public AND the pipeline user) sees published docs only.
  */
 export const publishedOrStaff: Access = ({ req }) => (isStaff(req.user) ? true : published)
+
+/**
+ * Delete for drafts-enabled content (SCHEMA §4.3 + Delta log 2026-10-18):
+ * admin deletes any doc; marketing only docs whose LIVE `_status` is not
+ * `published` (never published, or unpublished); pipeline and public never.
+ * Used by `case-studies`, `posts`, `lead-magnets`, `pages`.
+ *
+ * Verified payload@3.91.0: deleteByID / delete apply the returned Where to the
+ * MAIN collection row (collections/operations/deleteByID.js `db.findOne` on the
+ * combined query → Forbidden), not to the latest version, so a published doc
+ * with a newer staff draft on top still counts as published. `not_equals`
+ * matches NULL too (@payloadcms/drizzle@3.91.0 queries/parseParams.js:
+ * `or(isNull(col), ne(col, value))`), so rows predating drafts are deletable.
+ */
+export const adminOrMarketingUnpublished: Access = ({ req }) => {
+  if (isAdmin(req.user)) return true
+  if (isMarketing(req.user)) return { _status: { not_equals: 'published' } }
+  return false
+}
 
 /**
  * Public create for `form-submissions`, gated by Turnstile. The flag is set only
@@ -90,4 +109,14 @@ export const staffContentAccess = {
   create: staffOnly,
   update: staffOnly,
   delete: staffOnly,
+} satisfies NonNullable<CollectionConfig['access']>
+
+/**
+ * `staffContentAccess` with draft-only delete for marketing (Delta log
+ * 2026-10-18): `pages` and `lead-magnets`. `faqs`, `team-members`, `clients`,
+ * `testimonials` keep staff delete (SCHEMA §4.3).
+ */
+export const staffContentAccessDraftDelete = {
+  ...staffContentAccess,
+  delete: adminOrMarketingUnpublished,
 } satisfies NonNullable<CollectionConfig['access']>

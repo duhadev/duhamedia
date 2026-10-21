@@ -10,9 +10,10 @@ import { MEDIA_DIR } from './Media'
  * Non-image lead-magnet deliverables (PDF, worksheet, CSV, zip), kept apart
  * from image-only `media` so media can keep a required, meaningful alt.
  * Files sit in `${MEDIA_DIR}/downloads`, a sibling of media's `${MEDIA_DIR}/media`
- * (never nested inside it; see MEDIA_DIR in Media.ts), and are served only at
- * /api/downloads/file/<filename>. Read is public: the link is emailed and the
- * files are not secret (SCHEMA §6.10).
+ * (never nested inside it; see MEDIA_DIR in Media.ts). Read is staff-only
+ * (mini Gate S 2026-10-21): files are delivered as email attachments by the
+ * lead_magnet integration (server-side, overrideAccess), so neither
+ * /api/downloads nor /api/downloads/file/<name> is public (SCHEMA §6.10).
  *
  * Verified against payload@3.91.0: upload `staticDir`, `mimeTypes`,
  * `focalPoint`, `crop` in uploads/types.d.ts; `mimeTypes` enforced
@@ -25,7 +26,8 @@ export const Downloads: CollectionConfig = {
     defaultColumns: ['title', 'filename', 'updatedAt'],
   },
   access: {
-    read: () => true,
+    // Staff-only read (mini Gate S 2026-10-21). Also governs the static file route.
+    read: staffOnly,
     // Humans only. The pipeline API user is logged in but must not upload.
     create: staffOnly,
     update: staffOnly,
@@ -49,7 +51,8 @@ export const Downloads: CollectionConfig = {
       type: 'text',
       required: true,
       admin: {
-        description: 'Shown in the admin and used as the link text in the delivery email.',
+        description:
+          'Shown in the admin. Used as the attachment name/label in the delivery email (no longer link text).',
       },
     },
   ],
