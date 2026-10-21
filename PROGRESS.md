@@ -26,8 +26,8 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 | delta | S1 mini Gate S delta: lead-magnet gating + whatsInside heading + drafts-only marketing delete (posts, lead-magnets, pages) + `downloads` staff-only read (2026-10-21) | 8, 13, 14, 16, 18 + all | documented | 87/87 smoke; migration proven; heading field verified in browser by PM 2026-10-21; anonymous `/api/downloads` and `/file/*` → 403; dev + marketing docs done |
 | global | G1 `site-settings` | all | documented | Gate 1 cleared 2026-10-21 under standing approval (QA admin pass: tabs, required, socials add/reorder/remove, https booking, conditional rating, defaults). Cosmetic accepted: empty email says "valid email" not "required" (stock); tab badge +1 vs group count (stock); 25–50% row fields stack at ~1260px. migration `g1_site_settings`; newsletterForm TODO(P1); defaults land on first save only — frontend treats all fields optional; dev DB holds placeholder legalName/contactEmail |
 | global | G2 `scarcity` | all | documented | Gate 1 cleared 2026-10-21 under standing approval (QA 8/8: all errors inline; reorder/remove persist). Cosmetic accepted (stock): array min-rows tooltip lingers until next save; long inline error truncated in label tooltip; empty row label 'Statement 01'. migration `g2_scarcity`; scarcityRef() factory deferred to first consuming block (import SCARCITY_KEYS from src/lib/scarcity.ts); dev DB holds placeholder 7/3/2/1 + one statement |
-| global | G3 `navigation` | all | coding | schema-architect (opus) dispatched 2026-10-21 |
-| global | G4 `seo-defaults` | all | queued | one unit each; standing approval to checkpoint (flags deferred) |
+| global | G3 `navigation` | all | cleared | Gate 1 cleared 2026-10-21 under standing approval. QA 8 checks: all validation inline; max rows hide Add; keyboard reorder persists. Rework done: shared linkField type select `isClearable: false` (PM browser-verified, no clear control; tsc 0). Cosmetic accepted (stock): collapsed new rows hide inline msg (badge shows); stale tab error badge until reload. migration `g3_navigation`; integrator: chrome fetch should carry `pages` + linked-collection tags |
+| global | G4 `seo-defaults` | all | coding | schema-architect (opus) dispatched 2026-10-21 | one unit each; standing approval to checkpoint (flags deferred) |
 | plugin | P1 form-builder (overrides + delivery fields) · P2 redirects · P3 seo | all | queued | one unit each |
 | block | 23 blocks in page build order (SCHEMA.md §8–9) | — | queued after collections/globals | appended to /_showcase on Gate 1 |
 | integration | contact · newsletter (DOI) · lead_magnet · site_error | — | queued after triggering units clear | Gate A |
@@ -39,6 +39,7 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 ## Migrations log
 | Date | Migration file | What it changes | Applied in dev / staging / prod |
 |---|---|---|---|
+| 2026-10-21 | `src/migrations/20261021_224808_g3_navigation.ts` | + navigation, navigation_rels, header_links, footer_standard_columns(+_links), footer_reduced_links, footer_legal_links; 5 enums (down hand-fixed) | scratch proofs; dev via push / no / no |
 | 2026-10-21 | `src/migrations/20261021_223802_g2_scarcity.ts` | + scarcity, scarcity_statements, enum_scarcity_statements_key | scratch proofs; dev via push / no / no |
 | 2026-10-21 | `src/migrations/20261021_222539_g1_site_settings.ts` | + site_settings, site_settings_socials, site_settings_rels, 3 enums (down hand-fixed) | scratch proofs; dev via push / no / no |
 | 2026-10-18 | `src/migrations/20261018_053136_s1_lead_magnet_heading.ts` | + nullable `whats_inside_heading` varchar DEFAULT 'What''s inside' on lead_magnets and _lead_magnets_v | scratch proofs; dev via push / no / no |
@@ -162,6 +163,9 @@ Decisions deferred to the human; each has a safe default applied so work continu
 | F6 | G1 | `postalAddress` publicly readable via `/api/globals/site-settings` (not rendered). Rec: staff-only field read (mini Gate S, no DB change) | left public; field is empty |
 | F7 | G2 | `capacity` default 7 ("We cap at 7" in design)? | no default; seed placeholder (default later = migration + mini Gate S) |
 | F8 | G2 | SCHEMA §12 Q4: cap per client? must builds/engines ≤ capacity? | only activeClients ≤ capacity enforced (validation-only to add) |
+| F9 | G3 | Nav link rows not pre-filled with design labels (a label needs a target page; pages not seeded yet) | all arrays empty; seed fills after pages; nudge copy has defaults |
+| F10 | G3 | Deleting a page linked from navigation blocks the next nav save until that link is fixed (error names the link) | accepted; frontend skips null/unpopulated refs; marketing guide to explain |
+| F11 | G3 | p17/p18 show only Privacy + Terms but there's one `footer.legalLinks` list | one list; decide at block stage (first two vs all, or per-link checkbox = mini Gate S) |
 
 ## Session handoff
 - **In flight:** big step 2 — G1 site-settings (schema-architect, opus), then G2 scarcity, G3 navigation, G4 seo-defaults, P1 form-builder, P2 redirects, P3 seo. Serial (shared payload.config.ts / types / migrations).

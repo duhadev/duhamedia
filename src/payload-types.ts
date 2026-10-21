@@ -108,10 +108,12 @@ export interface Config {
   globals: {
     'site-settings': SiteSetting;
     scarcity: Scarcity;
+    navigation: Navigation;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     scarcity: ScarcitySelect<false> | ScarcitySelect<true>;
+    navigation: NavigationSelect<false> | NavigationSelect<true>;
   };
   locale: null;
   widgets: {
@@ -1986,6 +1988,219 @@ export interface Scarcity {
   createdAt?: string | null;
 }
 /**
+ * The menu at the top of the site and the links in the footers. Which header and footer a page shows is chosen on the page itself (Pages → a page → "Header" and "Footer" in the sidebar). Changes go live as soon as you save.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navigation".
+ */
+export interface Navigation {
+  id: number;
+  /**
+   * The menu bar at the top of every page (on phones it opens from the menu button and shows the same links). Pages set to a "Logo only" header — campaign landing pages and lead magnets — and the Link-in-Bio page (no header) show none of these links.
+   */
+  header: {
+    /**
+     * Up to 6 links, shown left to right in this order, e.g. Work, Services, Testimonials, About, FAQ. Drag to reorder.
+     */
+    links?:
+      | {
+          link: {
+            type: 'internal' | 'custom';
+            newTab?: boolean | null;
+            reference?:
+              | ({
+                  relationTo: 'pages';
+                  value: number | Page;
+                } | null)
+              | ({
+                  relationTo: 'case-studies';
+                  value: number | CaseStudy;
+                } | null)
+              | ({
+                  relationTo: 'posts';
+                  value: number | Post;
+                } | null)
+              | ({
+                  relationTo: 'lead-magnets';
+                  value: number | LeadMagnet;
+                } | null);
+            /**
+             * https://…, mailto:…, or a site path like /book-a-call.
+             */
+            url?: string | null;
+            label?: string | null;
+          };
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * The highlighted button at the right of the menu, usually "Book a Call" linking to the Book a Call page. Leave empty to show no button.
+     */
+    cta: {
+      type: 'internal' | 'custom';
+      newTab?: boolean | null;
+      reference?:
+        | ({
+            relationTo: 'pages';
+            value: number | Page;
+          } | null)
+        | ({
+            relationTo: 'case-studies';
+            value: number | CaseStudy;
+          } | null)
+        | ({
+            relationTo: 'posts';
+            value: number | Post;
+          } | null)
+        | ({
+            relationTo: 'lead-magnets';
+            value: number | LeadMagnet;
+          } | null);
+      /**
+       * https://…, mailto:…, or a site path like /book-a-call.
+       */
+      url?: string | null;
+      label?: string | null;
+    };
+  };
+  /**
+   * There are three footers. Standard: on almost every page. Reduced: only on Book a Call and Thank You, so visitors stay focused. Legal only: on campaign landing pages, Link-in-Bio and lead magnets — just the small legal links. The company name and the brand line in the footers come from Site settings.
+   */
+  footer?: {
+    /**
+     * Used on every page except Book a Call, Thank You, campaign landing pages, Link-in-Bio and lead magnets.
+     */
+    standard?: {
+      /**
+       * Up to 3 columns of links next to the logo, e.g. Pages, Services, Resources. Drag to reorder columns; open a column to add, remove or reorder its links.
+       */
+      columns?:
+        | {
+            title: string;
+            /**
+             * Shown top to bottom in this order. Drag to reorder.
+             */
+            links?:
+              | {
+                  link: {
+                    type: 'internal' | 'custom';
+                    newTab?: boolean | null;
+                    reference?:
+                      | ({
+                          relationTo: 'pages';
+                          value: number | Page;
+                        } | null)
+                      | ({
+                          relationTo: 'case-studies';
+                          value: number | CaseStudy;
+                        } | null)
+                      | ({
+                          relationTo: 'posts';
+                          value: number | Post;
+                        } | null)
+                      | ({
+                          relationTo: 'lead-magnets';
+                          value: number | LeadMagnet;
+                        } | null);
+                    /**
+                     * https://…, mailto:…, or a site path like /book-a-call.
+                     */
+                    url?: string | null;
+                    label?: string | null;
+                  };
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+          }[]
+        | null;
+      /**
+       * The small sign-up box in the last column of the standard footer. It uses the newsletter form chosen in Site settings.
+       */
+      newsletterNudge?: {
+        heading?: string | null;
+        line?: string | null;
+        buttonLabel?: string | null;
+      };
+    };
+    /**
+     * Used only on Book a Call and Thank You: the logo, these few links and the legal links.
+     */
+    reduced?: {
+      /**
+       * e.g. Home, Work, FAQ, Contact. Shown left to right in this order. Drag to reorder.
+       */
+      links?:
+        | {
+            link: {
+              type: 'internal' | 'custom';
+              newTab?: boolean | null;
+              reference?:
+                | ({
+                    relationTo: 'pages';
+                    value: number | Page;
+                  } | null)
+                | ({
+                    relationTo: 'case-studies';
+                    value: number | CaseStudy;
+                  } | null)
+                | ({
+                    relationTo: 'posts';
+                    value: number | Post;
+                  } | null)
+                | ({
+                    relationTo: 'lead-magnets';
+                    value: number | LeadMagnet;
+                  } | null);
+              /**
+               * https://…, mailto:…, or a site path like /book-a-call.
+               */
+              url?: string | null;
+              label?: string | null;
+            };
+            id?: string | null;
+          }[]
+        | null;
+    };
+    /**
+     * The small links in the bottom bar of every footer, e.g. Privacy, Terms, Cookies, GDPR. Campaign landing pages, Link-in-Bio and lead magnets show only this bar.
+     */
+    legalLinks?:
+      | {
+          link: {
+            type: 'internal' | 'custom';
+            newTab?: boolean | null;
+            reference?:
+              | ({
+                  relationTo: 'pages';
+                  value: number | Page;
+                } | null)
+              | ({
+                  relationTo: 'case-studies';
+                  value: number | CaseStudy;
+                } | null)
+              | ({
+                  relationTo: 'posts';
+                  value: number | Post;
+                } | null)
+              | ({
+                  relationTo: 'lead-magnets';
+                  value: number | LeadMagnet;
+                } | null);
+            /**
+             * https://…, mailto:…, or a site path like /book-a-call.
+             */
+            url?: string | null;
+            label?: string | null;
+          };
+          id?: string | null;
+        }[]
+      | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings_select".
  */
@@ -2073,6 +2288,109 @@ export interface ScarcitySelect<T extends boolean = true> {
         statistic?: T;
         reason?: T;
         id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "navigation_select".
+ */
+export interface NavigationSelect<T extends boolean = true> {
+  header?:
+    | T
+    | {
+        links?:
+          | T
+          | {
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    url?: T;
+                    label?: T;
+                  };
+              id?: T;
+            };
+        cta?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+      };
+  footer?:
+    | T
+    | {
+        standard?:
+          | T
+          | {
+              columns?:
+                | T
+                | {
+                    title?: T;
+                    links?:
+                      | T
+                      | {
+                          link?:
+                            | T
+                            | {
+                                type?: T;
+                                newTab?: T;
+                                reference?: T;
+                                url?: T;
+                                label?: T;
+                              };
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              newsletterNudge?:
+                | T
+                | {
+                    heading?: T;
+                    line?: T;
+                    buttonLabel?: T;
+                  };
+            };
+        reduced?:
+          | T
+          | {
+              links?:
+                | T
+                | {
+                    link?:
+                      | T
+                      | {
+                          type?: T;
+                          newTab?: T;
+                          reference?: T;
+                          url?: T;
+                          label?: T;
+                        };
+                    id?: T;
+                  };
+            };
+        legalLinks?:
+          | T
+          | {
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    url?: T;
+                    label?: T;
+                  };
+              id?: T;
+            };
       };
   updatedAt?: T;
   createdAt?: T;

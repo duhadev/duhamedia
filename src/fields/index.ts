@@ -267,7 +267,7 @@ export const linkField = ({
               { label: 'Page on this site', value: 'internal' },
               { label: 'Custom address', value: 'custom' },
             ],
-            admin: { width: '50%' },
+            admin: { width: '50%', isClearable: false },
           },
           {
             name: 'newTab',

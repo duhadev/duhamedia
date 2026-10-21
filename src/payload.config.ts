@@ -17,6 +17,7 @@ import { Posts } from './collections/Posts'
 import { TeamMembers } from './collections/TeamMembers'
 import { Testimonials } from './collections/Testimonials'
 import { Users } from './collections/Users'
+import { Navigation } from './globals/Navigation'
 import { Scarcity } from './globals/Scarcity'
 import { SiteSettings } from './globals/SiteSettings'
 import { migrations } from './migrations'
@@ -34,7 +35,7 @@ export default buildConfig({
   },
   serverURL: process.env.SITE_URL || '',
   collections: [Users, Pages, Media, Downloads, Clients, TeamMembers, Testimonials, Faqs, CaseStudies, Posts, LeadMagnets],
-  globals: [SiteSettings, Scarcity],
+  globals: [SiteSettings, Scarcity, Navigation],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
