@@ -17,6 +17,7 @@ import { Posts } from './collections/Posts'
 import { TeamMembers } from './collections/TeamMembers'
 import { Testimonials } from './collections/Testimonials'
 import { Users } from './collections/Users'
+import { SiteSettings } from './globals/SiteSettings'
 import { migrations } from './migrations'
 
 const filename = fileURLToPath(import.meta.url)
@@ -32,6 +33,7 @@ export default buildConfig({
   },
   serverURL: process.env.SITE_URL || '',
   collections: [Users, Pages, Media, Downloads, Clients, TeamMembers, Testimonials, Faqs, CaseStudies, Posts, LeadMagnets],
+  globals: [SiteSettings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

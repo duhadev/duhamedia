@@ -105,8 +105,12 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'site-settings': SiteSetting;
+  };
+  globalsSelect: {
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -1769,6 +1773,237 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * Details used across the whole site: footer legal line, contact email, social profiles, location, booking link and newsletter defaults. Changes go live as soon as you save.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  /**
+   * The registered company name for the copyright line at the bottom of every footer ("© 2026 …"). The year updates by itself.
+   */
+  legalName: string;
+  /**
+   * The short line under the logo in the main footer, e.g. "One team. Store, engine, then yours to run. Chicago."
+   */
+  footerTagline?: string | null;
+  /**
+   * The public email address shown on the Contact page.
+   */
+  contactEmail: string;
+  /**
+   * Optional small line next to the email, e.g. "Reply in 1 business day". Only promise what you keep.
+   */
+  responseTimeNote?: string | null;
+  /**
+   * Shown on the Contact and Link-in-Bio pages and told to Google as the company's official profiles. Drag to reorder.
+   */
+  socials?:
+    | {
+        platform: 'linkedin' | 'instagram' | 'youtube' | 'x' | 'facebook' | 'github';
+        /**
+         * The full handle, e.g. @duhamedia. The @ is added if you leave it out.
+         */
+        handle: string;
+        /**
+         * Full https:// profile address.
+         */
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  location: {
+    locality: string;
+    /**
+     * Two-letter code, e.g. IL.
+     */
+    region: string;
+    /**
+     * Two-letter code, e.g. US.
+     */
+    country?: string | null;
+    /**
+     * How the location reads on the site, e.g. "Lombard, IL".
+     */
+    displayLine?: string | null;
+    /**
+     * The metro area named in the brand line, e.g. "Chicago" in "Integrated ecommerce growth partner — Chicago".
+     */
+    marketArea?: string | null;
+    /**
+     * Drawn as the ring on the Contact page map.
+     */
+    serviceRadiusMiles?: number | null;
+    /**
+     * Map pin position. Copy it from Google Maps (right-click the spot → the first number).
+     */
+    latitude?: number | null;
+    /**
+     * The second number from Google Maps.
+     */
+    longitude?: number | null;
+  };
+  /**
+   * The full https:// address of the booking calendar. Leave empty and the Book a Call page shows a "get in touch" message instead of a booking button.
+   */
+  bookingUrl?: string | null;
+  /**
+   * Keep "new tab" unless the booking calendar has been set up to allow showing inside our site (it is not today).
+   */
+  bookingMode: 'link-out' | 'embed';
+  /**
+   * The full https:// link to the Google Business Profile, so visitors can check the reviews.
+   */
+  gbpUrl?: string | null;
+  /**
+   * Stays hidden on the site until "Show" is ticked. Only enter the real figures from Google.
+   */
+  aggregateRating?: {
+    show?: boolean | null;
+    /**
+     * e.g. 4.9
+     */
+    ratingValue?: number | null;
+    reviewCount?: number | null;
+    /**
+     * The day you read the figures.
+     */
+    asOf?: string | null;
+    /**
+     * The Google page the rating comes from (full https:// address).
+     */
+    sourceUrl?: string | null;
+  };
+  /**
+   * Used at the end of case studies and articles, and by any newsletter or final call-to-action section whose heading is left empty.
+   */
+  templateDefaults: {
+    newsletterHeading?: string | null;
+    /**
+     * The quiet line under the newsletter heading.
+     */
+    newsletterLine?: string | null;
+    /**
+     * The big closing line before the footer, e.g. "Get the build scoped in writing."
+     */
+    finalCtaHeading?: string | null;
+    /**
+     * Usually "Book a Call", linking to the Book a Call page.
+     */
+    finalCtaButton: {
+      type: 'internal' | 'custom';
+      newTab?: boolean | null;
+      reference?:
+        | ({
+            relationTo: 'pages';
+            value: number | Page;
+          } | null)
+        | ({
+            relationTo: 'case-studies';
+            value: number | CaseStudy;
+          } | null)
+        | ({
+            relationTo: 'posts';
+            value: number | Post;
+          } | null)
+        | ({
+            relationTo: 'lead-magnets';
+            value: number | LeadMagnet;
+          } | null);
+      /**
+       * https://…, mailto:…, or a site path like /book-a-call.
+       */
+      url?: string | null;
+      label?: string | null;
+    };
+  };
+  /**
+   * US law requires a postal address at the bottom of every newsletter email. Not shown on the website pages. The first newsletter cannot be sent until this is filled in.
+   */
+  postalAddress?: {
+    line1?: string | null;
+    line2?: string | null;
+    city?: string | null;
+    region?: string | null;
+    postalCode?: string | null;
+    country?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  legalName?: T;
+  footerTagline?: T;
+  contactEmail?: T;
+  responseTimeNote?: T;
+  socials?:
+    | T
+    | {
+        platform?: T;
+        handle?: T;
+        url?: T;
+        id?: T;
+      };
+  location?:
+    | T
+    | {
+        locality?: T;
+        region?: T;
+        country?: T;
+        displayLine?: T;
+        marketArea?: T;
+        serviceRadiusMiles?: T;
+        latitude?: T;
+        longitude?: T;
+      };
+  bookingUrl?: T;
+  bookingMode?: T;
+  gbpUrl?: T;
+  aggregateRating?:
+    | T
+    | {
+        show?: T;
+        ratingValue?: T;
+        reviewCount?: T;
+        asOf?: T;
+        sourceUrl?: T;
+      };
+  templateDefaults?:
+    | T
+    | {
+        newsletterHeading?: T;
+        newsletterLine?: T;
+        finalCtaHeading?: T;
+        finalCtaButton?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+      };
+  postalAddress?:
+    | T
+    | {
+        line1?: T;
+        line2?: T;
+        city?: T;
+        region?: T;
+        postalCode?: T;
+        country?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -2,6 +2,7 @@ import { revalidatePath, revalidateTag } from 'next/cache'
 import type {
   CollectionAfterChangeHook,
   CollectionAfterDeleteHook,
+  GlobalAfterChangeHook,
   PayloadRequest,
   TypeWithID,
 } from 'payload'
@@ -51,8 +52,8 @@ const guarded = (what: string, run: () => void, req: PayloadRequest): void => {
 const safeRevalidate = (tag: string, req: PayloadRequest): void =>
   guarded(`revalidateTag ${tag}`, () => revalidateTag(tag, 'max'), req)
 
-const safeRevalidatePath = (path: string, req: PayloadRequest): void =>
-  guarded(`revalidatePath ${path}`, () => revalidatePath(path), req)
+const safeRevalidatePath = (path: string, req: PayloadRequest, type?: 'layout' | 'page'): void =>
+  guarded(`revalidatePath ${path}${type ? ` (${type})` : ''}`, () => revalidatePath(path, type), req)
 
 type PathsFor<T> = (doc: T | null | undefined) => (string | null | undefined)[]
 
@@ -87,3 +88,23 @@ export const revalidateTagHooks = <T extends Published = Published>(
     },
   }
 }
+
+/**
+ * Globals (SCHEMA §7, §10: "globals → layout-wide tag"). Globals have no
+ * drafts, so every save is live: purge the global's tag and the whole
+ * `(frontend)` tree (`revalidatePath('/', 'layout')`, next@16.3.8
+ * server/web/spec-extension/revalidate.d.ts:32), because site-wide globals
+ * render in the shared header/footer of every page. Same guard and
+ * `context.disableRevalidate` opt-out as the collection hooks.
+ *
+ * Signature: `GlobalAfterChangeHook` = globals/config/types.d.ts:67
+ * (payload@3.91.0) `{ context, data, doc, global, previousDoc, req }`.
+ */
+export const revalidateGlobalHook =
+  (tag: string): GlobalAfterChangeHook =>
+  ({ doc, req, context }) => {
+    if (context.disableRevalidate) return doc
+    safeRevalidate(tag, req)
+    safeRevalidatePath('/', req, 'layout')
+    return doc
+  }
