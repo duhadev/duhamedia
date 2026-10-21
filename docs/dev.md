@@ -236,7 +236,9 @@ Entries are in build order (C1, C2, C3 …), not `SCHEMA.md` §6 order (PM decis
 
 - `upload`: `mimeTypes` `application/pdf`, `text/csv`, `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` (xlsx), `application/zip`; `focalPoint: false`, `crop: false`, no `imageSizes`.
 
-Access (both collections):
+Access:
+
+`media`:
 
 | Who | read | create | update | delete |
 |---|---|---|---|---|
@@ -244,13 +246,21 @@ Access (both collections):
 | admin, marketing (`staffOnly`) | yes | yes | yes | yes |
 | pipeline | yes (public read) | no | no | no |
 
+`downloads` (changed in [S1](#lead-magnets-unit-c9), mini Gate S 2026-10-21): `read: staffOnly`, so the table above does not apply to it.
+
+| Who | read | create | update | delete |
+|---|---|---|---|---|
+| public | no (403) | no | no | no |
+| admin, marketing (`staffOnly`) | yes | yes | yes | yes |
+| pipeline | no (403) | no | no | no |
+
 **Wiring**
 - Registration: `src/payload.config.ts` → `collections: [Users, Media, Downloads]`.
 - Storage: `MEDIA_DIR = process.env.MEDIA_DIR || path.resolve(process.cwd(), 'media')`.
   - `media` `staticDir`: `${MEDIA_DIR}/media`.
   - `downloads` `staticDir`: `${MEDIA_DIR}/downloads`.
   - Payload creates the directories on first upload.
-- Serving: `/api/media/file/<filename>` and `/api/downloads/file/<filename>`, public read. Paths containing `../` are rejected with 403.
+- Serving: `/api/media/file/<filename>` is public read. `/api/downloads` and `/api/downloads/file/<filename>` are staff-only since S1 (the collection `read` access also governs the static file route); anonymous requests return 403 (verified 2026-10-21). Paths containing `../` are rejected with 403.
 - Pages using it: `media` is referenced by any unit that renders imagery; `downloads` by `lead-magnets` (page 18). Linked from those entries as they land.
 - Revalidation: n/a in this unit. Pages that render media revalidate through their own collection/global hooks.
 - Migration: `20261017_195538_c2_media_downloads`. Additive only.
@@ -263,6 +273,7 @@ Access (both collections):
 - PDF uploads are validated by Payload 3.91.0 (`payload/dist/utilities/validatePDF.js`): the file must start with `%PDF-` and contain both `xref` and `%%EOF` in its last 1024 bytes. Seed fixtures must be real PDFs.
 - A request for a missing file returns **500** "Something went wrong." (stock 3.91.0 behaviour, not 404). The `site_error` reporter must ignore or rate-limit these.
 - Non-image assets never go in `media`, so every `media` document has a meaningful alt.
+- S1: `downloads` files are no longer publicly fetchable by URL. The `lead_magnet` integration delivers them as email attachments (not yet built); it must read the file with `overrideAccess`. No migration for this change.
 
 #### Shared helpers for content collections (C3–C6)
 
@@ -275,6 +286,9 @@ Introduced with C3–C6 and reused by later content collections.
   - `validateYouTubeUrl`: same pattern; non-empty value must yield a video id from `youtubeVideoId`.
 - `src/lib/youtube.ts`: `youtubeVideoId(input)` returns the 11-character id or `null`. Accepts https only; hosts `youtube.com`, `www.`/`m.youtube.com`, `youtu.be`, `youtube-nocookie.com`, `www.youtube-nocookie.com`; paths `watch?v=`, `youtu.be/<id>`, `/embed/`, `/shorts/`, `/live/`. Video components must reuse this function, so validation and rendering share one definition.
 - `src/access/index.ts`: `staffContentAccess` preset = `read: publishedOrStaff`, `readVersions: staffOnly`, `create`/`update`/`delete: staffOnly`. Public and pipeline get published docs only and no writes; `readVersions` staff-only keeps drafts out of `/api/<slug>/versions`.
+- S1 additions to `src/access/index.ts` (Delta log 2026-10-18):
+  - `adminOrMarketingUnpublished` (`Access`): admin `true`; marketing returns `{ _status: { not_equals: 'published' } }`; everyone else `false`. Payload 3.91.0 applies the `Where` to the main collection row on delete, so a published doc with a newer staff draft still counts as published. `not_equals` also matches NULL `_status`. Used by `case-studies`, `posts`, `lead-magnets`, `pages`.
+  - `staffContentAccessDraftDelete`: `staffContentAccess` with `delete: adminOrMarketingUnpublished`. Used by `lead-magnets` and `pages`. `faqs`, `team-members`, `clients`, `testimonials` keep `staffContentAccess` (staff delete).
 - `src/hooks/revalidateTag.ts`: `revalidateTagHooks(tag)` returns `{ afterChange, afterDelete }`.
   - Calls Next 16 `revalidateTag(tag, 'max')` (the profile argument is required in next@16.3.8).
   - `afterChange` fires only when the saved doc is published or the previous doc was published (publish, re-publish, unpublish). Draft/autosave edits of an unpublished doc do nothing.
@@ -515,6 +529,8 @@ Outside the tabs:
 | marketing | all | yes | yes | yes | only where `_status` ≠ `published` |
 | pipeline, public | published only (`publishedOrStaff`) | no | no | no | no |
 
+S1: the delete rule is now the shared `adminOrMarketingUnpublished` helper (see [Shared helpers](#shared-helpers-for-content-collections-c3c6)); behaviour is unchanged.
+
 - Publish rule (`figuresApproved`), two layers:
   1. `validateFiguresApproved` (field `validate` on `figuresApproved`): runs the built-in `checkbox()` validator from `payload/shared` first; `true` passes; on a server save (`event: 'submit'`) it returns "Tick this before publishing." only when the merged `data._status` is `published`. Being a field validator, it is reported together with every other field error in one attempt. Draft saves skip validation (`drafts.validate: false`); a non-draft update of a draft and a version restore that publishes are validated. In admin form state (`event: 'onChange'`, only after a submit attempt) it ignores `_status`, like the built-in `required` errors it is shown with.
   2. `blockUnapprovedPublish` (FIRST `afterChange` hook, before revalidation): backstop for any publish path that skips field validation (none known in 3.91.0). If `doc._status` is `published` and `figuresApproved` is not `true`, throws `ValidationError` on path `figuresApproved`. It runs inside the operation's transaction (update, create, restoreVersion), so the throw rolls the publish back. Must stay first in `afterChange`.
@@ -622,7 +638,8 @@ Access:
 
 | Who | read | readVersions | create | update | delete |
 |---|---|---|---|---|---|
-| admin, marketing | all | yes | yes | yes | yes (`staffOnly`; no published-status restriction, unlike case-studies) |
+| admin | all | yes | yes | yes | any |
+| marketing | all | yes | yes | yes | only where `_status` ≠ `published` (`adminOrMarketingUnpublished`, S1) |
 | pipeline | `_status = draft` only | no | yes (forced draft) | drafts only, and never a post whose live row is published | no |
 | public | published only | no | no | no | no |
 
@@ -685,7 +702,7 @@ Tab **Capture**:
 | `pitch` | textarea, required | |
 | `formNote` | text | Small line under the form |
 
-Tab **What's inside**: `valueBullets` array "Bullets", required, `minRows: 3`, `maxRows: 6`, each row `text` (text, required). Custom `validate: validateBullets` replaces the built-in array check so the message names bullets ("requires at least 3 bullets" via `validation:requiresAtLeast` / `requiresNoMoreThan`); accepts the value as an array or a row count. `RowLabel`: `ValueBulletRowLabel`.
+Tab **What's inside** (S1 adds `whatsInsideHeading`: text, label "Heading", `defaultValue: "What's inside"`, shown above the bullets): `valueBullets` array "Bullets", required, `minRows: 3`, `maxRows: 6`, each row `text` (text, required). Custom `validate: validateBullets` replaces the built-in array check so the message names bullets ("requires at least 3 bullets" via `validation:requiresAtLeast` / `requiresNoMoreThan`); accepts the value as an array or a row count. `RowLabel`: `ValueBulletRowLabel`.
 
 Tab **Asset & email**:
 
@@ -706,7 +723,9 @@ Asset rule (exactly one of file or URL), in `leadMagnetAsset.ts`:
 - Server validators call the built-in `upload` (async) / `text` validator from `payload/shared` first, then the rule.
 - Client wrappers pass the same functions as the `validate` prop of `UploadField` / `TextField` from `@payloadcms/ui`. Reason: Payload strips custom validators from the client config, so a server-only error on a custom-validated field can be lost when autosave merges form state. Errors display only after a submit attempt, not while drafting.
 
-Access: `staffContentAccess` (SCHEMA §4.3). Public and pipeline read published documents only; only staff write; versions are staff-only; marketing may delete published documents.
+Access: `staffContentAccessDraftDelete` (SCHEMA §4.3 + Delta 2026-10-18; was `staffContentAccess` in C9). Public and pipeline read published documents only; only staff write; versions are staff-only; delete: admin any, marketing only where `_status` ≠ `published`.
+
+Field-level read (S1): `asset` and `deliveryEmail` groups have `access.read: staffOnlyField` (const `staffReadOnly` in `LeadMagnets.ts`). Public and pipeline responses omit both groups. `src/payload-types.ts` still types them as present, so the frontend must treat them as absent. The future `lead_magnet` job must read the document with `overrideAccess: true` (the Local API default) or these groups come back empty.
 
 Slug: `uniqueSlugHooks('lead-magnets')` (`beforeValidate` fills from title, `-2`, `-3` … on collision; see [C8 Slugs](#posts-unit-c8)). `publishedAt`: `setPublishedAtOnPublish`, never overwrites an entered date.
 
@@ -726,9 +745,12 @@ Slug: `uniqueSlugHooks('lead-magnets')` (`beforeValidate` fills from title, `-2`
   - `form` relationship → form-builder `forms` (P1): additive, one nullable `form_id` column; `TODO(P1)` in the collection.
   - SEO `meta` tab (P3, `collections: ['lead-magnets']`).
   - Live preview and draft mode with the `/resources/<slug>` route.
-- Open, held for the human at C10:
-  - The public API exposes the asset link and delivery email text of published lead magnets (no gate).
-  - The "What's inside" heading is template text, not a field.
+- Resolved by S1 (mini Gate S, committed 6bbf0f8):
+  - The asset link and delivery email text are no longer exposed to the public API (field-level read, above). Files in `downloads` are also staff-only to fetch (see [C2](#media--downloads-unit-c2)).
+  - The "What's inside" heading is now the `whatsInsideHeading` field.
+- S1 migration: `20261018_053136_s1_lead_magnet_heading` (+ `.json`), registered in `src/migrations/index.ts`. Additive.
+  - Up: `lead_magnets.whats_inside_heading` and `_lead_magnets_v.version_whats_inside_heading`, both nullable `varchar DEFAULT 'What''s inside'`.
+  - Down: drops both columns. The `downloads` read change needed no migration.
 
 #### `pages` (unit C10)
 
@@ -771,7 +793,7 @@ Zero leakage:
 - `blockLeakyPublish` (first `afterChange` hook): backstop on publish with `zeroLeakage`; throws `ValidationError` (rolls back the publish) if `layout` has a NewsletterBand or the header/footer variant is not logo-only/legal-only.
 - The NewsletterBand block's slug must be exactly `newsletterBand` (`NEWSLETTER_BAND_BLOCK_SLUG` in `Pages.ts`), or the unit must update the constant.
 
-Access: `staffContentAccess` (SCHEMA §4.3). Public and the pipeline user read published documents only; only staff write; versions staff-only.
+Access: `staffContentAccessDraftDelete` (SCHEMA §4.3 + Delta 2026-10-18; S1 changed it from `staffContentAccess`). Public and the pipeline user read published documents only; only staff write; versions staff-only; delete: admin any, marketing only where `_status` ≠ `published`.
 
 **Wiring**
 - Registration: `src/payload.config.ts` → `collections: [Users, Pages, Media, Downloads, Clients, TeamMembers, Testimonials, Faqs, CaseStudies, Posts, LeadMagnets]`.
