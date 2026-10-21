@@ -8,6 +8,7 @@ import * as migration_20261017_221725_c9_lead_magnets from './20261017_221725_c9
 import * as migration_20261017_223525_c10_pages from './20261017_223525_c10_pages';
 import * as migration_20261018_053136_s1_lead_magnet_heading from './20261018_053136_s1_lead_magnet_heading';
 import * as migration_20261021_222539_g1_site_settings from './20261021_222539_g1_site_settings';
+import * as migration_20261021_223802_g2_scarcity from './20261021_223802_g2_scarcity';
 
 export const migrations = [
   {
@@ -58,6 +59,11 @@ export const migrations = [
   {
     up: migration_20261021_222539_g1_site_settings.up,
     down: migration_20261021_222539_g1_site_settings.down,
-    name: '20261021_222539_g1_site_settings'
+    name: '20261021_222539_g1_site_settings',
+  },
+  {
+    up: migration_20261021_223802_g2_scarcity.up,
+    down: migration_20261021_223802_g2_scarcity.down,
+    name: '20261021_223802_g2_scarcity'
   },
 ];

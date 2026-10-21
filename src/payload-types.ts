@@ -107,9 +107,11 @@ export interface Config {
   fallbackLocale: null;
   globals: {
     'site-settings': SiteSetting;
+    scarcity: Scarcity;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    scarcity: ScarcitySelect<false> | ScarcitySelect<true>;
   };
   locale: null;
   widgets: {
@@ -1935,6 +1937,55 @@ export interface SiteSetting {
   createdAt?: string | null;
 }
 /**
+ * The one place to update how busy we are. Each statement has a LOUD part (the big number or line, e.g. "3 builds in progress") and a QUIET part underneath (the one-line reason, e.g. "The cap keeps every build senior-staffed"). The site never shows a number without its reason. Changes go live as soon as you save.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "scarcity".
+ */
+export interface Scarcity {
+  id: number;
+  /**
+   * The most clients we take at once ("We cap at 7").
+   */
+  capacity: number;
+  /**
+   * Clients we are working with now. Can't be more than the cap ("Slots open 3/7").
+   */
+  activeClients: number;
+  /**
+   * Store builds running now ("3 builds in progress").
+   */
+  buildsInProgress: number;
+  /**
+   * Growth engines running now ("3 engines running").
+   */
+  enginesRunning: number;
+  /**
+   * Each row is one statement the site can show. Pages pick a statement by its type, so each type is used once. In the statement you can write {active}, {capacity}, {builds}, {engines} or {open} (cap minus active) and the site fills in the numbers above, so you only update numbers in one place. Drag to reorder.
+   */
+  statements: {
+    /**
+     * Where this statement is used. Each type once.
+     */
+    key: 'ongoing' | 'capacity' | 'builds-line' | 'engines-line' | 'slots-line' | 'offer-line';
+    /**
+     * Optional small caption next to a big number, e.g. "Projects ongoing".
+     */
+    label?: string | null;
+    /**
+     * The big line, e.g. "{builds} builds in progress. We cap at {capacity}." Use the placeholders so the numbers stay in sync.
+     */
+    statistic: string;
+    /**
+     * Required. The one-line reason shown quietly underneath, e.g. "The cap keeps every build senior-staffed." Keep the reason out of the statement itself.
+     */
+    reason: string;
+    id?: string | null;
+  }[];
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings_select".
  */
@@ -2000,6 +2051,28 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         region?: T;
         postalCode?: T;
         country?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "scarcity_select".
+ */
+export interface ScarcitySelect<T extends boolean = true> {
+  capacity?: T;
+  activeClients?: T;
+  buildsInProgress?: T;
+  enginesRunning?: T;
+  statements?:
+    | T
+    | {
+        key?: T;
+        label?: T;
+        statistic?: T;
+        reason?: T;
+        id?: T;
       };
   updatedAt?: T;
   createdAt?: T;

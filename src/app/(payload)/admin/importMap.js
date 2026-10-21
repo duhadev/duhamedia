@@ -20,6 +20,7 @@ import { FaqRowLabel as FaqRowLabel_c7da98d435c621318b089da57fb11fb9 } from '../
 import { ValueBulletRowLabel as ValueBulletRowLabel_51164b16e5c3488951a3ed8785d562ad } from '../../../components/admin/ValueBulletRowLabel'
 import { LeadMagnetAssetFileField as LeadMagnetAssetFileField_dc6e9e7f6a87095250af2140b6169c99 } from '../../../components/admin/LeadMagnetAssetFields'
 import { LeadMagnetAssetUrlField as LeadMagnetAssetUrlField_dc6e9e7f6a87095250af2140b6169c99 } from '../../../components/admin/LeadMagnetAssetFields'
+import { ScarcityRowLabel as ScarcityRowLabel_35d13a473df2c08662ceec0d42c3b278 } from '../../../components/admin/ScarcityRowLabel'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -46,5 +47,6 @@ export const importMap = {
   "/components/admin/ValueBulletRowLabel#ValueBulletRowLabel": ValueBulletRowLabel_51164b16e5c3488951a3ed8785d562ad,
   "/components/admin/LeadMagnetAssetFields#LeadMagnetAssetFileField": LeadMagnetAssetFileField_dc6e9e7f6a87095250af2140b6169c99,
   "/components/admin/LeadMagnetAssetFields#LeadMagnetAssetUrlField": LeadMagnetAssetUrlField_dc6e9e7f6a87095250af2140b6169c99,
+  "/components/admin/ScarcityRowLabel#ScarcityRowLabel": ScarcityRowLabel_35d13a473df2c08662ceec0d42c3b278,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }
