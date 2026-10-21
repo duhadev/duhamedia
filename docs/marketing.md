@@ -14,7 +14,7 @@ Sections are added here as each part of the site is finished and approved.
 
 | I want to… | How |
 |---|---|
-| Edit scarcity numbers | [fill in once built] |
+| Edit scarcity numbers | **Admin → Globals → Capacity & scarcity** → change the four counts and/or the **Statements** → **Save**. Live straight away (no Publish). See [Capacity & scarcity](#capacity--scarcity). |
 | Add a redirect | [fill in once built] |
 | Edit page copy or images | [fill in once built] |
 | Find form submissions and failed deliveries | [fill in once built] |
@@ -70,6 +70,7 @@ Sections are added here as each part of the site is finished and approved.
 21. [404](#21-404)
 - [Site-wide settings (header, footers, contact details)](#site-wide-settings)
   - [Site settings](#site-settings)
+  - [Capacity & scarcity](#capacity--scarcity)
 
 Each entry below covers: **SEO** (what is set, and where to change it) · **Editable by marketing** (what you can change, including adding, removing and reordering items) · **Forms & leads** (where submissions go, what gets announced, what "failed" means and how to re-send) · **Social share** · **Other**.
 
@@ -588,7 +589,7 @@ Open **Admin → Collections → Lead magnets** and click **Create New**, or ope
 
 Header, footers, contact details, social handles, booking link and default share image.
 
-A **global** is a single settings screen that exists once for the whole site (unlike a collection, which is a list of many items). Globals are listed in the left-hand menu under **Globals**. Only **Site settings** is built so far; the header and footer menus and the default share image are *not built yet*.
+A **global** is a single settings screen that exists once for the whole site (unlike a collection, which is a list of many items). Globals are listed in the left-hand menu under **Globals**. **Site settings** and **Capacity & scarcity** are built so far; the header and footer menus and the default share image are *not built yet*.
 
 ### Site settings
 
@@ -650,3 +651,54 @@ Facts the whole site shares: the company name in the footer, contact email, soci
 - Defaults are filled in the first time the screen is saved; until the first save some fields show their placeholders only.
 - Never enter invented facts. Leave a field empty rather than guess: legal name, email, social profiles, the Google link, map position, postal address and rating all start empty on purpose.
 - Marketing and Admins can edit this screen; ordinary visitors only see the results.
+
+### Capacity & scarcity
+
+How busy we are, kept in one place. The site uses these numbers in several spots (the big "projects ongoing" strip, the capacity line above the closing call-to-action, the offer on campaign pages, the Link-in-Bio slots line). You update them here once and every spot follows.
+
+**Where:** **Admin → Globals → Capacity & scarcity** (address `duhamedia.com/admin/globals/scarcity`). Click **Save** when done. Both Admins and Marketing can edit it.
+
+**There is no draft stage here.** A save is live straight away, with no Publish step and no developer needed. The page sections that display these numbers are still being built, so for now nothing on the public site shows them; what you save is ready for when they land.
+
+**SEO:** n/a. Nothing here is a search-result title or description.
+
+**Editable by marketing**
+
+*The four counts* (all required whole numbers, 0 or more; the cap must be at least 1)
+- **Client cap**: the most clients we take at once ("We cap at 7").
+- **Active clients**: clients we are working with now ("Slots open 3/7"). **It can never be more than the Client cap.** If you type a bigger number, Save is refused with a message saying so. Raise the cap first, or lower the number.
+- **Builds in progress**: store builds running now ("3 builds in progress").
+- **Engines running**: growth engines running now ("3 engines running").
+- These start empty on purpose, so no made-up number can ever appear. Fill in the real ones.
+
+*Statements* (the wording the site shows)
+- Each statement has a **loud** part and a **quiet** part. The **loud** part is the big line or number ("3 builds in progress. We cap at 7."). The **quiet** part is the one-line **reason** underneath, in small text ("The cap keeps every build senior-staffed.").
+- **The reason is required.** The site never shows a number without its reason, so Save is refused if any statement has an empty reason. Keep the reason out of the loud line; each part has its own box.
+- Fields on each statement row:
+  - **Type** (required): where the statement is used. See the list below. **Each type can be used once**; picking a type already used in another row is refused. Edit that row instead.
+  - **Caption** (optional): a small label next to a big number, e.g. "Projects ongoing".
+  - **Statement (loud)** (required): the big line.
+  - **Reason (quiet)** (required): the line beneath.
+- **Add:** click **Add Statement** (you need at least one to save). **Reorder:** drag a row by its handle. **Remove:** use the row's menu, then **Save**. Rows are collapsed to start; click a row to open it. Each collapsed row is labelled with its type.
+
+*Where each type is used*
+- **Projects ongoing (big number)**: the "projects ongoing" figure in the scarcity strip on the Homepage.
+- **Client cap (big number)**: the "we cap at" figure in that same strip.
+- **Builds line (Final CTA)**: the capacity line above the closing call-to-action on most pages.
+- **Engines line (Marketing / MKT-SEO Final CTA)**: the same line, but about engines, on the Marketing page and MKT-SEO articles.
+- **Slots line (Link-in-Bio)**: the slots line on the Link-in-Bio page.
+- **Offer line (Campaign LP offer)**: the offer section on campaign landing pages.
+
+*Placeholders that fill in the numbers*
+- A **placeholder** is a word in curly brackets that the site swaps for the real number. Write it inside the loud statement, e.g. `{builds} builds in progress. We cap at {capacity}.`
+- The ones that exist: `{active}` (Active clients), `{capacity}` (Client cap), `{builds}` (Builds in progress), `{engines}` (Engines running), and `{open}` (cap minus active clients, worked out for you, never below 0).
+- Using placeholders means you only change a number once, in the four counts, and every statement stays in step.
+- **An unknown placeholder** (for example `{slots}` or a typo like `{buidls}`) is refused when you Save, with a message naming it and listing the valid ones. Fix the spelling or type the number as plain text. If a placeholder's count is missing, the site leaves that statement out rather than print half a sentence.
+
+**Forms & leads:** n/a.
+
+**Social share:** n/a.
+
+**Other**
+- The four counts have no defaults and the statements list starts empty; the example numbers come from demonstration content that is clearly not final.
+- Never enter numbers that are not true. Update the counts whenever capacity really changes.

@@ -44,6 +44,7 @@ Entry format for every unit: **Files** / **Fields & schema** / **Wiring** (regis
     - [`pages` (C10)](#pages-unit-c10)
   - [Globals](#globals)
     - [`site-settings` (G1)](#site-settings-unit-g1)
+    - [`scarcity` (G2)](#scarcity-unit-g2)
 - [Block showcase sandbox (`/_showcase`)](#block-showcase-sandbox-_showcase)
 - [Deploy](#deploy)
 - [Integrations](#integrations)
@@ -911,6 +912,70 @@ Access:
 - `postalAddress` is publicly readable through the public `read` access (it is not rendered on the site). Open flag F6 in `PROGRESS.md`.
 - TODO(P1): `newsletterForm` relationship to form-builder `forms` (maxDepth 1), added with the form-builder unit. Additive: one nullable `newsletter_form_id` column.
 - `SocialRowLabel` keeps its own copy of the six platform labels, because a `'use client'` module cannot share constants with the server config.
+
+#### `scarcity` (unit G2)
+
+The one place capacity and scarcity statements are edited (SCHEMA §7.2, §4.3, §10). Blocks hold no numbers; they reference a statement by key.
+
+**Files**
+- `src/globals/Scarcity.ts`: global config.
+- `src/lib/scarcity.ts`: dependency-free shared module (no server imports), read by the config, the admin row label and future blocks. Exports `SCARCITY_KEYS` (`{ label, value }` list), `ScarcityKey`, `SCARCITY_KEY_LABELS`, `ScarcityCounts`, `SCARCITY_TOKENS`, `unknownScarcityTokens(statistic)`, `fillScarcityTokens(statistic, counts)`, and the validation message constants/builders.
+- `src/components/admin/ScarcityRowLabel.tsx`: client component (`useRowLabel`), row label for `statements`: `<Type label> — <statistic>`, falls back to `Statement NN`.
+- `src/payload.config.ts`: `globals: [SiteSettings, Scarcity]`.
+- `src/payload-types.ts` and `src/app/(payload)/admin/importMap.js`: regenerated.
+- `src/migrations/20261021_223802_g2_scarcity.ts` (+ `.json`), registered in `src/migrations/index.ts`.
+
+**Fields & schema**
+
+Slug `scarcity`, label "Capacity & scarcity". No drafts, no versions: a save is live immediately.
+
+| Field | Type | Notes |
+|---|---|---|
+| `capacity` | number, required, `min` 1 | No default. Whole number |
+| `activeClients` | number, required, `min` 0 | No default. Whole number; must be ≤ `capacity` (read from `siblingData`) |
+| `buildsInProgress` | number, required, `min` 0 | No default. Whole number |
+| `enginesRunning` | number, required, `min` 0 | No default. Whole number |
+| `statements` | array, required, `minRows` 1 | Sortable, `initCollapsed`, row label `ScarcityRowLabel` |
+| `statements.key` | select, required | Options from `SCARCITY_KEYS`: `ongoing`, `capacity`, `builds-line`, `engines-line`, `slots-line`, `offer-line`. Unique across rows |
+| `statements.label` | text | Optional caption; trimmed |
+| `statements.statistic` | text, required | The loud line; trimmed; non-blank; only known tokens |
+| `statements.reason` | text, required | The quiet line; trimmed; non-blank |
+
+Counts are laid out in one row of four (25% width each).
+
+Tokens usable in `statistic`: `{active}`, `{capacity}`, `{builds}`, `{engines}`, `{open}` (`capacity - activeClients`, floored at 0, null if either is missing).
+
+Loud/quiet rule (CLAUDE.md content rule 2): `reason` is required and non-blank, so a statement cannot be saved without its reason. Blocks must have no render path that shows a statement or number without its reason.
+
+Validation (field validators, no throwing hooks; each calls the built-in validator from `payload/shared` first, because a custom `validate` replaces the built-in):
+- Counts: built-in `number()`, then `Number.isInteger`. `activeClients` additionally ≤ `capacity`.
+- `key`: built-in `select()`, then no other row in `data.statements` may use the same key.
+- `statistic`: blank check, built-in `text()`, then `unknownScarcityTokens` must be empty.
+- `reason`: blank check, then built-in `text()`.
+- `statements`: custom `minRows` message (`validation:requiresAtLeast`, label "Statement"), because the built-in array message ignores `labels`.
+- Trimming of `label`, `statistic`, `reason` is a field `beforeValidate` hook.
+- No client validate wrappers: the global has no drafts/autosave, and the admin's server-built form state runs the same custom validators, so errors show inline (same as G1).
+
+Access:
+- `read`: public (`() => true`).
+- `update`: `staffOnly`.
+- `readVersions`: `staffOnly` (versions are not enabled).
+- The pipeline user is logged in but not staff, so it is denied on update.
+
+**Wiring**
+- Registration: `src/payload.config.ts` → `globals: [SiteSettings, Scarcity]`.
+- Revalidation: `afterChange: [revalidateGlobalHook('scarcity')]` calls `revalidateTag('scarcity', 'max')` and `revalidatePath('/', 'layout')`. Skipped when `context.disableRevalidate` is set (seed).
+- Pages using it (consuming blocks not built yet): p1 ProofStrip scarcity variant (max 2 statements); FinalCTA capacity line on p1 to p8, p13, p14, p19 (p11 uses none); p15 OfferBlock (`offer-line`); p17 LinkStack (`slots-line`). Anything that reads the global must fetch with the `scarcity` tag.
+- Migration: `20261021_223802_g2_scarcity`. Additive.
+  - Up: enum `enum_scarcity_statements_key`; tables `scarcity` (four `numeric NOT NULL` count columns) and `scarcity_statements` (FK to `scarcity` cascades; `_order` and `_parent_id` indexes).
+  - Down: drops `scarcity_statements`, then `scarcity`, then the enum.
+
+**Notes**
+- In payload@3.91.0 a global has no stored row until first saved. The frontend must treat every field as optional, render nothing until the global is saved, and fetch with the `scarcity` tag. The seed must save all four counts and at least one statement (the counts and `statements` are required).
+- `fillScarcityTokens` returns `null` when a token's count is missing; the component must skip that statement rather than print a half-filled number.
+- Deferred: the `scarcityRef()` field factory (SCHEMA §3) ships with the first consuming block and must import `SCARCITY_KEYS` from `src/lib/scarcity.ts`.
+- SCHEMA §7.2's `capacity` default of 7 is deliberately not applied (no real-looking numbers as defaults). Open flag F7 in `PROGRESS.md`.
+- Open flag F8 in `PROGRESS.md`: `buildsInProgress` and `enginesRunning` are not validated against `capacity`; only `activeClients` is.
 
 ## Block showcase sandbox (`/_showcase`)
 
