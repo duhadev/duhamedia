@@ -19,6 +19,7 @@ import { Testimonials } from './collections/Testimonials'
 import { Users } from './collections/Users'
 import { Navigation } from './globals/Navigation'
 import { Scarcity } from './globals/Scarcity'
+import { SeoDefaults } from './globals/SeoDefaults'
 import { SiteSettings } from './globals/SiteSettings'
 import { migrations } from './migrations'
 
@@ -35,7 +36,7 @@ export default buildConfig({
   },
   serverURL: process.env.SITE_URL || '',
   collections: [Users, Pages, Media, Downloads, Clients, TeamMembers, Testimonials, Faqs, CaseStudies, Posts, LeadMagnets],
-  globals: [SiteSettings, Scarcity, Navigation],
+  globals: [SiteSettings, Scarcity, Navigation, SeoDefaults],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

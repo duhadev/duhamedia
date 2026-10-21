@@ -27,7 +27,7 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 | global | G1 `site-settings` | all | documented | Gate 1 cleared 2026-10-21 under standing approval (QA admin pass: tabs, required, socials add/reorder/remove, https booking, conditional rating, defaults). Cosmetic accepted: empty email says "valid email" not "required" (stock); tab badge +1 vs group count (stock); 25–50% row fields stack at ~1260px. migration `g1_site_settings`; newsletterForm TODO(P1); defaults land on first save only — frontend treats all fields optional; dev DB holds placeholder legalName/contactEmail |
 | global | G2 `scarcity` | all | documented | Gate 1 cleared 2026-10-21 under standing approval (QA 8/8: all errors inline; reorder/remove persist). Cosmetic accepted (stock): array min-rows tooltip lingers until next save; long inline error truncated in label tooltip; empty row label 'Statement 01'. migration `g2_scarcity`; scarcityRef() factory deferred to first consuming block (import SCARCITY_KEYS from src/lib/scarcity.ts); dev DB holds placeholder 7/3/2/1 + one statement |
 | global | G3 `navigation` | all | documented | Gate 1 cleared 2026-10-21 under standing approval. QA 8 checks: all validation inline; max rows hide Add; keyboard reorder persists. Rework done: shared linkField type select `isClearable: false` (PM browser-verified, no clear control; tsc 0). Cosmetic accepted (stock): collapsed new rows hide inline msg (badge shows); stale tab error badge until reload. migration `g3_navigation`; integrator: chrome fetch should carry `pages` + linked-collection tags |
-| global | G4 `seo-defaults` | all | coding | schema-architect (opus) dispatched 2026-10-21 | one unit each; standing approval to checkpoint (flags deferred) |
+| global | G4 `seo-defaults` | all | cleared | Gate 1 cleared 2026-10-21 under standing approval (QA 8/8, no discrepancies; all errors inline). migration `g4_seo_defaults`; exports TITLE_PLACEHOLDER / DEFAULT_DESCRIPTION_MAX / LOCAL_BUSINESS_TYPES for P3; seed must upload ≥1200×630 OG image before first save; dev DB: placeholder description + media id 11 as OG |
 | plugin | P1 form-builder (overrides + delivery fields) · P2 redirects · P3 seo | all | queued | one unit each |
 | block | 23 blocks in page build order (SCHEMA.md §8–9) | — | queued after collections/globals | appended to /_showcase on Gate 1 |
 | integration | contact · newsletter (DOI) · lead_magnet · site_error | — | queued after triggering units clear | Gate A |
@@ -39,6 +39,7 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 ## Migrations log
 | Date | Migration file | What it changes | Applied in dev / staging / prod |
 |---|---|---|---|
+| 2026-10-21 | `src/migrations/20261021_231646_g4_seo_defaults.ts` | + seo_defaults (default_og_image_id NOT NULL, 2 media FKs set null), enum_seo_defaults_local_business_type | scratch proofs; dev via push / no / no |
 | 2026-10-21 | `src/migrations/20261021_224808_g3_navigation.ts` | + navigation, navigation_rels, header_links, footer_standard_columns(+_links), footer_reduced_links, footer_legal_links; 5 enums (down hand-fixed) | scratch proofs; dev via push / no / no |
 | 2026-10-21 | `src/migrations/20261021_223802_g2_scarcity.ts` | + scarcity, scarcity_statements, enum_scarcity_statements_key | scratch proofs; dev via push / no / no |
 | 2026-10-21 | `src/migrations/20261021_222539_g1_site_settings.ts` | + site_settings, site_settings_socials, site_settings_rels, 3 enums (down hand-fixed) | scratch proofs; dev via push / no / no |
@@ -166,6 +167,10 @@ Decisions deferred to the human; each has a safe default applied so work continu
 | F9 | G3 | Nav link rows not pre-filled with design labels (a label needs a target page; pages not seeded yet) | all arrays empty; seed fills after pages; nudge copy has defaults |
 | F10 | G3 | Deleting a page linked from navigation blocks the next nav save until that link is fixed (error names the link) | accepted; frontend skips null/unpopulated refs; marketing guide to explain |
 | F11 | G3 | p17/p18 show only Privacy + Terms but there's one `footer.legalLinks` list | one list; decide at block stage (first two vs all, or per-link checkbox = mini Gate S) |
+| F12 | G4 | `MarketingAgency` isn't a schema.org type (SCHEMA §7.4 lists it). Rec: keep only ProfessionalService (or plain LocalBusiness) — mini Gate S + enum migration | options as SCHEMA; no default; P3 emits ProfessionalService when empty/MarketingAgency |
+| F13 | G4 | Default `localBusiness.type` = ProfessionalService? | empty |
+| F14 | G4 | Deleting the media used as default OG image fails with a raw "Failed query" (NOT NULL FK). Rec: friendly media beforeDelete check (validation only) or marketing note | image protected; message unclear |
+| F15 | G4 | Added min-size check: OG image must produce the 1200×630 `og` size (validation only). Keep? | kept |
 
 ## Session handoff
 - **In flight:** big step 2 — G1 site-settings (schema-architect, opus), then G2 scarcity, G3 navigation, G4 seo-defaults, P1 form-builder, P2 redirects, P3 seo. Serial (shared payload.config.ts / types / migrations).

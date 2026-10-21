@@ -109,11 +109,13 @@ export interface Config {
     'site-settings': SiteSetting;
     scarcity: Scarcity;
     navigation: Navigation;
+    'seo-defaults': SeoDefault;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     scarcity: ScarcitySelect<false> | ScarcitySelect<true>;
     navigation: NavigationSelect<false> | NavigationSelect<true>;
+    'seo-defaults': SeoDefaultsSelect<false> | SeoDefaultsSelect<true>;
   };
   locale: null;
   widgets: {
@@ -2201,6 +2203,63 @@ export interface Navigation {
   createdAt?: string | null;
 }
 /**
+ * Fallbacks for how the site looks in Google and in social shares (LinkedIn, Facebook, X, iMessage). Each page can override these in its own SEO tab. Changes go live as soon as you save.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "seo-defaults".
+ */
+export interface SeoDefault {
+  id: number;
+  /**
+   * How page titles appear in the browser tab and Google results. %s is replaced by the page title, e.g. "%s — Duha Media" becomes "About — Duha Media". Use %s exactly once.
+   */
+  titleTemplate: string;
+  /**
+   * The grey text under the title in Google results and in social share cards, used when a page has no description of its own. Up to 155 characters so Google does not cut it off.
+   */
+  defaultDescription: string;
+  /**
+   * The picture shown when a link to the site is shared on LinkedIn, Facebook, X or in a message, for any page without its own share image. Use a landscape image at least 1200 × 630 pixels; it is cropped to that shape around its focal point.
+   */
+  defaultOgImage: number | Media;
+  /**
+   * Facts Google reads about the company (structured data, not shown on the page). Social profiles come from Site settings. Only enter real facts.
+   */
+  organization?: {
+    /**
+     * The brand name, e.g. "Duha Media".
+     */
+    name?: string | null;
+    /**
+     * Optional. The real founding year (e.g. 2021) or date (2021-04-15). Leave empty if unsure.
+     */
+    foundingDate?: string | null;
+    /**
+     * Optional. The logo Google may show beside the company in search results. Use a square or near-square image, at least 112 × 112 pixels, on a plain background.
+     */
+    logo?: (number | null) | Media;
+  };
+  /**
+   * How Google understands the business locally (structured data, not shown on the page). The address comes from Site settings → Location.
+   */
+  localBusiness?: {
+    /**
+     * The kind of business Google is told this is. "Professional service" is recommended.
+     */
+    type?: ('ProfessionalService' | 'MarketingAgency') | null;
+    /**
+     * Where clients are served, e.g. "Chicago metropolitan area".
+     */
+    areaServed?: string | null;
+    /**
+     * Optional. Only real hours, in the format "Mo-Fr 09:00-17:00" (several entries separated by ";"). Leave empty if there are no set hours.
+     */
+    openingHours?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings_select".
  */
@@ -2391,6 +2450,32 @@ export interface NavigationSelect<T extends boolean = true> {
                   };
               id?: T;
             };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "seo-defaults_select".
+ */
+export interface SeoDefaultsSelect<T extends boolean = true> {
+  titleTemplate?: T;
+  defaultDescription?: T;
+  defaultOgImage?: T;
+  organization?:
+    | T
+    | {
+        name?: T;
+        foundingDate?: T;
+        logo?: T;
+      };
+  localBusiness?:
+    | T
+    | {
+        type?: T;
+        areaServed?: T;
+        openingHours?: T;
       };
   updatedAt?: T;
   createdAt?: T;
