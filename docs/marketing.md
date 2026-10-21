@@ -18,7 +18,7 @@ Sections are added here as each part of the site is finished and approved.
 | Add a redirect | [fill in once built] |
 | Edit page copy or images | [fill in once built] |
 | Find form submissions and failed deliveries | [fill in once built] |
-| Change the booking link | [fill in once built] |
+| Change the booking link | **Admin → Globals → Site settings → Booking tab → Booking page address** → paste the full `https://` address → **Save**. Live straight away. See [Site settings](#site-settings). |
 | Send a newsletter broadcast (Resend dashboard steps) | [fill in once built] |
 | Change the social-share (OG) image | [fill in once built] |
 | Upload an image | **Admin → Collections → Media → Create New** → choose the file → write the **Alt** text (required) → **Save**. See [Media library](#media-library-images). |
@@ -69,6 +69,7 @@ Sections are added here as each part of the site is finished and approved.
 20. [Legal template](#20-legal-template)
 21. [404](#21-404)
 - [Site-wide settings (header, footers, contact details)](#site-wide-settings)
+  - [Site settings](#site-settings)
 
 Each entry below covers: **SEO** (what is set, and where to change it) · **Editable by marketing** (what you can change, including adding, removing and reordering items) · **Forms & leads** (where submissions go, what gets announced, what "failed" means and how to re-send) · **Social share** · **Other**.
 
@@ -587,4 +588,65 @@ Open **Admin → Collections → Lead magnets** and click **Create New**, or ope
 
 Header, footers, contact details, social handles, booking link and default share image.
 
-*Not built yet.*
+A **global** is a single settings screen that exists once for the whole site (unlike a collection, which is a list of many items). Globals are listed in the left-hand menu under **Globals**. Only **Site settings** is built so far; the header and footer menus and the default share image are *not built yet*.
+
+### Site settings
+
+Facts the whole site shares: the company name in the footer, contact email, social profiles, location, booking link, Google rating and newsletter defaults. You change each one here once and every page that uses it updates.
+
+**Where:** **Admin → Globals → Site settings** (address `duhamedia.com/admin/globals/site-settings`). The screen has five **tabs** (the headings across the top of the form): **Brand & contact**, **Location**, **Booking**, **Reviews**, **Newsletter & closers**. Click **Save** at the bottom/top right when you are done.
+
+**There is no draft stage here.** Unlike pages, a save is live straight away: **changes appear on the site right away**, with no Publish step and no developer needed. Check spelling and links before you click Save. Both Admins and Marketing can edit this screen.
+
+**SEO**
+- Nothing here is a search-result title or description. Some facts do reach search engines behind the scenes: the **social profiles** and **location** are given to Google as the company's official profiles and address area, which helps it recognise the business. (This arrives with the SEO unit; there is nothing to set for it.)
+- Keep the **social profile links** and **Short location line** accurate, as these are what Google is told.
+
+**Editable by marketing**
+
+*Brand & contact tab* (shown in every footer and on the Contact and Link-in-Bio pages)
+- **Legal company name** (required): the registered company name in the copyright line at the bottom of every footer ("© 2026 …"). The year updates by itself.
+- **Footer brand line** (optional, up to 120 characters): the short line under the logo in the main footer.
+- **Contact email** (required): the public address shown on the Contact page.
+- **Reply-time note** (optional, up to 60 characters): a small line next to the email, e.g. "Reply in 1 business day". Only promise what you keep.
+- **Social profiles** (a list of rows):
+  - **Add:** click **Add Social profile**, then fill the row: **Platform** (LinkedIn, Instagram, YouTube, X (Twitter), Facebook or GitHub), **Handle** and **URL**.
+  - **Handle:** type it as it appears on the platform, e.g. `duhamedia`. The **@ is added automatically** if you leave it out. Only letters, numbers, dots, dashes and underscores are accepted.
+  - **URL:** the full profile address. It **must start with `https://`**; anything else is rejected when you save.
+  - **Reorder:** drag a row by its handle; the order here is the order on the site. Each row is labelled with its platform so you can tell them apart.
+  - **Remove:** use the row's menu (the **⋯** or trash icon on the row), then Save.
+
+*Location tab* (the Contact page map and Google search results)
+- **Town / city**, **State** and **Country** (town and state are required; use two-letter codes for state and country, e.g. IL and US). The facts already filled in are Lombard, IL, US.
+- **Short location line**: how the location reads on the site, e.g. "Lombard, IL".
+- **Market area**: the metro area named in the brand line, e.g. "Chicago" in "Integrated ecommerce growth partner — Chicago".
+- **Service radius (miles)**: drawn as the ring on the Contact page map (0 to 500).
+- **Latitude** and **Longitude**: the map pin position. In Google Maps, right-click the spot; the first number is latitude and the second is longitude. Latitude is between -90 and 90, longitude between -180 and 180.
+
+*Booking tab* (the Book a Call page)
+- **Booking page address**: the full `https://` address of the booking calendar. This is where the Book a Call page sends people. **If you leave it empty, the Book a Call page shows a "get in touch" fallback panel** instead of a booking button, so nothing looks broken.
+- **How the booking page opens** (required) has two settings:
+  - **Button that opens the booking page in a new tab** (**link-out**, the default): visitors see a button and the booking calendar opens in a new browser tab.
+  - **Booking calendar shown inside the page** (**embed**): the calendar would appear inside our own page. **Keep link-out.** The booking calendar has not been set up to allow this, so embedding does not work today.
+
+*Reviews tab* (Testimonials and Reviews pages)
+- **Google Business Profile link**: the full `https://` link to the business's Google profile, so visitors can check the reviews.
+- **Average rating** (the star rating shown on the site):
+  - It is **hidden until you tick "Show the rating on the site"**. While unticked, nothing is shown and nothing else needs filling in.
+  - Once ticked, more fields appear and **all become required**: **Average stars** (1 to 5, e.g. 4.9), **Number of reviews**, **Checked on** (the day you read the figures) and **Source link** (the Google page the rating comes from, starting with `https://`). Save is refused until they are filled in.
+  - Only enter real figures copied from Google. Untick **Show** to take the rating off the site again.
+
+*Newsletter & closers tab*
+- **Default closing sections**: used at the end of case studies and articles, and by any newsletter or final call-to-action section whose own heading is left empty.
+  - **Newsletter heading** and **Newsletter line** (the quiet line underneath).
+  - **Final call-to-action heading** (the big closing line before the footer) and **Final call-to-action button** (usually "Book a Call"). The button is a link: choose **Page on this site** to pick a page from a list, or **Custom address** to type one.
+- **Postal address (newsletter emails)**: address lines, city, state, ZIP code and country. **US law requires a postal address at the bottom of every newsletter email**, so it is used in the newsletter footer. **It is not shown on the website pages.** The first newsletter cannot be sent until this is filled in.
+
+**Forms & leads:** n/a here. The postal address is read when a newsletter is sent; see the Quick reference once newsletter sending is documented. The newsletter sign-up form itself is chosen here in a later release.
+
+**Social share:** the social profile links are for the profile icons on the site, not for share previews. The default share image is not set here; it will be covered under the SEO unit.
+
+**Other**
+- Defaults are filled in the first time the screen is saved; until the first save some fields show their placeholders only.
+- Never enter invented facts. Leave a field empty rather than guess: legal name, email, social profiles, the Google link, map position, postal address and rating all start empty on purpose.
+- Marketing and Admins can edit this screen; ordinary visitors only see the results.

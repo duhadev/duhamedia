@@ -42,6 +42,8 @@ Entry format for every unit: **Files** / **Fields & schema** / **Wiring** (regis
     - [`posts` (C8)](#posts-unit-c8)
     - [`lead-magnets` (C9)](#lead-magnets-unit-c9)
     - [`pages` (C10)](#pages-unit-c10)
+  - [Globals](#globals)
+    - [`site-settings` (G1)](#site-settings-unit-g1)
 - [Block showcase sandbox (`/_showcase`)](#block-showcase-sandbox-_showcase)
 - [Deploy](#deploy)
 - [Integrations](#integrations)
@@ -813,6 +815,102 @@ Access: `staffContentAccessDraftDelete` (SCHEMA §4.3 + Delta 2026-10-18; S1 cha
   - Handle a request for `/home` (404 or 301 to `/`).
   - Live preview and draft mode for `pages`, `posts`, `case-studies`, `lead-magnets`, with URLs built from server-side `SITE_URL` via `pagePath`.
 - Frontend rule (SCHEMA §5.2): public queries use `draft: false`.
+
+### Globals
+
+#### `site-settings` (unit G1)
+
+Site-wide facts shared by every page: footer legal line and brand line, contact email, socials, location, booking link, GBP link and aggregate rating, newsletter/final-CTA defaults, postal address for newsletter footers (SCHEMA §7.1, §4.3, §10).
+
+**Files**
+- `src/globals/SiteSettings.ts`: global config.
+- `src/hooks/revalidateTag.ts`: new `revalidateGlobalHook(tag)` (`GlobalAfterChangeHook`); `safeRevalidatePath` gained an optional third argument `type?: 'layout' | 'page'`.
+- `src/components/admin/SocialRowLabel.tsx`: client component, row label for the `socials` array (`<Platform> — <handle>`, falls back to the URL, then `Social link NN`). Also used by `team-members` socials (those rows have no `handle`).
+- `src/payload.config.ts`: `globals: [SiteSettings]`.
+- `src/payload-types.ts` and `src/app/(payload)/admin/importMap.js`: regenerated.
+- `src/migrations/20261021_222539_g1_site_settings.ts` (+ `.json`), registered in `src/migrations/index.ts`.
+
+**Fields & schema**
+
+Slug `site-settings`, label "Site settings". No drafts, no versions: a save is live immediately. Admin layout is five tabs.
+
+Brand & contact:
+
+| Field | Type | Notes |
+|---|---|---|
+| `legalName` | text, required | Copyright line in every footer |
+| `footerTagline` | text, `maxLength` 120 | Brand line under the logo in the standard footer |
+| `contactEmail` | email, required | Contact page |
+| `responseTimeNote` | text, `maxLength` 60 | Optional |
+| `socials` | array | Row label `SocialRowLabel` |
+| `socials.platform` | select, required | `linkedin`, `instagram`, `youtube`, `x`, `facebook`, `github` |
+| `socials.handle` | text, required | `beforeValidate` adds a leading `@` and trims; validate: built-in `text()` then `^@[A-Za-z0-9._-]{1,100}$` |
+| `socials.url` | text, required | `validateHttpsUrl` |
+
+Location (group `location`):
+
+| Field | Type | Default |
+|---|---|---|
+| `locality` | text, required | `Lombard` |
+| `region` | text, required | `IL` |
+| `country` | text | `US` |
+| `displayLine` | text | `Lombard, IL` |
+| `marketArea` | text | `Chicago` |
+| `serviceRadiusMiles` | number, 0 to 500 | `30` |
+| `latitude` | number, -90 to 90 | none |
+| `longitude` | number, -180 to 180 | none |
+
+Booking:
+
+| Field | Type | Notes |
+|---|---|---|
+| `bookingUrl` | text | `validateHttpsUrl`; empty means the BookingEmbed fallback state |
+| `bookingMode` | select, required | `link-out` (default) / `embed` |
+
+Reviews:
+
+| Field | Type | Notes |
+|---|---|---|
+| `gbpUrl` | text | `validateHttpsUrl` |
+| `aggregateRating.show` | checkbox | default `false` |
+| `aggregateRating.ratingValue` | number, 1 to 5 | Shown only when `show`; required when `show` is true |
+| `aggregateRating.reviewCount` | number, min 0 | Same condition and rule |
+| `aggregateRating.asOf` | date (day only) | Same condition and rule |
+| `aggregateRating.sourceUrl` | text | Same condition; `validateHttpsUrl`, required when `show` is true |
+
+Each conditional validator calls the built-in validator from `payload/shared` first, then applies the rule.
+
+Newsletter & closers:
+
+| Field | Type | Default |
+|---|---|---|
+| `templateDefaults.newsletterHeading` | text | `One useful email a month.` |
+| `templateDefaults.newsletterLine` | text | `Numbers included. Unsubscribe anytime.` |
+| `templateDefaults.finalCtaHeading` | text | none |
+| `templateDefaults.finalCtaButton` | `linkField` | none; internal targets are `pages`, `case-studies`, `posts`, `lead-magnets` |
+| `postalAddress.line1`, `line2`, `city`, `region`, `postalCode`, `country` | text | none |
+
+Defaults that are facts: location only. Legal name, contact email, socials, GBP link, coordinates, postal address and rating start empty (MERGED §10 R5).
+
+Access:
+- `read`: public (`() => true`).
+- `update`: `staffOnly`.
+- `readVersions`: `staffOnly` (versions are not enabled).
+
+**Wiring**
+- Registration: `src/payload.config.ts` → `globals: [SiteSettings]`.
+- Revalidation: `afterChange: [revalidateGlobalHook('site-settings')]` calls `revalidateTag('site-settings', 'max')` and `revalidatePath('/', 'layout')`. Skipped when `context.disableRevalidate` is set. Same guard as the collection hooks: outside a Next request the error is logged at debug and swallowed.
+- Pages using it: all footers (standard, reduced-nav, legal-only), p9 (BookingEmbed), p12, p17, p7, p19, p2/p13/p14 closers, empty NewsletterBand/FinalCTA headings. The consuming components are not built yet. Anything that reads the global must fetch with the `site-settings` tag.
+- Migration: `20261021_222539_g1_site_settings`. Additive.
+  - Up: tables `site_settings`, `site_settings_socials`, `site_settings_rels` (internal-link targets of `finalCtaButton`: `pages`, `case_studies`, `posts`, `lead_magnets`; FKs cascade); enums `enum_site_settings_socials_platform`, `enum_site_settings_booking_mode`, `enum_site_settings_template_defaults_final_cta_button_type`.
+  - Down: hand-fixed (drops the child tables first, then `site_settings`, then the three enums).
+
+**Notes**
+- In payload@3.91.0 a global has no stored row until it is first saved (`findOne` returns an empty-shaped result), and field defaults apply on that first save, not on read. The frontend must treat every field as optional. The seed must save the global, including the required `legalName` and `contactEmail`.
+- `aggregateRating` values are returned by the public API even when `show` is false. The frontend must check `show` before rendering or emitting JSON-LD.
+- `postalAddress` is publicly readable through the public `read` access (it is not rendered on the site). Open flag F6 in `PROGRESS.md`.
+- TODO(P1): `newsletterForm` relationship to form-builder `forms` (maxDepth 1), added with the form-builder unit. Additive: one nullable `newsletter_form_id` column.
+- `SocialRowLabel` keeps its own copy of the six platform labels, because a `'use client'` module cannot share constants with the server config.
 
 ## Block showcase sandbox (`/_showcase`)
 
