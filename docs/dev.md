@@ -49,6 +49,7 @@ Entry format for every unit: **Files** / **Fields & schema** / **Wiring** (regis
     - [`seo-defaults` (G4)](#seo-defaults-unit-g4)
   - [Plugins](#plugins)
     - [`form-builder` (P1)](#form-builder-unit-p1)
+    - [`redirects` (P2)](#redirects-unit-p2)
 - [Block showcase sandbox (`/_showcase`)](#block-showcase-sandbox-_showcase)
 - [Deploy](#deploy)
 - [Integrations](#integrations)
@@ -1189,6 +1190,70 @@ Plugin options:
 - "Failed deliveries" is a shared preset document (`payload-query-presets`), not config, so it exists only after the seed or an admin creates it.
 - The precall-homework form is created with `sendEvent` off at launch (X13); its submissions get no `deliveryStatus`, so they never appear in "Failed deliveries".
 - Payload's `queryPresets` access function (default) was verified in `payload@3.91.0` `query-presets/access.js`; the config overrides it for all four operations.
+
+#### `redirects` (unit P2)
+
+`@payloadcms/plugin-redirects` at exactly `3.91.0` (lockstep with `payload`). Adds the `redirects` collection (marketing self-service redirects). No cutover redirects are seeded (DECISIONS §C / Gate 0: no redirect map). SCHEMA refs: §0 "plugin-redirects options", §4.1 (marketing), §4.3, §6.14, §10.
+
+**Files**
+- `src/plugins/redirects.ts`: exports `redirects` (the configured plugin). Internal: `ownHosts`, `normaliseFrom`, `fromPathError`, `validateFrom`, `validateUrl`, `validateReference`, `typeFieldOverride`, `shapeFields`.
+- `src/lib/docPath.ts` (new): `docPath(collection, doc)` and type `RoutableDoc`.
+- `src/hooks/revalidateTag.ts`: reuses `revalidateLiveCollectionHooks` (P1).
+- `src/access/index.ts`: reuses `staffOnly`. `src/fields/index.ts`: reuses `LINK_TARGETS`. `src/lib/pagePath.ts`: reused by `docPath`.
+- `src/payload.config.ts`: `plugins: [formBuilder, redirects]`.
+- `src/payload-types.ts`: regenerated.
+- `src/migrations/20261021_235030_p2_redirects.ts` (+ `.json`), registered in `src/migrations/index.ts`.
+
+**Fields & schema**
+
+Plugin options: `collections: [...LINK_TARGETS]` (`pages`, `case-studies`, `posts`, `lead-magnets`), `redirectTypes: ['301', '302']`, `redirectTypeFieldOverride`, `overrides` (labels Singular "Redirect" / Plural "Redirects"; `admin.useAsTitle: 'from'`; `defaultColumns`: `from`, `to.type`, `type`, `updatedAt`; no drafts, so every save is live).
+
+| Field | Type | Notes |
+|---|---|---|
+| `from` (label "Old address") | text, required, unique, indexed (plugin defaults) | `beforeValidate` tidy (`normaliseFrom`): trims; a pasted full URL on an own host (`duhamedia.com`, `www.duhamedia.com`, host of `SITE_URL`) with no query/hash is reduced to its path; trailing slashes are stripped (so `/old/` and `/old` collide on the unique index). Validator (`validateFrom`, calls `text()` first) rejects: no leading `/`; whitespace; `?` or `#`; `/` alone; `//`; any segment starting with `_`; first segment `admin` or `api`. Unique via the plugin's `redirects_from_idx`. Case-sensitive (`/Old` ≠ `/old`) |
+| `to.type` (label "Send visitors to") | radio `reference` / `custom`, default `reference` | Options labelled "A page on this site" / "Another address" |
+| `to.reference` (label "Page") | relationship (polymorphic) → `pages`, `case-studies`, `posts`, `lead-magnets`; `maxDepth: 1` | Value shape `{ relationTo, value }`. Shown when `to.type = reference`. `validateReference` (calls `relationship()` first, skips on `onChange`): rejects a target with no public path per `docPath` (e.g. the `404` page) and a target whose path equals `from` (self-loop), both checked on save |
+| `to.url` (label "Address") | text | Shown when `to.type = custom`. `validateUrl`: either a site path starting with `/` (single slash, no spaces) or an `https://` URL; rejects a path equal to `from`, and an own-host URL whose pathname equals `from` (self-loop) |
+| `type` (label "Redirect type") | select `301` / `302`, required, default `301` | Plugin adds the field only because `redirectTypes` is set; the plugin gives it no default, the override supplies `301` |
+
+- Hidden conditional fields (`to.reference` while type is `custom`, `to.url` while `reference`) are not required or validated while hidden (payload@3.91.0 `fields/hooks/beforeChange/promise.js`).
+- A custom `validate` replaces the built-in one, so each validator above calls `text()` / `relationship()` first.
+- Access (the plugin sets only `read: () => true`; it never sets create/update/delete, which would default to any logged-in user, including the pipeline user):
+
+| Collection | read | create | update | delete |
+|---|---|---|---|---|
+| `redirects` | public (`() => true`) | `staffOnly` | `staffOnly` | `staffOnly` |
+
+**Wiring**
+- Registration: `src/payload.config.ts` → `plugins: [formBuilder, redirects]`. The plugin adds no admin components (nothing for the import map).
+- Revalidation: `afterChange` / `afterDelete` = `revalidateLiveCollectionHooks('redirects')` → `revalidateTag('redirects', 'max')` and `revalidatePath('/', 'layout')`. Skipped when `context.disableRevalidate` is set.
+- `src/lib/docPath.ts` returns the public path of a link target, or `null` for a doc with no slug or no public path:
+  - `pages` → `pagePath(slug)` (`home` → `/`, the `404` doc → `null`)
+  - `case-studies` → `/work/<slug>`
+  - `posts` → `/newsletter/<slug>` when `track` is `newsletter-issue`, otherwise `/insights/<slug>`
+  - `lead-magnets` → `/resources/<slug>`
+  - Used by the redirects self-loop check now; intended for the redirect router and future link rendering.
+- Pages using it: none render it yet. There is no site route or proxy applying redirects (`TODO(router)` below).
+- Migration: `20261021_235030_p2_redirects`. Additive.
+  - Up: enums `enum_redirects_to_type` (`reference`, `custom`) and `enum_redirects_type` (`301`, `302`); tables `redirects` (`from` NOT NULL, `to_type` default `reference`, `to_url`, `type` default `301` NOT NULL, timestamps) and `redirects_rels` (`pages_id`, `case_studies_id`, `posts_id`, `lead_magnets_id`, each FK cascade); unique `redirects_from_idx`; indexes on `updated_at`, `created_at` and the rels columns; adds `payload_locked_documents_rels.redirects_id` (FK cascade, indexed).
+  - Down: hand-fixed (logged in PROGRESS Decision log). The generated order dropped the tables with CASCADE before dropping the locked-documents FK, so `DROP CONSTRAINT` failed. The fixed order drops that FK, its index and column first, then `redirects_rels`, then `redirects`, then the two enums.
+
+`TODO(router)` list (nothing below exists yet; the router is a later unit):
+1. On a not-found request, look up `redirects` by `from` via the Local API, using the tidied pathname (query string ignored); `depth: 1`, `limit: 1`; cache the lookup under tag `redirects`.
+2. Honour `type`: `301` → `permanentRedirect`, `302` → `redirect`.
+3. `to.type = custom`: use `to.url` as-is. `to.type = reference`: build the destination with `docPath`; only published targets (`overrideAccess: false`, no user). An unpopulated or null reference yields no redirect, so the request falls through to 404.
+4. No server-side chaining (one hop only); guard that destination ≠ request path.
+5. Precedence: redirects apply only when no live document matches the address (F22).
+6. The proxy matcher must exclude `/admin`, `/api` and `/_next`.
+
+**Notes**
+- Open flags (PROGRESS.md "Flags for checkpoint"):
+  - F22: a redirect does not override a live page at the same address; the router applies redirects only on not-found (website-template pattern).
+  - F23: deleting a redirect's target document leaves a dead redirect (the reference is emptied); the router skips it and the request 404s. Alternative (block deletion while redirects point at it, via a hook) needs a mini Gate S.
+  - F24: two-step loops (A→B, B→A) are not blocked, only self-loops; accepted, the router never chains server-side.
+  - F25: the old address is case-sensitive (`/Old` ≠ `/old`); exact match kept.
+- Self-loop checks run on save only; `validateReference` and the `to.url` loop check do not run on `onChange`.
+- Verified against the installed plugin (`node_modules/@payloadcms/plugin-redirects/dist`, 3.91.0): `overrides` is spread first (hooks pass through untouched; the plugin adds none), then `access` = `{ read: () => true, ...overrides.access }` and `admin` = `{ defaultColumns, ...overrides.admin }`.
 
 ## Block showcase sandbox (`/_showcase`)
 

@@ -15,7 +15,7 @@ Sections are added here as each part of the site is finished and approved.
 | I want to… | How |
 |---|---|
 | Edit scarcity numbers | **Admin → Globals → Capacity & scarcity** → change the four counts and/or the **Statements** → **Save**. Live straight away (no Publish). See [Capacity & scarcity](#capacity--scarcity). |
-| Add a redirect | [fill in once built] |
+| Add a redirect | **Admin → Redirects → Create New** → **Old address** (starts with `/`) → **Send visitors to** a page or another address → **Redirect type** (normally 301) → **Save**. Applies immediately; the public site starts carrying out redirects when its pages go live. See [Redirects](#redirects-site-wide). |
 | Edit page copy or images | [fill in once built] |
 | Find form submissions and failed deliveries | **Admin → Form submissions** → apply the **Failed deliveries** saved filter (the shared saved view at the top of the list). See [Forms and form submissions](#forms-and-form-submissions). Public forms and the re-send button are not live yet. |
 | Change the booking link | **Admin → Globals → Site settings → Booking tab → Booking page address** → paste the full `https://` address → **Save**. Live straight away. See [Site settings](#site-settings). |
@@ -75,6 +75,7 @@ Sections are added here as each part of the site is finished and approved.
   - [Capacity & scarcity](#capacity--scarcity)
   - [Navigation (header menu and footers)](#navigation-header-menu-and-footers)
   - [SEO defaults](#seo-defaults)
+- [Redirects (site-wide)](#redirects-site-wide)
 
 Each entry below covers: **SEO** (what is set, and where to change it) · **Editable by marketing** (what you can change, including adding, removing and reordering items) · **Forms & leads** (where submissions go, what gets announced, what "failed" means and how to re-send) · **Social share** · **Other**.
 
@@ -278,7 +279,7 @@ Every ordinary page of the site is a **Page**: Homepage, About, Services pages, 
 - **Web address (slug):** made automatically from the title and kept unique. To type your own, click **Unlock**, edit, then **Lock**. Use `/` between parts, e.g. `services/marketing`.
   - `home` is the homepage (`/`). `404` is the "page not found" page.
   - Some addresses are reserved and refused: `admin`, `api`, anything starting with `_`, and anything starting with `work/`, `insights/`, `newsletter/` or `resources/` (those belong to case studies, articles, newsletter issues and lead magnets). A refused address shows an error under the Slug field and the page stays a draft until you fix it.
-  - **Changing the address of a published page changes its link**, so old links stop working; add a redirect (see the Quick reference once that feature is built).
+  - **Changing the address of a published page changes its link**, so old links stop working; add a redirect (see [Redirects](#redirects-site-wide)).
 - **Header** (sidebar): **Standard**, **Logo only** (campaign landing pages) or **None** (Link-in-Bio).
 - **Footer** (sidebar): **Standard**, **Reduced navigation** (Book a Call, Thank You) or **Legal only** (campaign pages, Link-in-Bio).
 - **Zero leakage** (sidebar tick, for campaign landing pages): forces the Logo-only header and Legal-only footer (you cannot choose otherwise while it is on). Once sections exist it also blocks the newsletter band, so visitors can only take the page's offer.
@@ -494,7 +495,7 @@ Open **Admin → Collections → Posts** and click **Create New**, or open an ex
 
 *Sidebar*
 - **Track** (required): see above.
-- **Web address (slug)**: made automatically from the title and kept unique (`-2`, `-3` … is added if the address is taken). Click **Unlock** to type your own, then **Lock**. **Changing the web address of a published post changes its link**, so old links stop working; add a redirect (see the Quick reference once that feature is built).
+- **Web address (slug)**: made automatically from the title and kept unique (`-2`, `-3` … is added if the address is taken). Click **Unlock** to type your own, then **Lock**. **Changing the web address of a published post changes its link**, so old links stop working; add a redirect (see [Redirects](#redirects-site-wide)).
 - **Target keyword**: the search phrase the article is written for, e.g. "Shopify development Chicago".
 - **Author**: pick a person from [Team members](#team-members). Shown as "By …, Duha Media". Set by a person during review; the pipeline cannot set it.
 - **Read time** (minutes): leave empty and it is worked out from the body when you publish.
@@ -599,7 +600,7 @@ Open **Admin → Collections → Lead magnets** and click **Create New**, or ope
 - **Newsletter cross-sell line** (optional): the line that leads into the newsletter sign-up, e.g. "While you're here:".
 
 *Sidebar*
-- **Web address (slug)**: made automatically from the title and kept unique (`-2`, `-3` … is added if taken). The page lives at `/resources/(slug)`. Click **Unlock** to type your own, then **Lock**. **Changing the web address of a published lead magnet changes its link**, so old links stop working; add a redirect (see the Quick reference once that feature is built).
+- **Web address (slug)**: made automatically from the title and kept unique (`-2`, `-3` … is added if taken). The page lives at `/resources/(slug)`. Click **Unlock** to type your own, then **Lock**. **Changing the web address of a published lead magnet changes its link**, so old links stop working; add a redirect (see [Redirects](#redirects-site-wide)).
 - **Published** (date): set automatically the first time you publish. You can set it yourself.
 
 *Saving and publishing*
@@ -855,3 +856,57 @@ All on **Admin → Globals → SEO defaults**; there are no tabs, just one scree
 - Only enter real facts. Company name, area served and business type are the only things filled in or suggested; founding date and opening hours start empty on purpose.
 - Changes appear on the site as soon as you save; no rebuild or developer is needed.
 - Before the first save, the screen may show only its starting values; the share image has to be chosen before it can be saved.
+
+---
+
+## Redirects (site-wide)
+
+A **redirect** is an automatic forward. When someone visits an old web address (from a Google result, a bookmark, an email or another website), the site sends them straight to the new address instead of showing an error. You need one whenever a page's address changes or a page is removed.
+
+There are two kinds, chosen with **Redirect type**:
+- **301 — Permanent.** "This page has moved for good." Use this almost every time (renamed page, merged pages, retired page).
+- **302 — Temporary.** "This page is away for now but will come back." Use it only for short-term cases, for example sending an address to a promotion for a few weeks.
+
+**Not live on the public site yet:** the part of the website that carries out redirects ships with the site's page routing, later. You can create, edit and delete redirects now and they are saved; they take effect once the site's pages go live.
+
+**SEO**
+- Google ranks addresses, not pages. If you rename a page without a redirect, the old address stops working: visitors see the 404 ("page not found") page, and the ranking and incoming links the old address earned are lost.
+- A **301** tells Google to treat the new address as the page's new home and to move the old address's ranking to it. A **302** does not: Google keeps the old address. That is why the **Redirect type** defaults to 301.
+- So whenever you change the address (slug) of a published page, case study, article or lead magnet, add a 301 from the old address to the new one.
+
+**Editable by marketing**
+
+Both Admins and Marketing can add, edit and delete redirects.
+
+*Add a redirect:* **Admin → Redirects** (address `duhamedia.com/admin/collections/redirects`) → **Create New**, then fill in:
+1. **Old address** (required): the address visitors arrive at, starting with `/`, for example `/old-services`.
+   - You can paste the full address (for example `https://duhamedia.com/old-services`); the site trims it down to the path for you. A trailing `/` is dropped too, so `/old-services/` and `/old-services` count as the same address.
+   - Addresses are **case-sensitive**: `/Old-Services` and `/old-services` are different, so enter the address exactly as visitors use it. Add one redirect per spelling if both are in circulation.
+   - Each old address can be redirected only once. Saving a second redirect for the same address is refused.
+2. **Send visitors to** (choose one):
+   - **A page on this site**, then pick it in **Page**. You can pick a page, case study, article or free download. This is the better choice: if that page's address changes later, the redirect follows it. Visitors are only sent there once the page is **published**.
+   - **Another address**, then type it in **Address**: a full `https://…` address (another website) or a path on this site starting with `/`, such as `/book-a-call`.
+3. **Redirect type**: **301 — Permanent** (already selected) or **302 — Temporary**.
+4. Click **Save**.
+
+*Edit or delete:* **Admin → Redirects** → open the redirect (the list shows the old address, whether it points to a page or another address, the type and the last update) → change it and **Save**, or use the delete option on the page to remove it. There is no draft or Publish step.
+
+*What is not allowed (the admin shows a message and refuses the save):*
+- The **homepage** (`/`) cannot be redirected.
+- Anything starting with `/admin` or `/api`, which belong to the back office and the website's behind-the-scenes connections. Redirecting them could lock people out.
+- Addresses containing `?` or `#` (a query or a section marker). Enter only the path, for example `/old-services`, not `/old-services?ref=x`.
+- Addresses with spaces, with `//`, or where a part starts with `_` (reserved for the site itself).
+- An old address that does not start with `/`.
+- A redirect that points back to its own old address (it would loop forever). This is checked for pages, for site paths and for full `https://` addresses of this site.
+- A destination that is not a full `https://` address or a path starting with `/`. Plain `http://` is refused.
+- Pointing at a document that has no public address, such as the 404 page.
+
+**Forms & leads:** n/a.
+
+**Social share:** n/a.
+
+**Other**
+- **A redirect never hides a live page.** If a published page already exists at the old address, visitors see that page, not the redirect. To send an existing page's visitors elsewhere, first unpublish or change the address of that page, then the redirect takes over.
+- **If the destination page is deleted**, the redirect stops working and visitors see the 404 page. Edit the redirect to point somewhere else, or delete it. A redirect to a page that is only unpublished waits quietly and resumes when the page is published again.
+- **Changes apply immediately** once you click Save; no rebuild or developer is needed (once the site's pages are live, as noted above).
+- No redirects are pre-loaded: the old site's addresses are not carried over, so the list starts empty.
