@@ -47,6 +47,8 @@ Entry format for every unit: **Files** / **Fields & schema** / **Wiring** (regis
     - [`scarcity` (G2)](#scarcity-unit-g2)
     - [`navigation` (G3)](#navigation-unit-g3)
     - [`seo-defaults` (G4)](#seo-defaults-unit-g4)
+  - [Plugins](#plugins)
+    - [`form-builder` (P1)](#form-builder-unit-p1)
 - [Block showcase sandbox (`/_showcase`)](#block-showcase-sandbox-_showcase)
 - [Deploy](#deploy)
 - [Integrations](#integrations)
@@ -746,8 +748,8 @@ Slug: `uniqueSlugHooks('lead-magnets')` (`beforeValidate` fills from title, `-2`
 **Notes**
 - Frontend rule (SCHEMA §5.2): public queries use `draft: false`. With `draft: true`, a published document with a newer staff draft returns 404 to the public.
 - Noindex is template behaviour (SCHEMA §6.8; gated template), so there is no `noindex` field.
+- P1 (commit e370604): `form` relationship added in tab Capture, label "Capture form", → `forms`, `maxDepth: 1`, `required: true` (required to publish; drafts skip validation). Forms are staff-read, so a public read gets the id only; the frontend loads the form server-side. Migration `20261021_233028_p1_form_builder` adds `lead_magnets.form_id` and `_lead_magnets_v.version_form_id` (FKs → `forms`, ON DELETE set null, indexed). Reverse link: `form-submissions.leadMagnet`. See [P1](#form-builder-unit-p1).
 - Deferred:
-  - `form` relationship → form-builder `forms` (P1): additive, one nullable `form_id` column; `TODO(P1)` in the collection.
   - SEO `meta` tab (P3, `collections: ['lead-magnets']`).
   - Live preview and draft mode with the `/resources/<slug>` route.
 - Resolved by S1 (mini Gate S, committed 6bbf0f8):
@@ -912,7 +914,7 @@ Access:
 - In payload@3.91.0 a global has no stored row until it is first saved (`findOne` returns an empty-shaped result), and field defaults apply on that first save, not on read. The frontend must treat every field as optional. The seed must save the global, including the required `legalName` and `contactEmail`.
 - `aggregateRating` values are returned by the public API even when `show` is false. The frontend must check `show` before rendering or emitting JSON-LD.
 - `postalAddress` is publicly readable through the public `read` access (it is not rendered on the site). Open flag F6 in `PROGRESS.md`.
-- TODO(P1): `newsletterForm` relationship to form-builder `forms` (maxDepth 1), added with the form-builder unit. Additive: one nullable `newsletter_form_id` column.
+- P1 (commit e370604): `newsletterForm` added in tab "Newsletter & closers": relationship → `forms`, `maxDepth: 1`, label "Newsletter form"; the one signup form behind every NewsletterBand, the footer nudge and the p16 hero. Forms are staff-read, so the frontend loads it server-side. Migration `20261021_233028_p1_form_builder` adds nullable `site_settings.newsletter_form_id` (FK → `forms`, ON DELETE set null, indexed). See [P1](#form-builder-unit-p1).
 - `SocialRowLabel` keeps its own copy of the six platform labels, because a `'use client'` module cannot share constants with the server config.
 
 #### `scarcity` (unit G2)
@@ -1091,6 +1093,103 @@ Access:
 - Open flag F14: deleting the media document used as `defaultOgImage` fails with a raw foreign-key error (the column is NOT NULL while the FK is `set null`).
 - Open flag F15: the validator (not in SCHEMA) rejects a `defaultOgImage` that does not produce the `og` (1200×630) size, i.e. images too small for social previews. Validation only, no DB change; keep or drop is a human call.
 
+### Plugins
+
+Official `@payloadcms/*` plugins, configured in `src/plugins/`.
+
+#### `form-builder` (unit P1)
+
+`@payloadcms/plugin-form-builder` at exactly `3.91.0` (lockstep with `payload`). Adds the `forms` and `form-submissions` collections used by every public form (Contact, pre-call homework, newsletter, lead-magnet capture). SCHEMA refs: §0 "form-builder options", §4.3, §6.12, §6.13, §10, X13.
+
+**Files**
+- `src/plugins/formBuilder.ts` (new folder `src/plugins/`): exports `formBuilder` (the configured plugin), `FORM_EVENT_TYPES`; internal `formsEditor`, `adaptPluginFields`, `formIntegrationFields`, `submissionSystemFields`, `withFormMaxDepth`, `validateFormKey`, `validateEventType`.
+- `src/hooks/formSubmissions.ts`: `stampSubmissionDelivery`.
+- `src/hooks/revalidateTag.ts`: new `revalidateLiveCollectionHooks(tag)`.
+- `src/access/index.ts`: reuses `staffOnly`, `adminOnly`, `adminOnlyField`, `turnstileVerifiedOrAdmin` (C1).
+- `src/fields/index.ts`: reuses `richTextLinkFeature()`.
+- `src/collections/LeadMagnets.ts` (`form`), `src/globals/SiteSettings.ts` (`newsletterForm`): see [C9](#lead-magnets-unit-c9), [G1](#site-settings-unit-g1).
+- `src/payload.config.ts`: `plugins: [formBuilder]`; new top-level `queryPresets`.
+- `.env.example`: `FORMS_DEFAULT_TO_EMAIL`.
+- `src/payload-types.ts`, `src/app/(payload)/admin/importMap.js`: regenerated.
+- `src/migrations/20261021_233028_p1_form_builder.ts` (+ `.json`), registered in `src/migrations/index.ts`.
+
+**Fields & schema**
+
+Plugin options:
+- Field types on: `text`, `email`, `textarea`, `select`, `checkbox`, `message`, `number`, `date`. Off: `payment`, `country`, `state`, `upload`. Every key is set explicitly because `fields` merges over the plugin defaults (checkbox/country/email/message/number/select/state/text/textarea on; payment/upload off; `date` absent unless enabled).
+- No payment path is reachable: the Payment block is not registered with `payment: false`; the payment submission fields exist only when `fields.payment` is truthy; the only payment code (`createCharge` → `handlePayment`) is a no-op because `handlePayment` is never passed.
+- `redirectRelationships: ['pages']` (p9 homework redirects to `/thank-you?homework=done`; the plugin declares `maxDepth` 2 on this relationship). Migration adds `forms_rels` with `pages_id` (FK cascade).
+- `defaultToEmail: process.env.FORMS_DEFAULT_TO_EMAIL || undefined`. Recipient resolution in the plugin: form `emails[].emailTo`, else `defaultToEmail`, else the from-address (`defaultFromAddress`).
+- Rich-text fields added by the plugin (`confirmationMessage`, `emails.message`, the Message block) use `formsEditor`: `ParagraphFeature`, `BoldFeature`, `ItalicFeature`, `UnorderedListFeature`, `OrderedListFeature`, `richTextLinkFeature()`, `InlineToolbarFeature` (the FAQ-answer feature set, no Relationship/Upload features).
+- `localized` keys are stripped from the plugin's default fields by `adaptPluginFields` (localization is disabled; Payload would also drop them).
+- The plugin's `form` relationship on `form-submissions` is given `maxDepth: 0`.
+
+`forms` additions (sidebar, appended after the plugin's fields). `defaultColumns`: `title`, `formKey`, `eventType`, `sendEvent`, `updatedAt`. No drafts (every save is live).
+
+| Field | Type | Notes |
+|---|---|---|
+| `formKey` | text, required, unique, indexed, `validateFormKey` | Kebab-case (`^[a-z0-9]+(?:-[a-z0-9]+)*$`). Equals the event `form` value: `contact`, `precall-homework`, `newsletter`, `lead-magnet`. Do not rename once live |
+| `eventType` | select `none` / `contact` / `newsletter` / `lead_magnet`, required, default `none`, `validateEventType` | Must not be `none` while `sendEvent` is on |
+| `sendEvent` | checkbox, default `false` | Send each submission to the secretary. The pre-call homework form has this off at launch (X13): submissions are stored, no event |
+| `newsletterSync` | checkbox, default `false` | Sync the submitter to Resend (contact, segment, topic, double opt-in) |
+| `newsletterOptInField` | text | Shown when `newsletterSync`. Name of the checkbox field that must be ticked (lead-magnet forms); empty = sync every submission (newsletter form) |
+
+`form-submissions` additions (appended after the plugin's fields):
+
+| Field | Type | Notes |
+|---|---|---|
+| `eventId` | text, unique, indexed, `disableDuplicate`, read-only | Idempotency key; set by `stampSubmissionDelivery` |
+| `deliveryStatus` | select `pending` / `delivered` / `failed`, indexed, read-only | Empty when the form sends no event |
+| `deliveryNote` | textarea, read-only | Last response or error summary |
+| `deliveryAttempts` | number, min 0, default 0, read-only | |
+| `lastAttemptAt` | date (day and time), read-only | |
+| `sourcePath` | text, read-only | Page path the form was submitted on |
+| `leadMagnet` | relationship → `lead-magnets`, `maxDepth: 0`, read-only | Asset requested |
+| `newsletter` (group, read-only) | `syncStatus` (pending / synced / failed), `syncNote`, `syncAttempts` (default 0), `optInStatus` (pending-confirmation / confirmed / expired), `confirmTokenHash` (text, `hidden: true`), `confirmExpiresAt`, `confirmedAt` | Resend sync, tracked separately from event delivery. `confirmTokenHash` is never in API responses or the admin |
+
+- Field-level `access.create: adminOnlyField` on `deliveryNote`, `deliveryAttempts`, `lastAttemptAt` and the `newsletter` group, so values a public submitter forges at create are stripped. `eventId` and `deliveryStatus` are overwritten by the hook. `sourcePath` and `leadMagnet` have no field-level create restriction (the form handler may set them).
+- Admin UI: all system fields are `admin.readOnly`. `defaultColumns` on `form-submissions`: `form`, `deliveryStatus`, `deliveryAttempts`, `createdAt`. `enableQueryPresets: true`.
+- Collection access (set explicitly on both; plugin defaults are looser, including a default "any logged-in user" delete on submissions that would include the pipeline user):
+
+| Collection | read | create | update | delete |
+|---|---|---|---|---|
+| `forms` | `staffOnly` | `adminOnly` | `adminOnly` | `adminOnly` |
+| `form-submissions` | `staffOnly` | `turnstileVerifiedOrAdmin` | `adminOnly` | `adminOnly` |
+
+- Query presets (top-level `queryPresets` in `payload.config.ts`): `access` read/create/update/delete = `staffOnly` (Payload's default is any logged-in user, which includes the pipeline); `constraints: {}` (built-in Only me / Everyone / Specific users). Enabled on `form-submissions` only.
+- The pipeline user is denied on `forms`, `form-submissions` and query presets.
+
+**Wiring**
+- Registration: `src/payload.config.ts` → `plugins: [formBuilder]`; `queryPresets` as above.
+- Hooks, `forms`: `afterChange` / `afterDelete` = `revalidateLiveCollectionHooks('forms')`. Collections without drafts feed public pages, so every save and delete calls `revalidateTag('forms', 'max')` and `revalidatePath('/', 'layout')`. Skipped when `context.disableRevalidate` is set; same safe-guard behaviour as the other revalidate hooks.
+- Hooks, `form-submissions`:
+  - `beforeChange`: plugin `createCharge` (no-op), then `stampSubmissionDelivery`. On `create` only: `eventId` = fresh `randomUUID()` (node:crypto) on every create, overwriting any caller-supplied value; `deliveryStatus` = `pending` only if the submission's form has `sendEvent` true and `eventType` not `none`, else `null` (caller values overwritten either way). The form is read with `overrideAccess: true` and the same `req`. Updates (re-send) never regenerate `eventId`.
+  - `afterChange`: the plugin's `sendEmail` (notification email via Resend). It is awaited inside the submit request (open flag F20). No integration `afterChange` exists yet (`TODO(integration)`).
+- Pages using it: p9 (homework form), p10, p12 (contact form), p16 and every NewsletterBand / footer nudge (via `site-settings.newsletterForm`), p18 (via `lead-magnets.form`). Blocks (FormEmbed, NewsletterBand) are not built yet.
+- Frontend rule: forms are staff-read, so the frontend reads form definitions server-side with `overrideAccess` and must never pass the `emails` array (notification addresses) to client components.
+- Migration: `20261021_233028_p1_form_builder`. Additive.
+  - Up: enums `enum_forms_confirmation_type`, `enum_forms_redirect_type`, `enum_forms_event_type`, `enum_form_submissions_delivery_status`, `enum_form_submissions_newsletter_sync_status`, `enum_form_submissions_newsletter_opt_in_status`, and four `enum_payload_query_presets_*` (read/update/delete constraint, related_collection = `form-submissions`); tables `forms`, `forms_blocks_{checkbox,email,message,number,select,select_options,text,textarea,date}`, `forms_emails`, `forms_rels`, `form_submissions`, `form_submissions_submission_data`, `payload_query_presets`, `payload_query_presets_rels`; unique `forms_form_key_idx` and `form_submissions_event_id_idx`, index on `delivery_status`; `form_submissions.form_id` NOT NULL FK → `forms` ON DELETE set null; adds `lead_magnets.form_id`, `_lead_magnets_v.version_form_id`, `site_settings.newsletter_form_id` (FKs → `forms`, set null) and `forms_id` / `form_submissions_id` on `payload_locked_documents_rels` (FK cascade); all with indexes.
+  - Down: hand-fixed to drop the five FKs that point into the new tables (`lead_magnets`, `_lead_magnets_v`, `payload_locked_documents_rels` ×2, `site_settings`) before the `DROP TABLE … CASCADE` statements (same fix as C2), then drops the added indexes, columns and enums.
+
+`TODO(integration)` list (nothing below exists yet; each is an `automation-engineer` unit):
+1. Form handler (server action or route): Turnstile siteverify first, then `payload.create` on `form-submissions` with `context.turnstileVerified = true` and `overrideAccess: false`; may set `sourcePath` and `leadMagnet`.
+2. `afterChange` on create: enqueue the event delivery job (never send inline) and, for forms with `newsletterSync`, the newsletter sync job. Jobs write with `overrideAccess` (field-level create restrictions otherwise strip their values); reading or writing `newsletter.confirmTokenHash` needs `showHiddenFields`.
+3. `resend` `ui` field on `form-submissions` plus a staff-only endpoint that re-enqueues the job keeping the same `eventId`. A `ui` field has no column, so no migration.
+4. Seed the shared "Failed deliveries" query preset (a `payload-query-presets` document, not config): `title`, `isShared: true`, `relatedCollection: 'form-submissions'`, `where` `deliveryStatus` equals `failed`, access constraint `everyone` for read/update/delete as chosen.
+5. Move the plugin's notification email off the request path (F20).
+
+**Notes**
+- Open flags (PROGRESS.md "Flags for checkpoint"):
+  - F16: `FORMS_DEFAULT_TO_EMAIL` is new and optional; whether the server sets it is an OPS question.
+  - F17: forms are admin-write, so `marketing` cannot edit form copy or notification addresses.
+  - F18: deleting a form that has submissions raises a raw DB error (the `form_id` column is NOT NULL while the FK is `set null`, as in F14). A friendly `beforeDelete` check is recommended; not built.
+  - F19: deleting a `pages` document used as a form redirect silently clears that redirect.
+  - F20: the plugin's notification email is awaited inside the submit request; the visitor waits on Resend. Plugin default for now; fix planned in the contact integration unit.
+  - F21 (all drafts-enabled collections): opening a create view autosaves a blank draft; strays accumulate if the editor leaves.
+- "Failed deliveries" is a shared preset document (`payload-query-presets`), not config, so it exists only after the seed or an admin creates it.
+- The precall-homework form is created with `sendEvent` off at launch (X13); its submissions get no `deliveryStatus`, so they never appear in "Failed deliveries".
+- Payload's `queryPresets` access function (default) was verified in `payload@3.91.0` `query-presets/access.js`; the config overrides it for all four operations.
+
 ## Block showcase sandbox (`/_showcase`)
 
 Renders every block and every variant back to back, for review at Gate K. Hidden from navigation, sitemap and search (noindex), and returns 404 when `APP_ENV=production`. Visible on local dev and staging only.
@@ -1139,6 +1238,7 @@ Source: `DECISIONS.md` §D, §E, §F and `OPS_REQUESTS.md` #3. Items marked **TB
 | `RESEND_API_KEY` | Resend full-access key (email transport + contacts) |
 | `RESEND_NEWSLETTER_SEGMENT_ID` | Resend newsletter Segment |
 | `RESEND_NEWSLETTER_TOPIC_ID` | Resend newsletter Topic (replaces the retired `RESEND_AUDIENCE_ID`) |
+| `FORMS_DEFAULT_TO_EMAIL` | Optional. Notification inbox when a form's "Email to" is empty (form-builder `defaultToEmail`). Unset: falls back to the Resend from-address. Open flag F16 |
 | `TURNSTILE_SITE_KEY` | Cloudflare Turnstile site key (passed to client components as a prop) |
 | `TURNSTILE_SECRET_KEY` | Cloudflare Turnstile secret for server-side verification |
 
@@ -1149,6 +1249,8 @@ Local dev: values live only in the untracked `.env`, created from the committed 
 ## Integrations
 
 Every lead, signup and site error is sent to the OpenClaw secretary as a signed HTTP event, and newsletter signups sync to Resend Contacts. The full contract, signing, retry schedule, re-send procedure and per-event status live in [`INTEGRATIONS.md`](../INTEGRATIONS.md).
+
+The submit-side data model (forms, submissions, delivery fields) is documented in [`form-builder` (P1)](#form-builder-unit-p1). None of the integration code is built yet: the open `TODO(integration)` items (form handler with Turnstile, delivery and newsletter-sync jobs, re-send endpoint, "Failed deliveries" preset) are listed in the [P1 Wiring section](#form-builder-unit-p1).
 
 ---
 

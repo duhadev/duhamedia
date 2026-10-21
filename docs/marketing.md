@@ -17,7 +17,7 @@ Sections are added here as each part of the site is finished and approved.
 | Edit scarcity numbers | **Admin → Globals → Capacity & scarcity** → change the four counts and/or the **Statements** → **Save**. Live straight away (no Publish). See [Capacity & scarcity](#capacity--scarcity). |
 | Add a redirect | [fill in once built] |
 | Edit page copy or images | [fill in once built] |
-| Find form submissions and failed deliveries | [fill in once built] |
+| Find form submissions and failed deliveries | **Admin → Form submissions** → apply the **Failed deliveries** saved filter (the shared saved view at the top of the list). See [Forms and form submissions](#forms-and-form-submissions). Public forms and the re-send button are not live yet. |
 | Change the booking link | **Admin → Globals → Site settings → Booking tab → Booking page address** → paste the full `https://` address → **Save**. Live straight away. See [Site settings](#site-settings). |
 | Send a newsletter broadcast (Resend dashboard steps) | [fill in once built] |
 | Change the social-share (OG) image | **Admin → Globals → SEO defaults → Default social share image** → choose or upload an image (at least 1200 × 630 pixels) → **Save**. Live straight away. This is the fallback for every page; individual pages will be able to override it once the SEO tab is added to Pages (a later release). See [SEO defaults](#seo-defaults). |
@@ -44,6 +44,8 @@ Sections are added here as each part of the site is finished and approved.
   - [Testimonials and reviews](#testimonials-and-reviews)
   - [FAQs](#faqs)
   - [Pages (site pages)](#pages-site-pages)
+- [Forms & leads (site-wide)](#forms--leads-site-wide)
+  - [Forms and form submissions](#forms-and-form-submissions)
 1. [Homepage](#1-homepage)
 2. [Case Study template](#2-case-study-template)
    - [Case studies (the collection)](#case-studies-the-collection)
@@ -298,6 +300,50 @@ Every ordinary page of the site is a **Page**: Homepage, About, Services pages, 
 **Other**
 - Changes appear on the site as soon as they are published; no developer is needed.
 
+## Forms & leads (site-wide)
+
+Every form on the website (Contact, the pre-call homework, newsletter sign-ups, lead-magnet downloads) is set up and stored in two places in the admin, described below. A **lead** is a person who has filled in one of these forms.
+
+**Not live yet:** the public forms on the website are not switched on. They arrive with the form sections (blocks) and spam protection, which are built later. Until then nothing on the public site creates a submission, and nothing is sent to anyone. This entry explains the admin screens so you know where to look once they are live.
+
+### Forms and form submissions
+
+**SEO:** n/a.
+
+**Editable by marketing**
+
+*Forms* (**Admin → Forms**)
+- **Marketing can view forms but not change them.** Only an **Admin** can create, edit or delete a form. The reason: each form's field names are the contract with the lead notifications. Renaming a field by accident would break what the notification says. If a form needs a new question or different wording, ask an Admin.
+- What an Admin sets on each form, so you recognise the labels (in the right-hand sidebar):
+  - **Form key**: a short, fixed code name for the form, e.g. `contact` or `precall-homework`. It is how the system tells forms apart. Never renamed once the form is live.
+  - **Event type**: what kind of lead notification a submission produces: **None**, **Contact**, **Newsletter** or **Lead magnet**.
+  - **Send event**: when ticked, each submission is announced (sent as an "event") to the business's assistant system, which tells the human. When unticked, submissions are still saved here but nothing is announced. The pre-call homework form starts with this off.
+  - **Newsletter sync**: when ticked, the person is also added to the newsletter list in Resend (the email service). For lead-magnet forms an **Opt-in field name** appears, naming the tick box the visitor must tick; leave it empty to add everyone who submits (the newsletter form).
+- The kinds of question a form can ask: short text, email address, long text, dropdown (select), tick box, number, date, and a plain message (text shown to the visitor, with no answer). There is no file upload, payment or country/state picker.
+
+*Form submissions* (**Admin → Form submissions**)
+- **Where leads land:** every submission is saved in **Admin → Form submissions**, before anything else happens. This list is the permanent record of every lead, even if a notification fails.
+- **Columns in the list:** **Form** (which form it came from), **Delivery status**, **Delivery attempts** and **Created** (when it was submitted). Open a row to see the person's answers.
+- **Marketing can read submissions but not edit or delete them.** Only an Admin can. This keeps the lead record trustworthy.
+- **Delivery status** says whether the lead was announced to the human:
+  - **Pending**: saved, announcement not yet confirmed.
+  - **Delivered**: announced successfully.
+  - **Failed**: the announcement could not be completed. The lead is **not lost**, it is saved here; only the announcement failed.
+  - **Empty**: the form sends no announcement (for example the pre-call homework form at launch).
+- The delivery fields (**Event ID**, **Delivery status**, **Delivery note**, **Delivery attempts**, **Last attempt**) are filled in automatically and are read-only. **Delivery note** holds the last response or error. A newsletter form also shows a **Newsletter sync** group tracking the email-list sign-up separately from the announcement.
+- **Find failed deliveries:** **Admin → Form submissions** → apply the **Failed deliveries** saved filter. A saved filter (called a **preset**) is a shared saved view of a list. The Failed deliveries preset is created by an Admin or the setup process; if you do not see it, ask an Admin.
+- **Make your own saved filter:** open **Admin → Form submissions**, set the filter you want (for example Form is `contact`), then save it as a preset using the saved-views control at the top of the list and choose who can use it (just you, or shared with everyone). Saved filters are personal conveniences and never change any data.
+- **Re-send button: coming with the lead-notification release (not built yet).** Today there is no way to re-send an announcement from the admin. When it arrives, it will resend a failed lead without creating a duplicate announcement. This entry will be updated then.
+
+**Forms & leads:** see above. What gets announced to the human, and what "failed" means in practice, will be confirmed here when the lead-notification release is live (nothing is announced today).
+
+**Social share:** n/a.
+
+**Other**
+- **Where forms are connected:** a lead magnet's **Capture form** (**Admin → Collections → Lead magnets → (lead magnet) → Capture tab**) chooses which form collects the email for that download. The one **Newsletter form** used by every newsletter box and the footer is chosen at **Admin → Globals → Site settings → Newsletter & closers tab → Newsletter form**.
+- **Blank drafts:** opening a **Create New** screen on a collection with drafts (Pages, Case studies, Lead magnets and so on) saves a blank draft automatically. If you back out without writing anything, delete that blank draft from the list so it does not clutter it.
+- Never copy real leads' details into notes, chat or documents. Refer to a submission by its ID.
+
 ## 1. Homepage
 
 *Not built yet.* The Homepage is a Page with the web address `home`; see [Pages (site pages)](#pages-site-pages).
@@ -529,7 +575,7 @@ Open **Admin → Collections → Lead magnets** and click **Create New**, or ope
 - **Accent phrase** (optional): a word or phrase to show in the accent colour. It must be copied from the title (capital letters do not matter); anything not found in the title is rejected.
 - **Pitch** (required): one paragraph on what it is, who it is for and the problem it solves. Lead with the number.
 - **Form note** (optional): a small line under the sign-up form.
-- The sign-up form itself is not chosen here yet. It is linked once the forms are built.
+- **Capture form**: the form that collects the visitor's details for this download. Pick it from the list of forms (forms are set up by an Admin; see [Forms and form submissions](#forms-and-form-submissions)). Public forms are not live yet, so nothing is collected until they are.
 
 *What's inside tab*
 - **Value bullets** (required, **3 to 6**): the concrete things the reader gets. Each row is one line of text, and the collapsed row shows that text.
@@ -564,7 +610,7 @@ Open **Admin → Collections → Lead magnets** and click **Create New**, or ope
 *Removing a lead magnet*
 - **Marketing can delete drafts only.** To take a published lead magnet off the site, open it, use the **⋯ (three dots) menu → Unpublish**; it returns to being a draft, which you can then delete if you wish. Or ask an Admin.
 
-**Forms & leads:** not wired up yet. The sign-up form (name/email, with an optional newsletter opt-in tick box) and where its submissions land arrive with the forms unit, and will be described here then, including how to spot and re-send a failed delivery.
+**Forms & leads:** submissions will land in **Admin → Form submissions** once the public forms are live; see [Forms and form submissions](#forms-and-form-submissions). The public form and the re-send button are not built yet.
 
 **Social share:** not set here yet. The share image and text arrive with the SEO unit.
 
@@ -640,12 +686,13 @@ Facts the whole site shares: the company name in the footer, contact email, soci
   - Only enter real figures copied from Google. Untick **Show** to take the rating off the site again.
 
 *Newsletter & closers tab*
+- **Newsletter form**: the one form used by every newsletter box on the site and by the footer sign-up. Pick it from the list. Forms themselves are set up by an Admin; see [Forms and form submissions](#forms-and-form-submissions).
 - **Default closing sections**: used at the end of case studies and articles, and by any newsletter or final call-to-action section whose own heading is left empty.
   - **Newsletter heading** and **Newsletter line** (the quiet line underneath).
   - **Final call-to-action heading** (the big closing line before the footer) and **Final call-to-action button** (usually "Book a Call"). The button is a link: choose **Page on this site** to pick a page from a list, or **Custom address** to type one.
 - **Postal address (newsletter emails)**: address lines, city, state, ZIP code and country. **US law requires a postal address at the bottom of every newsletter email**, so it is used in the newsletter footer. **It is not shown on the website pages.** The first newsletter cannot be sent until this is filled in.
 
-**Forms & leads:** n/a here. The postal address is read when a newsletter is sent; see the Quick reference once newsletter sending is documented. The newsletter sign-up form itself is chosen here in a later release.
+**Forms & leads:** n/a here. The postal address is read when a newsletter is sent; see the Quick reference once newsletter sending is documented. The newsletter sign-up form itself is chosen in the **Newsletter form** field on the same tab; sign-ups will land in **Admin → Form submissions** (see [Forms and form submissions](#forms-and-form-submissions)).
 
 **Social share:** the social profile links are for the profile icons on the site, not for share previews. The default share image is not set here; it is set under [SEO defaults](#seo-defaults).
 
