@@ -71,6 +71,7 @@ Sections are added here as each part of the site is finished and approved.
 - [Site-wide settings (header, footers, contact details)](#site-wide-settings)
   - [Site settings](#site-settings)
   - [Capacity & scarcity](#capacity--scarcity)
+  - [Navigation (header menu and footers)](#navigation-header-menu-and-footers)
 
 Each entry below covers: **SEO** (what is set, and where to change it) · **Editable by marketing** (what you can change, including adding, removing and reordering items) · **Forms & leads** (where submissions go, what gets announced, what "failed" means and how to re-send) · **Social share** · **Other**.
 
@@ -589,7 +590,7 @@ Open **Admin → Collections → Lead magnets** and click **Create New**, or ope
 
 Header, footers, contact details, social handles, booking link and default share image.
 
-A **global** is a single settings screen that exists once for the whole site (unlike a collection, which is a list of many items). Globals are listed in the left-hand menu under **Globals**. **Site settings** and **Capacity & scarcity** are built so far; the header and footer menus and the default share image are *not built yet*.
+A **global** is a single settings screen that exists once for the whole site (unlike a collection, which is a list of many items). Globals are listed in the left-hand menu under **Globals**. **Site settings**, **Capacity & scarcity** and **Navigation** (the header menu and footer links) are built so far; the default share image is *not built yet*.
 
 ### Site settings
 
@@ -702,3 +703,60 @@ How busy we are, kept in one place. The site uses these numbers in several spots
 **Other**
 - The four counts have no defaults and the statements list starts empty; the example numbers come from demonstration content that is clearly not final.
 - Never enter numbers that are not true. Update the counts whenever capacity really changes.
+
+### Navigation (header menu and footers)
+
+The links at the top of every page (the **header**, or menu bar) and the links in the three **footers** (the block of links at the bottom of a page). You edit them here once and every page that shows them follows.
+
+**Where:** **Admin → Globals → Navigation** (address `duhamedia.com/admin/globals/navigation`). It has two **tabs** (the headings across the top of the form): **Header** and **Footers**. Click **Save** when done. Both Admins and Marketing can edit it.
+
+**There is no draft stage here.** A save is live straight away, with no Publish step and no developer needed. Check each link before you click Save.
+
+**SEO:** n/a. Nothing here is a search-result title or description. Links are ordinary links that search engines can follow.
+
+**Editable by marketing**
+
+*Header tab* (**Admin → Globals → Navigation → Header tab**)
+- **Menu links**: up to **6** links, shown left to right in the order listed (for example Work, Services, Testimonials, About, FAQ). On phones the same links open from the menu button. Once you have 6, the **Add Link** button is no longer offered.
+- **Button**: the highlighted button at the right of the menu, usually "Book a Call". **Leave every part of it empty and no button is shown.** If you fill in any part, the link text and the destination are both needed.
+- The header only shows on pages whose **Header** setting is **Standard**. Campaign landing pages (**Logo only**) and Link-in-Bio (**None**) show none of these links.
+
+*Footers tab* (**Admin → Globals → Navigation → Footers tab**)
+
+There are three footers. Which one a page shows is chosen **per page**: **Admin → Collections → Pages → (page) →** the **Footer** setting in the right-hand sidebar (see [Pages](#pages-site-pages)).
+- **Standard footer**: used on almost every page. The default.
+- **Reduced footer**: only on **Book a Call** and **Thank You**, so visitors stay focused on the next step. The logo, a few links and the legal links.
+- **Legal only footer**: on **campaign landing pages**, **Link-in-Bio** and **lead magnets**. Just the small legal links.
+- The **company name** in the copyright line and the **brand line** under the logo come from [Site settings](#site-settings) (**Brand & contact** tab), not from here.
+
+What you edit for each footer:
+- **Standard footer → Link columns**: up to **3** columns. Each column has a **Column heading** (required, e.g. "Pages") and its own list of **Links**. Open a column to add, remove or reorder the links inside it.
+- **Standard footer → Newsletter sign-up**: the small sign-up box in the last column. Three texts: **Heading**, **Line** (the sentence under it) and **Button text**. They start with "Newsletter", "One useful email a month. Numbers included." and "Join". The form it uses is chosen in Site settings.
+- **Reduced footer → Links**: a short row of links, e.g. Home, Work, FAQ, Contact.
+- **Legal links**: the small links in the bottom bar of **all three** footers, e.g. Privacy, Terms, Cookies, GDPR. On the Legal only footer this bar is the whole footer.
+
+*How to add a link (every list works the same way)*
+1. Click **Add Link** (or **Add Column** first, then open it and **Add Link**). A new row opens **collapsed** (closed to one line); click it to open it.
+2. Choose the **Link type**:
+   - **Page on this site**: then pick the page from the **Page** list. Case studies, articles and lead magnets can be picked too.
+   - **Custom address**: then type the **Address**: a full `https://…` address, a `mailto:…` address, or a path on this site starting with `/`, such as `/book-a-call`.
+3. Write the **Link text** (the words visitors see). Both the link text and the destination are always required.
+4. Tick **Open in a new tab** if the link should open in a separate browser tab (useful for other websites).
+5. Click **Save**.
+
+*Reorder and remove*
+- **Reorder:** drag a row by its handle (the grip at the left of the row). With a keyboard: click to focus the drag handle, press **Space** to pick the row up, use the **arrow keys** to move it, then press **Space** again to drop it. This works for links, and for footer columns.
+- **Remove:** use the row's menu (the **⋯** or trash icon on the row), then **Save**.
+- Collapsed rows are labelled with their link text (columns with their heading), so you can tell them apart without opening them.
+
+*If a save is refused*
+- Rows start collapsed, so a problem can be hidden inside one. The row with the problem shows a **red badge**. Open it to read the message under the field (for example a missing link text, or an address that is not `https://`, `mailto:` or a `/` path). Fix it and Save again.
+
+**Forms & leads:** n/a here. The newsletter sign-up box in the standard footer submits through the newsletter form chosen in Site settings; where those sign-ups land is covered with the forms unit once it is built.
+
+**Social share:** n/a.
+
+**Other**
+- **Deleted or unpublished pages:** the site simply hides any link to a page that has been deleted or is not published, so visitors never hit a dead link. If you **delete a page that a menu links to**, the next time you save Navigation it will ask you to fix or remove that link. Do that, then Save.
+- Nothing is pre-filled yet: the lists start empty, so a header or footer with no links shows nothing in that area until you add them. Add the links once the pages exist.
+- Changes appear on the site as soon as you save; no rebuild or developer is needed.

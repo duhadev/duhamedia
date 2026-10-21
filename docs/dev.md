@@ -45,6 +45,7 @@ Entry format for every unit: **Files** / **Fields & schema** / **Wiring** (regis
   - [Globals](#globals)
     - [`site-settings` (G1)](#site-settings-unit-g1)
     - [`scarcity` (G2)](#scarcity-unit-g2)
+    - [`navigation` (G3)](#navigation-unit-g3)
 - [Block showcase sandbox (`/_showcase`)](#block-showcase-sandbox-_showcase)
 - [Deploy](#deploy)
 - [Integrations](#integrations)
@@ -447,7 +448,7 @@ Drafts on (`contentVersions`); `useAsTitle: 'question'`; `defaultSort: ['categor
   - `metricFields()`: `Field[]` to spread inside a named group. Row `value` (text, required) + `label` (text, required); `sub` (text); `accent` (checkbox, default `false`). No default numbers (R5); value is a result, never a price (R13).
   - `validateAccentPhrase(headingField)`: text validator; runs `text()` first; empty passes; otherwise the value must be a case-insensitive substring of the sibling field `headingField`.
   - `linkField({ name, label?, description?, required? })`: group `{ type, newTab, reference, url, label }`.
-    - `type` select `internal` / `custom` (required, default `internal`); `newTab` checkbox (default `false`).
+    - `type` select `internal` / `custom` (required, default `internal`, `admin.isClearable: false` since G3: an emptied required `type` blocked saving; applies to every `linkField` use); `newTab` checkbox (default `false`).
     - `reference`: polymorphic relationship, `relationTo: ['case-studies']` (`LINK_TARGETS`), `maxDepth: 1`, shown when `type` = `internal`.
     - `url`: text, shown when `type` = `custom`; accepts `https://…`, `mailto:…` or a site path starting with a single `/`.
     - `label`: text ("Link text").
@@ -976,6 +977,62 @@ Access:
 - Deferred: the `scarcityRef()` field factory (SCHEMA §3) ships with the first consuming block and must import `SCARCITY_KEYS` from `src/lib/scarcity.ts`.
 - SCHEMA §7.2's `capacity` default of 7 is deliberately not applied (no real-looking numbers as defaults). Open flag F7 in `PROGRESS.md`.
 - Open flag F8 in `PROGRESS.md`: `buildsInProgress` and `enginesRunning` are not validated against `capacity`; only `activeClients` is.
+
+#### `navigation` (unit G3)
+
+Header links and the three footer variants' links (SCHEMA §7.3, §4.3, §10). Which header/footer a page shows is chosen per page by `pages.headerVariant` / `pages.footerVariant` ([C10](#pages-unit-c10)), not here.
+
+**Files**
+- `src/globals/Navigation.ts`: global config, `linkArray` helper, `maxRowsValidate`, `validateColumnTitle`.
+- `src/components/admin/NavRowLabels.tsx`: client components `NavLinkRowLabel` (link text, else URL, else `Link NN`) and `FooterColumnRowLabel` (column title), both via `useRowLabel`.
+- `src/fields/index.ts`: `linkField` `type` select gets `admin.isClearable: false` (shared change, see Notes).
+- `src/payload.config.ts`: `globals: [SiteSettings, Scarcity, Navigation]`.
+- `src/payload-types.ts` and `src/app/(payload)/admin/importMap.js`: regenerated.
+- `src/migrations/20261021_224808_g3_navigation.ts` (+ `.json`), registered in `src/migrations/index.ts`.
+
+**Fields & schema**
+
+Slug `navigation`, label "Navigation". No drafts, no versions: a save is live immediately. `header` and `footer` are named tabs; they store like groups, so the data paths are as below.
+
+| Path | Type | Notes |
+|---|---|---|
+| `header.links` | array of `{ link }`, `maxRows: 6` | Menu links, left to right. Sortable, `initCollapsed`, row label `NavLinkRowLabel` |
+| `header.cta` | `linkField` (optional) | Header button ("Book a Call"). Fully empty = no button; once any of label / URL / reference is filled, label and destination are both required (half-filled is rejected) |
+| `footer.standard.columns` | array, `maxRows: 3` | Row label `FooterColumnRowLabel` |
+| `footer.standard.columns[].title` | text, required | Trimmed; blank rejected ("Add the column heading, e.g. "Pages".") |
+| `footer.standard.columns[].links` | array of `{ link }` | Unlimited rows |
+| `footer.standard.newsletterNudge.heading` | text, default `Newsletter` | Trimmed |
+| `footer.standard.newsletterNudge.line` | text, default `One useful email a month. Numbers included.` | Trimmed |
+| `footer.standard.newsletterNudge.buttonLabel` | text, default `Join` | Trimmed. The three fields share one row (30/50/20 %) |
+| `footer.reduced.links` | array of `{ link }` | Reduced-nav footer: p9 Book a Call, p10 Thank You |
+| `footer.legalLinks` | array of `{ link }` | Bottom bar of all three footer variants; the legal-only footer (p15, p17, p18) is this bar alone |
+
+- Every array row is `{ link: linkField({ required: true }) }`, so consumers read `links[i].link.*` (`type`, `newTab`, `reference`, `url`, `label`). A row cannot be saved empty or half-filled.
+- The newsletter nudge holds copy only. The form it submits is `site-settings.newsletterForm` ([G1](#site-settings-unit-g1), P1).
+- The brand-zone text of the standard footer is `site-settings.footerTagline`; "© year legalName" is `site-settings.legalName`. Neither is stored here.
+- Max-row messages: the built-in array validator words the limit as "no more than N Rows" and ignores `labels`, so `maxRowsValidate` replaces it with `validation:requiresNoMoreThan` and the noun ("links", "columns"). `maxRows` is kept on the fields, so the admin also stops offering "Add" at the limit.
+- No link defaults. A label without a target fails `linkField` validation and the target pages do not exist yet, so all arrays (including column titles) start empty; the seed fills them. The only defaults are the three nudge strings.
+
+Access:
+- `read`: public (`() => true`).
+- `update`, `readVersions`: `staffOnly`.
+- The pipeline user is logged in but not staff, so it is denied on update.
+
+**Wiring**
+- Registration: `src/payload.config.ts` → `globals: [SiteSettings, Scarcity, Navigation]`.
+- Revalidation: `afterChange: [revalidateGlobalHook('navigation')]` calls `revalidateTag('navigation', 'max')` and `revalidatePath('/', 'layout')`. Skipped when `context.disableRevalidate` is set (seed).
+- Pages using it (consuming header/footer components not built yet): header on every page with `headerVariant = standard` (`logo-only`: p15, p18; `none`: p17, which render none of these links); standard footer on all pages except p9, p10, p15, p17, p18; reduced footer p9, p10; legal bar on all footers, alone on p15, p17, p18.
+- Integrator note: the chrome fetch should carry the `navigation` tag and also the `pages` and linked-collection tags, so a renamed linked page refreshes the chrome. Moot while the frontend is `force-dynamic`.
+- Migration: `20261021_224808_g3_navigation`. Additive.
+  - Up: 5 enums (`enum_navigation_header_links_link_type`, `enum_navigation_footer_standard_columns_links_link_type`, `enum_navigation_footer_reduced_links_link_type`, `enum_navigation_footer_legal_links_link_type`, `enum_navigation_header_cta_type`); 7 tables (`navigation_header_links`, `navigation_footer_standard_columns_links`, `navigation_footer_standard_columns`, `navigation_footer_reduced_links`, `navigation_footer_legal_links`, `navigation`, `navigation_rels`).
+  - Down: hand-fixed.
+
+**Notes**
+- A global has no stored row until its first save (payload@3.91.0). `findGlobal` on an unsaved global returns `{}`; every field is optional to the frontend, and empty zones (no links, no button, no columns) must render without error.
+- Skip links whose `reference` is null or an unpopulated ID: a deleted target, or a draft (population runs through the reader's access, so drafts stay unpopulated for anonymous readers). Do not render a link without a resolved target.
+- Open flag F10: deleting a page (or other linked document) that is referenced in navigation leaves a dangling relationship row; the next save of this global is blocked by the foreign key until that link is fixed or removed.
+- Open flag F9: no default navigation rows (see Fields). Open flag F11: the p17/p18 legal links are a subset of the global's legal links.
+- Shared change: `linkField`'s `type` select has `admin.isClearable: false`, because an emptied required `type` blocked saving. Affects every `linkField` use (see [C7](#case-studies-unit-c7)).
 
 ## Block showcase sandbox (`/_showcase`)
 
