@@ -22,6 +22,8 @@ import { Scarcity } from './globals/Scarcity'
 import { SeoDefaults } from './globals/SeoDefaults'
 import { SiteSettings } from './globals/SiteSettings'
 import { migrations } from './migrations'
+import { staffOnly } from './access'
+import { formBuilder } from './plugins/formBuilder'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -59,7 +61,15 @@ export default buildConfig({
         apiKey: process.env.RESEND_API_KEY,
       })
     : undefined,
+  // Query presets (enabled on form-submissions, SCHEMA §4.3): staff only.
+  // Payload's default is "any logged-in user", which includes the pipeline
+  // (payload@3.91.0 query-presets/access.js:9-19).
+  queryPresets: {
+    access: { read: staffOnly, create: staffOnly, update: staffOnly, delete: staffOnly },
+    // Built-in constraints only (Only me / Everyone / Specific users).
+    constraints: {},
+  },
   sharp,
   telemetry: false,
-  plugins: [],
+  plugins: [formBuilder],
 })

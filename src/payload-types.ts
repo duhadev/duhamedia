@@ -78,10 +78,13 @@ export interface Config {
     'case-studies': CaseStudy;
     posts: Post;
     'lead-magnets': LeadMagnet;
+    forms: Form;
+    'form-submissions': FormSubmission;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
+    'payload-query-presets': PayloadQueryPreset;
   };
   collectionsJoins: {};
   collectionsSelect: {
@@ -96,10 +99,13 @@ export interface Config {
     'case-studies': CaseStudiesSelect<false> | CaseStudiesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
     'lead-magnets': LeadMagnetsSelect<false> | LeadMagnetsSelect<true>;
+    forms: FormsSelect<false> | FormsSelect<true>;
+    'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
+    'payload-query-presets': PayloadQueryPresetsSelect<false> | PayloadQueryPresetsSelect<true>;
   };
   db: {
     defaultIDType: number;
@@ -1050,6 +1056,10 @@ export interface LeadMagnet {
    */
   pitch: string;
   /**
+   * The form visitors fill in to get the asset (Forms in the admin).
+   */
+  form: number | Form;
+  /**
    * Small line under the form, e.g. "Email delivery. No drip sequence ambush — one send, plus the monthly newsletter if you opt in."
    */
   formNote?: string | null;
@@ -1129,6 +1139,188 @@ export interface LeadMagnet {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "forms".
+ */
+export interface Form {
+  id: number;
+  title: string;
+  fields?:
+    | (
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            required?: boolean | null;
+            defaultValue?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'checkbox';
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'email';
+          }
+        | {
+            message?: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            } | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'message';
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            defaultValue?: number | null;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'number';
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            defaultValue?: string | null;
+            placeholder?: string | null;
+            options?:
+              | {
+                  label: string;
+                  value: string;
+                  id?: string | null;
+                }[]
+              | null;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'select';
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            defaultValue?: string | null;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'text';
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            defaultValue?: string | null;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'textarea';
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            required?: boolean | null;
+            defaultValue?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'date';
+          }
+      )[]
+    | null;
+  submitButtonLabel?: string | null;
+  confirmationType?: ('message' | 'redirect') | null;
+  confirmationMessage?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  redirect?: {
+    type?: ('reference' | 'custom') | null;
+    reference?: {
+      relationTo: 'pages';
+      value: number | Page;
+    } | null;
+    url?: string | null;
+  };
+  emails?:
+    | {
+        emailTo?: string | null;
+        cc?: string | null;
+        bcc?: string | null;
+        replyTo?: string | null;
+        emailFrom?: string | null;
+        subject: string;
+        message?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Stable machine id, sent as the event "form" value: contact, precall-homework, newsletter, lead-magnet. Do not rename once live.
+   */
+  formKey: string;
+  /**
+   * Which secretary event a submission sends (CLAUDE.md events table).
+   */
+  eventType: 'none' | 'contact' | 'newsletter' | 'lead_magnet';
+  /**
+   * When on, each submission is sent to the secretary. Off for the pre-call homework form at launch: submissions are still stored here.
+   */
+  sendEvent?: boolean | null;
+  /**
+   * Add the submitter to the newsletter (Resend contact, segment and topic, with double opt-in).
+   */
+  newsletterSync?: boolean | null;
+  /**
+   * Name of the checkbox field that must be ticked for newsletter sync (lead-magnet forms). Leave empty to sync every submission (the newsletter form).
+   */
+  newsletterOptInField?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Questions and answers for the FAQ page and the FAQ sections on service pages.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1170,6 +1362,57 @@ export interface Faq {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "form-submissions".
+ */
+export interface FormSubmission {
+  id: number;
+  form: number | Form;
+  submissionData?:
+    | {
+        field: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Idempotency key, reused on every retry and re-send.
+   */
+  eventId?: string | null;
+  /**
+   * Delivery to the secretary. Empty when this form sends no event.
+   */
+  deliveryStatus?: ('pending' | 'delivered' | 'failed') | null;
+  /**
+   * Last response or error summary.
+   */
+  deliveryNote?: string | null;
+  deliveryAttempts?: number | null;
+  lastAttemptAt?: string | null;
+  /**
+   * Page path the form was submitted on.
+   */
+  sourcePath?: string | null;
+  /**
+   * The asset requested (lead-magnet forms).
+   */
+  leadMagnet?: (number | null) | LeadMagnet;
+  /**
+   * Resend contact sync, tracked separately from event delivery.
+   */
+  newsletter?: {
+    syncStatus?: ('pending' | 'synced' | 'failed') | null;
+    syncNote?: string | null;
+    syncAttempts?: number | null;
+    optInStatus?: ('pending-confirmation' | 'confirmed' | 'expired') | null;
+    confirmTokenHash?: string | null;
+    confirmExpiresAt?: string | null;
+    confirmedAt?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1238,6 +1481,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'lead-magnets';
         value: number | LeadMagnet;
+      } | null)
+    | ({
+        relationTo: 'forms';
+        value: number | Form;
+      } | null)
+    | ({
+        relationTo: 'form-submissions';
+        value: number | FormSubmission;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1278,6 +1529,55 @@ export interface PayloadMigration {
   id: number;
   name?: string | null;
   batch?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-query-presets".
+ */
+export interface PayloadQueryPreset {
+  id: number;
+  title: string;
+  isShared?: boolean | null;
+  access?: {
+    read?: {
+      constraint?: ('everyone' | 'onlyMe' | 'specificUsers') | null;
+      users?: (number | User)[] | null;
+    };
+    update?: {
+      constraint?: ('everyone' | 'onlyMe' | 'specificUsers') | null;
+      users?: (number | User)[] | null;
+    };
+    delete?: {
+      constraint?: ('everyone' | 'onlyMe' | 'specificUsers') | null;
+      users?: (number | User)[] | null;
+    };
+  };
+  where?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  columns?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  groupBy?: string | null;
+  relatedCollection: 'form-submissions';
+  /**
+   * This is a temporary field used to determine if updating the preset would remove the user's access to it. When `true`, this record will be deleted after running the preset's `validate` function.
+   */
+  isTemp?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1704,6 +2004,7 @@ export interface LeadMagnetsSelect<T extends boolean = true> {
   title?: T;
   accentPhrase?: T;
   pitch?: T;
+  form?: T;
   formNote?: T;
   whatsInsideHeading?: T;
   valueBullets?:
@@ -1742,6 +2043,171 @@ export interface LeadMagnetsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "forms_select".
+ */
+export interface FormsSelect<T extends boolean = true> {
+  title?: T;
+  fields?:
+    | T
+    | {
+        checkbox?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              required?: T;
+              defaultValue?: T;
+              id?: T;
+              blockName?: T;
+            };
+        email?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              required?: T;
+              id?: T;
+              blockName?: T;
+            };
+        message?:
+          | T
+          | {
+              message?: T;
+              id?: T;
+              blockName?: T;
+            };
+        number?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              defaultValue?: T;
+              required?: T;
+              id?: T;
+              blockName?: T;
+            };
+        select?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              defaultValue?: T;
+              placeholder?: T;
+              options?:
+                | T
+                | {
+                    label?: T;
+                    value?: T;
+                    id?: T;
+                  };
+              required?: T;
+              id?: T;
+              blockName?: T;
+            };
+        text?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              defaultValue?: T;
+              required?: T;
+              id?: T;
+              blockName?: T;
+            };
+        textarea?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              defaultValue?: T;
+              required?: T;
+              id?: T;
+              blockName?: T;
+            };
+        date?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              required?: T;
+              defaultValue?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  submitButtonLabel?: T;
+  confirmationType?: T;
+  confirmationMessage?: T;
+  redirect?:
+    | T
+    | {
+        type?: T;
+        reference?: T;
+        url?: T;
+      };
+  emails?:
+    | T
+    | {
+        emailTo?: T;
+        cc?: T;
+        bcc?: T;
+        replyTo?: T;
+        emailFrom?: T;
+        subject?: T;
+        message?: T;
+        id?: T;
+      };
+  formKey?: T;
+  eventType?: T;
+  sendEvent?: T;
+  newsletterSync?: T;
+  newsletterOptInField?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "form-submissions_select".
+ */
+export interface FormSubmissionsSelect<T extends boolean = true> {
+  form?: T;
+  submissionData?:
+    | T
+    | {
+        field?: T;
+        value?: T;
+        id?: T;
+      };
+  eventId?: T;
+  deliveryStatus?: T;
+  deliveryNote?: T;
+  deliveryAttempts?: T;
+  lastAttemptAt?: T;
+  sourcePath?: T;
+  leadMagnet?: T;
+  newsletter?:
+    | T
+    | {
+        syncStatus?: T;
+        syncNote?: T;
+        syncAttempts?: T;
+        optInStatus?: T;
+        confirmTokenHash?: T;
+        confirmExpiresAt?: T;
+        confirmedAt?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -1777,6 +2243,43 @@ export interface PayloadPreferencesSelect<T extends boolean = true> {
 export interface PayloadMigrationsSelect<T extends boolean = true> {
   name?: T;
   batch?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-query-presets_select".
+ */
+export interface PayloadQueryPresetsSelect<T extends boolean = true> {
+  title?: T;
+  isShared?: T;
+  access?:
+    | T
+    | {
+        read?:
+          | T
+          | {
+              constraint?: T;
+              users?: T;
+            };
+        update?:
+          | T
+          | {
+              constraint?: T;
+              users?: T;
+            };
+        delete?:
+          | T
+          | {
+              constraint?: T;
+              users?: T;
+            };
+      };
+  where?: T;
+  columns?: T;
+  groupBy?: T;
+  relatedCollection?: T;
+  isTemp?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1883,6 +2386,10 @@ export interface SiteSetting {
      */
     sourceUrl?: string | null;
   };
+  /**
+   * The signup form used by every newsletter section and the footer.
+   */
+  newsletterForm?: (number | null) | Form;
   /**
    * Used at the end of case studies and articles, and by any newsletter or final call-to-action section whose heading is left empty.
    */
@@ -2300,6 +2807,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         asOf?: T;
         sourceUrl?: T;
       };
+  newsletterForm?: T;
   templateDefaults?:
     | T
     | {

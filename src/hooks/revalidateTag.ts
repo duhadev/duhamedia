@@ -108,3 +108,28 @@ export const revalidateGlobalHook =
     safeRevalidatePath('/', req, 'layout')
     return doc
   }
+
+/**
+ * Collections WITHOUT drafts whose docs feed public pages (P1: form-builder
+ * `forms`, rendered by FormEmbed / NewsletterBand / Hero and the footer
+ * nudge on every page). No `_status` exists, so every save and delete is
+ * live: purge the tag and the whole `(frontend)` tree, as for globals.
+ */
+export const revalidateLiveCollectionHooks = (
+  tag: string,
+): { afterChange: CollectionAfterChangeHook; afterDelete: CollectionAfterDeleteHook } => {
+  const purge = (req: PayloadRequest): void => {
+    safeRevalidate(tag, req)
+    safeRevalidatePath('/', req, 'layout')
+  }
+  return {
+    afterChange: ({ doc, req, context }) => {
+      if (!context.disableRevalidate) purge(req)
+      return doc
+    },
+    afterDelete: ({ doc, req, context }) => {
+      if (!context.disableRevalidate) purge(req)
+      return doc
+    },
+  }
+}

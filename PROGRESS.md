@@ -28,8 +28,9 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 | global | G2 `scarcity` | all | documented | Gate 1 cleared 2026-10-21 under standing approval (QA 8/8: all errors inline; reorder/remove persist). Cosmetic accepted (stock): array min-rows tooltip lingers until next save; long inline error truncated in label tooltip; empty row label 'Statement 01'. migration `g2_scarcity`; scarcityRef() factory deferred to first consuming block (import SCARCITY_KEYS from src/lib/scarcity.ts); dev DB holds placeholder 7/3/2/1 + one statement |
 | global | G3 `navigation` | all | documented | Gate 1 cleared 2026-10-21 under standing approval. QA 8 checks: all validation inline; max rows hide Add; keyboard reorder persists. Rework done: shared linkField type select `isClearable: false` (PM browser-verified, no clear control; tsc 0). Cosmetic accepted (stock): collapsed new rows hide inline msg (badge shows); stale tab error badge until reload. migration `g3_navigation`; integrator: chrome fetch should carry `pages` + linked-collection tags |
 | global | G4 `seo-defaults` | all | documented | Gate 1 cleared 2026-10-21 under standing approval (QA 8/8, no discrepancies; all errors inline). migration `g4_seo_defaults`; exports TITLE_PLACEHOLDER / DEFAULT_DESCRIPTION_MAX / LOCAL_BUSINESS_TYPES for P3; seed must upload ≥1200×630 OG image before first save; dev DB: placeholder description + media id 11 as OG |
-| plugin | P1 form-builder (overrides + delivery fields + lead-magnets.form + site-settings.newsletterForm) | all | coding | schema-architect (opus) dispatched 2026-10-21; job/enqueue/Turnstile/re-send left to integration units |
-| plugin | P2 redirects · P3 seo | all | queued | one unit each |
+| plugin | P1 form-builder (overrides + delivery fields + lead-magnets.form + site-settings.newsletterForm) | all | cleared | Gate 1 cleared 2026-10-21 under standing approval (QA 8/8: only allowed field types offered; formKey format/unique + event rule inline; small rich-text editor; drag reorder persists; eventId stamped, delivery fields read-only; shared preset create/apply/delete; Capture form + newsletterForm pickers). Coded: src/plugins/formBuilder.ts, hooks/formSubmissions.ts; payment/country/state/upload off; forms + submissions staff read, submissions create `turnstileVerifiedOrAdmin` (public POST 403 until integration handler); eventId/deliveryStatus stamping; migration `p1_form_builder` proven; 51/51 smoke; TODO(integration): handler, enqueue, jobs, re-send ui field + endpoint, seed 'Failed deliveries' shared preset (preset is a doc, not config); frontend reads forms server-side with overrideAccess and never passes `emails` to client |
+| plugin | P2 redirects | all | coding | schema-architect (opus) dispatched 2026-10-21 |
+| plugin | P3 seo | all | queued | |
 | block | 23 blocks in page build order (SCHEMA.md §8–9) | — | queued after collections/globals | appended to /_showcase on Gate 1 |
 | integration | contact · newsletter (DOI) · lead_magnet · site_error | — | queued after triggering units clear | Gate A |
 
@@ -40,6 +41,7 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 ## Migrations log
 | Date | Migration file | What it changes | Applied in dev / staging / prod |
 |---|---|---|---|
+| 2026-10-21 | `src/migrations/20261021_233028_p1_form_builder.ts` | + forms (+blocks, rels, emails), form_submissions (+data), payload_query_presets (+rels); 10 enums; nullable lead_magnets.form_id, _lead_magnets_v.version_form_id, site_settings.newsletter_form_id, locked rels cols (down hand-fixed) | scratch proofs; dev via push / no / no |
 | 2026-10-21 | `src/migrations/20261021_231646_g4_seo_defaults.ts` | + seo_defaults (default_og_image_id NOT NULL, 2 media FKs set null), enum_seo_defaults_local_business_type | scratch proofs; dev via push / no / no |
 | 2026-10-21 | `src/migrations/20261021_224808_g3_navigation.ts` | + navigation, navigation_rels, header_links, footer_standard_columns(+_links), footer_reduced_links, footer_legal_links; 5 enums (down hand-fixed) | scratch proofs; dev via push / no / no |
 | 2026-10-21 | `src/migrations/20261021_223802_g2_scarcity.ts` | + scarcity, scarcity_statements, enum_scarcity_statements_key | scratch proofs; dev via push / no / no |
@@ -150,6 +152,7 @@ Append-only. New sessions: read this before asking the human anything.
 | 2026-10-18 | Frontend rule: generated types still mark `lead-magnets.asset`/`deliveryEmail` as present — public-facing code must treat them as absent (field read access strips them) | schema-architect S1 |
 | 2026-10-21 | **Mini Gate S approved: `downloads` read = staff only** (option a). Lead-magnet files are delivered as an **email attachment** by the lead_magnet integration (server-side, `overrideAccess`); no public `/api/downloads` list or file URL. Closes the 2026-10-18 open item | Human: "I choose A" |
 | 2026-10-21 | marketing.md scarcity page-per-type mapping (Projects ongoing/Client cap → p1 strip; Builds line → most FinalCTAs; Engines line → p6/p14) is from config comments — re-verify when ProofStrip/FinalCTA/OfferBlock/LinkStack clear Gate 1 | marketing-docs G2 |
+| 2026-10-21 | New folder `src/plugins/` holds plugin configs (formBuilder.ts; redirects/seo next) — not in CLAUDE.md file list; adopted | schema-architect P1 |
 | 2026-10-21 | **Standing approval (big step 2):** run G1–G4 globals + P1–P3 plugins autonomously; PM clears Gate 1 on QA + browser proof; every decision needing the human is **flagged and deferred** to one big checkpoint at the end of the step (before blocks). Supersedes "present each global's gate" | Human: "delay… put a flag on it… continue autonomously… next big step" |
 | 2026-10-17 | Local Postgres image provisional `postgres:17-alpine` until server major is known; local port 5433 | OPS #6 open |
 
@@ -172,6 +175,12 @@ Decisions deferred to the human; each has a safe default applied so work continu
 | F13 | G4 | Default `localBusiness.type` = ProfessionalService? | empty |
 | F14 | G4 | Deleting the media used as default OG image fails with a raw "Failed query" (NOT NULL FK). Rec: friendly media beforeDelete check (validation only) or marketing note | image protected; message unclear |
 | F15 | G4 | Added min-size check: OG image must produce the 1200×630 `og` size (validation only). Keep? | kept |
+| F16 | P1 | New optional env `FORMS_DEFAULT_TO_EMAIL` (notification fallback; unset → from-address). Server should set it? (OPS) | name in .env.example only |
+| F17 | P1 | Forms writes admin-only (SCHEMA) → marketing can't edit form copy / notification addresses. Keep? | admin-only |
+| F18 | P1 | Deleting a form that has submissions → raw DB error (NOT NULL + set null, like F14). Rec: friendly beforeDelete check | protected; message unclear |
+| F19 | P1 | Deleting a page used as a form redirect silently clears that redirect | accepted |
+| F20 | P1 | Plugin's notification email is awaited inside the submit request (visitor waits on Resend). CLAUDE.md wants it parallel/not blocking. Rec: integration unit moves it off the request path | plugin default for now; fix in contact integration unit |
+| F21 | all | Opening a drafts-enabled collection's create view autosaves a blank draft (stray drafts pile up if the editor leaves). Rec: accept (stock) + marketing note, or disable autosave on create | stock; strays deleted by id during QA |
 
 ## Session handoff
 - **In flight:** big step 2 — G1 site-settings (schema-architect, opus), then G2 scarcity, G3 navigation, G4 seo-defaults, P1 form-builder, P2 redirects, P3 seo. Serial (shared payload.config.ts / types / migrations).

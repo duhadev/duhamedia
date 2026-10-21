@@ -11,6 +11,7 @@ import * as migration_20261021_222539_g1_site_settings from './20261021_222539_g
 import * as migration_20261021_223802_g2_scarcity from './20261021_223802_g2_scarcity';
 import * as migration_20261021_224808_g3_navigation from './20261021_224808_g3_navigation';
 import * as migration_20261021_231646_g4_seo_defaults from './20261021_231646_g4_seo_defaults';
+import * as migration_20261021_233028_p1_form_builder from './20261021_233028_p1_form_builder';
 
 export const migrations = [
   {
@@ -77,5 +78,10 @@ export const migrations = [
     up: migration_20261021_231646_g4_seo_defaults.up,
     down: migration_20261021_231646_g4_seo_defaults.down,
     name: '20261021_231646_g4_seo_defaults',
+  },
+  {
+    up: migration_20261021_233028_p1_form_builder.up,
+    down: migration_20261021_233028_p1_form_builder.down,
+    name: '20261021_233028_p1_form_builder'
   },
 ];

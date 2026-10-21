@@ -20,6 +20,13 @@ import { FaqRowLabel as FaqRowLabel_c7da98d435c621318b089da57fb11fb9 } from '../
 import { ValueBulletRowLabel as ValueBulletRowLabel_51164b16e5c3488951a3ed8785d562ad } from '../../../components/admin/ValueBulletRowLabel'
 import { LeadMagnetAssetFileField as LeadMagnetAssetFileField_dc6e9e7f6a87095250af2140b6169c99 } from '../../../components/admin/LeadMagnetAssetFields'
 import { LeadMagnetAssetUrlField as LeadMagnetAssetUrlField_dc6e9e7f6a87095250af2140b6169c99 } from '../../../components/admin/LeadMagnetAssetFields'
+import { QueryPresetsAccessCell as QueryPresetsAccessCell_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
+import { QueryPresetsWhereCell as QueryPresetsWhereCell_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
+import { QueryPresetsWhereField as QueryPresetsWhereField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
+import { QueryPresetsColumnsCell as QueryPresetsColumnsCell_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
+import { QueryPresetsColumnField as QueryPresetsColumnField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
+import { QueryPresetsGroupByCell as QueryPresetsGroupByCell_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
+import { QueryPresetsGroupByField as QueryPresetsGroupByField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
 import { ScarcityRowLabel as ScarcityRowLabel_35d13a473df2c08662ceec0d42c3b278 } from '../../../components/admin/ScarcityRowLabel'
 import { NavLinkRowLabel as NavLinkRowLabel_4df5bd70e145115dc037f3c88cff1519 } from '../../../components/admin/NavRowLabels'
 import { FooterColumnRowLabel as FooterColumnRowLabel_4df5bd70e145115dc037f3c88cff1519 } from '../../../components/admin/NavRowLabels'
@@ -49,6 +56,13 @@ export const importMap = {
   "/components/admin/ValueBulletRowLabel#ValueBulletRowLabel": ValueBulletRowLabel_51164b16e5c3488951a3ed8785d562ad,
   "/components/admin/LeadMagnetAssetFields#LeadMagnetAssetFileField": LeadMagnetAssetFileField_dc6e9e7f6a87095250af2140b6169c99,
   "/components/admin/LeadMagnetAssetFields#LeadMagnetAssetUrlField": LeadMagnetAssetUrlField_dc6e9e7f6a87095250af2140b6169c99,
+  "@payloadcms/next/client#QueryPresetsAccessCell": QueryPresetsAccessCell_2b8867833a34864a02ddf429b0728a40,
+  "@payloadcms/next/client#QueryPresetsWhereCell": QueryPresetsWhereCell_2b8867833a34864a02ddf429b0728a40,
+  "@payloadcms/next/client#QueryPresetsWhereField": QueryPresetsWhereField_2b8867833a34864a02ddf429b0728a40,
+  "@payloadcms/next/client#QueryPresetsColumnsCell": QueryPresetsColumnsCell_2b8867833a34864a02ddf429b0728a40,
+  "@payloadcms/next/client#QueryPresetsColumnField": QueryPresetsColumnField_2b8867833a34864a02ddf429b0728a40,
+  "@payloadcms/next/client#QueryPresetsGroupByCell": QueryPresetsGroupByCell_2b8867833a34864a02ddf429b0728a40,
+  "@payloadcms/next/client#QueryPresetsGroupByField": QueryPresetsGroupByField_2b8867833a34864a02ddf429b0728a40,
   "/components/admin/ScarcityRowLabel#ScarcityRowLabel": ScarcityRowLabel_35d13a473df2c08662ceec0d42c3b278,
   "/components/admin/NavRowLabels#NavLinkRowLabel": NavLinkRowLabel_4df5bd70e145115dc037f3c88cff1519,
   "/components/admin/NavRowLabels#FooterColumnRowLabel": FooterColumnRowLabel_4df5bd70e145115dc037f3c88cff1519,

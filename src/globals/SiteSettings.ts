@@ -44,12 +44,6 @@ import { revalidateGlobalHook } from '../hooks/revalidateTag'
  * whole frontend layout (src/hooks/revalidateTag.ts `revalidateGlobalHook`);
  * skipped with `context.disableRevalidate` (seed).
  *
- * Deferred:
- * - TODO(P1): `newsletterForm` relationship → form-builder `forms`
- *   (maxDepth 1): the one newsletter form behind every NewsletterBand, the
- *   footer nudge and the p16 hero. The plugin is not installed yet; adding the
- *   field then is additive (one nullable `newsletter_form_id` column).
- *
  * Validation follows the repo convention (PROGRESS Decision log): conditional
  * rules are field `validate` functions that call the built-in validator from
  * `payload/shared` first (a custom `validate` replaces the built-in one,
@@ -431,7 +425,17 @@ export const SiteSettings: GlobalConfig = {
           label: 'Newsletter & closers',
           admin: { description: 'Default newsletter and closing call-to-action text, and the postal address for newsletter emails.' },
           fields: [
-            // TODO(P1): `newsletterForm` relationship → `forms` (form-builder), maxDepth 1.
+            {
+              // P1 (SCHEMA §7.1): the one newsletter form behind every NewsletterBand,
+              // the footer nudge and the p16 hero. Forms are staff-read; the frontend
+              // loads the form server-side.
+              name: 'newsletterForm',
+              type: 'relationship',
+              relationTo: 'forms',
+              maxDepth: 1,
+              label: 'Newsletter form',
+              admin: { description: 'The signup form used by every newsletter section and the footer.' },
+            },
             {
               name: 'templateDefaults',
               type: 'group',

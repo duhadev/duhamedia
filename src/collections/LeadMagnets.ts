@@ -41,10 +41,6 @@ import { assetFileError, assetUrlError } from '../lib/leadMagnetAsset'
  * field; it is sidebar-only and never overwrites an entered date).
  *
  * Deferred:
- * - TODO(P1): `form` relationship → form-builder `forms` (maxDepth 1, required
- *   to publish; capture form = email + newsletter opt-in checkbox). The plugin
- *   is not installed yet; adding the field then is additive (one nullable
- *   `form_id` column).
  * - TODO(P3): `meta` plugin-seo tab (plugin-seo `collections: ['lead-magnets']`).
  * - Live preview + draft mode with the `/resources/<slug>` route (integrator).
  *
@@ -174,7 +170,18 @@ export const LeadMagnets: CollectionConfig = {
                 description: 'One paragraph: what the asset is, who it is for, the problem it solves. Lead with the number.',
               },
             },
-            // TODO(P1): `form` relationship → `forms` (form-builder), maxDepth 1, required to publish.
+            {
+              // P1 (SCHEMA §6.8): the capture form (email + newsletter opt-in checkbox).
+              // Required to publish (drafts.validate false). Forms are staff-read, so
+              // public reads get the id only; the frontend loads the form server-side.
+              name: 'form',
+              type: 'relationship',
+              relationTo: 'forms',
+              maxDepth: 1,
+              required: true,
+              label: 'Capture form',
+              admin: { description: 'The form visitors fill in to get the asset (Forms in the admin).' },
+            },
             {
               name: 'formNote',
               type: 'text',
