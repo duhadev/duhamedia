@@ -34,7 +34,9 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 | delta | S3 friendly errors sweep (F10, F14, F18, F19, F21, F23 + audit) | all | documented | Gate 1 cleared 2026-10-22 under standing approval (QA 6/6: no draft on create; OG image, page single + bulk deletes blocked with plain toasts; cleanup ok; missing file 404, downloads 403; home 200; no raw errors anywhere). PM shortened the OG hint (was repetitive). Cosmetic accepted (stock labels 'Save Draft'/'Publish changes'). Coded: src/hooks/blockDeleteIfReferenced.ts (runtime-derived refs, published only, APIError 409 plain list ≤5 +N more, skipReferenceCheck bypass) on 9 collections + forms; specials for OG image, forms/lead magnets with submissions; missingFileHandler 404; (frontend)/error.tsx + app/global-error.tsx placeholders; autosave off on 8 content collections (no 3.91 option to skip create-time draft); no-op expand migration `s3_friendly_errors`; 33/33 smoke; site_error unit needs: afterError (non-public/≥500), instrumentation onRequestError (skip /api/health; include digest), ignore client-upload 'Expected response' 500 |
 | delta | S4 homepage generated SEO title brand-led (F29) | 1 | queued | tiny: seo.ts generateTitle special-case `home` |
 | plugin | P3 seo | all | documented | Gate 1 cleared 2026-10-22 under standing approval. Rework done: help text via plugin-seo i18n override (stock lines replaced; PM browser-verified, no 'hero image'); coded: src/plugins/seo.ts; SEO tab (meta title/description/image) on pages, case-studies, posts, lead-magnets; Pages title moved into a 'Content' tab (layout only); generators never throw (title template, doc summary, hero≥og else default OG, SITE_URL+docPath); pipeline may set meta title/desc on own drafts; migration `p3_seo` proven; 52/52 smoke; QA: all checks pass except **custom SEO help text not rendering (stock plugin copy shown; image says 'hero image') → rework**. Cosmetic accepted (stock): stale inline length message until next save; plugin 'Too short'/'Good' badges; error tooltip overlaps help line. TODO(router): generateMetadata, JSON-LD, sitemap/robots, live preview |
-| block | 23 blocks in page build order (SCHEMA.md §8–9) | — | queued after collections/globals | appended to /_showcase on Gate 1 |
+| foundation | B0 tokens/fonts, (frontend) layout, RenderBlocks, /_showcase, pages.layout, S4 | all | cleared | integrator 2026-10-22; no gate (machinery); no migration (layout field appears with first block); tsc/lint/types clean |
+| chrome | B1 SiteHeader (+mobile) + SiteFooter standard/reduced/legal-only | all | coding | block-coder |
+| block | 23 blocks in page build order (SCHEMA.md §8–9) | — | queued; homepage set first (Hero → ProofStrip → CaseStudyCards → MiniCTAStrip → TwoTrackPanels → PhaseTimeline → TeamIntro → TestimonialRow → FinalCTA) | homepage variants only this step; appended to /_showcase on Gate 1 |
 | integration | contact · newsletter (DOI) · lead_magnet · site_error | — | queued after triggering units clear | Gate A |
 
 ## Page assembly status
@@ -172,6 +174,9 @@ Append-only. New sessions: read this before asking the human anything.
 | 2026-10-22 | **Checkpoint F26–F35 decided** (human walk-through): all defaults kept except F29 (brand-led homepage title → S4) and F32 (as-you-type live preview with the routes) | Human |
 | 2026-10-21 | **Standing approval (big step 2):** run G1–G4 globals + P1–P3 plugins autonomously; PM clears Gate 1 on QA + browser proof; every decision needing the human is **flagged and deferred** to one big checkpoint at the end of the step (before blocks). Supersedes "present each global's gate" | Human: "delay… put a flag on it… continue autonomously… next big step" |
 | 2026-10-17 | Local Postgres image provisional `postgres:17-alpine` until server major is known; local port 5433 | OPS #6 open |
+| 2026-10-22 | B0: breakpoints = Tailwind defaults; design mobile build < `md` (768), desktop ≥ `md`; mobile-first classes. Fonts DM Sans + Archivo Black (next/font, self-hosted) + system mono (MERGED R16). Default Tailwind palette removed — design colours only | B0 integrator |
+| 2026-10-22 | Block registry: config in `src/blocks/index.ts` (`pageBlocks`), component in `src/blocks/components.ts`, fixtures in `src/showcase/registry.ts`; `/_showcase` lives at `src/app/(frontend)/%5Fshowcase/`. `pages.layout` only exists once ≥1 block registered (3.91 admin crashes on empty blocks field) | B0 integrator |
+| 2026-10-22 | Big step 3 builds homepage variants only; other pages' variants are added (not restyles) when their page is built | PM |
 
 ## Flags for checkpoint (big step 2: G1–G4 + P1–P3)
 Decisions deferred to the human; each has a safe default applied so work continues.
@@ -212,10 +217,15 @@ Decisions deferred to the human; each has a safe default applied so work continu
 | F33 | S3 | **ACCEPTED 2026-10-22 (human)** — Links/images inside rich text aren't delete-protected (no FK); renderer skips dead ones | accepted |
 | F34 | S3 | **ACCEPTED (placeholder until design) 2026-10-22 (human)** — Error-page copy is placeholder pending design | placeholder |
 | F35 | S3 | **ACCEPTED (by design) 2026-10-22 (human)** — Fixing a blocked delete means editing the docs that use it first (as designed) | marketing note |
+| F36 | B0 | `gray-warm` text colour value (R14 left open) | `#747069` (4.92:1 on white); dividers keep original rgba |
+| F37 | B0 | New mobile spacing tokens `section-mobile` 56px, `container-mobile` 20px (from Homepage mobile build, not in merged-tokens.css) | added |
+| F38 | B0 | Button sizes 15/17px have no token | kept as exact `text-[15px]`/`text-[17px]` |
+| F39 | B0 | `/` with no published `home` doc | shows old placeholder instead of 404 |
+| F40 | PM | Homepage-only variants this step (selects list only built variants) | as stated |
 
 ## Session handoff
 - **Last session ended:** 2026-10-22 — big step 2 complete (G1–G4, P1–P3, S1–S3 documented, pushed); checkpoint F1–F35 all decided. Human about to /clear.
-- **In flight:** nothing.
+- **In flight:** big step 3 started 2026-10-22 (human "move to the next step"). B0 foundation dispatched to integrator.
 - **Next up (big step 3, awaiting the human's "go"):**
   1. Foundation unit: design tokens/fonts from `design-reference/` (MERGED.md + merged-tokens.css; gold standard = design project `project/`) into Tailwind; `(frontend)` layout; RenderBlocks; `/_showcase` (404 when APP_ENV=production, noindex, dotted dividers, monospace labels, viewport tags); re-add `pages.layout` via `pageLayoutField([...])` inside the Pages "Content" tab with the first block; S4 (F29 homepage SEO title "Duha Media — Integrated Ecommerce Growth Partner, Chicago" in src/plugins/seo.ts).
   2. Homepage blocks in order (SCHEMA §8–9): Hero → ScarcityStrip/ProofStrip (scarcityRef() factory, import SCARCITY_KEYS from src/lib/scarcity.ts) → ClientLogoStrip → CaseStudyCards (designed empty state) → MiniCTAStrip → TwoTrackPanels → PhaseTimeline → TeamIntro → TestimonialRow → FinalCTA → standard footer. NewsletterBand slug must be `newsletterBand`.

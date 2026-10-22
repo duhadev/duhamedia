@@ -1,3 +1,176 @@
 @import "tailwindcss";
 
-/* Design tokens from /design-reference/ land here in Phase 3. */
+/*
+ * Duha Media design tokens (unit B0). Tailwind CSS 4.1 CSS-first: every token
+ * is a theme variable (no tailwind.config). Source of every value:
+ *   design-reference/merged-tokens.css + MERGED.md §2 (effective values the
+ *   final pages render with; gold standard = design-reference/project/*.dc.html),
+ *   resolutions MERGED.md §10 (binding).
+ * Nothing here may be added without a design source (CLAUDE.md "Payload
+ * conventions" 6). Not ported: the mobile canvas #DED9D0 (scaffolding), the
+ * X/Twitter card colours (R12: dropped), the _ds base values the pages override.
+ *
+ * Design var → Tailwind name (block-coders porting inline styles):
+ *   --cream / --surface-page / --text-on-dark   → cream     (bg-cream, text-cream)
+ *   --ink / --surface-inverse / --text-body / --border-strong → ink
+ *   --gray-light / --surface-card               → gray-light
+ *   --gray-warm / --text-secondary              → gray-warm (DARKENED, see below)
+ *   --accent / --wine                           → accent / wine (same hex)
+ *   --gold-pale / --yellow                      → gold-pale
+ *   --accent-primary (#111 in the finals)       → accent-primary
+ *   --ground-accent (#C20E59 in the finals)     → ground-accent
+ *   --text-on-accent                            → on-accent
+ *   --border-divider                            → divider   (border-divider)
+ *   --text-h1 / --text-h1-mobile …              → text-h1 / text-h1-mobile …
+ *   --text-body-size / --text-body-mobile       → text-body / text-body-mobile
+ *   --section-pad / --container-pad / --target-min → py-section, px-container, min-h-target
+ *   --container-max                             → max-w-site
+ *   --shadow-card / -lift / -ring               → shadow-card / shadow-lift / shadow-ring
+ *   --radius-sm / --radius-badge                → rounded-sm / rounded-badge (default rounded-none)
+ *
+ * Breakpoints: Tailwind defaults (MERGED §10 R16). The design's 390px mobile
+ * build applies below `md` (48rem = 768px); its 1280–1440 desktop build from
+ * `md` up. Write mobile-first: `text-h1-mobile md:text-h1`.
+ */
+
+@theme {
+  /* ---------- Colour (MERGED §2.1). Default palette removed: design colours only. ---------- */
+  --color-*: initial;
+  --color-cream: #ffffff; /* effective page value; _ds base #FAF7F2 */
+  --color-ink: #111111;
+  --color-accent: #c20e59; /* deep wine; hex sign-off still open (_ds readme:50) */
+  --color-wine: #c20e59; /* page alias of accent */
+  --color-accent-bright: #e82561; /* logo/brand contexts only, never UI */
+  --color-gold: #f5c842; /* logo band only */
+  --color-gold-pale: #fce588; /* = page alias --yellow */
+  /* R14: #8A857D is 3.66:1 on white (fails AA). Same hue scaled ×0.84 → #747069:
+     4.92:1 on cream #FFF, 4.51:1 on gray-light #F5F5F4. Text only; dividers keep
+     the original rgba below. Exact value is a PM/human flag. */
+  --color-gray-warm: #747069;
+  --color-gray-light: #f5f5f4; /* effective page value; _ds base #EDE9E2 */
+  --color-on-accent: #faf7f2; /* label on primary Button fill (literal in _ds) */
+  --color-accent-primary: #111111; /* effective: primary CTA fill, AccentHeadline accent */
+  --color-ground-accent: #c20e59; /* effective: wine figure (geometry, ticks, loud numbers) */
+  --color-divider: rgba(138, 133, 125, 0.35);
+  /* Book a Call / Thank You success states (page-local in source 2) */
+  --color-success: #1e8e5a;
+  --color-success-strong: #1b7a4b;
+  --color-success-edge: #0f5433;
+  --color-success-deep: #0f4d2f;
+  --color-success-tint: #eaf4ee;
+  /* "fade-edge" dot-matrix ground (MERGED §5) */
+  --color-geo-dot: rgba(17, 17, 17, 0.22);
+  --color-geo-dot-on-dark: rgba(250, 247, 242, 0.18);
+
+  /* ---------- Type scale (MERGED §2.2). Desktop + mobile (390 build) pairs. ---------- */
+  --text-h1: 4.5rem;
+  --text-h1--line-height: 1;
+  --text-h1--letter-spacing: -0.01em;
+  --text-h1-mobile: 2.5rem;
+  --text-h1-mobile--line-height: 1;
+  --text-h1-mobile--letter-spacing: -0.01em;
+  --text-h2: 3rem;
+  --text-h2--line-height: 1.05;
+  --text-h2--letter-spacing: -0.01em;
+  --text-h2-mobile: 2rem;
+  --text-h2-mobile--line-height: 1.05;
+  --text-h2-mobile--letter-spacing: -0.01em;
+  --text-h3: 1.75rem;
+  --text-h3--line-height: 1.15;
+  --text-h3-mobile: 1.375rem;
+  --text-h3-mobile--line-height: 1.15;
+  --text-metric: 4.5rem;
+  --text-metric--line-height: 1;
+  --text-metric-mobile: 2.75rem;
+  --text-metric-mobile--line-height: 1;
+  --text-body: 1.125rem;
+  --text-body--line-height: 1.6;
+  --text-body-mobile: 1rem;
+  --text-body-mobile--line-height: 1.6;
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.5;
+  --text-small-mobile: 0.8125rem;
+  --text-small-mobile--line-height: 1.5;
+  /* Badge, Input label, Metric label (uppercase is applied by the component) */
+  --text-label: 0.8125rem;
+  --text-label--line-height: 1.2;
+  --text-label--letter-spacing: 0.08em;
+  --text-label--font-weight: 700;
+  --tracking-eyebrow: 0.08em;
+  --tracking-headline: -0.01em;
+
+  /* ---------- Spacing / layout (MERGED §2.3). The 4px base (--spacing 0.25rem)
+     already equals _ds --space-1…--space-10 (p-1=4 … p-6=24, p-12=48, p-24=96). ---------- */
+  --spacing-section: 96px; /* --section-pad (desktop) */
+  --spacing-section-tight: 64px; /* --section-pad-tight (proof sections) */
+  --spacing-section-mobile: 56px; /* mobile builds' section padding (Homepage mobile: 56px) */
+  --spacing-container: 24px; /* --container-pad (desktop) */
+  --spacing-container-mobile: 20px; /* mobile builds' gutter (MERGED §2.3 "20px inline") */
+  --spacing-target: 44px; /* --target-min: 44px touch targets */
+  --spacing-header: 72px; /* SiteHeader */
+  --spacing-header-mobile: 60px; /* SiteHeaderMobile */
+  --container-site: 1200px; /* --container-max */
+
+  /* ---------- Shape / effects (MERGED §2.4). Default is square (rounded-none). ---------- */
+  --radius-sm: 2px; /* inputs only */
+  --radius-badge: 999px; /* badges (+ Mini CTA pill, MERGED Conflict 13) */
+  --shadow-card: 0 2px 0 0 #111111;
+  --shadow-lift: 0 6px 0 0 #111111;
+  --shadow-ring: 0 0 0 1px rgba(17, 17, 17, 0.15);
+
+  /* ---------- Motion (MERGED §2.5) ---------- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1); /* durations: duration-180 (fast), duration-450 (enter) */
+}
+
+/* Fonts are self-hosted by next/font (src/app/(frontend)/fonts.ts sets the
+   --font-archivo-black / --font-dm-sans variables on <html>), so these must be
+   `inline` (Tailwind docs: theme variables that reference other variables). */
+@theme inline {
+  --font-display: var(--font-archivo-black), "Arial Black", sans-serif; /* single 900 cut: use font-normal */
+  --font-body: var(--font-dm-sans), "Helvetica Neue", Arial, sans-serif;
+  --font-sans: var(--font-dm-sans), "Helvetica Neue", Arial, sans-serif; /* Tailwind default family = body */
+  /* System mono stack only (R16; IBM Plex Mono not adopted). Also the
+     /_showcase scaffolding labels, which must never use a brand font. */
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+@layer base {
+  :root {
+    /* Runtime-only motion values (no Tailwind namespace). */
+    --dur-fast: 180ms;
+    --dur-enter: 450ms;
+    --enter-distance: 24px;
+    --reading-progress-width: 4px;
+  }
+
+  html {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+  }
+
+  /* Homepage.dc.html helmet: body = DM Sans 500 on the page ground. */
+  body {
+    font-family: var(--font-body);
+    font-weight: 500;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* R16 focus ring (source 1 gap-fill): 2px ink, 2px offset. Components on
+     dark grounds switch the colour (e.g. Button ghost-light). */
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+
+  /* MERGED §2.5: honour reduced motion everywhere. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

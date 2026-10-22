@@ -15,6 +15,7 @@ import {
 import { blocks, text } from 'payload/shared'
 
 import { staffContentAccessDraftDelete } from '../access'
+import { pageBlocks } from '../blocks'
 import { contentVersions } from '../fields'
 import { blockDeleteIfReferenced } from '../hooks/blockDeleteIfReferenced'
 import { setPublishedAtOnPublish } from '../hooks/publishedAt'
@@ -50,11 +51,12 @@ import { pagePath, pageSlugError, slugifyPath } from '../lib/pagePath'
  * - `readingProgress` — p8, p11 (R10).
  * - `noindex` — p10, p15, p17, p21.
  *
- * `layout` is NOT registered yet (rework 2026-10-17): payload@3.91.0's admin
- * crashes on a blocks field with `blocks: []` (see `pageLayoutField`). The
- * integrator adds `pageLayoutField([...])` with the first cleared block. Until
- * then: pages save and publish without sections, and the zero-leakage
- * NewsletterBand check is dormant (header/footer forcing stays live).
+ * `layout` is built from the block registry `pageBlocks` (src/blocks/index.ts,
+ * B0) and appears as soon as that list has one block. While it is empty the
+ * field is omitted (payload@3.91.0's admin crashes on a blocks field with
+ * `blocks: []`, see `pageLayoutField`): pages save and publish without
+ * sections, and the zero-leakage NewsletterBand check is dormant
+ * (header/footer forcing stays live).
  *
  * Access: `staffContentAccessDraftDelete` (SCHEMA §4.3 + Delta 2026-10-18):
  * public and the pipeline user read published docs only; only staff write;
@@ -230,8 +232,10 @@ export const Pages: CollectionConfig = {
               required: true,
               admin: { description: 'Admin title and the default browser-tab title.' },
             },
-            // TODO(blocks): add `pageLayoutField([<first block>])` here, inside the Content tab
-            // (required, minRows 1), with the first block.
+            // B0: the `layout` blocks field, built from the one block registry
+            // (src/blocks/index.ts). Left out while the registry is empty, because
+            // payload@3.91.0's admin crashes on `blocks: []` (see `pageLayoutField`).
+            ...(pageBlocks.length > 0 ? [pageLayoutField(pageBlocks)] : []),
           ],
         },
       ],

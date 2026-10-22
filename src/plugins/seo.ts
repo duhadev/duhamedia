@@ -23,6 +23,7 @@ import {
   validateOgImage,
 } from '../globals/SeoDefaults'
 import { docPath } from '../lib/docPath'
+import { HOME_SLUG } from '../lib/pagePath'
 
 /**
  * P3: `@payloadcms/plugin-seo@3.91.0` (DECISIONS §I, CLAUDE.md "Approved
@@ -143,13 +144,22 @@ const applyTemplate = (template: string, value: string): string => {
 }
 
 /**
- * `seo-defaults.titleTemplate` with `%s` = the doc title. Posts (SCHEMA §6.3:
+ * Generated search title of the `home` page (S4, Flag F29). 57 characters.
+ * The router's metadata fallback must use the same value.
+ */
+export const HOME_SEO_TITLE = 'Duha Media — Integrated Ecommerce Growth Partner, Chicago'
+
+/**
+ * `seo-defaults.titleTemplate` with `%s` = the doc title. Exception: the
+ * `home` page → `HOME_SEO_TITLE`. Posts (SCHEMA §6.3:
  * `targetKeyword` "feeds generateTitle"): when the templated title is longer
  * than ~60 characters and a target keyword is set, the keyword becomes the
  * `%s` instead, so the search title stays keyword-led and short.
  */
 export const generateTitle: GenerateTitle<SeoDoc> = async (args) => {
   try {
+    // S4 (F29, human 2026-10-22): the homepage title is brand-led, not "Home — Duha Media".
+    if (slugOf(args) === 'pages' && clean(args.doc?.slug) === HOME_SLUG) return HOME_SEO_TITLE
     const title = clean(args.doc?.title)
     if (!title) return ''
     const defaults = await readDefaults(args.req)

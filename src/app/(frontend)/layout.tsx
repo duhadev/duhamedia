@@ -3,6 +3,7 @@ import React from 'react'
 
 import { getSiteUrl, isProduction } from '@/lib/env'
 
+import { archivoBlack, dmSans } from './fonts'
 import './styles.css'
 
 // Every frontend route renders at request time, so `next build` never needs a
@@ -20,8 +21,12 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function FrontendLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" className={`${archivoBlack.variable} ${dmSans.variable}`}>
+      <body>
+        {/* B1 slot: SiteHeader (variant from the page's `headerVariant`) goes here. */}
+        {children}
+        {/* B1 slot: SiteFooter (variant from the page's `footerVariant`) goes here. */}
+      </body>
     </html>
   )
 }
