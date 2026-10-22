@@ -903,7 +903,7 @@ export const showcaseEntries: ShowcaseEntry[] = [
         { id: 'fx-me-1', label: '[Online revenue]', value: '$[N]/yr', baseline: '$[N]/yr', change: '+[N]%', accent: true },
         { id: 'fx-me-2', label: '[Checkout completion]', value: '[N]%', baseline: '[N]%', change: '+[N]pt' },
         { id: 'fx-me-3', label: '[Cost metric]', value: '$[N]', baseline: '$[N]', change: '-[N]%', sub: '[quiet detail line]' },
-        { id: 'fx-me-4', label: '[Agency fees, month N on]', value: '$0/mo', baseline: '$[N]/mo', change: 'Handover' },
+        { id: 'fx-me-4', label: '[Agency fees, month N on]', value: '$[N]/mo', baseline: '$[N]/mo', change: 'Handover' },
       ],
     },
   },
@@ -1017,8 +1017,8 @@ export const showcaseEntries: ShowcaseEntry[] = [
   {
     block: 'caseStudyCards',
     variant: 'ledger',
-    label: 'p3 live: 3 published fixture studies (manual), numbered rows',
-    data: { layout: 'ledger', source: 'manual', allLink: { type: 'custom' }, caseStudies: numberedStudies, ledgerLabels, pageSize: 6, loadMore: true, fallbackMode: 'ledger' },
+    label: 'p3 live: 3 published fixture studies (manual), numbered rows — pageSize 2 so the Load More button shows',
+    data: { layout: 'ledger', source: 'manual', allLink: { type: 'custom' }, caseStudies: numberedStudies, ledgerLabels, pageSize: 2, loadMore: true, fallbackMode: 'ledger' },
   },
   {
     block: 'caseStudyCards',
@@ -1079,7 +1079,7 @@ export const showcaseEntries: ShowcaseEntry[] = [
       fallbackMetrics: [
         { id: 'fx-cs-m1', value: '[N]', label: 'Channels, one team', sub: '[Email, ads, content, SEO, GBP, CRM]', accent: true },
         { id: 'fx-cs-m2', value: '[N] MO', label: 'Minimum term', sub: '[The honest window to judge an engine]' },
-        { id: 'fx-cs-m3', value: '1', label: 'Dashboard', sub: '[You see what we see, always]' },
+        { id: 'fx-cs-m3', value: '[N]', label: 'Dashboard', sub: '[You see what we see, always]' },
       ],
       pricingNote: 'Engines start at $1K/mo.',
     },

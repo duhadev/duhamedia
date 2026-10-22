@@ -11,6 +11,7 @@ Entry format for every unit: **Files** / **Fields & schema** / **Wiring** (regis
 - [Frontend foundation (B0)](#frontend-foundation-unit-b0)
 - [Site chrome (B1)](#site-chrome-unit-b1)
 - [Page router (B2)](#page-router-unit-b2)
+- [Shared components and form foundation (big step 4)](#shared-components-and-form-foundation-big-step-4)
 1. [Homepage](#1-homepage)
    - [Hero (B3)](#hero-unit-b3)
    - [ProofStrip (B3)](#proofstrip-unit-b3)
@@ -23,10 +24,31 @@ Entry format for every unit: **Files** / **Fields & schema** / **Wiring** (regis
    - [TeamIntro, founder-card variant (B3)](#teamintro-founder-card-variant-unit-b3)
    - [FinalCTA (B3)](#finalcta-unit-b3)
 2. [Case Study template](#2-case-study-template)
+   - [Template route and view (S4-12)](#template-route-and-view-unit-s4-12)
+   - [Hero, article variant (S4-1)](#hero-article-variant-unit-s4-1)
+   - [RichContent, article variant (S4-8)](#richcontent-article-variant-unit-s4-8)
+   - [MetricEvent, table variant (S4-9)](#metricevent-table-variant-unit-s4-9)
+   - [TestimonialRow, client-voice variant (S4-10)](#testimonialrow-client-voice-variant-unit-s4-10)
+   - [CaseStudyCards, next-link layout (S4-2)](#casestudycards-next-link-layout-unit-s4-2)
+   - [NewsletterBand (S4-11)](#newsletterband-unit-s4-11)
 3. [Work hub](#3-work-hub)
+   - [Hero, typographic stats (S4-1)](#hero-typographic-stats-unit-s4-1)
+   - [CaseStudyCards, ledger layout and Load More (S4-2)](#casestudycards-ledger-layout-and-load-more-unit-s4-2)
 4. [Services Hub](#4-services-hub)
+   - [Hero, phaseStrip (S4-1)](#hero-phasestrip-unit-s4-1)
+   - [TwoTrackPanels, doors and contrast variants (S4-3)](#twotrackpanels-doors-and-contrast-variants-unit-s4-3)
+   - [PhaseTimeline, arc and steps variants (S4-4)](#phasetimeline-arc-and-steps-variants-unit-s4-4)
+   - [AccordionFAQ, mini variant (S4-6)](#accordionfaq-mini-variant-unit-s4-6)
 5. [Shopify Theme Development](#5-shopify-theme-development)
+   - [Hero, service variant (S4-1)](#hero-service-variant-unit-s4-1)
+   - [TwoTrackPanels, primary-secondary variant (S4-3)](#twotrackpanels-primary-secondary-variant-unit-s4-3)
+   - [SpecLedger, cards (anatomy) and expandable variants (S4-5)](#specledger-cards-anatomy-and-expandable-variants-unit-s4-5)
+   - [PhaseTimeline, build-run variant (S4-4)](#phasetimeline-build-run-variant-unit-s4-4)
+   - [CaseStudyCards, track source and testimonials fallback (S4-2)](#casestudycards-track-source-and-testimonials-fallback-unit-s4-2)
 6. [Marketing](#6-marketing)
+   - [SpecLedger on the Marketing page: signal-flow, expandable, cards (feature) (S4-5)](#specledger-on-the-marketing-page-signal-flow-expandable-cards-feature-unit-s4-5)
+   - [PhaseTimeline, engine-rollout variant (S4-4)](#phasetimeline-engine-rollout-variant-unit-s4-4)
+   - [CaseStudyCards, metric-strip fallback (S4-2)](#casestudycards-metric-strip-fallback-unit-s4-2)
 7. [Testimonials](#7-testimonials)
 8. [About](#8-about)
 9. [Book a Call](#9-book-a-call)
@@ -86,8 +108,8 @@ Sitewide frontend machinery, not tied to a page. Every block unit depends on it.
   - `Media` renders a media doc with `next/image` (alt from the doc; `alt=""` only for decorative images). It keeps the upload path and query and drops the origin; with `fill`, the focal point sets `object-position`. Renders nothing for an empty or id-only upload.
 - `src/lib/cx.ts`: class-name joiner.
 - `src/lib/accentPhrase.ts`: `splitAccentPhrase(heading, accent)` returns `[before, accent, after]` (case-insensitive match, heading's own spelling) or `null`. Shares its matching rule with `accentPhraseError` / `validateAccentPhrase`.
-- `src/blocks/index.ts`: `pageBlocks` (block configs only; 9 blocks registered by B3, in this order: `Hero`, `MiniCTAStrip`, `FinalCTA`, `ProofStrip`, `CaseStudyCards`, `TestimonialRow`, `TwoTrackPanels`, `PhaseTimeline`, `TeamIntro`; the order is the admin "Add section" picker order). Must not import React or CSS because `payload.config.ts` loads it.
-- `src/blocks/components.ts`: `blockComponents` (`blockType` to component), typed `{ [K in PageBlockType]: ComponentType<BlockData<K>> }`; a missing entry is a type error. Keys: `hero`, `miniCTAStrip`, `finalCTA`, `proofStrip`, `caseStudyCards`, `testimonialRow`, `twoTrackPanels`, `phaseTimeline`, `teamIntro`.
+- `src/blocks/index.ts`: `pageBlocks` (block configs only; 14 blocks registered after big step 4, in this order: `Hero`, `MiniCTAStrip`, `FinalCTA`, `ProofStrip`, `CaseStudyCards`, `MetricEvent`, `TestimonialRow`, `TwoTrackPanels`, `PhaseTimeline`, `TeamIntro`, `RichContent`, `SpecLedger`, `NewsletterBand`, `AccordionFAQ`; the order is the admin "Add section" picker order. B3 registered the first 9, without `MetricEvent`). Must not import React or CSS because `payload.config.ts` loads it.
+- `src/blocks/components.ts`: `blockComponents` (`blockType` to component), typed `{ [K in PageBlockType]: ComponentType<BlockData<K>> }`; a missing entry is a type error. Keys: `hero`, `miniCTAStrip`, `finalCTA`, `proofStrip`, `caseStudyCards`, `metricEvent`, `testimonialRow`, `twoTrackPanels`, `phaseTimeline`, `teamIntro`, `richContent`, `specLedger`, `newsletterBand`, `accordionFAQ`.
 - `src/blocks/types.ts`: `PageLayoutBlock`, `PageBlockType`, `BlockData<K>`, all derived from the generated `Page` type (resolve to `never` while no block exists).
 - `src/fields/index.ts`: shared field factories. B3 added `eyebrowField()`, `headlineFields()`, `scarcityRef()` and the `required` option of `metricFields()` (below); `linkField`, `metricFields`, `pricingNote`, `validateAccentPhrase` / `accentPhraseAdminField` and `contentVersions` predate B3.
   - `eyebrowField({ defaultTick = true, description })`: a `row` (no data nesting) holding `eyebrow` (text, 70% width) and `eyebrowTick` (checkbox "Show the diamond marker", 30%, default from `defaultTick`). Both optional; an empty eyebrow renders nothing.
@@ -222,7 +244,7 @@ Resolves `pages` documents to URLs and produces their head metadata, draft previ
   - `to.type = custom`: the stored `to.url`. `to.type = reference`: the target's public path via `docPath(relationTo, doc)`, and only while the target is **published** (queried with `_status: published`, `draft: false`, `overrideAccess: false`); otherwise no redirect (404). A resolved location equal to the request path is ignored.
   - Status: stored type `301` → `permanentRedirect` (HTTP 308); `302` → `redirect` (HTTP 307). In the App Router a page can only emit 308/307; search engines treat 308 as 301 and 307 as 302.
   - A lookup error is logged and treated as not found.
-- Sitemap (`/sitemap.xml`): `find` on `pages` with `_status: published`, slug not `404`, `depth: 0`, `draft: false`, `overrideAccess: false`, `limit: 0`, sorted by `slug`. Documents with `noindex === true` or `zeroLeakage === true` are dropped in code (an SQL `<> true` would also drop NULL rows). `home` appears once, as `<SITE_URL>/`. `lastModified` is `updatedAt`. `/_showcase` and `/_preview` never appear. A DB failure is a 500, not an empty sitemap. Only `pages` are listed; case-studies, posts and lead-magnets are added when their routes land. Same sitemap in every environment (not filtered by `APP_ENV`).
+- Sitemap (`/sitemap.xml`): `find` on `pages` with `_status: published`, slug not `404`, `depth: 0`, `draft: false`, `overrideAccess: false`, `limit: 0`, sorted by `slug`. Documents with `noindex === true` or `zeroLeakage === true` are dropped in code (an SQL `<> true` would also drop NULL rows). `home` appears once, as `<SITE_URL>/`. `lastModified` is `updatedAt`. `/_showcase` and `/_preview` never appear. A DB failure is a 500, not an empty sitemap. Published `case-studies` are appended after the pages as `<SITE_URL>/work/<slug>` (newest `publishedAt` first, `select: { slug, updatedAt }`; see [Template route and view (S4-12)](#template-route-and-view-unit-s4-12)). Posts and lead-magnets are added when their routes land. Same sitemap in every environment (not filtered by `APP_ENV`).
 - Robots (`/robots.txt`): `Sitemap: <SITE_URL>/sitemap.xml` always. Not production: `User-agent: *`, `Disallow: /`. Production: `Allow: /` and `/api/media/file/`; `Disallow: /admin`, `/api/`, `/_showcase`, `/_preview`.
 - `readingProgress`: `PageView` renders `<ReadingProgress />` before `<main>` when `page.readingProgress` is true (flag set per page; About and FAQ per `Pages.ts`). The component is a `'use client'` island because it reads scroll position: a fixed 4px bar (`--reading-progress-width`) on the left edge in `accent-primary`, `aria-hidden`, `pointer-events-none`, height driven by `transform: scaleY(0..1)`, rAF-throttled scroll and resize listeners, no transition.
 - Revalidation: unchanged. Everything is `force-dynamic` and read per request; the `pages` hooks (tag `pages` plus the page path) still run on publish.
@@ -232,11 +254,83 @@ Resolves `pages` documents to URLs and produces their head metadata, draft previ
 - Organization / LocalBusiness JSON-LD is not built. There is no JSON-LD in the page output yet.
 - Open SEO findings, F65 (Gate 2, none applied): `getSiteUrl()` falls back to `http://localhost:3000` when `SITE_URL` is unset, so a production container without it would emit localhost canonicals and sitemap URLs silently (and `getSiteUrl` and `siteOrigin` are two separate helpers); home canonical vs sitemap trailing-slash consistency; the `/` placeholder (no home doc) is indexable in production and absent from the sitemap; the seo-defaults placeholder description and OG alt are live until seeded; seed must set `noindex` on Thank You and gated templates; Organization/LocalBusiness JSON-LD (page scope); `not-found` has no description.
 - QA of the authenticated preview and the redirect create/verify/delete test were pending when this entry was written.
-- Case-study cards link to `/work/<slug>`; that route is not built yet (case-studies, posts and lead-magnets have no frontend route).
+- Case-study cards link to `/work/<slug>`; that route now exists ([S4-12](#template-route-and-view-unit-s4-12)). Posts and lead-magnets still have no frontend route.
+
+---
+
+## Shared components and form foundation (big step 4)
+
+Sitewide helpers added while building pages 2 to 6. Several blocks depend on them; they are not tied to one page.
+
+### RichText wrapper (`src/components/RichText.tsx`)
+
+**Files**
+- `src/components/RichText.tsx`: exports `RichText`, `RichTextData` (= `Faq['answer']`, the generated Lexical shape shared by every `richText` field), `safeHref`, `richTextLinkHref`, `linkConverters`.
+
+**Fields & schema**: none.
+
+**Wiring**
+- `RichText({ data, converters?, linkClassName?, className?, disableContainer? })` wraps `RichText` from `@payloadcms/richtext-lexical/react`. It merges `defaultConverters`, then `linkConverters(linkClassName)`, then the caller's `converters` (which must return only the node types they override; spreading `defaultConverters` back in replaces the shared link converters). Renders nothing when `data.root` is missing.
+- `safeHref(href)`: returns the trimmed value only for `/…` (not `//`), `#…`, `http(s):`, `mailto:`, `tel:`; otherwise `null`.
+- `richTextLinkHref(fields)`: `linkType = internal` resolves through `docPath(relationTo, value)` and only when the populated target's `_status` is `published` (absent `_status` counts as published); an unpopulated or unpublished target returns `null`. Other link types go through `safeHref(fields.url)`. A `null` href renders the link text as plain text.
+- `linkConverters(className?)`: `link` and `autolink` converters. A site-relative href without `newTab` renders through `next/link`; everything else is an `<a>`, `newTab` adds `target="_blank" rel="noopener noreferrer"`.
+- Used by: `AccordionFAQ` (answers), `TestimonialRow` (client-voice `doDifferently`), `RichContent` (`ArticleBody`, with article converters layered on top), `CMSForm` (form confirmation and `message` blocks).
+
+**Notes**
+- The `_status` check depends on `_status` being in the populated collection's `defaultPopulate` (next section).
+- PROGRESS flag F74.
+
+### `defaultPopulate` rule
+
+- A relationship populated by Payload carries only the fields listed in the target collection's `defaultPopulate` (it is the `select` for populated docs; payload@3.91.0 `fields/hooks/afterRead/relationshipPopulationPromise.js:38`). Payload does not add `_status` to it (`utilities/sanitizeSelect.js`), so it must be listed explicitly for any collection whose populated docs are filtered on `_status`.
+- `case-studies` `defaultPopulate`: `title`, `slug`, `client`, `track`, `studyNumber`, `engagementLine`, `headlineMetric`, `cardSummary`, `heroMedia`, `featured`, `publishedAt`, `_status`.
+- `pages`, `lead-magnets`: `title`, `slug`, `_status`. `posts`: `title`, `slug`, `track`, `dek`, `publishedAt`, `issueNumber`, `_status`.
+- Consequence for blocks: a manually picked case study arrives trimmed to those fields (or as a bare id when it is unpublished or unreadable). `CaseStudyCards` `ledger` / `next-link` therefore re-reads any pick that lacks `studyNumber` (see [S4-2](#casestudycards-next-link-layout-unit-s4-2)).
+
+### Form foundation (S4-7)
+
+**Files**
+- `src/app/api/form-submit/route.ts`: `POST /api/form-submit`.
+- `src/integrations/turnstile.ts`: `verifyTurnstile(token, remoteIp?)`, `getTurnstileSiteKey()`, `TURNSTILE_TEST_SITE_KEY`.
+- `src/integrations/forms/shared.ts`: client-safe contract (path, caps, FormData keys, `PublicForm`, `PublicFormField`, `FormSubmitResult`, `FormSubmitResponse`).
+- `src/integrations/forms/handleSubmission.ts`: `parseSubmissionFormData`, `validateSubmission`, `handleFormSubmission`.
+- `src/components/forms/CMSForm.tsx` (server), `PayloadForm.tsx` (client), `TurnstileWidget.tsx` (client), `publicForm.ts` (`toPublicForm`), `index.ts` (barrel).
+
+**Fields & schema**
+- No new collection. The form definition is the form-builder `forms` doc ([P1](#form-builder-unit-p1)). Migration `20261022_052303_b4_pages_2_6_blocks` adds a nullable `placeholder` varchar to `forms_blocks_text`, `forms_blocks_email` and `forms_blocks_textarea`.
+
+**Wiring**
+- Route contract:
+  - Static route outside both route groups (like `/api/health`), so Payload's `[...slug]` catch-all never sees it; the stable path lets one Cloudflare rate-limit rule match on path alone (OPS_REQUESTS #10).
+  - `force-dynamic`. Same-origin POST only (`Sec-Fetch-Site` / `Origin` checked against `SITE_URL`; outside staging and production the request `Host` over http is also accepted). 403 otherwise.
+  - Content type `multipart/form-data` or `application/x-www-form-urlencoded` (415 otherwise); body cap `MAX_BODY_BYTES` = 64 KB, enforced while streaming (413).
+  - FormData keys: `_form` (form id), `f:<field name>` (field values), optional `_source` (page path, same-site only, stored as `sourcePath`), optional `_leadMagnet` (lead-magnet id; accepted only when that published lead magnet's capture form is this form), and `cf-turnstile-response`.
+  - `Accept: application/json` (what `PayloadForm` sends): JSON `FormSubmitResponse`; 200 `{ ok: true, redirect? }` on success, 400 `{ ok: false, message, fieldErrors? }` on a rejected submission. Without it (no-JS post): 303 to the form's redirect confirmation, or a minimal HTML page. Always `Cache-Control: no-store`. GET/PUT/PATCH/DELETE/HEAD/OPTIONS return 405.
+- `handleFormSubmission` order: (1) `verifyTurnstile`, nothing is read or stored before it passes (misconfigured secret returns "unavailable", a failed check returns the friendly "couldn't confirm" message); (2) load the form with a trusted Local API read; (3) `validateSubmission` against the form's own fields (unknown or duplicate keys reject the whole submission; per-type length and format caps from `MAX_LENGTH`); (4) `payload.create('form-submissions')` with `overrideAccess: false` and `context.turnstileVerified = true`, the only code path that sets that flag (`turnstileVerifiedOrAdmin`, `src/access/index.ts`).
+- `verifyTurnstile`: Cloudflare siteverify, 10 s timeout, never throws, logs error codes only. Outside development `TURNSTILE_SECRET_KEY` is required and Cloudflare's test secrets are refused (`test-secret-in-production`); the reply hostname must equal the host of `SITE_URL` (a wrong `SITE_URL` breaks every form). Development falls back to the always-pass test secret and test site key.
+- `CMSForm` (server): props = `PayloadFormProps` minus `form`, `siteKey`, `confirmation`, `messages`, plus `form` (id or populated `Form`; always re-read by id with a trusted read, then reduced by `toPublicForm` so `emails`, `redirect`, `confirmationMessage` and integration fields never reach the browser), optional `confirmation` node. Reads `TURNSTILE_SITE_KEY` at request time (prop, no `NEXT_PUBLIC_*`). Renders the confirmation message and `message` blocks as server-rendered `RichText`. Renders nothing when the form cannot be loaded.
+- `PayloadForm` (client) props: `form`, `siteKey`, `confirmation?`, `messages?`, `sourcePath?`, `leadMagnetId?`, `submitLabel?`, `turnstileAppearance?` (`'always'` default, or `'interaction-only'`), `tone?` (`light` | `dark`), `submitVariant?`, `submitSize?`, `className?`, `classNames?`.
+  - `classNames` slots: `form`, `fields`, `field`, `label`, `control`, `error`, `turnstile`, `footer`, `submit`, `status`, `success`. The layout slots `form`, `fields`, `footer`, `turnstile`, `submit` REPLACE the default layout classes when set (defaults: form `flex flex-col gap-6`, fields `flex flex-wrap gap-4`, footer `flex flex-col gap-3`, submit `self-start`, turnstile `min-h-[65px] w-full`, or `w-full` with `interaction-only`); the others are appended.
+  - Behaviour: submits with `fetch` and the form's own FormData; keeps inputs on error; resets the Turnstile token and focuses the status region after each response; a `redirect` in the response navigates (site path via `router.push`). Without JS the plain `action` / `method="post"` posts to the same route. `placeholder` is rendered on `text`, `email`, `textarea` and `select` fields.
+- `TurnstileWidget` (client) props: `siteKey`, `appearance?` (`'always'` | `'interaction-only'`, Cloudflare's `appearance`), `onTokenChange?`, `theme?`, `className?`. Uses `@marsidev/react-turnstile` (pinned 1.6.2, Gate 0 Q4), `size: 'flexible'`, auto refresh on expiry and timeout, hidden input name `cf-turnstile-response`. `interaction-only` collapses the row to zero height unless Cloudflare needs a click.
+- Env vars (names only): `TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`, `SITE_URL`, `APP_ENV`.
+- Full submission path, event contract and retry rules: `INTEGRATIONS.md`, section "Form submission path (S4-7, lead flow steps 1–2)".
+
+**Notes**
+- Event sending is not in this path. The `form-submissions` `afterChange` enqueue and the delivery job remain `TODO(integration)` in `src/plugins/formBuilder.ts`.
+- First consumer: [NewsletterBand](#newsletterband-unit-s4-11). `FormEmbed` and the lead-magnet capture are not built yet.
+- PROGRESS flag F71 (rate-limit path, hostname check, custom validation, misconfiguration returns 400).
+
+### Showcase Lexical builders (`src/showcase/lexical.ts`)
+
+- Tiny builders for static Lexical fixtures in `/_showcase` (never DB data). Exports: `text(t, { bold })`, `p(...children)`, `h('h2'|'h3'|'h4', t)`, `quote(t)`, `hr()`, `ul(...items)`, `internalLink(t, doc | null)` (`doc: null` = unresolved target, renders as plain text), `customLink(t, url, newTab?)`, `figure(media, caption)` (upload node with the RichContent `caption` field), `root(...children)`; type `LexicalRoot` (= `Faq['answer']`).
+- Used by the showcase fixtures for `accordionFAQ` answers, `richContent` bodies and `testimonialRow` client-voice `doDifferently`.
 
 ---
 
 ## 1. Homepage
+
+Variants added to these blocks by big step 4 (Hero, CaseStudyCards, TwoTrackPanels, PhaseTimeline, TestimonialRow) are documented under pages 2 to 6, where each is first used.
 
 Locked section order: Hero → Scarcity strip → Client logo strip → Featured case studies → Mini CTA strip → What we do → Process timeline → Founder/team + about → Testimonials → Final CTA → Footer (standard).
 
@@ -514,23 +608,521 @@ Section: Final CTA (restates capacity), the dark band before the footer. One var
 
 ## 2. Case Study template
 
-Data source: the [`case-studies` collection (C7)](#case-studies-unit-c7) (site-wide section). No blocks documented yet.
+Data source: the [`case-studies` collection (C7)](#case-studies-unit-c7) (site-wide section). Locked section order: Hero (client, oversized result metric, browser-framed visual) → The Before → The Strategy → The Results → Testimonial / Client Voice → Newsletter CTA → Final CTA → Footer. The template is not a `pages` doc: one `case-studies` document is fed into existing block components (no layout builder). Blocks below are documented in on-page order.
+
+### Template route and view (unit S4-12)
+
+**Files**
+- `src/app/(frontend)/work/[slug]/page.tsx`: the route `/work/<slug>`.
+- `src/components/CaseStudyView.tsx`: `CaseStudyView({ study })`, the on-page composition.
+- `src/lib/caseStudies.ts`: `getCaseStudy(slug)`, `CASE_STUDY_QUERY_DEPTH = 2`.
+- `src/lib/metadata.ts`: `caseStudyMetadata(study, { preview })`, `caseStudyJsonLd(study)`.
+- `src/app/sitemap.ts` (case-study entries), `src/collections/CaseStudies.ts` (`admin.preview` / `admin.livePreview`).
+
+**Fields & schema**
+- None added. Reads the existing `case-studies` fields; no migration. Mapping from the document to the blocks, in locked page order:
+
+| # | Section | Block · variant | Study fields → props |
+|---|---|---|---|
+| 1 | Hero | `hero` · `article` | `title` → `heading`; `accentPhrase`; `geometry: true`; `breadcrumb` = [`Work` → `/work`, current crumb `Study NN — <client name>` (parts omitted when missing; `Study` if both)]; `headlineMetric` → `resultMetric`; `engagementLine` → `body`; `publishedAt` + `figuresApproved` + `readTime` → `metaLine` (`Published Mon YYYY · Client-approved figures · N min read`, each part only when present); `inShort` → `summary.body` (label `In short`); `heroMedia` → `media`, `mediaFrame: 'browser'` |
+| 2 | The Before / The Strategy / The Results | `richContent` · `article` | `narrative.before`, `.strategy`, `.results` (each `title` + `body`) are joined into ONE Lexical document: each non-empty `title` becomes an H2 followed by that section's body; `numberSections: true` (01 / 02 / 03) |
+| 3 | Results table | `metricEvent` · `table` | `resultsTable` via `resultsTableToMetricEvent`: `eyebrow` → `eyebrow`, `columns` → `columns`, `method` → `note`, `rows[]` (`measure`, `baseline`, `after`, `change`) → `items[]` (`label`, `baseline`, `value` = after, `change`); first row `accent` |
+| 4 | Client voice | `testimonialRow` · `client-voice` | `clientVoice` group passed straight to `TestimonialClientVoiceView`; labels passed explicitly: number `04`, heading `What we'd do differently`, phases label `How this maps to our phases` |
+| 5 | Next study | `caseStudyCards` · `next-link` | `source: 'latest'`, `nextLabels` `Next study` / `Read it →`, empty `allLink`; `currentStudy` = `{ id, studyNumber, publishedAt }` |
+| 6 | Newsletter CTA | `newsletterBand` · `band` | `closing.newsletterHeading` → `heading` |
+| 7 | Final CTA | `finalCTA` | `closing.finalCtaHeading` → `heading`; `capacity: 'builds-line'`; `buttons: []` (site defaults) |
+
+**Wiring**
+- Route:
+  - `getCaseStudy(slug)` (React `cache`, dedupes page and metadata): public = `find` on `case-studies` where slug equals and `_status` is `published`, `draft: false`, `overrideAccess: false`, `depth: 2`. Draft preview: only when Next draft mode is on AND `getPreviewUser()` returns a staff user; then `draft: true`, `user`, `overrideAccess: false`.
+  - No study: `findRedirect('/work/<slug>')` (a hit calls `permanentRedirect` or `redirect`), else `notFound()`.
+  - `/work` itself is the `work` pages doc served by `[...slug]`; the `[slug]` segment matches one segment only, and `pageSlugError` forbids pages under `work/`, so they cannot collide.
+  - `force-dynamic` through the `(frontend)` layout; no `generateStaticParams`.
+- `CaseStudyView` renders `PageShell` (standard header and footer), `<ReadingProgress />` (template behaviour, not a field), then `<main>` with the seven sections. It has no markup or styling of its own.
+- Metadata: `caseStudyMetadata` = title `meta.title` → seo-defaults template with `%s` = study title; description `meta.description` → `cardSummary` → `inShort` → seo-defaults; share image `meta.image` → `heroMedia` (its `og` size) → seo-defaults; canonical `/work/<slug>`; Open Graph type `article` with published and modified times; noindex in draft preview (and outside production, per `buildMetadata`).
+- JSON-LD: `caseStudyJsonLd` emits schema.org `Article` (headline, `datePublished`, `dateModified`, `image` from `heroMedia`, `url` / `mainEntityOfPage`, `author` and `publisher` = the seo-defaults Organization), serialised with `<` escaped.
+- Sitemap: published case studies appended after pages (see [B2](#page-router-unit-b2)).
+- Preview: `CaseStudies.admin.preview` and `admin.livePreview.url` = `previewUrl('/work/<slug>')` (`/_preview?path=…`), none until the doc has a slug; breakpoints `PREVIEW_BREAKPOINTS`.
+- Revalidation: the `case-studies` hooks revalidate `/work`, `/work/<slug>` and tag `case-studies` (SCHEMA §10). Unchanged.
+- Migration: none.
+
+**Notes**
+- Each section keeps its block's own empty state: no client voice renders nothing; no other published study renders no next line; no newsletter form and no `/newsletter` page renders no band.
+- PROGRESS flag F76: template labels (`Work`, `Study NN`, `Published`, `Client-approved figures`, `min read`, `In short`, `Next study`, `Read it →`, client-voice labels) are hardcoded in `CaseStudyView`; the capacity line is `builds-line` for every study; the breadcrumb `Work` link 404s until the `work` page doc is published.
+- Case studies are drafts at launch, so `/work/<slug>` is 404 to the public until a study is published.
+
+### Hero, article variant (unit S4-1)
+
+Section: Hero. Variants of `hero` after this unit: `typographic`, `service`, `article`. Files shared by the three variants of S4-1 are listed here.
+
+**Files**
+- `src/blocks/Hero/config.ts`, `Component.tsx` (dispatches on `variant`), `ArticleHero.tsx`, `ServiceHero.tsx`, `Breadcrumb.tsx`, `logoMask.ts` (the logo mask style shared by `typographic` and `article`).
+
+**Fields & schema** (slug `hero`; fields shown only for the listed variants via `admin.condition`)
+- `variant`: options now `typographic`, `service`, `article`.
+- `breadcrumb` (`service`, `article`): array, max 4; row = `label` (text, required), `page` (relationship to the `LINK_TARGETS` collections, `maxDepth: 1`), `url` (text; a site path or an `https://` address, validated). Beyond SCHEMA (F70): it is `{label, page, url}`, not a `linkField`, so middle crumbs can be plain text.
+- `resultMetric` (`article`): group = `metricFields({ required: false })`. Beyond SCHEMA §8.1 (F70).
+- `metaLine` (`article`): text, right side of the rule under the headline.
+- `summary` (`article`): group `label` (default `In short`), `body` (textarea; empty hides the box).
+- `media` (`article`): upload to `media`, `maxDepth: 1`; `mediaFrame` select `none` (default) | `browser` | `full-bleed`.
+- `body` is also used by `article` (left side of the rule: the engagement scope). `eyebrow`, `heading` / `accentPhrase`, `geometry` (typographic and article) unchanged.
+- `stats`, `phaseStrip`: see the p3 and p4 entries.
+
+**Wiring**
+- Registered since B3; no change to registration. Showcase: `hero` / `article — browser media`, `article — no media`, `article — full-bleed media`.
+- Used by the case-study template ([S4-12](#template-route-and-view-unit-s4-12)) with props computed from the study.
+- Migration: `20261022_052303_b4_pages_2_6_blocks` (tables `pages_blocks_hero_breadcrumb`, `pages_blocks_hero_stats`, `pages_blocks_hero_phase_strip` and the `_pages_v_*` equivalents; columns `result_metric_*`, `meta_line`, `summary_label`, `summary_body`, `media_id`, `media_frame` on `pages_blocks_hero`; enum `enum_pages_blocks_hero_media_frame`).
+
+**Notes**
+- `article`: 820px column on the dot-matrix ground, the only h1. Breadcrumb is `nav aria-label="Breadcrumb"` with an ordered list; the last crumb is `aria-current="page"` and never a link. The result metric, meta rule, summary box and media each render only when filled. Media: `browser` = 2px ink frame, hard shadow, grey bar with three dots; `full-bleed` = edge to edge; `none` = ring shadow.
+- The browser frame and metric are derived designs (F70, needs design sign-off).
+- The `typographic` markup is unchanged when `stats` and `phaseStrip` are empty (rendered HTML diffed identical).
+
+### RichContent, article variant (unit S4-8)
+
+Section: The Before / The Strategy / The Results (also About body and the SEO article templates later).
+
+**Files**
+- `src/blocks/RichContent/config.ts`, `src/blocks/RichContent/Component.tsx` (`RichContentBlock`, exported `ArticleBody({ data, numbered })`, type `RichContentProps`).
+
+**Fields & schema** (slug `richContent`, `interfaceName: 'RichContentBlock'`)
+- `variant`: select, required, default `article` (only option; `legal` / `band` come later).
+- `eyebrow` / `eyebrowTick`: `eyebrowField()`.
+- `heading` / `accentPhrase`: `headlineFields({ required: false })`; empty heading is allowed.
+- `numberSections`: checkbox, default true. Adds 01, 02, 03 above each H2.
+- `body`: richText, required, own Lexical editor: paragraph, headings H2 to H4, bold, italic, bullet and ordered lists, quote, horizontal rule, `richTextLinkFeature()`, upload of `media` with a `caption` text field (`maxDepth: 1`), fixed and inline toolbars.
+
+**Wiring**
+- Registered in `pageBlocks`; component key `richContent`. Showcase: `richContent` / `article`, `article — minimal`.
+- Reads no collection. Renders through the shared [RichText wrapper](#richtext-wrapper-srccomponentsrichtexttsx) with article converters on top: h1 and h2 render as numbered `h2`, h5/h6 as `h4`; quote, horizontal rule; uploads render through `Media` in a 2px ink frame with the caption. `ArticleBody` is the prose on its own so the case-study template can render a Lexical document it built from `narrative`.
+- Migration: `20261022_052303_b4_pages_2_6_blocks` (tables `pages_blocks_rich_content`, `_pages_v_blocks_rich_content`, enum `enum_pages_blocks_rich_content_variant`).
+
+**Notes**
+- Renders nothing (with a `console.warn`) when the body is empty and there is no heading. An unpopulated upload node is logged and skipped; a non-image upload renders as a download link. Internal links to an unpublished or unresolved target render as plain text.
+- Server component; no client island.
+
+### MetricEvent, table variant (unit S4-9)
+
+Section: The Results table.
+
+**Files**
+- `src/blocks/MetricEvent/config.ts`, `src/blocks/MetricEvent/Component.tsx` (`MetricEventBlock`, `MetricEventData`, `resultsTableToMetricEvent`).
+
+**Fields & schema** (slug `metricEvent`, `interfaceName: 'MetricEventBlock'`)
+- `variant`: select, required, default `table` (only option).
+- `eyebrow` / `eyebrowTick`: `eyebrowField({ defaultTick: false })`.
+- `heading` / `accentPhrase`: `headlineFields({ required: false })`.
+- `columns`: group `measure`, `baseline`, `after`, `change` (text; defaults `Measure`, `Before`, `After`, `Change`). Beyond SCHEMA (F69).
+- `items`: array; each = `metricFields()` (`value` = the "after" figure, `label` = the measure, `sub`, `accent`) plus `baseline` and `change` text.
+- `note`: textarea, the method line under the table.
+
+**Wiring**
+- Registered in `pageBlocks`; component key `metricEvent`. Showcase: `metricEvent` / `table`, `table — one row`, `table — sparse rows`, `table — empty`.
+- `resultsTableToMetricEvent(doc.resultsTable)` maps `eyebrow`, `columns`, `method` → `note`, `rows` → `items`, first row accented.
+- Migration: `20261022_052303_b4_pages_2_6_blocks` (tables `pages_blocks_metric_event`, `pages_blocks_metric_event_items`, `_pages_v_*`, enum `enum_pages_blocks_metric_event_variant`).
+
+**Notes**
+- A real `<table>` with explicit ARIA roles; below `md` rows become stacked cards using CSS only. Rows without both `label` and `value` are dropped; with no valid row the block renders nothing (`console.warn`).
+- The change carries its own sign, an arrow (▲ for a leading `+`, ▼ for `-`, `−` or `–`) and a screen-reader word (`Increase:` / `Decrease:`), so it never relies on colour (the arrows are an addition to the design, F69). Text without a sign (e.g. `Handover`) is shown as written.
+- Server component.
+
+### TestimonialRow, client-voice variant (unit S4-10)
+
+Section: Testimonial / Client Voice. Extends the [homepage TestimonialRow](#testimonialrow-unit-b3).
+
+**Files**
+- `src/blocks/TestimonialRow/config.ts`, `src/blocks/TestimonialRow/Component.tsx` (exports `TestimonialClientVoiceView`, `TestimonialRowView`, `TestimonialRowBlock`).
+
+**Fields & schema**
+- `variant`: options now `row` and `client-voice`.
+- Row fields (`eyebrow`, `heading`, `testimonials`, `studyCard`, `cta`) are now shown only for `row` (or unset); their names and shapes are unchanged.
+- `clientVoice` (`client-voice`): group mirroring `case-studies.clientVoice` field for field: `testimonial` (relationship to `testimonials`, `maxDepth: 2`), `doDifferently` (richText, small editor: paragraph, bold, italic, lists, link, inline toolbar), `phaseMapping` (textarea), `link` (`linkField`).
+- `differentlyNumber` (text, default `04`; clear to hide), `differentlyHeading` (text, default `What we'd do differently`), `phaseLabel` (text, default `How this maps to our phases`).
+
+**Wiring**
+- Component key `testimonialRow` (dispatches on `variant`). Showcase: `testimonialRow` / `client-voice`, `client-voice — text only`, `client-voice — no testimonial`.
+- The template passes `study.clientVoice` and the three label defaults explicitly to `TestimonialClientVoiceView`.
+- `doDifferently` renders through the shared [RichText wrapper](#richtext-wrapper-srccomponentsrichtexttsx).
+- Migration: `20261022_052303_b4_pages_2_6_blocks` (`client_voice_*` columns on `pages_blocks_testimonial_row`, `differently_number`, `differently_heading`, `phase_label`; enum `enum_pages_blocks_testimonial_row_client_voice_link_type`; the `testimonial` relationship column).
+
+**Notes**
+- Renders only for a populated testimonial whose `_status` is `published` (or absent); otherwise the whole section renders nothing with a server-side `console.warn` (the case study still reads whole). A video testimonial shows its poster (link out to YouTube) above the quote; a text testimonial shows the quote only.
+- The "what we'd do differently" part renders only when the rich text has non-blank text. The phases box renders when `phaseMapping` or a resolvable, labelled `link` exists.
+- Row variant regression was only partly re-checked by the coder; QA re-shoots the row entries.
+- Server component.
+
+### CaseStudyCards, next-link layout (unit S4-2)
+
+Section: Next study. Extends the [homepage CaseStudyCards](#casestudycards-unit-b3). This entry also records the fields S4-2 added for all layouts.
+
+**Files**
+- `src/blocks/CaseStudyCards/config.ts`, `Component.tsx` (dispatches on `layout`; exports type `CurrentStudy`), `ledger.tsx`, `LoadMore.tsx` (client island, see page 3).
+
+**Fields & schema** (new in S4-2; `layout`, `source`, `limit`, … from B3 unchanged)
+- `layout`: options now `cards`, `ledger`, `next-link`.
+- `tone`: select `light` (default) | `grey`; background of the whole section, live and fallback.
+- `source`: option `track` added (see page 5).
+- `nextLabels` (`next-link`): group `label` (default `Next study`), `readLabel` (default `Read it →`).
+- `allLink`: with `next-link`, shown on its own when there is no other published study.
+- Ledger and fallback fields: see pages 3, 5 and 6.
+- Beyond SCHEMA: PROGRESS flag F72 (`track` is hasMany; `staggered` layout and `logo-strip` fallback not built).
+
+**Wiring**
+- Component key `caseStudyCards`. Showcase: `caseStudyCards` / `next-link`.
+- The template passes `currentStudy` (a prop, not a block field). Order: study number ascending (unnumbered last), then `publishedAt`, then id; the next published study after the current one, wrapping to the first, never the current study. `source = manual` uses the first published pick that is not the current study.
+- Data: `find` on `case-studies` with `draft: false`, `overrideAccess: false`, `depth: 1`, `where` published and `id not_equals current`, `limit: 200`. Manual picks are resolved by `resolvePicks`: a pick that is not a complete published object (the `defaultPopulate` subset has no `studyNumber`) is re-read by id, published only, so drafts and unreadable ids are dropped; complete published objects (showcase fixtures) are used as they are.
+- Migration: `20261022_052303_b4_pages_2_6_blocks` (`tone`, `next_labels_*`, `ledger_labels_*`, `page_size`, `load_more*` columns on `pages_blocks_case_study_cards`; enums `enum_pages_blocks_case_study_cards_tone`, `…_track`; table `pages_blocks_case_study_cards_track`; `_pages_v_*` equivalents).
+
+**Notes**
+- Output is a boxed line `Next study / <client> — <cardSummary or title> / Read it →` in the 820px column, linking to `/work/<slug>`. With no other published study it renders only `allLink` when set and labelled, else nothing. `next-link` without `currentStudy` and a non-manual source logs an error and renders nothing.
+- The existing `cards` markup is unchanged (outerHTML of the four B3 entries compared identical).
+- Server component.
+
+### NewsletterBand (unit S4-11)
+
+Section: Newsletter CTA. Also used on pages 3 and 4; later pages reuse this entry.
+
+**Files**
+- `src/blocks/NewsletterBand/config.ts`, `Component.tsx` (`NewsletterBandBlock`, `NewsletterBandData`), `formClassNames.ts` (`bandFormClassNames`).
+
+**Fields & schema** (slug literal `newsletterBand`, `interfaceName: 'NewsletterBandBlock'`)
+- `variant`: select, required, default `band` (only option; `cross-sell` is added by the lead-magnet unit).
+- `heading` / `accentPhrase`: `headlineFields({ required: false })`. Empty heading falls back to `site-settings.templateDefaults.newsletterHeading` (and its default line).
+- `line`: text, the quiet line; with an empty heading the default line from site-settings is used.
+- `buttonLabel`: text, default `Join`.
+- `tone` (`grey` default | `light`) and `spacing` (`standard` default | `roomy`). Beyond SCHEMA (F75).
+- The signup form is not a block field: it is `site-settings.newsletterForm`.
+
+**Wiring**
+- Registered in `pageBlocks`; component key `newsletterBand`. Showcase: `newsletterBand` / `band`, `band — light, roomy`, `band — custom button` (three entries).
+- Data (public reads, `overrideAccess: false`): `site-settings` global (`depth: 0`) for `newsletterForm` and `templateDefaults`; when no form is set, the published `newsletter` page (`docPath`) for the fallback link.
+- Form: `CMSForm` with `tone="light"`, `submitVariant="dark"`, `turnstileAppearance="interaction-only"` and `bandFormClassNames` (layout slots replace the defaults; `control` keeps `!` overrides for the flat input). See [Form foundation](#form-foundation-s4-7).
+- Zero-leakage pages cannot hold this block: the `Pages` `beforeValidate` hook rejects `NEWSLETTER_BAND_BLOCK_SLUG` (`src/collections/Pages.ts`) when `zeroLeakage` is set.
+- Migration: `20261022_053011_b4b_newsletter_band` (tables `pages_blocks_newsletter_band`, `_pages_v_blocks_newsletter_band`; enums `…_variant`, `…_tone`, `…_spacing`).
+
+**Notes**
+- Empty states: no form chosen → text plus a Join button linking to the published `newsletter` page; no form and no such page → the whole band renders nothing (logged once). A missing heading with no site default logs an error and omits the headline.
+- Submissions carry no `sourcePath` (the block does not know the page path; F75). The success state needs a real Turnstile round trip and was not proven in isolation.
+- Async server component; the form is the `PayloadForm` client island inside `CMSForm`.
+
+### FinalCTA
+
+The seventh section uses [FinalCTA (B3)](#finalcta-unit-b3) with `heading` from `closing.finalCtaHeading` and `capacity: 'builds-line'`; no new fields.
 
 ## 3. Work hub
 
-*No units documented yet.*
+Pages doc `work` (route `/work`, served by `[...slug]`). Order: Hero (intro strip) → Case study grid (ledger, Load More, fallback) → Newsletter CTA → Final CTA → Footer. The design also has a Proof pull (SCHEMA §9 p3, `TestimonialRow` · `row`).
+
+### Hero, typographic stats (unit S4-1)
+
+Variant `typographic` with `stats` (Work intro strip). Same block and files as [Hero, article variant](#hero-article-variant-unit-s4-1).
+
+**Fields & schema**
+- `stats`: array, max 5, row = `value` (required) and `label` (required). Shown for `typographic` and `service`. Intended for results or counts, never a price.
+
+**Wiring**
+- Showcase: `hero` / `typographic + stats` (two figures), `typographic + stats x5`.
+- Migration: `20261022_052303_b4_pages_2_6_blocks` (`pages_blocks_hero_stats`, `_pages_v_blocks_hero_stats`).
+
+**Notes**
+- With figures: the desktop (`lg`) layout is a two-column grid with the figures in a ruled right column and the logo shape parked in the corner; below `lg` the figures render as an "Aggregates" strip under the hero (1 to 3 figures in one row, 4 or 5 in two columns, an odd last one spanning both). Without figures the markup is the unchanged homepage hero.
+
+### CaseStudyCards, ledger layout and Load More (unit S4-2)
+
+Section: Study ledger (case study grid). Extends [CaseStudyCards](#casestudycards-next-link-layout-unit-s4-2).
+
+**Files**
+- `src/blocks/CaseStudyCards/ledger.tsx` (`toLedgerRow`, `LedgerRow`, `LEDGER_COLS`, `LEDGER_LIST`), `LoadMore.tsx` (`LedgerLoadMore`, `'use client'`), `Component.tsx` (`StudyLedger`).
+
+**Fields & schema** (`layout = ledger`)
+- `pageSize`: number 1 to 24, default 6 (rows at first and per click). `loadMore`: checkbox, default true.
+- `loadMoreLabel` (default `Load more studies`), `loadMoreLoadingLabel` (`Loading…`), `loadMoreErrorLabel` (`Could not load more studies. Try again.`), shown when `loadMore` is on.
+- `ledgerLabels`: group `number` (`№`), `client` (`Client`), `summary` (`What was leaking / what we changed`), `metric` (`Returned`), `kind` (`Case study`, phones), `readLabel` (`Read the study →`, phones).
+- Reuses `eyebrow`, `heading`, `source` (`featured` | `latest` | `track` | `manual`), `caseStudies`, `tone`, and the fallback fields.
+
+**Wiring**
+- Showcase: `caseStudyCards` / `ledger` (three published fixture studies, manual), `ledger — latest (DB)` (the launch state: with none published it is the ledger fallback).
+- Data: automatic sources run `find` on `case-studies` (`draft: false`, `overrideAccess: false`, `depth: 1`, `limit: pageSize`, `sort: -publishedAt`, published filter). `hasNextPage` and a REST query string (where, sort, select limited to the fields a row reads, `populate` of `clients.name`) are handed to the island. Manual picks are resolved by `resolvePicks` and show every published pick, without Load More.
+- Load More: public REST, no route of our own: `GET /api/case-studies?<query>&limit=<pageSize>&page=<n>&depth=1` with `credentials: 'omit'`, so collection read access (`publishedOrStaff`) returns published studies only, plus the explicit `_status` filter in the query. Rows already shown are de-duplicated by id.
+- Migration: `20261022_052303_b4_pages_2_6_blocks` (see S4-2 above).
+
+**Notes**
+- Client island `LoadMore.tsx` (`'use client'`, reason: appends rows on click with state and a browser `fetch`). The first page is server-rendered; the button renders only after hydration (so it is never a dead control without JS) and only while more rows exist. Focus moves to the first new row; the list is `aria-live="polite"`; an error shows `loadMoreErrorLabel`.
+- Launch state: with no published study (or a failed read) the designed fallback renders (see [homepage CaseStudyCards](#casestudycards-unit-b3)).
+- Newest first (the design shows ascending numbers; no sort field, F72). The ledger desktop grid starts at `lg`.
+
+### Newsletter CTA, Final CTA, Proof pull
+
+- Newsletter CTA: [NewsletterBand](#newsletterband-unit-s4-11) with `tone: light`, `spacing: roomy` (fixture `band — light, roomy`).
+- Final CTA: [FinalCTA (B3)](#finalcta-unit-b3).
+- Proof pull (SCHEMA §9 p3 row 3): [TestimonialRow `row`](#testimonialrow-unit-b3); no new fields.
 
 ## 4. Services Hub
 
-*No units documented yet.*
+Pages doc `services`. Order (SCHEMA §9 p4): Hero → Two doors → Why both together → Newsletter CTA → The arc → How it starts → Featured proof → FAQ mini → Final CTA → Footer.
+
+### Hero, phaseStrip (unit S4-1)
+
+Variant `typographic` with `phaseStrip`. Same block and files as [Hero, article variant](#hero-article-variant-unit-s4-1).
+
+**Fields & schema**
+- `phaseStrip` (`typographic` only): array, max 3, row = `number` (required, e.g. `01`) and `label` (required). Beyond SCHEMA §8.1 as a styled strip (F70: "system-styled", the design has none).
+
+**Wiring**
+- Showcase: `hero` / `typographic + phaseStrip`.
+- Migration: `20261022_052303_b4_pages_2_6_blocks` (`pages_blocks_hero_phase_strip`, `_pages_v_*`).
+
+**Notes**
+- Rendered as a three-column ordered list under the buttons. The last step is always at full weight (ink top rule, accent number, trailing arrow).
+
+### TwoTrackPanels, doors and contrast variants (unit S4-3)
+
+Sections: Two doors (track split) and Why both together. Extends the [homepage TwoTrackPanels](#twotrackpanels-unit-b3).
+
+**Files**
+- `src/blocks/TwoTrackPanels/config.ts`, `src/blocks/TwoTrackPanels/Component.tsx` (`Equal`, `Contrast`, `PrimarySecondary`, `Doors`).
+
+**Fields & schema**
+- `variant`: options now `equal`, `contrast`, `primary-secondary`, `doors`.
+- `panels[].claim` (text, `contrast` only): the struck-through claim.
+- `panels[].label`: used by `equal`, `contrast`, `primary-secondary`. `panels[].accentTitle`, `pricingNote`, `link`: `equal`, `primary-secondary`, `doors`.
+- `panels[].body`: textarea, no longer `required` at the field level (so the DB column stays nullable); a `validate` function requires it for every variant except `contrast`.
+- `conclusion` (textarea): `contrast`, `primary-secondary`, `doors`.
+- Beyond SCHEMA §8.3: `doors` (F67, F74: p4 "Two doors" differs from the homepage `equal`; needs a mini Gate S), `claim` and `conclusion` (F66).
+
+**Wiring**
+- Component key `twoTrackPanels` (dispatches on `variant`). Showcase: `twoTrackPanels` / `doors`, `doors — no links/pricing`, `contrast`, `contrast — no panels`.
+- Reads no collection or global.
+- Migration: `20261022_052303_b4_pages_2_6_blocks` (enum values `contrast`, `primary-secondary`, `doors` added to the variant enums; columns `claim` on `…_panels` and `conclusion` on the block, plus `_pages_v_*`). The migration contains no `DROP NOT NULL`.
+
+**Notes**
+- `doors`: each panel is one linked card (title, paragraph, filled CTA; ink for the first door, wine when `accentTitle`). The design's large price numeral is not rendered; the price is the small inline `pricingNote` (CLAUDE.md rule 5). `heading` is a required field for every variant (PROGRESS F74).
+- `contrast`: desktop two bordered grey cards, mobile a ruled list; each panel = small label, struck `claim` (`<del>`), reality line (`title`, `h3`); then `conclusion`. Panels missing `claim` or `title` are skipped with a `console.error`; with no valid panel only the heading and conclusion render.
+- `equal`, `primary-secondary`, `doors` skip a panel missing `title` or `body` (logged).
+- Equal-variant pixel regression was not proven by the coder; QA re-shoots the `equal` entries against the earlier captures.
+- Server component.
+
+### Newsletter CTA
+
+[NewsletterBand](#newsletterband-unit-s4-11) with `spacing: roomy`.
+
+### PhaseTimeline, arc and steps variants (unit S4-4)
+
+Sections: The arc and How it starts. Extends the [homepage PhaseTimeline](#phasetimeline-unit-b3).
+
+**Files**
+- `src/blocks/PhaseTimeline/config.ts`, `Component.tsx` (dispatches on `variant`), `ArcPhases.tsx`, `StepCards.tsx`, `StepRun.tsx` (build-run and engine-rollout, see pages 5 and 6), `SwipeTrack.tsx` (client), `shared.tsx` (`Headline`, `titledSteps`).
+
+**Fields & schema** (each field is shown only for the variants that use it, through `admin.condition` on the block's `variant`)
+- `variant`: options now `accordion`, `arc`, `steps`, `build-run`, `engine-rollout`; not clearable.
+- `phases` (`accordion`, `arc`): `body` (textarea, from B3) is now shown for `arc`; added `link` (`linkField`, `arc`). Max 3 rows.
+- `steps` (`accordion`, `steps`, `build-run`, `engine-rollout`): added `tag` (text; `steps`, `build-run`, `engine-rollout`), `isSignOff` (checkbox, `build-run`), `outcomes` (array max 4 of `{ text }`, `steps`). Max 10 rows.
+- `closingLine`: now also `steps`, `build-run`, `engine-rollout`. `cta` (`linkField`): `steps`.
+- `eyebrow`: `accordion`, `build-run`, `engine-rollout`.
+- Beyond SCHEMA: PROGRESS flag F73 (hardcoded "You leave with" and "Swipe →").
+
+**Wiring**
+- Component key `phaseTimeline`. Showcase: `phaseTimeline` / `arc`, `arc — minimal`, `steps`, `steps — minimal`, `steps — empty`.
+- Migration: `20261022_052303_b4_pages_2_6_blocks` (`link_*` columns on `pages_blocks_phase_timeline_phases`, `tag` and `is_sign_off` on `…_steps`, table `pages_blocks_phase_timeline_steps_outcomes`, block `cta_*` columns, variant enum values, and the `_pages_v_*` equivalents).
+
+**Notes**
+- `arc`: one ruled row per phase (number in mono, display title, body, optional link). Desktop puts the label in a column of at least 200px (wider only if a word needs it). The LAST phase title is always in the accent colour. Phases without a title are skipped (logged).
+- `steps`: numbered cards with the number, a boxed `tag`, title, sentence, then a grey "You leave with" foot listing `outcomes`. Stacked below `lg`; one row with arrows between from `lg`. Closing line and button: the line first on desktop, the full-width button first on phones. Every card has the same full weight, the last included; there is no field to reduce it. With no steps only the heading renders.
+- The design's endless tag-flash animation (7.5 s) is not ported (WCAG 2.2.2).
+- Server components; the `accordion` variant is unchanged (regression script identical at 390, 1009 and 1440 px).
+
+### Featured proof
+
+[TestimonialRow `row`](#testimonialrow-unit-b3) (SCHEMA §9 p4 row 7). No new fields.
+
+### AccordionFAQ, mini variant (unit S4-6)
+
+Section: FAQ mini (also pages 5 and 6; later pages link here).
+
+**Files**
+- `src/blocks/AccordionFAQ/config.ts`, `src/blocks/AccordionFAQ/Component.tsx` (`AccordionFAQBlock`, async server component).
+
+**Fields & schema** (slug `accordionFAQ`, `interfaceName: 'AccordionFAQBlock'`)
+- `variant`: select, required, default `mini` (only option; `group` for page 11 is added later).
+- `eyebrow` / `eyebrowTick`: `eyebrowField()`, optional.
+- `heading`: text, required; the section `h2`, shown in capitals.
+- `source`: select `selected` (default) | `category`.
+- `category`: select, options taken from `Faqs` (`pricing-contracts`, `builds`, `marketing`, `process-trust`), shown for `category`.
+- `faqs`: relationship to `faqs`, `hasMany`, `maxDepth: 1`, shown for `selected`.
+- `limit`: number 1 to 12, default 6. `openFirst`: checkbox, default false.
+- `allLink`: `linkField`, optional underlined link under the list.
+
+**Wiring**
+- Registered in `pageBlocks` (last); component key `accordionFAQ`. Showcase: `accordionFAQ` / `mini`, `mini — category (DB)`, `mini — empty`.
+- Data: `selected` uses the page-populated `faqs`, keeping only populated objects with `_status = published`, in the editor's order. `category` runs `find` on `faqs` (`draft: false`, `overrideAccess: false`, `depth: 1`, sort `sortOrder`, published and category filter). A failed read is logged and renders nothing.
+- JSON-LD: a `FAQPage` script for exactly the rendered items (`Question` name, `Answer` text = plain text of the Lexical answer), `<` escaped.
+- Migration: `20261022_052303_b4_pages_2_6_blocks` (table `pages_blocks_accordion_f_a_q`, `_pages_v_*`, enums `…_variant`, `…_source`, `…_category`, `…_all_link_type`).
+
+**Notes**
+- Native `<details>` / `<summary>` (works without JS; answers crawlable). Answers render through the shared [RichText wrapper](#richtext-wrapper-srccomponentsrichtexttsx).
+- No published question: renders nothing, with one server-side `console.warn`.
+- Server component; no client island.
+
+### Final CTA
+
+[FinalCTA (B3)](#finalcta-unit-b3).
 
 ## 5. Shopify Theme Development
 
-*No units documented yet.*
+Pages doc `services/shopify-theme-development`. Order (SCHEMA §9 p5): Breadcrumb + Dev hero → Where people usually start → Template anatomy → Specification → Build run → Proof → FAQ mini → Final CTA → Footer.
+
+### Hero, service variant (unit S4-1)
+
+Section: Breadcrumb + Dev hero (also page 6). Same block and files as [Hero, article variant](#hero-article-variant-unit-s4-1).
+
+**Fields & schema** (`variant = service`)
+- Uses `eyebrow` / `eyebrowTick`, `heading` / `accentPhrase`, `body`, `pricingNote`, `ctas` (max 2), `subNote`, `breadcrumb`, `stats` (max 5).
+- Beyond SCHEMA (F70): the CTA styling (primary `Button` with overrides).
+
+**Wiring**
+- Showcase: `hero` / `service — build`, `service — growth`, `service — minimal`.
+- Migration: `20261022_052303_b4_pages_2_6_blocks` (variant enum value `service`).
+
+**Notes**
+- Ink band with a breadcrumb bar on top (rendered only when a crumb has a label), eyebrow with a yellow diamond, the only h1, body. The aside (right column from `lg`, full-bleed rows on phones) shows `stats`, the pricing note, the sub-note and the buttons; it is omitted when all are empty.
+- R13: the design's `$5K` / `$1K/mo` display statistic is not rendered; the price is the small inline `pricingNote`.
+- Server component.
+
+### TwoTrackPanels, primary-secondary variant (unit S4-3)
+
+Section: Where people usually start. Same block and files as [TwoTrackPanels, doors and contrast](#twotrackpanels-doors-and-contrast-variants-unit-s4-3).
+
+**Fields & schema** (`variant = primary-secondary`)
+- Uses `eyebrow`, `heading` / `accentPhrase`, `panels` (exactly 2: `label`, `title`, `accentTitle`, `body` required, `pricingNote`, `link`), `conclusion`.
+
+**Wiring**
+- Showcase: `twoTrackPanels` / `primary-secondary`. Migration: `20261022_052303_b4_pages_2_6_blocks`.
+
+**Notes**
+- Derived design (F66, needs design sign-off): the section is missing from the final Shopify design. Primary = 2px ink border on grey, tag, filled `ButtonLink`; secondary = hairline border, muted copy, text link; columns 3fr / 2fr from `md`.
+
+### SpecLedger, cards (anatomy) and expandable variants (unit S4-5)
+
+Sections: Template anatomy and Specification (what's included). New block.
+
+**Files**
+- `src/blocks/SpecLedger/config.ts`, `src/blocks/SpecLedger/Component.tsx` (`SpecLedgerBlock`, `SpecLedgerData`).
+
+**Fields & schema** (slug `specLedger`, `interfaceName: 'SpecLedgerBlock'`; conditions read the parent block's `variant`)
+- `variant`: select, required, default `cards`: `cards`, `expandable`, `signal-flow`.
+- `cardLayout` (`cards`): `anatomy` (default) | `feature`. Beyond SCHEMA (F68).
+- `tone`: `auto` (default) | `light` | `grey`; automatic = grey for anatomy cards and signal flow, white otherwise. Beyond SCHEMA (F68).
+- `eyebrow` / `eyebrowTick` (`eyebrowField({ defaultTick: false })`): the small grey caption; the section's `h2` unless a headline or the hub headline already is.
+- `heading` / `accentPhrase`: `headlineFields({ required: false })`.
+- `note` (anatomy cards): text. Beyond SCHEMA (F68).
+- `items`: array, max 10: `code` (text, max 8), `title` (required), `line` (cards, expandable), `image` (upload, `maxDepth: 1`, cards), `whatLabel`, `what`, `proofLabel`, `proof` (expandable).
+- `firstOpen` (expandable): checkbox, default true. Beyond SCHEMA (F68).
+- `hub` (signal-flow): see page 6.
+- `pricingNote`: text (max 80), under the content.
+
+**Wiring**
+- Registered in `pageBlocks`; component key `specLedger`. Showcase: `specLedger` / `cards — anatomy`, `expandable — p5`, `signal-flow`, `expandable — p6`, `cards — feature`, `expandable — sparse`, `cards — anatomy, no image`, `signal-flow — hub, no image` (eight entries; the registry orders them p5 anatomy, p5 expandable, p6 signal-flow, p6 expandable, p6 feature, then the three sparse states).
+- Reads no collection.
+- Migration: `20261022_052303_b4_pages_2_6_blocks` (tables `pages_blocks_spec_ledger`, `pages_blocks_spec_ledger_items`, `_pages_v_*`; enums `…_variant`, `…_card_layout`, `…_tone`).
+
+**Notes**
+- `cards` / `anatomy`: 2 x 2 grid (one column on phones) of framed cards with the coded title, picture (4:3, keeps its shape without an image) and one line. `expandable`: native `<details>` rows with a "+" marker (several may be open); the first is open when `firstOpen` is not false.
+- Items without a `title` are dropped; the block renders nothing when there are no items and no heading or caption. An unknown variant logs an error and renders nothing.
+- One copy set serves desktop and mobile (the mobile design shows shorter copy; F68). Fixture copy is written from the design with placeholder markers (T-01 to T-04, D-01 to D-07).
+- Server component; no client island.
+
+### PhaseTimeline, build-run variant (unit S4-4)
+
+Section: Build run (Phase 1 process). Same block and files as [PhaseTimeline, arc and steps](#phasetimeline-arc-and-steps-variants-unit-s4-4).
+
+**Fields & schema** (`variant = build-run`)
+- Uses `eyebrow`, `heading`, `steps` (`number`, `title`, `detail`, `tag`, `isSignOff`), `closingLine`.
+
+**Wiring**
+- Showcase: `phaseTimeline` / `build-run`, `build-run — minimal`. Migration: `20261022_052303_b4_pages_2_6_blocks`.
+
+**Notes**
+- One ink band (`StepRun`). Below `lg` a horizontal swipe row of bordered cards (numeral, title, `detail`; a sign-off step shows its `tag` with a diamond) with progress bars; from `lg`, a 3-column grid of cells split by hairlines showing the `tag`. A filler cell pads an incomplete last row.
+- Client island `SwipeTrack.tsx` (`'use client'`, reason: the progress bars follow the scroll position). The server renders the row and the bars (first bar lit), so the row still scrolls with JS off. While the row overflows it gets `tabIndex 0`, `role="region"` and `aria-labelledby` the section heading, so arrow keys scroll it.
+- Every step has the same full weight, the last included; "Swipe →" is hardcoded (F73).
+
+### CaseStudyCards, track source and testimonials fallback (unit S4-2)
+
+Section: Proof (fallback). Extends [CaseStudyCards](#casestudycards-next-link-layout-unit-s4-2).
+
+**Fields & schema**
+- `source = track`: `track` select, `hasMany`, options `build`, `growth`, `build-and-growth`, `handover` (table `pages_blocks_case_study_cards_track`). A track source with no type ticked logs an error and renders the fallback. Page 5 uses `build` + `build-and-growth`.
+- `fallbackMode`: options now also `testimonials` and `metric-strip` (default stays `ledger`; hidden for `next-link`).
+- `fallbackTestimonials`: relationship to `testimonials`, `hasMany`, max 3, `maxDepth: 2`; shown for `testimonials`.
+- `fallbackEyebrow`, `fallbackHeading`, `fallbackAccentPhrase`, `fallbackBody`, `pricingNote` apply to every fallback mode.
+
+**Wiring**
+- Showcase: `caseStudyCards` / `cards — track build, fallback testimonials` (reads the DB; with none published the testimonials fallback renders).
+- Data: `where` published and `track in <ticked>`; same query options as the other automatic sources.
+- Migration: `20261022_052303_b4_pages_2_6_blocks`.
+
+**Notes**
+- `testimonials` fallback: headline, then the small label (`fallbackEyebrow`) and up to three published picked testimonials as quote cards. The design's "A study in full" card is not rendered (SCHEMA §5). With no usable testimonial it degrades to the `note` text block.
+- The quote card duplicates the `TestimonialRow` card markup (flagged to promote one shared card later). Draft testimonials are skipped.
+
+### FAQ mini and Final CTA
+
+[AccordionFAQ `mini`](#accordionfaq-mini-variant-unit-s4-6) and [FinalCTA (B3)](#finalcta-unit-b3).
 
 ## 6. Marketing
 
-*No units documented yet.*
+Pages doc `services/marketing`. Order (SCHEMA §9 p6): Breadcrumb + Marketing hero → Signal flow → Channel specification → Engine rollout → Camera work → Proof → FAQ mini → Final CTA → Footer.
+
+Hero: [Hero, service variant](#hero-service-variant-unit-s4-1) (`pricingNote` `Engines start at $1K/mo`).
+
+### SpecLedger on the Marketing page: signal-flow, expandable, cards (feature) (unit S4-5)
+
+Sections: Signal flow, Channel specification, Camera work. Same block and files as [SpecLedger (page 5)](#specledger-cards-anatomy-and-expandable-variants-unit-s4-5).
+
+**Fields & schema**
+- `signal-flow`: `items` (`code`, `title`; no `line`, no `image`) are the tiles; `hub` group (condition `variant = signal-flow`): `kicker`, `heading`, `body`, `note` (desktop only), `image` (upload, `maxDepth: 1`). `kicker` and `note` are beyond SCHEMA (F68).
+- `expandable`: as on page 5, with labels `What we run` and `What you'll see on the dashboard`.
+- `cards` with `cardLayout = feature`: two image cards (title and line on top, large picture below, side by side).
+
+**Wiring**
+- Showcase: `specLedger` / `signal-flow`, `expandable — p6`, `cards — feature`, `signal-flow — hub, no image`.
+- Migration: `20261022_052303_b4_pages_2_6_blocks`.
+
+**Notes**
+- `signal-flow`: tiles converge on the hub card (splits at `lg`). The hub renders only when it has text or an image; with neither, only the tiles show.
+- The feature cards render an `h3` without a preceding `h2` when the section has no caption or heading (the SEO auditor may flag it).
+- Feature-card and signal-flow copy on `/_showcase` is written from the design with placeholder markers.
+
+### PhaseTimeline, engine-rollout variant (unit S4-4)
+
+Section: Engine rollout (Phase 2 framing, Phase 3 endpoint visible). Same block and files as [PhaseTimeline, arc and steps](#phasetimeline-arc-and-steps-variants-unit-s4-4).
+
+**Fields & schema** (`variant = engine-rollout`)
+- Uses `eyebrow`, `heading`, `steps` (`number`, `title`, `detail`, `tag` for timing), `closingLine`. `isSignOff` is not used.
+
+**Wiring**
+- Showcase: `phaseTimeline` / `engine-rollout`, `engine-rollout — minimal`. Migration: `20261022_052303_b4_pages_2_6_blocks`.
+
+**Notes**
+- Same ink band and phone swipe row as `build-run` (`StepRun` + `SwipeTrack`); the desktop single row of columns starts at `xl` (1280px) because six columns clip below it (F73). The tag shows under the title on computers; `detail` shows on phones.
+- The last step (Independence, Phase 03) renders like every other step, at full weight; nothing can dim it.
+
+### CaseStudyCards, metric-strip fallback (unit S4-2)
+
+Section: Proof (fallback, directly above the FAQ). Extends [CaseStudyCards](#casestudycards-next-link-layout-unit-s4-2).
+
+**Fields & schema**
+- `fallbackMode = metric-strip`: `fallbackMetrics` (array max 3, `metricFields()`), shown for `ledger` and `metric-strip`. The `$1K/mo` figure from the design is a `pricingNote` (rule 5), not a metric (F72). Page 6 uses `source = track` with `growth` + `build-and-growth`.
+
+**Wiring**
+- Showcase: `caseStudyCards` / `cards — track growth, fallback metric strip`. Migration: `20261022_052303_b4_pages_2_6_blocks`.
+
+**Notes**
+- Renders the text block, then a centred strip of up to three facts (on a `grey` section the strip takes the white ground). With no metric rows it degrades to the `note` text block. The strip duplicates the future `MetricEvent` strip (to be merged later).
+
+### FAQ mini and Final CTA
+
+[AccordionFAQ `mini`](#accordionfaq-mini-variant-unit-s4-6) and [FinalCTA (B3)](#finalcta-unit-b3) (`capacity: engines-line` per SCHEMA §9).
 
 ## 7. Testimonials
 
@@ -1859,7 +2451,11 @@ Implemented in [B0](#frontend-foundation-unit-b0).
 - Route: `src/app/(frontend)/%5Fshowcase/page.tsx`. The folder is `%5Fshowcase` because a `_folder` is a private folder excluded from routing; `%5F` (URL-encoded `_`) creates a segment starting with an underscore.
 - `notFound()` when `APP_ENV=production` (`showcaseEnabled()`); always `robots: { index: false, follow: false }`.
 - Entries come from `showcaseEntries` in `src/showcase/registry.ts`, each rendered through `RenderBlocks`. Scaffolding: system-mono labels (block, variant, `mobile-only`/`desktop-only` tag), dotted dividers between entries, and an empty-state message ("No blocks yet.") while the registry is empty.
-- Entries (B3, in order): `hero` x2, `proofStrip` x4, `caseStudyCards` x4, `miniCTAStrip` x2, `twoTrackPanels` x2, `phaseTimeline` x2, `teamIntro` (intro) x2, `testimonialRow` x4, `teamIntro` (founder-card) x2, `finalCTA` x3. Fixtures are static objects typed to the generated block rows, so fallback and empty states render without database content (except `caseStudyCards` / `cards — featured (DB)`, which reads published studies).
+- Entries: 78 in `showcaseEntries` (75 + 3 `newsletterBand`).
+  - Homepage group (B3, 27 entries, in order): `hero` x2, `proofStrip` x4, `caseStudyCards` x4, `miniCTAStrip` x2, `twoTrackPanels` x2, `phaseTimeline` x2, `teamIntro` (intro) x2, `testimonialRow` x4, `teamIntro` (founder-card) x2, `finalCTA` x3.
+  - Big step 4 group (51 entries, appended after the homepage group). Ordering rule: grouped by block in SCHEMA §9 page order of first use, and variants within a group in page order: `hero` article x3 (p2), stats x2 (p3), phaseStrip x1 (p4), service x3 (p5, p6) → `richContent` x2 (p2) → `metricEvent` x4 (p2) → `testimonialRow` client-voice x3 (p2) → `newsletterBand` x3 (p2, p3) → `caseStudyCards` next-link, ledger x2 (p3), track build (p5), track growth (p6) → `twoTrackPanels` doors x2, contrast x2 (p4), primary-secondary x1 (p5) → `phaseTimeline` arc x2, steps x3 (p4), build-run x2 (p5), engine-rollout x2 (p6) → `accordionFAQ` x3 (p4) → `specLedger` x8 (p5, p6).
+  - The grouping rule is stated in the comment above the first big-step-4 entry in `src/showcase/registry.ts`.
+- Fixtures are static objects typed to the generated block rows, so fallback and empty states render without database content. Entries that read published data from the database: `caseStudyCards` / `cards — featured (DB)`, `ledger — latest (DB)`, `cards — track build, fallback testimonials`, `cards — track growth, fallback metric strip`, and `accordionFAQ` / `mini — category (DB)` (with no data they show their fallback or render nothing).
 
 ---
 
@@ -1915,7 +2511,7 @@ Local dev: values live only in the untracked `.env`, created from the committed 
 
 Every lead, signup and site error is sent to the OpenClaw secretary as a signed HTTP event, and newsletter signups sync to Resend Contacts. The full contract, signing, retry schedule, re-send procedure and per-event status live in [`INTEGRATIONS.md`](../INTEGRATIONS.md).
 
-The submit-side data model (forms, submissions, delivery fields) is documented in [`form-builder` (P1)](#form-builder-unit-p1). None of the integration code is built yet: the open `TODO(integration)` items (form handler with Turnstile, delivery and newsletter-sync jobs, re-send endpoint, "Failed deliveries" preset) are listed in the [P1 Wiring section](#form-builder-unit-p1).
+The submit-side data model (forms, submissions, delivery fields) is documented in [`form-builder` (P1)](#form-builder-unit-p1). The public submission path (Turnstile verify, validation, store) is built: see [Shared components and form foundation](#shared-components-and-form-foundation-big-step-4) and `INTEGRATIONS.md` "Form submission path". Still open `TODO(integration)` items: the `form-submissions` `afterChange` enqueue and the signed-event delivery job, the newsletter-sync job, the re-send endpoint and the "Failed deliveries" preset (see the [P1 Wiring section](#form-builder-unit-p1)).
 
 ---
 
