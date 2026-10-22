@@ -77,8 +77,9 @@ export const DUPLICATE_KEY_MESSAGE =
   'This statement type is already used in another row. Each type can be used once; edit that row instead.'
 export const WHOLE_NUMBER_MESSAGE = 'Enter a whole number, e.g. 3.'
 
-export const activeOverCapacityMessage = (capacity: number) =>
-  `Active clients can't be more than the client cap (${capacity}). Raise the cap first, or lower this number.`
+/** "<label> can't be more than the client cap (7)…" — used by every count capped by `capacity`. */
+export const overCapacityMessage = (label: string, capacity: number) =>
+  `${label} can't be more than the client cap (${capacity}). Raise the cap first, or lower this number.`
 
 export const unknownTokensMessage = (tokens: string[]) =>
   `Unknown placeholder ${tokens.map((t) => `{${t}}`).join(', ')}. Use only {active}, {capacity}, {builds}, {engines} or {open}.`

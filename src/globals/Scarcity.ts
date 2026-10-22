@@ -17,7 +17,7 @@ import {
   SCARCITY_KEYS,
   STATISTIC_REQUIRED_MESSAGE,
   WHOLE_NUMBER_MESSAGE,
-  activeOverCapacityMessage,
+  overCapacityMessage,
   unknownScarcityTokens,
   unknownTokensMessage,
 } from '../lib/scarcity'
@@ -37,12 +37,14 @@ import {
  *   saved (the component must also have no reason-less render path; block-coder rule);
  * - `statistic` required and may only use the known tokens;
  * - `key` unique across rows (field validate reads `data.statements`);
- * - `activeClients ≤ capacity`; all counts are whole numbers ≥ 0 (capacity ≥ 1).
+ * - `activeClients`, `buildsInProgress` and `enginesRunning` each ≤ `capacity` (F8, mini
+ *   Gate S 2026-10-21); all counts are whole numbers ≥ 0 (capacity ≥ 1).
  *
- * No real-looking numbers as defaults (CLAUDE.md content rule 3 / dispatch): the four
- * counts are required with NO default, and `statements` starts empty. The seed supplies
- * demonstrative placeholders. SCHEMA §7.2's "default 7" on `capacity` is deliberately
- * not applied (flagged to the PM). In payload@3.91.0 a global has no stored row until its
+ * Defaults: `capacity` defaults to 7 — the REAL client cap (F7, mini Gate S 2026-10-21,
+ * restoring SCHEMA §7.2's "default 7"; DB column default via migration s2_scarcity_seo_delta).
+ * The other three counts are required with NO default (they are live numbers, never
+ * invented — CLAUDE.md content rule 3), and `statements` starts empty; the seed supplies
+ * demonstrative placeholders. In payload@3.91.0 a global has no stored row until its
  * first save (globals/operations/findOne.js), so the frontend must treat every field as
  * optional and render nothing until the global is saved.
  *
@@ -76,15 +78,18 @@ const validateCount: NumberFieldSingleValidation = (value, options) => {
   return true
 }
 
-const validateActiveClients: NumberFieldSingleValidation = (value, options) => {
-  const base = validateCount(value, options)
-  if (base !== true) return base
-  const capacity = (options.siblingData as { capacity?: unknown } | undefined)?.capacity
-  if (typeof value === 'number' && typeof capacity === 'number' && value > capacity) {
-    return activeOverCapacityMessage(capacity)
+/** Whole-number count that may not exceed the sibling `capacity` (F8). Error shows on this field. */
+const validateCappedCount =
+  (label: string): NumberFieldSingleValidation =>
+  (value, options) => {
+    const base = validateCount(value, options)
+    if (base !== true) return base
+    const capacity = (options.siblingData as { capacity?: unknown } | undefined)?.capacity
+    if (typeof value === 'number' && typeof capacity === 'number' && value > capacity) {
+      return overCapacityMessage(label, capacity)
+    }
+    return true
   }
-  return true
-}
 
 const validateKey: SelectFieldSingleValidation = (value, options) => {
   const base = select(value, options)
@@ -112,14 +117,20 @@ const validateReason: TextFieldSingleValidation = (value, options) => {
 const validateStatements: ArrayFieldValidation = (value, { req: { t } }) =>
   (Array.isArray(value) && value.length >= 1) || t('validation:requiresAtLeast', { count: 1, label: 'Statement' })
 
-const countField = (name: string, label: string, description: string, min = 0): NumberField => ({
-    name,
-    label,
-    type: 'number',
-    required: true,
-    min,
-    validate: name === 'activeClients' ? validateActiveClients : validateCount,
-    admin: { step: 1, width: '25%', description },
+const countField = (
+  name: string,
+  label: string,
+  description: string,
+  { min = 0, capped = true, defaultValue }: { min?: number; capped?: boolean; defaultValue?: number } = {},
+): NumberField => ({
+  name,
+  label,
+  type: 'number',
+  required: true,
+  min,
+  ...(defaultValue === undefined ? {} : { defaultValue }),
+  validate: capped ? validateCappedCount(label) : validateCount,
+  admin: { step: 1, width: '25%', description },
 })
 
 export const Scarcity: GlobalConfig = {
@@ -141,14 +152,27 @@ export const Scarcity: GlobalConfig = {
     {
       type: 'row',
       fields: [
-        countField('capacity', 'Client cap', 'The most clients we take at once ("We cap at 7").', 1),
+        countField(
+          'capacity',
+          'Client cap',
+          'The most clients we take at once. Our real cap is 7 ("We cap at 7"); change it only if the cap changes.',
+          { min: 1, capped: false, defaultValue: 7 },
+        ),
         countField(
           'activeClients',
           'Active clients',
           'Clients we are working with now. Can\'t be more than the cap ("Slots open 3/7").',
         ),
-        countField('buildsInProgress', 'Builds in progress', 'Store builds running now ("3 builds in progress").'),
-        countField('enginesRunning', 'Engines running', 'Growth engines running now ("3 engines running").'),
+        countField(
+          'buildsInProgress',
+          'Builds in progress',
+          'Store builds running now ("3 builds in progress"). Can\'t be more than the cap.',
+        ),
+        countField(
+          'enginesRunning',
+          'Engines running',
+          'Growth engines running now ("3 engines running"). Can\'t be more than the cap.',
+        ),
       ],
     },
     {

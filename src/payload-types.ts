@@ -2528,7 +2528,7 @@ export interface SiteSetting {
 export interface Scarcity {
   id: number;
   /**
-   * The most clients we take at once ("We cap at 7").
+   * The most clients we take at once. Our real cap is 7 ("We cap at 7"); change it only if the cap changes.
    */
   capacity: number;
   /**
@@ -2536,11 +2536,11 @@ export interface Scarcity {
    */
   activeClients: number;
   /**
-   * Store builds running now ("3 builds in progress").
+   * Store builds running now ("3 builds in progress"). Can't be more than the cap.
    */
   buildsInProgress: number;
   /**
-   * Growth engines running now ("3 engines running").
+   * Growth engines running now ("3 engines running"). Can't be more than the cap.
    */
   enginesRunning: number;
   /**
@@ -2823,9 +2823,9 @@ export interface SeoDefault {
    */
   localBusiness?: {
     /**
-     * The kind of business Google is told this is. "Professional service" is recommended.
+     * The kind of business Google is told this is. "Professional service" is the right type for Duha Media and the only option for now.
      */
-    type?: ('ProfessionalService' | 'MarketingAgency') | null;
+    type?: 'ProfessionalService' | null;
     /**
      * Where clients are served, e.g. "Chicago metropolitan area".
      */
