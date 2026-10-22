@@ -11,6 +11,7 @@ import type { PayloadFormClassNames } from '@/components/forms'
 export const footerNudgeFormClassNames: PayloadFormClassNames = {
   form: 'flex flex-row flex-wrap items-start gap-x-2 gap-y-2',
   fields: 'flex min-w-0 flex-1 flex-wrap gap-4',
+  field: 'gap-0!', // the sr-only label is out of flow but the column gap still offset the input 6px
   label: 'sr-only',
   control: 'text-[15px]! md:text-small! placeholder:text-cream/60',
   footer: 'contents',

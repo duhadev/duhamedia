@@ -29,7 +29,7 @@ const MILES_PER_DEG_LAT = 69.0
 
 /** Reference towns [name, lat, lon, label dx, label dy, anchor]. Fixed: the map treatment is fixed (R9). */
 const TOWNS: [string, number, number, number, number, 'start' | 'end'][] = [
-  ['Chicago', 41.8781, -87.6298, 8, -7, 'start'],
+  ['Chicago', 41.8781, -87.6298, -8, -7, 'end'], // label west of the dot: land side, clear of the shoreline + hatching,
   ["O'Hare", 41.9742, -87.9073, 8, -7, 'start'],
   ['Schaumburg', 42.0334, -88.0834, -8, -7, 'end'],
   ['Naperville', 41.7508, -88.1473, -8, 15, 'end'],
