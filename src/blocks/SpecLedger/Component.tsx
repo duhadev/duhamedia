@@ -58,7 +58,7 @@ function AnatomyCard({ item }: { item: Item }) {
 /** p6 §Camera work: title + line on top, large picture fills the rest. */
 function FeatureCard({ item }: { item: Item }) {
   return (
-    <div className="grid grid-rows-[auto_1fr] border-2 border-ink">
+    <div className="grid w-full grid-rows-[auto_1fr] border-2 border-ink">
       <div className="border-b-2 border-ink px-4 py-4.5 md:px-7 md:py-6">
         <h3 className={cx(DISPLAY, 'text-[1.125rem] md:text-[1.25rem]')}>{item.title}</h3>
         {hasText(item.line) ? (
@@ -306,7 +306,7 @@ export function SpecLedgerBlock(props: SpecLedgerData) {
               )}
             >
               {items.map((item, i) => (
-                <li key={item.id ?? i} className="m-0 min-w-0">
+                <li key={item.id ?? i} className={cx('m-0 min-w-0', layout !== 'anatomy' && 'flex')}>
                   {layout === 'anatomy' ? <AnatomyCard item={item} /> : <FeatureCard item={item} />}
                 </li>
               ))}

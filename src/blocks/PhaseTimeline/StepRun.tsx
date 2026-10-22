@@ -23,8 +23,9 @@ const CLASSES = {
     headline: 'lg:leading-normal',
     headlineAfterEyebrow: 'lg:mt-0',
     mobileOnly: 'lg:hidden',
-    container: 'max-lg:px-0',
-    row: 'lg:mt-8 lg:grid lg:grid-cols-3 lg:gap-px lg:overflow-visible lg:border-t-2 lg:border-cream lg:bg-[rgba(250,247,242,.25)] lg:px-0',
+    container: 'max-lg:px-0!',
+    scroller: 'lg:overflow-visible',
+    row: 'lg:mt-8 lg:w-auto lg:min-w-0 lg:grid lg:grid-cols-3 lg:gap-px lg:border-t-2 lg:border-cream lg:bg-[rgba(250,247,242,.25)] lg:px-0',
     cell: 'lg:w-auto lg:min-w-0 lg:border-0 lg:bg-ink lg:px-7 lg:py-8',
     number: 'lg:font-mono lg:text-[13px] lg:leading-normal lg:font-bold lg:opacity-60',
     title: 'lg:mt-2.5 lg:text-[1.75rem] lg:leading-[1.05]',
@@ -40,8 +41,9 @@ const CLASSES = {
     headline: 'xl:leading-normal',
     headlineAfterEyebrow: 'xl:mt-0',
     mobileOnly: 'xl:hidden',
-    container: 'max-xl:px-0',
-    row: 'xl:mt-6 xl:gap-0 xl:overflow-visible xl:border-t-2 xl:border-cream xl:px-0',
+    container: 'max-xl:px-0!',
+    scroller: 'xl:overflow-visible',
+    row: 'xl:mt-6 xl:w-auto xl:min-w-0 xl:gap-0 xl:border-t-2 xl:border-cream xl:px-0',
     cell: 'xl:w-auto xl:min-w-0 xl:flex-1 xl:border-0 xl:border-r xl:border-[rgba(250,247,242,.25)] xl:px-4.5 xl:py-5 xl:last:border-r-0',
     number: 'xl:font-mono xl:text-[11px] xl:leading-normal xl:font-bold xl:opacity-60',
     title: 'xl:mt-1.5 xl:text-[1.0625rem]',
@@ -113,10 +115,11 @@ export function StepRun({ variant, eyebrow, eyebrowTick, heading, accentPhrase, 
       {rows.length ? (
         <SwipeTrack count={rows.length} labelledBy={headingId} barsClassName={c.mobileOnly}>
           <Container className={c.container}>
+            {/* The scroller (not the list) carries the focusable region role, so the <ol> stays a list. */}
+            <div data-swipe-row className={cx('overflow-x-auto [scrollbar-width:none]', c.scroller)}>
             <ol
-              data-swipe-row
               className={cx(
-                'mt-4.5 flex gap-3 overflow-x-auto px-container-mobile [scrollbar-width:none] md:px-container',
+                'mt-4.5 flex w-max min-w-full gap-3 px-container-mobile md:px-container',
                 c.row,
               )}
             >
@@ -152,6 +155,7 @@ export function StepRun({ variant, eyebrow, eyebrowTick, heading, accentPhrase, 
                 <li key={`filler-${i}`} aria-hidden="true" className={c.filler} />
               ))}
             </ol>
+            </div>
           </Container>
         </SwipeTrack>
       ) : null}

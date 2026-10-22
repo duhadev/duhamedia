@@ -11,11 +11,11 @@ import React, { useEffect, useRef, useState } from 'react'
  * static design), so with JS off the row still scrolls and nothing is lost.
  *
  * Also: while the row actually overflows, it is made keyboard-focusable
- * (tabIndex 0, labelled by the section heading) so it can be scrolled with
+ * (tabIndex 0, role=region, labelled by the section heading; the scroller is a wrapping div, so the <ol> inside keeps its list semantics) so it can be scrolled with
  * the arrow keys; at desktop widths, where it does not scroll, it is not a
  * tab stop.
  *
- * The scrolling row inside `children` carries `data-swipe-row`.
+ * The scrolling wrapper inside `children` carries `data-swipe-row`.
  */
 export function SwipeTrack({
   count,

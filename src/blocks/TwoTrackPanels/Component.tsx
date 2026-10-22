@@ -119,6 +119,24 @@ function Contrast({ eyebrow, eyebrowTick, heading, accentPhrase, panels, conclus
   )
 }
 
+/** Keeps the last word with the trailing arrow (or other glyph) so it never wraps alone. */
+function KeepArrow({ label }: { label: string }) {
+  const at = label.lastIndexOf(' ')
+  if (at < 0) return <>{label}</>
+  const tail = label.slice(at + 1)
+  const beforeTail = label.slice(0, at)
+  const at2 = beforeTail.lastIndexOf(' ')
+  // "Ask about a scratch build →": nowrap "build →" when the tail is only a glyph.
+  const glue = /^[\p{L}\p{N}]/u.test(tail) ? at : at2
+  if (glue < 0) return <>{label}</>
+  return (
+    <>
+      {label.slice(0, glue)}{' '}
+      <span className="whitespace-nowrap">{label.slice(glue + 1)}</span>
+    </>
+  )
+}
+
 /**
  * `primary-secondary`: DERIVED design (the page designs omit this section;
  * MERGED §7). First panel = lead option at full weight (bordered gray-light
@@ -172,7 +190,9 @@ function PrimarySecondary({ eyebrow, eyebrowTick, heading, accentPhrase, panels,
                     primary ? (
                       <ButtonLink link={p.link} variant="primary" size="md" className="mt-auto self-start" />
                     ) : (
-                      <CMSLink link={p.link} className="mt-auto inline-flex min-h-target items-center self-start font-bold underline underline-offset-4" />
+                      <CMSLink link={p.link} className="mt-auto inline-flex min-h-target items-center self-start font-bold underline underline-offset-4">
+                        <KeepArrow label={p.link?.label?.trim() ?? ''} />
+                      </CMSLink>
                     )
                   ) : null}
                 </div>
@@ -221,10 +241,10 @@ function Doors({ heading, accentPhrase, eyebrow, eyebrowTick, panels, conclusion
                     </span>
                   ) : null}
                 </span>
-                <span className="text-[0.9375rem] leading-[1.55] text-ink/80 md:text-base md:leading-[1.6]">{p.body}</span>
+                <span className={`text-[0.9375rem] leading-[1.55] text-ink/80 md:text-base md:leading-[1.6] ${cta ? 'md:mb-2' : ''}`}>{p.body}</span>
                 {cta ? (
                   <span
-                    className={`mt-0.5 inline-flex min-h-target items-center self-start text-xs font-bold uppercase tracking-[0.06em] md:mt-2 md:px-6.5 md:text-small ${
+                    className={`mt-0.5 inline-flex min-h-target items-center self-start text-xs font-bold uppercase tracking-[0.06em] md:mt-auto md:px-6.5 md:text-small ${
                       wine ? 'text-ground-accent md:bg-ground-accent md:text-on-accent' : 'text-ink md:bg-ink md:text-cream'
                     }`}
                   >
