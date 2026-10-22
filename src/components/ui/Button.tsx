@@ -9,8 +9,10 @@ export type ButtonSize = 'sm' | 'md' | 'lg'
 
 // DS Button.jsx: DM Sans 700, line-height 1, 2px border, square, nowrap,
 // min-height 44px (--target-min), 180ms --ease-out, press = translateY(1px).
+// Transition list is explicit, NOT `all`: `all` also animates `outline`, so on keyboard
+// focus the ring tweened in from currentColor (cream on the primary button) at 3px/0 offset.
 const BASE =
-  'inline-flex min-h-target cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-none border-2 font-body font-bold leading-none no-underline transition-all duration-180 ease-out active:translate-y-px'
+  'inline-flex min-h-target cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-none border-2 font-body font-bold leading-none no-underline transition-[color,background-color,border-color,filter,translate] duration-180 ease-out active:translate-y-px'
 
 // Padding sm 10×18 / md 14×26 / lg 18×32. Font 14 / 15 / 17px: 14px = --text-small;
 // 15px and 17px have no token (kept exact from Button.jsx, MERGED §1).

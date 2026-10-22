@@ -47,7 +47,7 @@ export const getSeoDefaults = cache(async (): Promise<SeoDefaultsData> => {
   }
 })
 
-const clean = (value: unknown): string => (typeof value === 'string' ? value.replace(/\s+/g, ' ').trim() : '')
+export const clean = (value: unknown): string => (typeof value === 'string' ? value.replace(/\s+/g, ' ').trim() : '')
 
 /** `seo-defaults.titleTemplate` when it holds exactly one `%s`, else the SCHEMA default. */
 export const titleTemplate = (defaults: SeoDefaultsData): string => {
@@ -168,10 +168,18 @@ export const caseStudyMetadata = async (
   })
 }
 
-/** Absolute URL for a media doc's public path (Media URLs are site-relative). */
-const absoluteMediaUrl = (media: number | Media | null | undefined): string | undefined => {
+/**
+ * Absolute URL for a media doc's public path (Media URLs are site-relative).
+ * `og` (default) prefers the 1200×630 share crop; `original` is the uploaded
+ * file, for logos, which must not be cropped to 1.91:1 (Google Organization
+ * `logo`: min 112×112, developers.google.com/search/docs/appearance/structured-data/organization).
+ */
+export const absoluteMediaUrl = (
+  media: number | Media | null | undefined,
+  size: 'og' | 'original' = 'og',
+): string | undefined => {
   if (!media || typeof media !== 'object') return undefined
-  const url = media.sizes?.og?.url || media.url
+  const url = (size === 'og' ? media.sizes?.og?.url : null) || media.url
   if (!url) return undefined
   return /^https?:\/\//.test(url) ? url : `${getSiteUrl()}${url.startsWith('/') ? '' : '/'}${url}`
 }
@@ -187,7 +195,7 @@ export const caseStudyJsonLd = async (study: CaseStudy): Promise<Record<string, 
   const site = getSiteUrl()
   const path = docPath('case-studies', study)
   const url = path ? `${site}${path}` : undefined
-  const logo = absoluteMediaUrl(defaults.organization?.logo)
+  const logo = absoluteMediaUrl(defaults.organization?.logo, 'original')
   const organization = {
     '@type': 'Organization',
     name: siteName(defaults),

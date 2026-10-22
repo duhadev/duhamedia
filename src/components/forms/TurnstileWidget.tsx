@@ -24,6 +24,8 @@ export type TurnstileAppearance = 'always' | 'interaction-only'
 
 export type TurnstileWidgetProps = {
   siteKey: string
+  /** Container element id; must be unique per rendered widget (library default is a shared `cf-turnstile`). */
+  id?: string
   /** `'interaction-only'`: hidden unless a challenge needs the visitor. Default `'always'`. */
   appearance?: TurnstileAppearance
   /** Fires with a fresh token, and with `null` when it expires or errors. */
@@ -33,11 +35,12 @@ export type TurnstileWidgetProps = {
 }
 
 export const TurnstileWidget = React.forwardRef<TurnstileInstance | undefined, TurnstileWidgetProps>(
-  function TurnstileWidget({ siteKey, appearance = 'always', onTokenChange, theme = 'light', className }, ref) {
+  function TurnstileWidget({ siteKey, id, appearance = 'always', onTokenChange, theme = 'light', className }, ref) {
     return (
       <Turnstile
         ref={ref}
         siteKey={siteKey}
+        id={id}
         className={className}
         options={{
           theme,

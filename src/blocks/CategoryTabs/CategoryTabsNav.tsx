@@ -62,7 +62,7 @@ export function CategoryTabsNav({ ariaLabel, tabs }: { ariaLabel: string; tabs: 
               <a
                 key={t.anchorId}
                 href={`#${t.anchorId}`}
-                aria-current={on ? 'true' : undefined}
+                aria-current={on ? 'location' : undefined}
                 onClick={(e) => onClick(e, t.anchorId)}
                 className={cx(
                   'inline-flex min-h-target shrink-0 items-center rounded-full border-2 border-ink px-4 text-[13px] font-bold whitespace-nowrap text-ink no-underline',

@@ -119,6 +119,8 @@ export type PayloadFormProps = {
   submitSize?: ButtonSize
   className?: string
   classNames?: PayloadFormClassNames
+  /** Unique per-instance prefix for element ids (CMSForm supplies it); falls back to `useId()` alone. */
+  idPrefix?: string
 }
 
 const DEFAULT_SUCCESS = 'Thanks — we have it.'
@@ -172,6 +174,7 @@ export function PayloadForm({
   submitSize = 'md',
   className,
   classNames = {},
+  idPrefix,
 }: PayloadFormProps) {
   const router = useRouter()
   const [state, setState] = useState<FormSubmitResponse | null>(null)
@@ -180,7 +183,8 @@ export function PayloadForm({
   const turnstileRef = useRef<TurnstileInstance | undefined>(undefined)
   const statusRef = useRef<HTMLDivElement>(null)
   const formRef = useRef<HTMLFormElement>(null)
-  const idBase = useId()
+  const reactId = useId()
+  const idBase = idPrefix ? `${idPrefix}-${reactId}` : reactId
 
   const stepped = useBelow(steppedBelow, layout === 'stepped')
   const steps = useMemo(() => resolveSteps(form.fields, stepDefs), [form.fields, stepDefs])
@@ -358,6 +362,7 @@ export function PayloadForm({
         <TurnstileWidget
           ref={turnstileRef}
           siteKey={siteKey}
+          id={`${idBase}-turnstile`}
           theme={tone}
           appearance={turnstileAppearance}
           onTokenChange={() => setLocalError(null)}
@@ -491,9 +496,11 @@ export function PayloadForm({
           <span className="sr-only">{backLabel}</span>
         </button>
         {current === lastStep ? (
-          submitButton
+          // Distinct keys: the two buttons share a slot, and React would otherwise reuse the DOM node, flipping
+          // type=button → submit mid-click so the Next click that arrived here also submitted (and errored) the form.
+          React.cloneElement(submitButton, { key: 'send' })
         ) : (
-          <Button variant={submitVariant} size={submitSize} onClick={next} className="flex-1">
+          <Button key="next" variant={submitVariant} size={submitSize} onClick={next} className="flex-1">
             {current === 0 ? (startLabel ?? nextLabel) : nextLabel} <span aria-hidden="true">→</span>
           </Button>
         )}

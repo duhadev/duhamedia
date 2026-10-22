@@ -2,7 +2,7 @@ import 'server-only'
 
 import config from '@payload-config'
 import { getPayload } from 'payload'
-import React from 'react'
+import React, { cache } from 'react'
 
 import { RichText } from '@/components/RichText'
 import { getTurnstileSiteKey } from '@/integrations/turnstile'
@@ -25,12 +25,20 @@ import { toPublicForm } from './publicForm'
  * - Renders nothing when the form is missing (deleted / not chosen yet); the
  *   calling block owns any designed empty state.
  */
-export type CMSFormProps = Omit<PayloadFormProps, 'form' | 'siteKey' | 'confirmation' | 'messages'> & {
+export type CMSFormProps = Omit<PayloadFormProps, 'form' | 'siteKey' | 'confirmation' | 'messages' | 'idPrefix'> & {
   /** The block's form relationship value (id or populated doc). */
   form: number | Form | null | undefined
   /** Replace the form's own confirmation message (e.g. a block's designed success state). */
   confirmation?: React.ReactNode
 }
+
+/**
+ * Request-scoped instance counter. `useId()` alone is NOT unique across RSC
+ * subtrees (the layout's footer form and a page block can land on the same
+ * tree path and get the same id base), so each rendered form gets a prefix
+ * from here, passed down as a prop (identical during SSR and hydration).
+ */
+const nextFormInstance = cache(() => ({ n: 0 }))
 
 async function loadForm(value: CMSFormProps['form']): Promise<Form | null> {
   const id = typeof value === 'object' && value !== null ? value.id : value
@@ -48,6 +56,7 @@ export async function CMSForm({ form: formValue, confirmation, ...rest }: CMSFor
   const form = await loadForm(formValue)
   if (!form) return null
 
+  const idPrefix = `f${++nextFormInstance().n}`
   const messages: Record<string, React.ReactNode> = {}
   for (const [index, field] of (form.fields ?? []).entries()) {
     if (field.blockType === 'message' && field.message) {
@@ -64,6 +73,7 @@ export async function CMSForm({ form: formValue, confirmation, ...rest }: CMSFor
   return (
     <PayloadForm
       {...rest}
+      idPrefix={idPrefix}
       form={toPublicForm(form)}
       siteKey={getTurnstileSiteKey()}
       confirmation={confirmationNode}

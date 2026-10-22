@@ -193,7 +193,38 @@ export async function BookingEmbedBlock({
       }
     : await load(thankYouPage)
 
-  const headingId = `booking-${id ?? 'panel'}`
+  return (
+    <BookingEmbedView
+      {...{ heading, accentPhrase, body, buttonLabel, noteUnderButton, newTabLabel, fallbackHeading, fallbackBody, fallbackLink, id }}
+      bookingUrl={bookingUrl}
+      bookingMode={bookingMode}
+      thankYouHref={thankYouHref}
+    />
+  )
+}
+
+/** Sync view so `useId` can make the heading id unique per instance (the showcase repeats the block). */
+function BookingEmbedView({
+  heading,
+  accentPhrase,
+  body,
+  buttonLabel,
+  noteUnderButton,
+  newTabLabel,
+  fallbackHeading,
+  fallbackBody,
+  fallbackLink,
+  id,
+  bookingUrl,
+  bookingMode,
+  thankYouHref,
+}: Omit<BookingEmbedData, 'thankYouPage' | 'blockType'> & {
+  bookingUrl: string | null
+  bookingMode: BookingMode
+  thankYouHref: string | null
+}) {
+  const instance = React.useId().replace(/[^a-zA-Z0-9]/g, '')
+  const headingId = `booking-${id ?? `panel-${instance}`}`
   const label = buttonLabel?.trim() || 'Book your call'
   const title = heading?.trim() || label
 
@@ -242,9 +273,9 @@ export async function BookingEmbedBlock({
         <>
           <div className="md:hidden">{linkOut}</div>
           <div className="max-md:hidden">
-            <h2 id={headingId} className="sr-only">
+            <p id={headingId} className="sr-only">
               {title}
-            </h2>
+            </p>
             <iframe
               src={bookingUrl}
               title={title}

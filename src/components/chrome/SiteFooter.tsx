@@ -116,7 +116,7 @@ async function StandardZones({
       {/* Newsletter nudge: second on mobile (design), last zone on desktop */}
       {nudge && (nudge.heading || nudge.line || nudge.buttonLabel) ? (
         <div className="flex flex-col gap-2.5 text-small md:col-start-5 md:row-start-1">
-          {nudge.heading ? <h2 className={cx(HEADING, 'hidden md:block')}>{nudge.heading}</h2> : null}
+          {nudge.heading ? <p className={cx(HEADING, 'hidden md:block')}>{nudge.heading}</p> : null}
           {nudge.line ? <span className="text-[13px] opacity-60 md:text-small md:opacity-75">{nudge.line}</span> : null}
           {/* With `site-settings.newsletterForm` the nudge is a real inline form (F42); otherwise a link to the newsletter page. */}
           {newsletterFormId !== null ? (
@@ -143,9 +143,11 @@ async function StandardZones({
       {/* Link columns: 2-up grid on mobile (an odd last column spans), the outer grid's tracks on desktop */}
       {columns.length > 0 ? (
         <div className="grid grid-cols-2 gap-x-5 gap-y-5.5 border-t border-on-accent/20 pt-6 md:contents md:border-0 md:pt-0 max-md:[&>:last-child:nth-child(odd)]:col-span-2">
-          {columns.map((column) => (
-            <nav key={column.title} aria-label={column.title} className="flex flex-col text-[15px] md:gap-2.5 md:text-small">
-              <h2 className={HEADING}>{column.title}</h2>
+          {columns.map((column, index) => (
+            <nav key={column.title} aria-labelledby={`footer-col-${index}`} className="flex flex-col text-[15px] md:gap-2.5 md:text-small">
+              <p id={`footer-col-${index}`} className={HEADING}>
+                {column.title}
+              </p>
               {column.links.map((item) => (
                 <NavLink key={item.href + item.label} item={item} className={LIST_LINK} />
               ))}

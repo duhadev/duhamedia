@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useId } from 'react'
 
 /**
  * Static, server-rendered monochrome service-area locator (R9, MERGED Conflict
@@ -52,6 +52,8 @@ const SHORE: [number, number][] = [
 
 export function ServiceAreaMap({ size, lat, lon, radiusMiles, zoom, placeName, description }: Props) {
   const [W, H] = SIZES[size]
+  // Unique per instance (mobile + desktop copies, repeated blocks): a shared id would resolve to the display:none copy.
+  const waterId = `dc-water-${size}-${useId().replace(/[^a-zA-Z0-9]/g, '')}`
   const milesPerDegLon = 69.17 * Math.cos((lat * Math.PI) / 180)
   // Zoom 1 draws the ring at 128px radius whatever its length in miles.
   const ppm = (128 / Math.max(radiusMiles, 1)) * zoom
@@ -91,14 +93,14 @@ export function ServiceAreaMap({ size, lat, lon, radiusMiles, zoom, placeName, d
       className="block size-full"
     >
       <defs>
-        <pattern id="dc-water" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <pattern id={waterId} width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
           <line x1="0" y1="0" x2="0" y2="7" stroke="#111111" strokeOpacity="0.14" strokeWidth="1.5" />
         </pattern>
       </defs>
       <g stroke="#747069" strokeOpacity="0.28" strokeWidth="1" strokeDasharray="2 5">
         {grid}
       </g>
-      <polygon points={lake} fill="url(#dc-water)" stroke="#111111" strokeOpacity="0.45" strokeWidth="1.5" />
+      <polygon points={lake} fill={`url(#${waterId})`} stroke="#111111" strokeOpacity="0.45" strokeWidth="1.5" />
       {inView(lakeLabel) && lakeLabel[0] < W - 90 && (
         <text
           x={lakeLabel[0]}
@@ -142,7 +144,7 @@ export function ServiceAreaMap({ size, lat, lon, radiusMiles, zoom, placeName, d
         stroke="#111111"
         strokeWidth="2.5"
       />
-      <text x={cx} y={cy - 18} textAnchor="middle" fill="#111111" style={{ fontFamily: 'var(--font-display)' }} fontSize="13" letterSpacing="0.5">
+      <text x={cx} y={cy + 30} textAnchor="middle" fill="#111111" style={{ fontFamily: 'var(--font-display)' }} fontSize="13" letterSpacing="0.5">
         {placeName.toUpperCase()}
       </text>
       <g stroke="#111111" strokeWidth="2">

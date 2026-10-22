@@ -64,9 +64,10 @@ export function VideoFacade({
           href={`https://www.youtube.com/watch?v=${videoId}`}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={label}
           className={hit}
-        />
+        >
+          <span className="sr-only">{label} (opens YouTube in a new tab)</span>
+        </a>
       )}
     </div>
   )

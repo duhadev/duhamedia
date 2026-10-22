@@ -11,12 +11,37 @@ import { eyebrowField, linkField } from '../../fields'
 const categoryField = Faqs.fields.find((f): f is Extract<Field, { type: 'select' }> => 'name' in f && f.name === 'category')
 const categoryOptions = categoryField?.options ?? []
 
-/** Lowercase slug: a-z, 0-9 and single hyphens. Empty is allowed. */
+/**
+ * Ids the site itself renders (skip-link target `#main` in PageShell, Next's
+ * root container, the map's SVG patterns, `dc-water-*`). An anchor with one of these would
+ * produce a duplicate DOM id.
+ */
+export const RESERVED_ANCHOR_IDS = ['main', '__next', 'dc-water'] as const
+
+/**
+ * Lowercase slug (a-z, 0-9, single hyphens), not reserved, and unique among the
+ * `group` FAQ blocks of the same layout. Empty is allowed.
+ */
 const validateAnchorId: TextFieldSingleValidation = (value, options) => {
   const base = text(value, options)
   if (base !== true) return base
   if (typeof value !== 'string' || value.trim() === '') return true
-  return /^[a-z0-9]+(-[a-z0-9]+)*$/.test(value) ? true : 'Use lowercase letters, numbers and single hyphens only, e.g. "pricing".'
+  if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(value)) return 'Use lowercase letters, numbers and single hyphens only, e.g. "pricing".'
+  if ((RESERVED_ANCHOR_IDS as readonly string[]).some((r) => value === r || value.startsWith(`${r}-`))) {
+    return `"${value}" is used by the site itself. Pick a different anchor, e.g. "pricing" or "builds".`
+  }
+  // path is ['layout', 2, 'anchorId'] in the admin and ['layout', '2', 'anchorId'] on the server.
+  const { path, data } = options
+  const idx = path.length >= 3 ? Number(path[path.length - 2]) : NaN
+  const rows = Number.isInteger(idx) ? (data as Record<string, unknown>)?.[String(path[0])] : undefined
+  if (Array.isArray(rows)) {
+    const clash = rows.slice(0, idx).some((r) => {
+      const b = r as { blockType?: unknown; variant?: unknown; anchorId?: unknown } | null
+      return b?.blockType === 'accordionFAQ' && b.variant === 'group' && typeof b.anchorId === 'string' && b.anchorId.trim() === value
+    })
+    if (clash) return `Another FAQ group on this page already uses the anchor "${value}". Each group needs its own.`
+  }
+  return true
 }
 
 const isGroup = (_data: unknown, siblingData: { variant?: string } | undefined) => siblingData?.variant === 'group'

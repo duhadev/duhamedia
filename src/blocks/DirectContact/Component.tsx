@@ -141,7 +141,7 @@ export async function DirectContactBlock({ showEmail, showSocials, showLocation,
                 <span className={cx(LABEL, 'hidden md:block')}>{rowLabels?.email}</span>
                 <a
                   href={`mailto:${email}`}
-                  className="flex min-h-target items-center font-display text-[1.25rem] font-normal uppercase leading-[1.05] text-ink no-underline [overflow-wrap:anywhere] md:mt-1.5 md:min-h-0 md:font-body md:text-body md:font-medium md:normal-case md:underline md:underline-offset-4"
+                  className="flex min-h-target items-center font-display text-[1.25rem] font-normal uppercase leading-[1.05] text-ink no-underline [overflow-wrap:anywhere] md:-mb-3 md:-mt-[6.5px] md:font-body md:text-body md:font-medium md:normal-case md:underline md:underline-offset-4"
                 >
                   {email}
                 </a>

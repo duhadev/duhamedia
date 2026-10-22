@@ -69,8 +69,9 @@ const steppedCard = cx(
   'max-md:before:[background-image:radial-gradient(rgba(17,17,17,.22)_1.2px,transparent_1.2px)] max-md:before:[background-size:22px_22px]',
   'max-md:before:[mask-image:linear-gradient(215deg,#000_15%,transparent_65%)]',
   "max-md:has-[[data-step='0']:not([hidden])]:before:block",
-  // Wine mark bleeding off the top-right corner: steps 1 and 2.
-  'max-md:after:absolute max-md:after:-top-10 max-md:after:-right-[70px] max-md:after:-z-10 max-md:after:hidden max-md:after:size-[150px] max-md:after:bg-ground-accent',
+  // Wine mark bleeding off the top-right corner: steps 1 and 2. The design lets it sit under the progress bar and
+  // heading; here it is pushed up so its lower edge stops above the bar (card padding 26px), keeping both clear.
+  'max-md:after:absolute max-md:after:-top-[118px] max-md:after:-right-10 max-md:after:-z-10 max-md:after:hidden max-md:after:size-[140px] max-md:after:bg-ground-accent',
   'max-md:after:[mask-image:url(/logo-duha.png)] max-md:after:[mask-size:contain] max-md:after:[mask-repeat:no-repeat]',
   "max-md:has-[[data-step='0']:not([hidden])]:after:block max-md:has-[[data-step='1']:not([hidden])]:after:block",
 )
