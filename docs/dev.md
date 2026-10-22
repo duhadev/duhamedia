@@ -8,6 +8,7 @@ Entry format for every unit: **Files** / **Fields & schema** / **Wiring** (regis
 
 ## Table of contents
 
+- [Frontend foundation (B0)](#frontend-foundation-unit-b0)
 1. [Homepage](#1-homepage)
 2. [Case Study template](#2-case-study-template)
 3. [Work hub](#3-work-hub)
@@ -56,6 +57,54 @@ Entry format for every unit: **Files** / **Fields & schema** / **Wiring** (regis
 - [Deploy](#deploy)
 - [Integrations](#integrations)
 - [Restructure log](#restructure-log)
+
+---
+
+## Frontend foundation (unit B0)
+
+Sitewide frontend machinery, not tied to a page. Every block unit depends on it.
+
+**Files**
+- `src/app/(frontend)/styles.css`: Tailwind CSS 4 tokens in `@theme` (no `tailwind.config`). `--color-*: initial` removes the default palette, so only design colours exist. The header comment holds the design-var to Tailwind-name mapping table. Fonts are wired in a separate `@theme inline` block; `@layer base` sets html/body defaults, a 2px ink `:focus-visible` ring and a `prefers-reduced-motion` override.
+- `src/app/(frontend)/fonts.ts`: `archivoBlack` (Archivo Black, weight 400) and `dmSans` (DM Sans, variable) via `next/font/google`; downloaded at build time and self-hosted. CSS variables `--font-archivo-black` / `--font-dm-sans` feed `--font-display` / `--font-body` / `--font-sans`. Mono (`--font-mono`) is the system stack (`ui-monospace, "SF Mono", Menlo, monospace`), not loaded.
+- `src/app/(frontend)/layout.tsx`: `export const dynamic = 'force-dynamic'`; `<html lang="en">` carrying both font variable classes; `metadataBase` from `getSiteUrl()`; `robots` noindex/nofollow whenever not production. Comment slots for `SiteHeader` / `SiteFooter` (B1) are present, nothing rendered yet.
+- `src/app/(frontend)/page.tsx`: `/` renders the published `pages` doc with slug `home` through `RenderBlocks`. If none is published it renders a placeholder (`Duha Media` / `Site rebuild in progress.`), never a 404.
+- `src/app/(frontend)/[...slug]/page.tsx`: renders published `pages` docs at `/<slug>` (segments joined with `/`). `/home` and `/404` (`HOME_SLUG`, `NOT_FOUND_SLUG`) and any unknown or unpublished slug call `notFound()`.
+- `src/lib/pages.ts`: `getPublishedPage(slug)` (React `cache`-wrapped; Local API `find` on `pages`, `where` slug + `_status: published`, `draft: false`, `overrideAccess: false`, `depth: 2`) and `pageLayout(page)` (the `layout` rows, or `null` while the field does not exist).
+- `src/components/RenderBlocks.tsx`: maps `pages.layout` rows to components via `blockComponents`. Unknown `blockType`: always `console.error`; staging/development render a visible dotted-border warning in place; production renders nothing for that row.
+- `src/components/ui/*` (barrel `index.ts`): `Container` (max 1200px, gutter 20px below `md`, 24px from `md`), `Section` (tone `light|grey|dark`, pad `default|tight|none`, optional dividers), `Eyebrow`, `AccentHeadline` (`level` = visual size, `as` = HTML element), `Button` / `ButtonLink` / `buttonClasses` (variants `primary|ghost|ghost-light|dark`, sizes `sm|md|lg`), `CMSLink` / `resolveLinkHref` / `CMSLinkData`, `Media`, `DotMatrix`.
+  - `CMSLink` renders a `linkField` value: site paths as Next `Link`, `https:`/`mailto:` as `<a>`, `newTab` adds `target="_blank" rel="noopener noreferrer"`. Renders nothing when the destination does not resolve (empty, unpopulated or unpublished reference, no URL) or there is no text. `ButtonLink` behaves the same.
+  - `Media` renders a media doc with `next/image` (alt from the doc; `alt=""` only for decorative images). It keeps the upload path and query and drops the origin; with `fill`, the focal point sets `object-position`. Renders nothing for an empty or id-only upload.
+- `src/lib/cx.ts`: class-name joiner.
+- `src/lib/accentPhrase.ts`: `splitAccentPhrase(heading, accent)` returns `[before, accent, after]` (case-insensitive match, heading's own spelling) or `null`. Shares its matching rule with `accentPhraseError` / `validateAccentPhrase`.
+- `src/blocks/index.ts`: `pageBlocks` (block configs only; currently `[]`). Must not import React or CSS because `payload.config.ts` loads it.
+- `src/blocks/components.ts`: `blockComponents` (`blockType` to component), typed `{ [K in PageBlockType]: ComponentType<BlockData<K>> }`; currently `{}`.
+- `src/blocks/types.ts`: `PageLayoutBlock`, `PageBlockType`, `BlockData<K>`, all derived from the generated `Page` type. Resolve to `never` until a block exists.
+- `src/showcase/registry.ts` (`showcaseEntries`, `ShowcaseEntry`, `ShowcaseViewport`) and `src/showcase/enabled.ts` (`showcaseEnabled()` = not production).
+- `src/app/(frontend)/%5Fshowcase/page.tsx`: the `/_showcase` route.
+- `src/plugins/seo.ts`: exports `HOME_SEO_TITLE` (`Duha Media — Integrated Ecommerce Growth Partner, Chicago`), used by `generateTitle` for the `home` page (see [P3](#seo-unit-p3)).
+
+**Fields & schema**
+- None yet. `pages.layout` is added to `pages` only once `pageBlocks` has at least one block, because the Payload 3.91 admin crashes on a blocks field with `blocks: []`. An empty blocks field creates no tables; the first block unit generates the migration that adds the `pages_blocks_*` tables.
+
+**Wiring**
+- `src/app/(frontend)/layout.tsx` is the root layout of the `(frontend)` group and imports `styles.css` and the fonts.
+- Breakpoints: Tailwind defaults. The design's mobile build applies below `md` (768px), the desktop build from `md`. Write mobile-first (`text-h1-mobile md:text-h1`).
+- Revalidation: unchanged. The frontend is `force-dynamic` and reads through the Local API on each request, so published edits appear without a rebuild; no `next build` database access.
+- Migration: none.
+
+**Notes**
+- How to add a block:
+  1. Create `src/blocks/<Name>/config.ts` exporting a `Block` with a unique `slug` and `interfaceName: '<Name>Block'` (NewsletterBand uses the slug literal `newsletterBand`).
+  2. Create `src/blocks/<Name>/Component.tsx`, typed `BlockData<'<slug>'>`.
+  3. Add the config to `pageBlocks` in `src/blocks/index.ts` (configs only, no React or CSS imports).
+  4. Run `pnpm generate:types`.
+  5. Add `'<slug>': Component` to `src/blocks/components.ts`. A missing entry is a type error.
+  6. Add showcase fixtures to `showcaseEntries` in `src/showcase/registry.ts`: `{ block, variant, viewport?, label, data }`.
+  7. The first block also runs `pnpm payload migrate:create <name>` and checks that generated identifiers are at most 63 characters.
+- Tokens come from `design-reference/merged-tokens.css` and `MERGED.md`; new tokens need a Decision-log entry. Not ported: the mobile canvas colour `#DED9D0` and the X/Twitter card colours.
+- `--color-gray-warm` is `#747069` (darkened from the design's `#8A857D`, which fails AA contrast at 3.66:1; the exact value is flagged for PM/human sign-off). Dividers keep the original rgba.
+- Page-level metadata, draft mode/live preview and redirect fallback are not in this unit (router unit). The home fallback title must match `HOME_SEO_TITLE`.
 
 ---
 
@@ -1408,7 +1457,12 @@ Commit `eecd05c`. Standing rule (2026-10-21, "proper error reporting throughout"
 
 Renders every block and every variant back to back, for review at Gate K. Hidden from navigation, sitemap and search (noindex), and returns 404 when `APP_ENV=production`. Visible on local dev and staging only.
 
-*Not built yet.*
+Implemented in [B0](#frontend-foundation-unit-b0).
+
+- Route: `src/app/(frontend)/%5Fshowcase/page.tsx`. The folder is `%5Fshowcase` because a `_folder` is a private folder excluded from routing; `%5F` (URL-encoded `_`) creates a segment starting with an underscore.
+- `notFound()` when `APP_ENV=production` (`showcaseEnabled()`); always `robots: { index: false, follow: false }`.
+- Entries come from `showcaseEntries` in `src/showcase/registry.ts`, each rendered through `RenderBlocks`. Scaffolding: system-mono labels (block, variant, `mobile-only`/`desktop-only` tag), dotted dividers between entries, and an empty-state message ("No blocks yet.") while the registry is empty.
+- Currently no entries (no blocks registered).
 
 ---
 
