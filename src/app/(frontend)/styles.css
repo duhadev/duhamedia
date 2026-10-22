@@ -162,6 +162,13 @@
     outline-offset: 2px;
   }
 
+  /* Dark grounds (Section tone="dark", standard footer): ink ring would vanish
+     (WCAG 2.4.7 / 1.4.11), so flip to cream. Hook: data-tone="dark". */
+  [data-tone='dark'] :focus-visible,
+  [data-tone='dark']:focus-visible {
+    outline-color: var(--color-cream);
+  }
+
   /* MERGED §2.5: honour reduced motion everywhere. */
   @media (prefers-reduced-motion: reduce) {
     *,

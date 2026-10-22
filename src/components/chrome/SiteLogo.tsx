@@ -11,7 +11,8 @@ import { cx } from '@/lib/cx'
  * `logo-duha-01.png`); served unoptimised because next.config `localPatterns`
  * only whitelists `/api/media/file/**`.
  * `href` null → not a link (logo-only header: zero leakage; footer brand).
- * `decorative` → empty alt (the wordmark text already names the brand).
+ * The mark's alt is always empty (the wordmark text already names the brand), so
+ * the link carries `label` as its `aria-label` and is announced once (F41).
  */
 const SIZES = {
   header: { img: 'size-7 md:size-8.5', text: 'text-base md:text-lg', gap: 'gap-2 md:gap-2.5', px: [28, 34] },
@@ -22,12 +23,13 @@ const SIZES = {
 export function SiteLogo({
   size,
   href = null,
-  decorative = false,
+  label,
   className,
 }: {
   size: keyof typeof SIZES
   href?: string | null
-  decorative?: boolean
+  /** Accessible name of the link (site name + "home"). Only used when `href` is set. */
+  label?: string
   className?: string
 }) {
   const s = SIZES[size]
@@ -35,7 +37,7 @@ export function SiteLogo({
     <>
       <Image
         src="/logo-duha.png"
-        alt={decorative ? '' : 'Duha Media'}
+        alt=""
         width={s.px[1]}
         height={s.px[1]}
         unoptimized
@@ -46,7 +48,7 @@ export function SiteLogo({
   )
   const cls = cx('flex items-center', s.gap, className)
   return href ? (
-    <Link href={href} className={cx(cls, 'text-ink no-underline')}>
+    <Link href={href} aria-label={label ?? 'Duha Media home'} className={cx(cls, 'text-ink no-underline')}>
       {inner}
     </Link>
   ) : (

@@ -1730,10 +1730,10 @@ export const showcaseEntries: ShowcaseEntry[] = [
   {
     block: 'formEmbed',
     variant: 'standard',
-    label: 'FormEmbed · standard (homework, p9) — needs a seeded form (id 1); renders nothing without it',
+    label: 'FormEmbed · standard (homework, p9; dev form 14 stands in for the homework form) — renders nothing if form 14 is missing',
     data: {
       variant: 'standard',
-      form: 1,
+      form: 14, // TODO(seed): form id — hardcoded dev id; the seed must create this form on staging
       eyebrow: 'Pre-call homework',
       eyebrowTick: false,
       heading: 'A few fields. It makes the call worth both our time. [STRATEGIC PLACEHOLDER — final copy TBD]',
@@ -1771,10 +1771,10 @@ export const showcaseEntries: ShowcaseEntry[] = [
   {
     block: 'formEmbed',
     variant: 'reminder',
-    label: 'FormEmbed · reminder (p10; add ?homework=done for the done line) — needs a seeded form (id 1); renders nothing without it',
+    label: 'FormEmbed · reminder (p10; add ?homework=done for the done line; dev form 14 stands in for the homework form) — renders nothing if form 14 is missing',
     data: {
       variant: 'reminder',
-      form: 1,
+      form: 14, // TODO(seed): form id — hardcoded dev id; the seed must create this form on staging
       alertLabel: 'Required before your call',
       heading: 'One thing left: the homework.',
       body: 'A few fields, a few minutes. Calls with homework done cover more ground — that is why we ask.',
@@ -1854,11 +1854,40 @@ export const showcaseEntries: ShowcaseEntry[] = [
       body: 'Fit and pricing questions get real answers on a 30-minute call. Partnerships, press, and existing clients: the form below.',
     },
   },
+  /*
+   * Stepped entries: the stepped layout applies below md only; from md the
+   * whole form shows. Not single-viewport, so no `viewport` tag (the type only
+   * has 'mobile-only' | 'desktop-only', which mean "hidden elsewhere").
+   */
   {
     block: 'formEmbed',
-    variant: 'standard — stepped phones',
-    label: 'FormEmbed · standard (contact, p12; stepped below md, steps default to one question each) — needs a seeded form (id 2); renders nothing without it',
-    data: { variant: 'standard', form: 2, ground: 'grey', mobileLayout: 'stepped', submitLabel: 'Send' },
+    variant: 'standard — stepped (4 steps)',
+    label: 'FormEmbed — standard, stepped (Contact phone, 4 steps; stepped below md, full form from md)',
+    data: {
+      variant: 'standard',
+      form: 14, // TODO(seed): form id — hardcoded dev id; the seed must create this form on staging
+      ground: 'grey',
+      mobileLayout: 'stepped',
+      steps: [
+        { fieldNames: ['name'], heading: 'Who’s reaching out?', accentPhrase: 'reaching out?', hint: 'First name is plenty.' },
+        { fieldNames: ['email'], heading: 'What’s your email?', accentPhrase: 'email?', hint: 'So we can reply. We won’t add you to anything.' },
+        { fieldNames: ['reason'], heading: 'What’s this about?', accentPhrase: 'about?' },
+        { fieldNames: ['message'], heading: 'The short version.', accentPhrase: 'version.', hint: 'Direct works best here too.' },
+      ],
+      stepped: { progressLabel: 'Question {n} of {m}', startLabel: 'Start', nextLabel: 'Next', backLabel: 'Back', sendAnotherLabel: 'Send another', selectAsOptions: true },
+    },
+  },
+  {
+    block: 'formEmbed',
+    variant: 'standard — stepped (default steps)',
+    label: 'FormEmbed — standard, stepped (default one question per step; stepped below md, full form from md)',
+    data: {
+      variant: 'standard',
+      form: 14, // TODO(seed): form id — hardcoded dev id; the seed must create this form on staging
+      ground: 'grey',
+      mobileLayout: 'stepped',
+      stepped: { progressLabel: 'Question {n} of {m}', startLabel: 'Start', nextLabel: 'Next', backLabel: 'Back', sendAnotherLabel: 'Send another', selectAsOptions: true },
+    },
   },
   {
     block: 'directContact',

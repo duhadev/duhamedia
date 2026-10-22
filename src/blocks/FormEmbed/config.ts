@@ -200,6 +200,15 @@ export const FormEmbed: Block = {
           admin: { description: 'Read aloud by screen readers for the Back arrow button (not shown as text).' },
         },
         {
+          name: 'sendAnotherLabel',
+          type: 'text',
+          defaultValue: 'Send another',
+          admin: {
+            description:
+              'Phones only: the button under the thank-you message that clears the form so the visitor can send a second message. Leave empty for "Send another".',
+          },
+        },
+        {
           name: 'selectAsOptions',
           type: 'checkbox',
           defaultValue: true,

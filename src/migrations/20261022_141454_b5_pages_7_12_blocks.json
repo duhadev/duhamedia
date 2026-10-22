@@ -5029,6 +5029,13 @@
           "notNull": false,
           "default": "'Back'"
         },
+        "stepped_send_another_label": {
+          "name": "stepped_send_another_label",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Send another'"
+        },
         "stepped_select_as_options": {
           "name": "stepped_select_as_options",
           "type": "boolean",
@@ -11455,6 +11462,13 @@
           "primaryKey": false,
           "notNull": false,
           "default": "'Back'"
+        },
+        "stepped_send_another_label": {
+          "name": "stepped_send_another_label",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'Send another'"
         },
         "stepped_select_as_options": {
           "name": "stepped_select_as_options",
@@ -27119,6 +27133,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "b9124401-0fe5-4a0c-91b1-b84b3a525b09",
+  "id": "4b9d4c75-e21e-4bbf-8f90-7a2fd4cddb74",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }

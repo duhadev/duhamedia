@@ -2,6 +2,7 @@ import Link from 'next/link'
 import React from 'react'
 
 import { buttonClasses } from '@/components/ui/Button'
+import { VideoFacade } from '@/components/VideoFacade'
 import { Media } from '@/components/ui/Media'
 import { cx } from '@/lib/cx'
 import { docPath } from '@/lib/docPath'
@@ -203,13 +204,12 @@ function VideoCard({ card, labels, mirrored }: { card: FeedCardData; labels: Fee
         mirrored ? 'lg:grid-cols-[1fr_1.15fr]' : 'lg:grid-cols-[1.15fr_1fr]',
       )}
     >
-      <a
-        href={`https://www.youtube.com/watch?v=${card.videoId}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label={play ? `${play} ${card.authorName}` : card.authorName}
+      <VideoFacade
+        videoId={card.videoId ?? ''}
+        label={play ? `${play} ${card.authorName}` : `Play video: ${card.authorName}`}
+        title={`Video testimonial from ${card.authorName}`}
         className={cx(
-          'group relative block border-b border-divider bg-gray-light lg:border-b-0',
+          'border-b border-divider bg-gray-light lg:border-b-0',
           mirrored ? 'lg:order-2 lg:border-l' : 'lg:border-r',
         )}
       >
@@ -229,7 +229,7 @@ function VideoCard({ card, labels, mirrored }: { card: FeedCardData; labels: Fee
             {card.durationLabel}
           </span>
         ) : null}
-      </a>
+      </VideoFacade>
       <div className={cx('flex flex-col justify-center px-5 pt-4.5 pb-5 md:px-9 md:py-8', mirrored && 'lg:order-1')}>
         <TopRow card={card} labels={labels} isVideo />
         <blockquote className="m-0 mt-3.5 text-[1.0625rem] leading-normal font-medium text-pretty md:mt-5 md:text-[1.375rem] md:leading-[1.45]">

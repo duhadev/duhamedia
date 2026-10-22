@@ -4,6 +4,7 @@ import React from 'react'
 import { loadFeaturedStudy } from './loadFeaturedStudy'
 import type { BlockData } from '@/blocks/types'
 import { RichText } from '@/components/RichText'
+import { VideoFacade } from '@/components/VideoFacade'
 import { ButtonLink, CMSLink, Container, Eyebrow, Media, Section } from '@/components/ui'
 import { resolveLinkHref } from '@/components/ui/CMSLink'
 import { AccentHeadline } from '@/components/ui/AccentHeadline'
@@ -41,9 +42,9 @@ function UnderlineText({ children }: { children: React.ReactNode }) {
 const UNDERLINE_LINK = 'inline-flex min-h-target items-center self-start text-small-mobile font-bold uppercase tracking-[0.06em] text-ink no-underline md:text-small'
 
 /**
- * Video tile (server-safe, no embed): poster with a play button that opens the
- * YouTube video in a new tab. FLAG: promote to the shared VideoTile component
- * (SCHEMA X4) when it exists; nothing else in the repo provides one yet.
+ * Video tile: poster + play button; a click loads the YouTube player in place
+ * (VideoFacade, youtube-nocookie.com). FLAG: promote to the shared VideoTile
+ * component (SCHEMA X4) when it exists.
  */
 function VideoPoster({ t }: { t: Testimonial }) {
   const id = t.video?.url ? youtubeVideoId(t.video.url) : null
@@ -52,13 +53,14 @@ function VideoPoster({ t }: { t: Testimonial }) {
     console.error(`[TestimonialRow] video testimonial ${t.id} has no valid YouTube URL; showing the quote only.`)
     return null
   }
+  const client = typeof t.client === 'object' && t.client ? (t.client as Client) : null
+  const context = [t.authorName, client?.name].filter(Boolean).join(', ')
   return (
-    <a
-      href={`https://www.youtube.com/watch?v=${id}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={`Play video testimonial from ${t.authorName}`}
-      className="group relative mb-4 block aspect-video w-full overflow-hidden bg-ink"
+    <VideoFacade
+      videoId={id}
+      label={`Play video: ${context}`}
+      title={`Video testimonial from ${context}`}
+      className="mb-4 aspect-video w-full overflow-hidden bg-ink"
     >
       {poster ? <Media resource={poster} fill alt="" sizes="(min-width: 768px) 520px, 100vw" /> : null}
       <span className="absolute inset-0 grid place-items-center bg-ink/20 transition-colors duration-180 group-hover:bg-ink/35">
@@ -73,7 +75,7 @@ function VideoPoster({ t }: { t: Testimonial }) {
           {t.video.durationLabel}
         </span>
       ) : null}
-    </a>
+    </VideoFacade>
   )
 }
 

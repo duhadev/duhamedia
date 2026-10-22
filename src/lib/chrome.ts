@@ -76,3 +76,30 @@ export const getNewsletterHref = cache(async (): Promise<string | null> => {
     return null
   }
 })
+
+let warnedNewsletterForm = false
+
+/**
+ * The footer nudge's inline form (F42): `site-settings.newsletterForm` when it is
+ * set AND the form still exists, else `null` (the nudge then falls back to its
+ * link). Existence is checked with a trusted read (forms are staff-read, so the
+ * relationship arrives as a bare id for public requests); a set-but-missing form
+ * is logged once per process. Only the id leaves this function: `CMSForm`
+ * re-reads the form and strips `emails` before anything reaches the client.
+ */
+export const getNewsletterFormId = cache(async (value: SiteSetting['newsletterForm']): Promise<number | null> => {
+  const id = typeof value === 'object' && value !== null ? value.id : value
+  if (typeof id !== 'number') return null
+  try {
+    const payload = await getPayload({ config })
+    const form = await payload.findByID({ collection: 'forms', id, depth: 0, disableErrors: true, overrideAccess: true })
+    if (form) return id
+  } catch (error) {
+    console.error('[chrome] could not look up the newsletter form', error instanceof Error ? error.name : error)
+  }
+  if (!warnedNewsletterForm) {
+    warnedNewsletterForm = true
+    console.warn(`[chrome] site-settings.newsletterForm points at form ${id}, which does not exist; the footer nudge falls back to its link`)
+  }
+  return null
+})

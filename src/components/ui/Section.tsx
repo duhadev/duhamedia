@@ -47,7 +47,11 @@ export function Section({
   children: React.ReactNode
 } & Omit<React.HTMLAttributes<HTMLElement>, 'className' | 'children'>) {
   return (
-    <section className={cx(TONES[tone], PADS[pad], DIVIDERS[divider], className)} {...rest}>
+    <section
+      data-tone={tone}
+      className={cx(TONES[tone], PADS[pad], DIVIDERS[divider], className)}
+      {...rest}
+    >
       {children}
     </section>
   )

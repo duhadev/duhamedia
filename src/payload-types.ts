@@ -2884,6 +2884,10 @@ export interface FormEmbedBlock {
      */
     backLabel?: string | null;
     /**
+     * Phones only: the button under the thank-you message that clears the form so the visitor can send a second message. Leave empty for "Send another".
+     */
+    sendAnotherLabel?: string | null;
+    /**
      * Show drop-down questions (e.g. "What’s this about?") as tap-to-pick rows.
      */
     selectAsOptions?: boolean | null;
@@ -4076,6 +4080,7 @@ export interface FormEmbedBlockSelect<T extends boolean = true> {
         startLabel?: T;
         nextLabel?: T;
         backLabel?: T;
+        sendAnotherLabel?: T;
         selectAsOptions?: T;
       };
   doneHeading?: T;

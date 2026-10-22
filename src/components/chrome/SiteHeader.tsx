@@ -2,6 +2,7 @@ import React from 'react'
 
 import { Container, ButtonLink } from '@/components/ui'
 import { getChrome, toNavItem, toNavItems } from '@/lib/chrome'
+import { getSeoDefaults, siteName } from '@/lib/metadata'
 
 import { MobileNav } from './MobileNav'
 import { NavLink } from './NavLink'
@@ -37,6 +38,7 @@ export async function SiteHeader({ variant = 'standard' }: { variant?: HeaderVar
   }
 
   const { navigation } = await getChrome()
+  const homeLabel = `${siteName(await getSeoDefaults())} home`
   const links = toNavItems(navigation.header?.links)
   const cta = toNavItem(navigation.header?.cta)
   const linkClass = 'inline-flex min-h-target items-center text-[15px] font-medium text-ink no-underline'
@@ -44,7 +46,7 @@ export async function SiteHeader({ variant = 'standard' }: { variant?: HeaderVar
   return (
     <header className="sticky top-0 z-50 border-b border-divider bg-cream">
       <Container className="flex h-header-mobile items-center justify-between md:h-header">
-        <SiteLogo size="header" href="/" />
+        <SiteLogo size="header" href="/" label={homeLabel} />
         {links.length > 0 || cta ? (
           <nav aria-label="Main" className="hidden items-center gap-7 md:flex">
             {links.map((item) => (
@@ -56,7 +58,7 @@ export async function SiteHeader({ variant = 'standard' }: { variant?: HeaderVar
         {links.length > 0 || cta ? (
           <MobileNav>
             <nav
-              aria-label="Main"
+              aria-label="Main (mobile)"
               className="flex flex-col border-t border-divider bg-cream px-container-mobile pt-2 pb-5 shadow-ring"
             >
               {links.map((item) => (

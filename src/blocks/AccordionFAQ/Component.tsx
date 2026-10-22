@@ -123,7 +123,7 @@ const GROUP_SPACING = {
  */
 function GroupFaq({ heading, items, openFirst, allLink, anchorId, spacing, eyebrow, eyebrowTick }: Pick<AccordionFAQProps, 'heading' | 'openFirst' | 'allLink' | 'anchorId' | 'spacing' | 'eyebrow' | 'eyebrowTick'> & { items: Faq[] }) {
   return (
-    <Section id={anchorId || undefined} tone="light" pad="none" className={`scroll-mt-19 md:scroll-mt-34 ${GROUP_SPACING[spacing ?? 'middle']}`}>
+    <Section id={anchorId || undefined} tone="light" pad="none" className={`scroll-mt-31 md:scroll-mt-34 ${GROUP_SPACING[spacing ?? 'middle']}`}>
       <div className="mx-auto w-full max-w-205 px-container-mobile md:px-container">
         {eyebrow ? (
           <Eyebrow tick={eyebrowTick !== false} className="mb-3">

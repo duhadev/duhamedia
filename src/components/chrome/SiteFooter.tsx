@@ -1,10 +1,12 @@
 import Link from 'next/link'
 import React from 'react'
 
+import { CMSForm } from '@/components/forms'
 import { buttonClasses } from '@/components/ui'
-import { getChrome, getNewsletterHref, toNavItems, type NavItem } from '@/lib/chrome'
+import { getChrome, getNewsletterFormId, getNewsletterHref, toNavItems, type NavItem } from '@/lib/chrome'
 import { cx } from '@/lib/cx'
 
+import { footerNudgeFormClassNames } from './footerNudgeForm'
 import { NavLink } from './NavLink'
 import { SiteLogo } from './SiteLogo'
 
@@ -38,7 +40,7 @@ export async function SiteFooter({ variant = 'standard' }: { variant?: FooterVar
   const legalName = settings.legalName?.trim() || 'Duha Media'
 
   return (
-    <footer className="bg-ink font-medium text-cream">
+    <footer data-tone="dark" className="bg-ink font-medium text-cream">
       {variant === 'standard' ? <StandardZones settings={settings} footer={footer} /> : null}
       {variant === 'reduced-nav' ? <ReducedZone links={toNavItems(footer?.reduced?.links)} /> : null}
       <div className="border-t border-on-accent/20">
@@ -71,7 +73,7 @@ export async function SiteFooter({ variant = 'standard' }: { variant?: FooterVar
 function ReducedZone({ links }: { links: NavItem[] }) {
   return (
     <div className={cx(EDGE, 'flex flex-col gap-4 py-6.5 md:flex-row md:items-center md:justify-between md:gap-6 md:py-10')}>
-      <SiteLogo size="footer" decorative />
+      <SiteLogo size="footer" />
       {links.length > 0 ? (
         <nav aria-label="Footer" className="flex flex-wrap gap-x-4.5 text-[15px] md:gap-x-6 md:text-small">
           {links.map((item) => (
@@ -94,7 +96,8 @@ async function StandardZones({
     .map((column) => ({ title: column.title?.trim(), links: toNavItems(column.links) }))
     .filter((column) => column.title && column.links.length > 0)
   const nudge = footer?.standard?.newsletterNudge
-  const newsletterHref = await getNewsletterHref()
+  const newsletterFormId = await getNewsletterFormId(settings.newsletterForm)
+  const newsletterHref = newsletterFormId === null ? await getNewsletterHref() : null
   const tagline = settings.footerTagline?.trim()
 
   return (
@@ -106,17 +109,27 @@ async function StandardZones({
     >
       {/* Brand */}
       <div className="flex flex-col gap-3.5 text-small md:gap-2.5">
-        <SiteLogo size="footer" decorative />
+        <SiteLogo size="footer" />
         {tagline ? <span className="hidden max-w-[28ch] opacity-75 md:block">{tagline}</span> : null}
       </div>
 
       {/* Newsletter nudge: second on mobile (design), last zone on desktop */}
       {nudge && (nudge.heading || nudge.line || nudge.buttonLabel) ? (
         <div className="flex flex-col gap-2.5 text-small md:col-start-5 md:row-start-1">
-          {nudge.heading ? <span className={cx(HEADING, 'hidden md:block')}>{nudge.heading}</span> : null}
+          {nudge.heading ? <h2 className={cx(HEADING, 'hidden md:block')}>{nudge.heading}</h2> : null}
           {nudge.line ? <span className="text-[13px] opacity-60 md:text-small md:opacity-75">{nudge.line}</span> : null}
-          {/* The form-rendering block (NewsletterBand/FormEmbed) is not built yet: the nudge links to the newsletter page. */}
-          {newsletterHref && nudge.buttonLabel ? (
+          {/* With `site-settings.newsletterForm` the nudge is a real inline form (F42); otherwise a link to the newsletter page. */}
+          {newsletterFormId !== null ? (
+            <CMSForm
+              form={newsletterFormId}
+              submitLabel={nudge.buttonLabel?.trim() || undefined}
+              tone="dark"
+              submitVariant="ghost-light"
+              submitSize="sm"
+              turnstileAppearance="interaction-only"
+              classNames={footerNudgeFormClassNames}
+            />
+          ) : newsletterHref && nudge.buttonLabel ? (
             <Link
               href={newsletterHref}
               className={buttonClasses({ variant: 'ghost-light', size: 'sm', className: 'self-start' })}
@@ -132,7 +145,7 @@ async function StandardZones({
         <div className="grid grid-cols-2 gap-x-5 gap-y-5.5 border-t border-on-accent/20 pt-6 md:contents md:border-0 md:pt-0 max-md:[&>:last-child:nth-child(odd)]:col-span-2">
           {columns.map((column) => (
             <nav key={column.title} aria-label={column.title} className="flex flex-col text-[15px] md:gap-2.5 md:text-small">
-              <span className={HEADING}>{column.title}</span>
+              <h2 className={HEADING}>{column.title}</h2>
               {column.links.map((item) => (
                 <NavLink key={item.href + item.label} item={item} className={LIST_LINK} />
               ))}
