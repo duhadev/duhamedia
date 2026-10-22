@@ -10,7 +10,18 @@ Entry format for every unit: **Files** / **Fields & schema** / **Wiring** (regis
 
 - [Frontend foundation (B0)](#frontend-foundation-unit-b0)
 - [Site chrome (B1)](#site-chrome-unit-b1)
+- [Page router (B2)](#page-router-unit-b2)
 1. [Homepage](#1-homepage)
+   - [Hero (B3)](#hero-unit-b3)
+   - [ProofStrip (B3)](#proofstrip-unit-b3)
+   - [CaseStudyCards (B3)](#casestudycards-unit-b3)
+   - [MiniCTAStrip (B3)](#minictastrip-unit-b3)
+   - [TwoTrackPanels (B3)](#twotrackpanels-unit-b3)
+   - [PhaseTimeline (B3)](#phasetimeline-unit-b3)
+   - [TeamIntro (B3)](#teamintro-unit-b3)
+   - [TestimonialRow (B3)](#testimonialrow-unit-b3)
+   - [TeamIntro, founder-card variant (B3)](#teamintro-founder-card-variant-unit-b3)
+   - [FinalCTA (B3)](#finalcta-unit-b3)
 2. [Case Study template](#2-case-study-template)
 3. [Work hub](#3-work-hub)
 4. [Services Hub](#4-services-hub)
@@ -68,25 +79,27 @@ Sitewide frontend machinery, not tied to a page. Every block unit depends on it.
 **Files**
 - `src/app/(frontend)/styles.css`: Tailwind CSS 4 tokens in `@theme` (no `tailwind.config`). `--color-*: initial` removes the default palette, so only design colours exist. The header comment holds the design-var to Tailwind-name mapping table. Fonts are wired in a separate `@theme inline` block; `@layer base` sets html/body defaults, a 2px ink `:focus-visible` ring and a `prefers-reduced-motion` override.
 - `src/app/(frontend)/fonts.ts`: `archivoBlack` (Archivo Black, weight 400) and `dmSans` (DM Sans, variable) via `next/font/google`; downloaded at build time and self-hosted. CSS variables `--font-archivo-black` / `--font-dm-sans` feed `--font-display` / `--font-body` / `--font-sans`. Mono (`--font-mono`) is the system stack (`ui-monospace, "SF Mono", Menlo, monospace`), not loaded.
-- `src/app/(frontend)/layout.tsx`: `export const dynamic = 'force-dynamic'`; `<html lang="en">` carrying both font variable classes; `metadataBase` from `getSiteUrl()`; `robots` noindex/nofollow whenever not production. The layout renders no header or footer; chrome is rendered per page by `PageShell` in each route (see [Site chrome (B1)](#site-chrome-unit-b1)).
-- `src/app/(frontend)/page.tsx`: `/` renders the published `pages` doc with slug `home` through `RenderBlocks`. If none is published it renders a placeholder (`Duha Media` / `Site rebuild in progress.`), never a 404.
-- `src/app/(frontend)/[...slug]/page.tsx`: renders published `pages` docs at `/<slug>` (segments joined with `/`). `/home` and `/404` (`HOME_SLUG`, `NOT_FOUND_SLUG`) and any unknown or unpublished slug call `notFound()`.
-- `src/lib/pages.ts`: `getPublishedPage(slug)` (React `cache`-wrapped; Local API `find` on `pages`, `where` slug + `_status: published`, `draft: false`, `overrideAccess: false`, `depth: 2`) and `pageLayout(page)` (the `layout` rows, or `null` while the field does not exist).
+- `src/app/(frontend)/layout.tsx`, `page.tsx`, `[...slug]/page.tsx`, `src/lib/pages.ts`: created in B0, rewritten by B2; documented in [Page router (B2)](#page-router-unit-b2).
 - `src/components/RenderBlocks.tsx`: maps `pages.layout` rows to components via `blockComponents`. Unknown `blockType`: always `console.error`; staging/development render a visible dotted-border warning in place; production renders nothing for that row.
-- `src/components/ui/*` (barrel `index.ts`): `Container` (max 1200px, gutter 20px below `md`, 24px from `md`), `Section` (tone `light|grey|dark`, pad `default|tight|none`, optional dividers), `Eyebrow`, `AccentHeadline` (`level` = visual size, `as` = HTML element), `Button` / `ButtonLink` / `buttonClasses` (variants `primary|ghost|ghost-light|dark`, sizes `sm|md|lg`), `CMSLink` / `resolveLinkHref` / `CMSLinkData`, `Media`, `DotMatrix`.
+- `src/components/ui/*` (barrel `index.ts`): `Container` (max 1200px, gutter 20px below `md`, 24px from `md`), `Section` (tone `light|grey|dark`, pad `default|tight|none`, optional dividers), `Eyebrow`, `AccentHeadline` (`level` = visual size, `1|2|3|'section'`; `as` = HTML element; `level="section"` = the finals' section headline, `text-h3` (1.75rem) on mobile and `text-h2` (3rem) from `md`, so a block uses it instead of overriding the size with a class), `Button` / `ButtonLink` / `buttonClasses` (variants `primary|ghost|ghost-light|dark`, sizes `sm|md|lg`), `CMSLink` / `resolveLinkHref` / `CMSLinkData`, `Media`, `DotMatrix`.
   - `CMSLink` renders a `linkField` value: site paths as Next `Link`, `https:`/`mailto:` as `<a>`, `newTab` adds `target="_blank" rel="noopener noreferrer"`. Renders nothing when the destination does not resolve (empty, unpopulated or unpublished reference, no URL) or there is no text. `ButtonLink` behaves the same.
   - `Media` renders a media doc with `next/image` (alt from the doc; `alt=""` only for decorative images). It keeps the upload path and query and drops the origin; with `fill`, the focal point sets `object-position`. Renders nothing for an empty or id-only upload.
 - `src/lib/cx.ts`: class-name joiner.
 - `src/lib/accentPhrase.ts`: `splitAccentPhrase(heading, accent)` returns `[before, accent, after]` (case-insensitive match, heading's own spelling) or `null`. Shares its matching rule with `accentPhraseError` / `validateAccentPhrase`.
-- `src/blocks/index.ts`: `pageBlocks` (block configs only; currently `[]`). Must not import React or CSS because `payload.config.ts` loads it.
-- `src/blocks/components.ts`: `blockComponents` (`blockType` to component), typed `{ [K in PageBlockType]: ComponentType<BlockData<K>> }`; currently `{}`.
-- `src/blocks/types.ts`: `PageLayoutBlock`, `PageBlockType`, `BlockData<K>`, all derived from the generated `Page` type. Resolve to `never` until a block exists.
+- `src/blocks/index.ts`: `pageBlocks` (block configs only; 9 blocks registered by B3, in this order: `Hero`, `MiniCTAStrip`, `FinalCTA`, `ProofStrip`, `CaseStudyCards`, `TestimonialRow`, `TwoTrackPanels`, `PhaseTimeline`, `TeamIntro`; the order is the admin "Add section" picker order). Must not import React or CSS because `payload.config.ts` loads it.
+- `src/blocks/components.ts`: `blockComponents` (`blockType` to component), typed `{ [K in PageBlockType]: ComponentType<BlockData<K>> }`; a missing entry is a type error. Keys: `hero`, `miniCTAStrip`, `finalCTA`, `proofStrip`, `caseStudyCards`, `testimonialRow`, `twoTrackPanels`, `phaseTimeline`, `teamIntro`.
+- `src/blocks/types.ts`: `PageLayoutBlock`, `PageBlockType`, `BlockData<K>`, all derived from the generated `Page` type (resolve to `never` while no block exists).
+- `src/fields/index.ts`: shared field factories. B3 added `eyebrowField()`, `headlineFields()`, `scarcityRef()` and the `required` option of `metricFields()` (below); `linkField`, `metricFields`, `pricingNote`, `validateAccentPhrase` / `accentPhraseAdminField` and `contentVersions` predate B3.
+  - `eyebrowField({ defaultTick = true, description })`: a `row` (no data nesting) holding `eyebrow` (text, 70% width) and `eyebrowTick` (checkbox "Show the diamond marker", 30%, default from `defaultTick`). Both optional; an empty eyebrow renders nothing.
+  - `headlineFields({ required = true, description })`: returns two fields to spread: `heading` (text, `required` per option) and `accentPhrase` (text, label "Accent phrase", `validate: validateAccentPhrase('heading')` and `admin.components.Field: accentPhraseAdminField('heading')`). The accent must be a case-insensitive substring of `heading`; empty is allowed. `required: false` is for blocks whose empty heading falls back to defaults (FinalCTA) or hides the headline.
+  - `scarcityRef({ name = 'key', label, description, defaultValue = 'none' })`: a `select` of the `scarcity` global's statement keys (`SCARCITY_KEYS` in `src/lib/scarcity.ts`: `ongoing`, `capacity`, `builds-line`, `engines-line`, `slots-line`, `offer-line`) plus `none`. The block stores only the key; the number and reason are read from the global at render. Used by ProofStrip (`statements[].key`) and FinalCTA (`capacity`, default `builds-line`).
+  - `metricFields({ required = true })`: `value` and `label` text fields (required unless `required: false`), `sub` text, `accent` checkbox. The field shapes, and so the DB columns, are identical either way. `required: false` is used by `testimonialRow.studyCard.fallbackMetric`.
 - `src/showcase/registry.ts` (`showcaseEntries`, `ShowcaseEntry`, `ShowcaseViewport`) and `src/showcase/enabled.ts` (`showcaseEnabled()` = not production).
 - `src/app/(frontend)/%5Fshowcase/page.tsx`: the `/_showcase` route.
 - `src/plugins/seo.ts`: exports `HOME_SEO_TITLE` (`Duha Media — Integrated Ecommerce Growth Partner, Chicago`), used by `generateTitle` for the `home` page (see [P3](#seo-unit-p3)).
 
 **Fields & schema**
-- None yet. `pages.layout` is added to `pages` only once `pageBlocks` has at least one block, because the Payload 3.91 admin crashes on a blocks field with `blocks: []`. An empty blocks field creates no tables; the first block unit generates the migration that adds the `pages_blocks_*` tables.
+- None of its own. `pages.layout` is added to `pages` only once `pageBlocks` has at least one block, because the Payload 3.91 admin crashes on a blocks field with `blocks: []`. An empty blocks field creates no tables; the first block unit (Hero, B3) generated the migration that adds the `pages_blocks_*` / `_pages_v_blocks_*` tables. Block fields are documented per block under [1. Homepage](#1-homepage).
 
 **Wiring**
 - `src/app/(frontend)/layout.tsx` is the root layout of the `(frontend)` group and imports `styles.css` and the fonts.
@@ -96,16 +109,18 @@ Sitewide frontend machinery, not tied to a page. Every block unit depends on it.
 
 **Notes**
 - How to add a block:
-  1. Create `src/blocks/<Name>/config.ts` exporting a `Block` with a unique `slug` and `interfaceName: '<Name>Block'` (NewsletterBand uses the slug literal `newsletterBand`).
-  2. Create `src/blocks/<Name>/Component.tsx`, typed `BlockData<'<slug>'>`.
+  1. Create `src/blocks/<Name>/config.ts` exporting a `Block` with a unique `slug` and `interfaceName: '<Name>Block'` (NewsletterBand uses the slug literal `newsletterBand`). Import shared factories with **relative** paths (`import { eyebrowField, headlineFields } from '../../fields'`), not the `@/` alias: `payload.config.ts` loads the config under the Payload CLI, which does not resolve the alias.
+  2. Create `src/blocks/<Name>/Component.tsx`, typed `BlockData<'<slug>'>` (props are the generated row type; an async server component is fine for blocks that read data).
   3. Add the config to `pageBlocks` in `src/blocks/index.ts` (configs only, no React or CSS imports).
   4. Run `pnpm generate:types`.
   5. Add `'<slug>': Component` to `src/blocks/components.ts`. A missing entry is a type error.
-  6. Add showcase fixtures to `showcaseEntries` in `src/showcase/registry.ts`: `{ block, variant, viewport?, label, data }`.
-  7. The first block also runs `pnpm payload migrate:create <name>` and checks that generated identifiers are at most 63 characters.
+  6. Add showcase fixtures to `showcaseEntries` in `src/showcase/registry.ts`: `{ block, variant, viewport?, label, data }` (include the fallback / empty states).
+  7. Migration: generate with `pnpm payload migrate:create <name>` against a **fresh scratch database migrated to HEAD** (never the push-managed dev DB), under a pty (the command prompts), and check that generated identifiers are at most 63 characters. Prove it with `migrate` up, `migrate:down`, `migrate` up again. Commit the `.ts` and `.json` and register it in `src/migrations/index.ts`.
+  8. pnpm is run as `npx -y pnpm@11.28.3 <command>` in the agent environment.
+  9. `block-coder` self-checks the rendered block with headless chromium before reporting.
 - Tokens come from `design-reference/merged-tokens.css` and `MERGED.md`; new tokens need a Decision-log entry. Not ported: the mobile canvas colour `#DED9D0` and the X/Twitter card colours.
 - `--color-gray-warm` is `#747069` (darkened from the design's `#8A857D`, which fails AA contrast at 3.66:1; the exact value is flagged for PM/human sign-off). Dividers keep the original rgba.
-- Page-level metadata, draft mode/live preview and redirect fallback are not in this unit (router unit). The home fallback title must match `HOME_SEO_TITLE`.
+- Page-level metadata, draft mode/live preview and redirect fallback are in [Page router (B2)](#page-router-unit-b2). The home fallback title must match `HOME_SEO_TITLE`.
 
 ---
 
@@ -154,11 +169,348 @@ Sitewide header and footers. Not a block; not tied to one page.
 
 ---
 
+## Page router (unit B2)
+
+Resolves `pages` documents to URLs and produces their head metadata, draft preview, redirects, sitemap and robots. Sitewide; not a block.
+
+**Files**
+- `src/lib/pages.ts`: `getPage(slug)` (React `cache`; replaces B0's `getPublishedPage`), `getPreviewUser()`, `pageLayout(page)`, `PAGE_QUERY_DEPTH = 2`.
+- `src/lib/metadata.ts` (`server-only`): `getSeoDefaults()` (cached `findGlobal` on `seo-defaults`, `depth: 1`, `overrideAccess: false`; returns `{}` on a failed read), `titleTemplate()`, `siteName()`, `pageMetadata(page, { preview })`, `homeFallbackMetadata()`.
+- `src/lib/redirects.ts` (`server-only`): `findRedirect(path)` returning `{ location, permanent } | null`.
+- `src/lib/preview.ts`: `PREVIEW_ROUTE` (`/_preview`), `EXIT_PREVIEW_ROUTE` (`/_preview/exit`), `PREVIEW_BREAKPOINTS` (mobile 390x844, tablet 768x1024, desktop 1440x900), `previewUrl(path)`. No `server-only` and no `next/*` imports, because `Pages.ts` imports it and the Payload CLI loads that file.
+- `src/lib/env.ts` (`server-only`): `getAppEnv()` (`APP_ENV` = `production` or `staging`, anything else is `development`), `isProduction()`, `getSiteUrl()` (`SITE_URL` without trailing slashes; falls back to `http://localhost:3000` when unset).
+- `src/app/sitemap.ts`, `src/app/robots.ts`: Next metadata routes (`/sitemap.xml`, `/robots.txt`), both `force-dynamic`.
+- `src/app/(frontend)/layout.tsx`: `force-dynamic`; `generateMetadata` (site-wide defaults); html/body shell with both font variables. No header or footer.
+- `src/app/(frontend)/page.tsx` (`/`), `src/app/(frontend)/[...slug]/page.tsx` (every other page), `src/app/(frontend)/not-found.tsx`.
+- `src/app/(frontend)/%5Fpreview/route.ts` (`GET /_preview`) and `src/app/(frontend)/%5Fpreview/exit/route.ts` (`GET /_preview/exit`). The folder is `%5Fpreview` for the same reason as `%5Fshowcase`.
+- `src/components/PageView.tsx`: one `pages` doc in its chrome (`PageShell` with the doc's `headerVariant` / `footerVariant`, then `<main>` with `RenderBlocks`). Shared by `/` and `[...slug]`.
+- `src/components/ReadingProgress.tsx`: the only client island added by B2.
+- `src/collections/Pages.ts`: `admin.preview` and `admin.livePreview`.
+
+**Fields & schema**
+- None. No migration. Reads existing fields: `pages.{slug,title,meta,headerVariant,footerVariant,readingProgress,noindex,zeroLeakage,layout,updatedAt}`, `seo-defaults.{titleTemplate,defaultDescription,defaultOgImage,organization.name}`, `redirects`.
+
+**Wiring**
+- Routing:
+  - `/` renders the `home` doc (`HOME_SLUG`). With no home doc visible it renders a placeholder (`Duha Media` / `Site rebuild in progress.`) inside `PageShell` with default variants, never a 404.
+  - `/<slug>`: the catch-all joins segments with `/` (slug keeps `/` between segments, see `src/lib/pagePath.ts`). `/home` calls `permanentRedirect('/')` (308). `/404` (`NOT_FOUND_SLUG`) calls `notFound()`. No page: `findRedirect('/<slug>')`; a hit calls `permanentRedirect` (308) or `redirect` (307); otherwise `notFound()`.
+  - `not-found.tsx` is a placeholder (`Page not found` + link to `/`) in `PageShell` with standard variants. It does not read the `404` doc yet (Error404 block pending). Its metadata is `title: 'Page not found'` with `robots: null`, because Next adds its own `noindex` to not-found responses and the layout's non-production robots would otherwise duplicate it.
+- Page query (`getPage`):
+  - Public: `find` on `pages` with `where` slug equals and `_status` equals `published`, `draft: false`, `overrideAccess: false`, `depth: PAGE_QUERY_DEPTH`, `limit: 1`, `pagination: false`.
+  - Draft preview: only when Next draft mode is on AND `getPreviewUser()` returns a user; then `draft: true`, `user`, `overrideAccess: false` (collection access still applies).
+  - `PAGE_QUERY_DEPTH = 2`: the page's own relationships are depth 1 (block relations), the documents they point at are depth 2. Payload caps population by the **absolute** depth against each field's `maxDepth` (payload@3.91.0 `fields/hooks/afterRead/relationshipPopulationPromise.js:86`), so a nested relationship with `maxDepth: 1` never populates under a page. For that reason the nested fields that block components read are `maxDepth: 2`: `clients.logo`, `team-members.photo`, `testimonials.client`, `testimonials.video.poster`, `case-studies.client`, `case-studies.heroMedia`, and the block relations `proofStrip.logos.clients`, `caseStudyCards.caseStudies`, `testimonialRow.testimonials`, `testimonialRow.studyCard.caseStudy`, `teamIntro.member`.
+- Metadata (`pageMetadata`; Next `generateMetadata`). Title is emitted as `title.absolute`, so the layout template is never applied twice. Precedence per field:
+  - Title: `page.meta.title` (SEO tab) → for slug `home`, `HOME_SEO_TITLE` (same constant as plugin-seo `generateTitle`) → `seo-defaults.titleTemplate` with `%s` replaced by `page.title` (the template is used only if it contains exactly one `%s`, else `DEFAULT_TITLE_TEMPLATE` from `src/globals/SeoDefaults.ts`).
+  - Description: `page.meta.description` → `seo-defaults.defaultDescription` → none.
+  - Share image (Open Graph and Twitter): `page.meta.image` → `seo-defaults.defaultOgImage`; each is used only through its `sizes.og` (1200x630) rendition (url, width, height, alt). A media doc with no `og` size, or an unpopulated id, counts as none. Twitter card is `summary_large_image` with an image, `summary` without.
+  - Canonical and `og:url`: `getSiteUrl()` + `pagePath(slug)` (absolute; `/` for `home`). Not emitted for a doc with no path.
+  - `og:siteName`: `seo-defaults.organization.name`, else `Duha Media`.
+  - Robots: `{ index: false, follow: false }` when `APP_ENV` is not `production`, or the render is a draft preview, or `page.noindex === true`, or `page.zeroLeakage === true`; otherwise `{ index: true, follow: true }`. `robots` is a nested metadata field, so the page's value replaces the layout's: exactly one robots tag.
+  - Layout defaults (`layout.tsx` `generateMetadata`), for routes that set none (not-found, `/_showcase`, `/home` and `/404` in the catch-all): `metadataBase` = `getSiteUrl()`, `title.default` = site name, `title.template` = the seo-defaults template, description = `defaultDescription`, robots noindex/nofollow when not production.
+  - `homeFallbackMetadata()` (no home doc visible): `HOME_SEO_TITLE`, path `/`, indexable in production.
+- Draft preview:
+  - Admin: `Pages.admin.preview` and `Pages.admin.livePreview.url` both return `previewUrl(pagePath(slug))` = `<SITE_ORIGIN>/_preview?path=<path>`, where the origin comes from `siteOrigin()` in `src/plugins/seo.ts` (server-side `SITE_URL`; empty, so a relative URL, when unset). `null` (no preview) while the doc has no slug and for the `404` doc. Live preview breakpoints are `PREVIEW_BREAKPOINTS`.
+  - `GET /_preview?path=`: `path` must pass `getSafeRedirect` (`payload/shared`; same-origin relative path only), else 400. `payload.auth({ headers: request.headers, canSetHeaders: false })` must return a `users` user for whom `isStaff` is true (admin or marketing), else 403 (the pipeline API user and the public are refused). On success it enables Next draft mode and answers 307 to the path. Every refusal also disables draft mode.
+  - No shared secret or token in the URL: the admin session cookie is the credential.
+  - The staff session is re-checked on every page request in `getPreviewUser()`; the draft-mode cookie alone never shows a draft (it outlives a logout). A failed auth call is treated as no user.
+  - Every response from both preview routes sets `Cache-Control: private, no-store, max-age=0`.
+  - `GET /_preview/exit?path=`: disables draft mode, 307 to a safe `path` (default `/`).
+  - `_`-prefixed first segments are reserved (`pageSlugError`, redirects `from` validation), so no page or redirect can collide with `/_preview`.
+- Redirect fallback (`findRedirect`):
+  - Runs only after the page lookup found nothing (flag F22): a redirect never overrides a live page.
+  - Looks up `redirects.from` with both the raw and the percent-decoded request path; public read, `overrideAccess: false`, `depth: 0`. `redirects` has no drafts, so a saved redirect is live at once.
+  - `to.type = custom`: the stored `to.url`. `to.type = reference`: the target's public path via `docPath(relationTo, doc)`, and only while the target is **published** (queried with `_status: published`, `draft: false`, `overrideAccess: false`); otherwise no redirect (404). A resolved location equal to the request path is ignored.
+  - Status: stored type `301` → `permanentRedirect` (HTTP 308); `302` → `redirect` (HTTP 307). In the App Router a page can only emit 308/307; search engines treat 308 as 301 and 307 as 302.
+  - A lookup error is logged and treated as not found.
+- Sitemap (`/sitemap.xml`): `find` on `pages` with `_status: published`, slug not `404`, `depth: 0`, `draft: false`, `overrideAccess: false`, `limit: 0`, sorted by `slug`. Documents with `noindex === true` or `zeroLeakage === true` are dropped in code (an SQL `<> true` would also drop NULL rows). `home` appears once, as `<SITE_URL>/`. `lastModified` is `updatedAt`. `/_showcase` and `/_preview` never appear. A DB failure is a 500, not an empty sitemap. Only `pages` are listed; case-studies, posts and lead-magnets are added when their routes land. Same sitemap in every environment (not filtered by `APP_ENV`).
+- Robots (`/robots.txt`): `Sitemap: <SITE_URL>/sitemap.xml` always. Not production: `User-agent: *`, `Disallow: /`. Production: `Allow: /` and `/api/media/file/`; `Disallow: /admin`, `/api/`, `/_showcase`, `/_preview`.
+- `readingProgress`: `PageView` renders `<ReadingProgress />` before `<main>` when `page.readingProgress` is true (flag set per page; About and FAQ per `Pages.ts`). The component is a `'use client'` island because it reads scroll position: a fixed 4px bar (`--reading-progress-width`) on the left edge in `accent-primary`, `aria-hidden`, `pointer-events-none`, height driven by `transform: scaleY(0..1)`, rAF-throttled scroll and resize listeners, no transition.
+- Revalidation: unchanged. Everything is `force-dynamic` and read per request; the `pages` hooks (tag `pages` plus the page path) still run on publish.
+
+**Notes**
+- Live preview: autosave is off (S3/F21), so the live pane shows the last **saved** draft and does not auto-refresh on Save draft. Open decision, tracked as F57.
+- Organization / LocalBusiness JSON-LD is not built. There is no JSON-LD in the page output yet.
+- Open SEO findings, F65 (Gate 2, none applied): `getSiteUrl()` falls back to `http://localhost:3000` when `SITE_URL` is unset, so a production container without it would emit localhost canonicals and sitemap URLs silently (and `getSiteUrl` and `siteOrigin` are two separate helpers); home canonical vs sitemap trailing-slash consistency; the `/` placeholder (no home doc) is indexable in production and absent from the sitemap; the seo-defaults placeholder description and OG alt are live until seeded; seed must set `noindex` on Thank You and gated templates; Organization/LocalBusiness JSON-LD (page scope); `not-found` has no description.
+- QA of the authenticated preview and the redirect create/verify/delete test were pending when this entry was written.
+- Case-study cards link to `/work/<slug>`; that route is not built yet (case-studies, posts and lead-magnets have no frontend route).
+
+---
+
 ## 1. Homepage
 
 Locked section order: Hero → Scarcity strip → Client logo strip → Featured case studies → Mini CTA strip → What we do → Process timeline → Founder/team + about → Testimonials → Final CTA → Footer (standard).
 
-*No units documented yet.*
+All blocks below are registered in `src/blocks/index.ts` and `src/blocks/components.ts` (shared description in [B0](#frontend-foundation-unit-b0)) and have fixtures in `src/showcase/registry.ts`. Every block lives on `pages.layout` (tables `pages_blocks_<slug>` plus `_pages_v_blocks_<slug>` for versions). Unless stated, revalidation is the `pages` collection hook (tag `pages` + the page path) and the frontend is `force-dynamic`. Client islands: the only one among these blocks is `PhaseTimeline/AccordionSteps.tsx`; every other block is a server component. Data-reading blocks (ProofStrip, CaseStudyCards, TestimonialRow, FinalCTA) are async server components using the Local API with public access.
+
+### Hero (unit B3)
+
+Section: Hero. Variant built now: `typographic`. Later units append `service`, `article`, `vsl` to `variant.options` with their own fields.
+
+**Files**
+- `src/blocks/Hero/config.ts`, `src/blocks/Hero/Component.tsx` (`HeroBlock`, server component).
+
+**Fields & schema** (slug `hero`, `interfaceName: 'HeroBlock'`)
+- `variant`: select, required, default `typographic`.
+- `eyebrow` / `eyebrowTick`: `eyebrowField()` row (tick default true).
+- `heading` (required) / `accentPhrase`: `headlineFields()`.
+- `badge`: group. `badge.show` checkbox (default true); `badge.text` text (shown while `show` is not false). The pill renders only when `show !== false` and `text` is non-blank.
+- `body`: textarea.
+- `pricingNote`: `pricingNote()` text (max 80). Rendered inline after `body` in the same paragraph.
+- `ctas`: array, max 2 rows, each `{ link }` (`linkField`, required). Row 1 renders `primary`, row 2 `ghost`.
+- `subNote`: text, small note under the buttons.
+- `verticalMicrocopy`: text. Vertical on the left from `lg`; under the paragraph below `lg`.
+- `geometry`: checkbox, default true. The wine logo-shaped mask (`/logo-duha.png`) behind the headline.
+
+**Wiring**
+- Registered as the first entry of `pageBlocks`; component key `hero`.
+- Showcase: `hero` / `typographic` (homepage copy), `hero` / `typographic — minimal` (heading only, geometry off).
+- Reads no collection or global.
+- Migration: `20261022_025136_b3_hero` (tables `pages_blocks_hero`, `pages_blocks_hero_ctas`, `_pages_v_*` equivalents, enum `enum_pages_blocks_hero_variant`; the first block migration, which adds the `layout` tables to `pages`).
+
+**Notes**
+- The only block that renders an `h1` (via `AccentHeadline level={1} as="h1"`).
+- Every optional field renders nothing when empty. Mobile-first; desktop build from `md`.
+
+### ProofStrip (unit B3)
+
+Section: Scarcity strip + Client logo strip. Variant built now: `scarcity`. The `metrics` variant (page 15) comes later.
+
+**Files**
+- `src/blocks/ProofStrip/config.ts`, `src/blocks/ProofStrip/Component.tsx` (`ProofStripBlock`, async server component).
+
+**Fields & schema** (slug `proofStrip`, `interfaceName: 'ProofStripBlock'`)
+- `variant`: select, required, default `scarcity`.
+- `statements`: array, max 2 rows; each row `{ key }` = `scarcityRef()` (default `none`). Shown side by side.
+- `pricingNote`: text (max 80), centred under the statements.
+- `logos`: group.
+  - `logos.show`: checkbox, default true.
+  - `logos.eyebrow`: text, default `Stores we've run numbers for`.
+  - `logos.source`: select `flagged` (default; clients ticked "Show in logo strip") or `manual`.
+  - `logos.clients`: relationship to `clients`, `hasMany`, `maxDepth: 2`; shown when `source = manual`.
+
+**Wiring**
+- Registered in `pageBlocks`; component key `proofStrip`.
+- Showcase: `proofStrip` / `scarcity`, `scarcity — logos hidden`, `scarcity — one statement`, `scarcity — logo images`.
+- Data read through the Local API (public access, `overrideAccess: false`):
+  - `scarcity` global (`findGlobal`, `depth: 0`) for the picked keys.
+  - `clients`: `flagged` → `find` where `showInLogoStrip = true` and `_status = published`, sort `sortOrder`, `limit: 12`, `depth: 1`; `manual` → picked ids fetched with `_status = published` (`depth: 1`), keeping the editor's order.
+- Migration: `20261022_030147_b3_homepage_batch1` (tables `pages_blocks_proof_strip`, `pages_blocks_proof_strip_statements`, `_pages_v_*`; the `clients` relationship adds a column to `pages_rels` / `_pages_v_rels`).
+
+**Notes**
+- Loud/quiet contract (CLAUDE.md rule 2): a statement renders only with a usable statistic (tokens filled by `fillScarcityTokens`) AND a non-blank `reason`; otherwise it is skipped with a `console.error`. There is no render path for a number without its reason. A purely numeric statistic renders large (`ongoing`, `capacity` style); other statements render as a headline line.
+- The whole block renders nothing when there are no resolvable statements and no logo clients.
+- Client without a logo renders its name as text. Unpublished clients are never shown.
+- A failed read is logged and degrades (statements skipped / row hidden); it never fails the page.
+
+### CaseStudyCards (unit B3)
+
+Section: Featured case studies (toggleable, with fallback). Layout built now: `cards`. Fallback modes built now: `ledger` and `note`. Later units append the `ledger` / `staggered` / `next-link` layouts, the `track` source, `loadMore`, and the `testimonials` / `metric-strip` / `logo-strip` fallback modes.
+
+**Files**
+- `src/blocks/CaseStudyCards/config.ts`, `src/blocks/CaseStudyCards/Component.tsx` (`CaseStudyCardsBlock`, async server component; `StudyCard` internal).
+
+**Fields & schema** (slug `caseStudyCards`, `interfaceName: 'CaseStudyCardsBlock'`)
+- `layout`: select, required, default `cards`.
+- `eyebrow` / `eyebrowTick` and `heading` / `accentPhrase` (`headlineFields({ required: false })`): shown only when studies are live.
+- `source`: select, required, default `featured`: `featured` (studies ticked Featured), `latest`, `manual`.
+- `caseStudies`: relationship to `case-studies`, `hasMany`, `maxDepth: 2`; shown when `source = manual`.
+- `limit`: number 1 to 3, default 3.
+- `cardLinkLabel`: text, default `Read the case study`.
+- `allLink`: `linkField`, optional "All studies" link (shown only when studies are live).
+- `fallbackMode`: select, required, default `ledger`: `ledger` or `note`.
+- `fallbackEyebrow` (default `No studies live yet — the numbers we can show`), `fallbackHeading` (default `Numbers anyway.`), `fallbackAccentPhrase` (default `anyway.`, validated as a substring of `fallbackHeading`, same admin component as `accentPhrase`), `fallbackBody` (textarea, default `Studies publish here as clients sign off.`).
+- `fallbackMetrics`: array, max 3 rows, `metricFields()` (value, label, sub, accent); shown when `fallbackMode = ledger`.
+- `pricingNote`: text (max 80).
+
+**Wiring**
+- Registered in `pageBlocks`; component key `caseStudyCards`.
+- Showcase: `caseStudyCards` / `cards` (3 published fixture studies, manual), `cards — featured (DB)`, `cards — fallback ledger`, `cards — fallback note`.
+- Data: `source = featured | latest` → `find` on `case-studies` with `_status = published`, `draft: false`, `overrideAccess: false`, `depth: 1`, `limit`, sort `-publishedAt` (plus `featured = true` for `featured`). `source = manual` → the page-populated `caseStudies`, keeping only populated objects with `_status = published`.
+- Migration: `20261022_031049_b3_homepage_batch2` (tables `pages_blocks_case_study_cards`, `pages_blocks_case_study_cards_fallback_metrics`, `_pages_v_*`; relationship columns in the rels tables; enum `enum_pages_blocks_case_study_cards_layout`).
+
+**Notes**
+- Launch-state rule (CLAUDE.md rule 1): no field forces the live state. Cards render only from published studies. With none (also if all are unpublished or the read fails) the designed fallback renders: `ledger` shows the text block beside a ruled list of the metric rows (a pricing note, if set, sits under the list); `note` shows the text block only (the pricing note under the text). If `fallbackMode` is `ledger` but there are no metric rows it renders like `note`.
+- A draft study is never shown, even when picked by hand: an unreadable pick arrives as a bare id and is dropped.
+- Fallback body copy must state what is true; no "coming soon".
+- Card links go to `/work/<slug>`, a route that does not exist yet.
+- Ledger rows were prices in the design; CLAUDE.md rule 5 forbids price blocks, so rows are `metricFields` and a price is only the small `pricingNote`.
+
+### MiniCTAStrip (unit B3)
+
+Section: Mini CTA strip. Variant built now: `band`. `inline` and `button` come later.
+
+**Files**
+- `src/blocks/MiniCTAStrip/config.ts`, `src/blocks/MiniCTAStrip/Component.tsx` (`MiniCTAStripBlock`, server component).
+
+**Fields & schema** (slug `miniCTAStrip`, `interfaceName: 'MiniCTAStripBlock'`)
+- `variant`: select, required, default `band`.
+- `text`: text, required; the one-line statement (shown in capitals).
+- `link`: `linkField`, required; button text and destination. The whole strip is one link.
+
+**Wiring**
+- Registered in `pageBlocks`; component key `miniCTAStrip`. Showcase: `miniCTAStrip` / `band`, `band — link unresolved`.
+- Reads no collection or global.
+- Migration: `20261022_030147_b3_homepage_batch1` (table `pages_blocks_mini_c_t_a_strip`, `_pages_v_*`, enum for `variant`).
+
+**Notes**
+- Fallback: a link that does not resolve (empty reference, unpublished target, no label) renders the text alone, no button.
+- Dark section; the whole strip is a 44px-minimum link target.
+
+### TwoTrackPanels (unit B3)
+
+Section: What we do (We build it / Then we grow it). Variant built now: `equal`. `contrast` and `primary-secondary` come later as new options with their own fields.
+
+**Files**
+- `src/blocks/TwoTrackPanels/config.ts`, `src/blocks/TwoTrackPanels/Component.tsx` (`TwoTrackPanelsBlock`, server component).
+
+**Fields & schema** (slug `twoTrackPanels`, `interfaceName: 'TwoTrackPanelsBlock'`)
+- `variant`: select, required, default `equal`.
+- `eyebrow` / `eyebrowTick`: `eyebrowField({ defaultTick: false })`.
+- `heading` (required) / `accentPhrase`: `headlineFields()`.
+- `panels`: array, exactly 2 rows (`minRows` and `maxRows` 2); each row:
+  - `label`: text, optional small tag.
+  - `title`: text, required (shown in capitals).
+  - `accentTitle`: checkbox, default false (title in the wine accent colour).
+  - `body`: textarea, required.
+  - `pricingNote`: text (max 80), appended inline after `body`.
+  - `link`: `linkField`, optional, appended inline after the paragraph.
+
+**Wiring**
+- Registered in `pageBlocks`; component key `twoTrackPanels`. Showcase: `twoTrackPanels` / `equal`, `equal — no links/pricing`.
+- Reads no collection or global.
+- Migration: `20261022_030147_b3_homepage_batch1` (tables `pages_blocks_two_track_panels`, `pages_blocks_two_track_panels_panels`, `_pages_v_*`).
+
+**Notes**
+- A track missing its `title` or `body` is skipped (logged with `console.error`). Each track is one running paragraph: title, body, pricing note, link.
+- Prices appear only through the small inline `pricingNote` (CLAUDE.md rule 5).
+
+### PhaseTimeline (unit B3)
+
+Section: Process timeline (8-beat; independence handover at full weight). Variant built now: `accordion`. Later units append `arc` / `build-run` / `engine-rollout` / `steps` with their own fields (`phases.link`, `steps.tag`, `isSignOff`, `outcomes`, `cta`).
+
+**Files**
+- `src/blocks/PhaseTimeline/config.ts`, `src/blocks/PhaseTimeline/Component.tsx` (`PhaseTimelineBlock`, server component), `src/blocks/PhaseTimeline/AccordionSteps.tsx` (client island).
+
+**Fields & schema** (slug `phaseTimeline`, `interfaceName: 'PhaseTimelineBlock'`)
+- `variant`: select, required, default `accordion`, not clearable.
+- `eyebrow` / `eyebrowTick`: `eyebrowField({ defaultTick: false })`.
+- `heading` (required) / `accentPhrase`: `headlineFields()`.
+- `intro`: textarea, optional.
+- `phases`: array, 1 to 3 rows; each `number` (text, e.g. "Phase 1"), `title` (text, required), `body` (textarea; shown in the admin only when the variant is not `accordion`, and not rendered by `accordion`).
+- `steps`: array, 1 to 10 rows; each `number` (text), `title` (text, required), `phase` (select `1` / `2` / `3`, required, default `1`, not clearable), `detail` (textarea).
+- `closingLine`: text, optional.
+
+**Wiring**
+- Registered in `pageBlocks`; component key `phaseTimeline`. Showcase: `phaseTimeline` / `accordion` (8 steps, 3 phases), `accordion — minimal` (1 phase, 3 steps, a step without detail, closing line).
+- Reads no collection or global.
+- Migration: `20261022_031049_b3_homepage_batch2` (tables `pages_blocks_phase_timeline`, `pages_blocks_phase_timeline_phases`, `pages_blocks_phase_timeline_steps`, `_pages_v_*`, enum for `variant`).
+
+**Notes**
+- Independence rule (CLAUDE.md): the LAST phase always renders at full visual weight (accent label and accent bar). There is deliberately no field to switch it off.
+- Server render: every step is a native `<details>`/`<summary>` (works with JS off), the first step open. A phase or step without a title is skipped (logged). A step pointing at a phase that does not exist is shown under the last phase (logged).
+- Client island `AccordionSteps.tsx` (`'use client'`, reason: click and scroll listeners): one step open at a time and always one open (clicking the open step does nothing); a `toggle` backstop for opens that bypass the click; below `md` the step nearest 45% of the viewport height opens on scroll (rAF-throttled, 24px hysteresis, paused after a click until the visitor scrolls half a screen, disabled under `prefers-reduced-motion: reduce`, never moves focus). The design's desktop auto-advance timer is not ported (WCAG 2.2.2).
+- Transitions use the design's exact cubic-bezier values; the global reduced-motion override in `styles.css` zeroes them.
+
+### TeamIntro (unit B3)
+
+Section: Founder/team + about, first instance (`intro` variant). The second homepage instance uses the `founder-card` variant: see [TeamIntro, founder-card variant](#teamintro-founder-card-variant-unit-b3). Variants built now: `intro` and `founder-card`. Later pages reuse these or append new options.
+
+**Files**
+- `src/blocks/TeamIntro/config.ts`, `src/blocks/TeamIntro/Component.tsx` (`TeamIntroBlock`, server component; one component for both variants).
+
+**Fields & schema** (slug `teamIntro`, `interfaceName: 'TeamIntroBlock'`)
+- `variant`: select, required, default `intro`: `intro` or `founder-card`.
+- `eyebrow` / `eyebrowTick`: `eyebrowField({ defaultTick: false })`.
+- `heading` (required) / `accentPhrase`: `headlineFields()`.
+- `body`: textarea.
+- `photo`: upload to `media`, `maxDepth: 1`; shown when `variant = intro`.
+- `member`: relationship to `team-members`, required, `maxDepth: 2`; shown when `variant = founder-card`.
+- `link`: `linkField`, optional.
+
+**Wiring**
+- Registered in `pageBlocks`; component key `teamIntro`. Showcase: `teamIntro` / `intro`, `intro — no photo`, `founder-card`, `founder-card — no member` (the two `founder-card` entries sit after the TestimonialRow entries, matching homepage order).
+- Reads no collection or global itself; `member` and `photo` come populated from the page query (`PAGE_QUERY_DEPTH = 2`).
+- Migration: `20261022_031049_b3_homepage_batch2` (table `pages_blocks_team_intro`, `_pages_v_*`, enum `enum_pages_blocks_team_intro_variant`; `photo` is a column, `member` is a relation column).
+
+**Notes**
+- `intro`: text column plus a 4:5 photo (full-bleed under the text on mobile). No photo: text only, single column.
+- Link renders only when it resolves and has a label.
+- Client island: none.
+
+### TestimonialRow (unit B3)
+
+Section: Testimonials (3 cards) plus the "A study in full" card. Variant built now: `row`. `client-voice` (page 2) comes later; `leadMetric` (page 16) is deliberately not built.
+
+**Files**
+- `src/blocks/TestimonialRow/config.ts`, `src/blocks/TestimonialRow/Component.tsx` (`TestimonialRowBlock` async server wrapper and `TestimonialRowView` pure render), `src/blocks/TestimonialRow/loadFeaturedStudy.ts` (`server-only`).
+
+**Fields & schema** (slug `testimonialRow`, `interfaceName: 'TestimonialRowBlock'`)
+- `variant`: select, required, default `row`.
+- `eyebrow` / `eyebrowTick`: `eyebrowField({ defaultTick: false })`.
+- `heading` / `accentPhrase`: `headlineFields({ required: false })`.
+- `testimonials`: relationship to `testimonials`, `hasMany`, 1 to 3, `maxDepth: 2`.
+- `studyCard`: group.
+  - `show`: checkbox, default true.
+  - `label`: text, default `A study in full`.
+  - `source`: select, required, default `featured` (newest published study ticked Featured) or `manual`.
+  - `caseStudy`: relationship to `case-studies`, `maxDepth: 2`; shown when `source = manual`.
+  - `readLabel`: text, default `Read the study`.
+  - `fallbackMetric`: group = `metricFields({ required: false })` (value, label, sub, accent); the quiet figure shown while no study is published.
+- `cta`: `linkField`, optional "link under the cards".
+
+**Wiring**
+- Registered in `pageBlocks`; component key `testimonialRow`. Showcase: `testimonialRow` / `row`, `row — mixed, no study`, `row — published study (manual)`, `row — empty`.
+- Data: testimonials and the manual `caseStudy` come populated from the page query. `loadFeaturedStudy()` (only when the card is shown and `source = featured`): `find` on `case-studies` where `featured = true` and `_status = published`, sort `-publishedAt`, `limit: 1`, `depth: 1`, `overrideAccess: false`; a failed read is logged and treated as none.
+- Migration: `20261022_031049_b3_homepage_batch2` (table `pages_blocks_testimonial_row`, `_pages_v_*`, enum for `variant`; relation columns in the rels tables; `studyCard` and `fallbackMetric` are flattened columns).
+
+**Notes**
+- Published only: a testimonial renders only with `_status` published (or unset); drafts are skipped. A study card renders only for a published study that has a slug and a non-blank headline metric value and label.
+- States: no testimonials and no study/figure → the block renders nothing; testimonials only (no study, no complete fallback figure) → the cards reflow into a row; study/figure only → the study column alone. The fallback figure needs both `value` and `label`, otherwise nothing renders in the slot.
+- A video testimonial renders a poster with a link to the YouTube watch URL in a new tab (no embed); an unparseable YouTube URL logs an error and the quote renders alone. Rating shows stars only when set.
+- The inline video tile is a stop-gap; it is flagged to be replaced by the shared VideoTile (SCHEMA X4) when that exists.
+
+### TeamIntro, founder-card variant (unit B3)
+
+Section: second founder block, "One founder, no layers." Same block and files as [TeamIntro](#teamintro-unit-b3); this entry covers the variant only.
+
+**Files**
+- `src/blocks/TeamIntro/config.ts`, `src/blocks/TeamIntro/Component.tsx`.
+
+**Fields & schema**
+- Select `variant = founder-card`. Fields used: `eyebrow`, `heading`, `accentPhrase`, `body`, `member` (required, `team-members`, `maxDepth: 2`), `link`. `photo` is hidden in the admin for this variant.
+- Reads from the member: `name`, `role`, `photo` (decorative, `alt=""`), `socials` (platform and https URL; each opens in a new tab with a platform icon and label).
+
+**Wiring**
+- Component key `teamIntro`. Showcase: `teamIntro` / `founder-card` and `founder-card — no member`.
+- Migration: `20261022_031049_b3_homepage_batch2`.
+
+**Notes**
+- Fallback: no member, an unpopulated member (id only: draft or unreadable) or a member whose `_status` is not `published` makes the whole block render nothing (logged with `console.error`), never a half card.
+- No "latest posts" (R12); copy is single-founder (R17). The headline renders at `level={2}` with the wine accent colour.
+
+### FinalCTA (unit B3)
+
+Section: Final CTA (restates capacity), the dark band before the footer. One variant; the dot matrix and wine logo mark are fixed by the design.
+
+**Files**
+- `src/blocks/FinalCTA/config.ts`, `src/blocks/FinalCTA/Component.tsx` (`FinalCTABlock`, async server component).
+
+**Fields & schema** (slug `finalCTA`, `interfaceName: 'FinalCTABlock'`)
+- `heading` / `accentPhrase`: `headlineFields({ required: false })`. Empty heading falls back to the site default.
+- `body`: textarea, optional.
+- `capacity`: `scarcityRef({ name: 'capacity', defaultValue: 'builds-line' })`; `none` hides the line.
+- `buttons`: array, 1 to 2 rows, each `{ link }` (`linkField`, required). Empty falls back to the site default button.
+
+**Wiring**
+- Registered in `pageBlocks`; component key `finalCTA`. Showcase: `finalCTA` / `default`, `default — no capacity`, `default — template defaults` (empty heading and no buttons, `engines-line`).
+- Data (public Local API, `overrideAccess: false`): `site-settings` global (`depth: 1`) for `templateDefaults.finalCtaHeading` and `templateDefaults.finalCtaButton`; `scarcity` global (`depth: 0`) when `capacity` is not `none`.
+- Migration: `20261022_030147_b3_homepage_batch1` (tables `pages_blocks_final_c_t_a`, `pages_blocks_final_c_t_a_buttons`, `_pages_v_*`).
+
+**Notes**
+- Loud/quiet contract: the capacity line renders the statistic (loud, bold) with its reason quiet beneath; a missing statement, an unfillable token or a blank reason skips the line with a `console.error`. Never a bare number.
+- Editing `site-settings` or `scarcity` revalidates through their global hooks (layout-wide), so default headline/button and capacity changes appear without a rebuild.
+- A heading left empty with no site default logs an error and the headline is omitted. The accent phrase only applies to an explicit heading.
+- The CTA buttons use the `ghost-light` variant; the second button has a lighter border.
 
 ## 2. Case Study template
 
@@ -913,8 +1265,8 @@ Access: `staffContentAccessDraftDelete` (SCHEMA §4.3 + Delta 2026-10-18; S1 cha
 **Wiring**
 - Registration: `src/payload.config.ts` → `collections: [Users, Pages, Media, Downloads, Clients, TeamMembers, Testimonials, Faqs, CaseStudies, Posts, LeadMagnets]`.
 - Hooks: `beforeValidate: [slug.beforeValidate, enforceZeroLeakage]`; `beforeChange: [setPublishedAtOnPublish]`; `afterChange: [blockLeakyPublish, revalidate.afterChange]`; `afterDelete: [revalidate.afterDelete]`.
-- Layout: `TODO(blocks)` in `Pages.ts`; the integrator appends each block to `layout.blocks` as it clears its gates. Because `layout` is required (min 1), no page can be published until the first block is registered; drafts save.
-- Pages using it: all single-document pages listed above. The router is not built yet.
+- Layout: `pageLayoutField(pageBlocks)` is attached once `pageBlocks` is non-empty (nine blocks since B3); `layout` is required (min 1) to publish, drafts save without it.
+- Pages using it: all single-document pages listed above. Routing, metadata, preview, redirects, sitemap and robots: [Page router (B2)](#page-router-unit-b2).
 - Revalidation: `revalidateTagHooks('pages', { paths: (doc) => [pagePath(doc?.slug)] })`. Tag `pages` plus the page path for `doc` and `previousDoc` (old and new slug); `home` → `/`; `404` → tag only. Live proof is deferred until a page can publish (first block registered). Anything that reads pages must fetch with the `pages` tag.
 - `richTextLinkFeature()` on FAQ answers, case-study editors and post editors: internal links to `pages`, `case-studies`, `posts`, `lead-magnets` (`maxDepth: 1`), plus external URLs. Population runs through the reader's access, so an internal link to a draft stays an unpopulated ID for the public.
 - Migration: `20261017_223525_c10_pages`. Additive.
@@ -923,12 +1275,11 @@ Access: `staffContentAccessDraftDelete` (SCHEMA §4.3 + Delta 2026-10-18; S1 cha
 
 **Notes**
 - P3 (see [`seo` (P3)](#seo-unit-p3)): `title` now sits inside an unnamed "Content" tab (the first top-level field is a `tabs` field so plugin-seo can append its SEO tab). Admin layout only; no schema or column change. The future `layout` field (`pageLayoutField(...)`, `TODO(blocks)` in `Pages.ts`) goes inside that Content tab. The sidebar fields and `slug` stay top-level. The `meta` group is added by P3 (migration `20261022_001520_p3_seo`).
-- Deferred: live preview and draft mode.
+- Live preview and draft mode: done in B2 for `pages` only (`admin.preview`, `admin.livePreview`); see [Page router (B2)](#page-router-unit-b2).
 - S3: `beforeDelete: [blockDeleteIfReferenced()]`; autosave off. Blocks paths on other collections (e.g. a future `layout` block holding a relationship to `pages`) are scanned, not queried. See [Error handling](#error-handling-unit-s3).
 - Router checklist (for the router unit):
-  - `[...slug]` route and `not-found.tsx` (reads the `404` doc), both fetching with the `pages` tag.
-  - Handle a request for `/home` (404 or 301 to `/`).
-  - Live preview and draft mode for `pages`, `posts`, `case-studies`, `lead-magnets`, with URLs built from server-side `SITE_URL` via `pagePath`.
+  - Done in B2: `[...slug]` route; `/home` redirects (308) to `/`; live preview and draft mode for `pages`.
+  - Still open: `not-found.tsx` reading the `404` doc; live preview and draft mode for `posts`, `case-studies`, `lead-magnets`.
 - Frontend rule (SCHEMA §5.2): public queries use `draft: false`.
 
 ### Globals
@@ -1508,7 +1859,7 @@ Implemented in [B0](#frontend-foundation-unit-b0).
 - Route: `src/app/(frontend)/%5Fshowcase/page.tsx`. The folder is `%5Fshowcase` because a `_folder` is a private folder excluded from routing; `%5F` (URL-encoded `_`) creates a segment starting with an underscore.
 - `notFound()` when `APP_ENV=production` (`showcaseEnabled()`); always `robots: { index: false, follow: false }`.
 - Entries come from `showcaseEntries` in `src/showcase/registry.ts`, each rendered through `RenderBlocks`. Scaffolding: system-mono labels (block, variant, `mobile-only`/`desktop-only` tag), dotted dividers between entries, and an empty-state message ("No blocks yet.") while the registry is empty.
-- Currently no entries (no blocks registered).
+- Entries (B3, in order): `hero` x2, `proofStrip` x4, `caseStudyCards` x4, `miniCTAStrip` x2, `twoTrackPanels` x2, `phaseTimeline` x2, `teamIntro` (intro) x2, `testimonialRow` x4, `teamIntro` (founder-card) x2, `finalCTA` x3. Fixtures are static objects typed to the generated block rows, so fallback and empty states render without database content (except `caseStudyCards` / `cards — featured (DB)`, which reads published studies).
 
 ---
 
