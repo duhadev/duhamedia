@@ -211,13 +211,28 @@ export const Pages: CollectionConfig = {
     afterDelete: [revalidate.afterDelete],
   },
   fields: [
+    // P3: the main fields sit in a "Content" tab so plugin-seo's `tabbedUI` appends
+    // its SEO tab beside it and leaves the sidebar fields below top-level
+    // (plugin-seo@3.91.0 dist/index.js:161-183). An unnamed tab stores nothing of
+    // its own: no DB change.
     {
-      name: 'title',
-      type: 'text',
-      required: true,
-      admin: { description: 'Admin title and the default browser-tab title.' },
+      type: 'tabs',
+      tabs: [
+        {
+          label: 'Content',
+          fields: [
+            {
+              name: 'title',
+              type: 'text',
+              required: true,
+              admin: { description: 'Admin title and the default browser-tab title.' },
+            },
+            // TODO(blocks): add `pageLayoutField([<first block>])` here, inside the Content tab
+            // (required, minRows 1), with the first block.
+          ],
+        },
+      ],
     },
-    // TODO(blocks): add `pageLayoutField([<first block>])` here (required, minRows 1) with the first block.
     slugField({ slugify: ({ valueToSlugify }) => slugifyPath(valueToSlugify), overrides: pageSlugOverrides }),
     {
       name: 'headerVariant',

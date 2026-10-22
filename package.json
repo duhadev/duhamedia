@@ -24,6 +24,7 @@
     "@payloadcms/next": "3.91.0",
     "@payloadcms/plugin-form-builder": "3.91.0",
     "@payloadcms/plugin-redirects": "3.91.0",
+    "@payloadcms/plugin-seo": "3.91.0",
     "@payloadcms/richtext-lexical": "3.91.0",
     "@payloadcms/ui": "3.91.0",
     "cross-env": "7.0.3",

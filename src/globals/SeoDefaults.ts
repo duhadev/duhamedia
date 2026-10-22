@@ -62,6 +62,8 @@ import { revalidateGlobalHook } from '../hooks/revalidateTag'
 
 /** The placeholder plugin-seo's `generateTitle` replaces with the document title. */
 export const TITLE_PLACEHOLDER = '%s'
+/** SCHEMA §7.4 default; also plugin-seo's fallback while the global is unsaved (P3). */
+export const DEFAULT_TITLE_TEMPLATE = '%s — Duha Media'
 export const DEFAULT_DESCRIPTION_MAX = 155
 /** schema.org LocalBusiness subtypes offered (must be real schema.org types). */
 export const LOCAL_BUSINESS_TYPES = ['ProfessionalService'] as const
@@ -92,8 +94,12 @@ const validateDescription: TextareaFieldValidation = (value, options) => {
   return textarea(value, options)
 }
 
-/** Required (built-in check), then the image must be big enough for the `og` size. */
-const validateOgImage: UploadFieldSingleValidation = async (value, options) => {
+/**
+ * Required (built-in check), then the image must be big enough for the `og` size.
+ * Also used on the per-document plugin-seo share image (src/plugins/seo.ts, P3),
+ * where the field is optional so the built-in check passes an empty value.
+ */
+export const validateOgImage: UploadFieldSingleValidation = async (value, options) => {
   const base = await upload(value, options)
   if (base !== true) return base
   const id =
@@ -165,7 +171,7 @@ export const SeoDefaults: GlobalConfig = {
       type: 'text',
       label: 'Title template',
       required: true,
-      defaultValue: '%s — Duha Media',
+      defaultValue: DEFAULT_TITLE_TEMPLATE,
       validate: validateTitleTemplate,
       hooks: { beforeValidate: [trim] },
       admin: {

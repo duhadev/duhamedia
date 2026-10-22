@@ -25,6 +25,7 @@ import { migrations } from './migrations'
 import { staffOnly } from './access'
 import { formBuilder } from './plugins/formBuilder'
 import { redirects } from './plugins/redirects'
+import { seo } from './plugins/seo'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -72,5 +73,6 @@ export default buildConfig({
   },
   sharp,
   telemetry: false,
-  plugins: [formBuilder, redirects],
+  // seo is order-independent (touches only pages/case-studies/posts/lead-magnets).
+  plugins: [formBuilder, redirects, seo],
 })

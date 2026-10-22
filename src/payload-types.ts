@@ -203,6 +203,7 @@ export interface Page {
    * Admin title and the default browser-tab title.
    */
   title: string;
+  meta?: SeoMeta;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
@@ -238,6 +239,24 @@ export interface Page {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SeoMeta".
+ */
+export interface SeoMeta {
+  /**
+   * The title shown in Google results, the browser tab and social share cards. Aim for 50–60 characters. "Auto-generate" fills it from the title and the SEO defaults template; if left empty, the site builds it the same way.
+   */
+  title?: string | null;
+  /**
+   * The grey text under the title in Google results and share cards. Aim for 100–155 characters (155 at most). Leave empty to use the SEO defaults description.
+   */
+  description?: string | null;
+  /**
+   * The picture shown when this page is shared on LinkedIn, Facebook, X or in a message. Landscape, at least 1200 × 630 pixels. Leave empty to use the SEO defaults image.
+   */
+  image?: (number | null) | Media;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -731,6 +750,7 @@ export interface CaseStudy {
     newsletterHeading?: string | null;
     finalCtaHeading?: string | null;
   };
+  meta?: SeoMeta;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
@@ -1000,6 +1020,7 @@ export interface Post {
      */
     finalCtaHeading?: string | null;
   };
+  meta?: SeoMeta;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
@@ -1127,6 +1148,7 @@ export interface LeadMagnet {
      */
     crossSellLine?: string | null;
   };
+  meta?: SeoMeta;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
@@ -1671,6 +1693,7 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
+  meta?: T | SeoMetaSelect<T>;
   generateSlug?: T;
   slug?: T;
   headerVariant?: T;
@@ -1682,6 +1705,15 @@ export interface PagesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SeoMeta_select".
+ */
+export interface SeoMetaSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  image?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1943,6 +1975,7 @@ export interface CaseStudiesSelect<T extends boolean = true> {
         newsletterHeading?: T;
         finalCtaHeading?: T;
       };
+  meta?: T | SeoMetaSelect<T>;
   generateSlug?: T;
   slug?: T;
   featured?: T;
@@ -2038,6 +2071,7 @@ export interface PostsSelect<T extends boolean = true> {
         newsletterHeading?: T;
         finalCtaHeading?: T;
       };
+  meta?: T | SeoMetaSelect<T>;
   generateSlug?: T;
   slug?: T;
   track?: T;
@@ -2089,6 +2123,7 @@ export interface LeadMagnetsSelect<T extends boolean = true> {
         body?: T;
         crossSellLine?: T;
       };
+  meta?: T | SeoMetaSelect<T>;
   generateSlug?: T;
   slug?: T;
   publishedAt?: T;
