@@ -16,6 +16,7 @@ import { blocks, text } from 'payload/shared'
 
 import { staffContentAccessDraftDelete } from '../access'
 import { contentVersions } from '../fields'
+import { blockDeleteIfReferenced } from '../hooks/blockDeleteIfReferenced'
 import { setPublishedAtOnPublish } from '../hooks/publishedAt'
 import { revalidateTagHooks } from '../hooks/revalidateTag'
 import { uniqueSlugHooks } from '../hooks/uniqueSlug'
@@ -208,6 +209,8 @@ export const Pages: CollectionConfig = {
     beforeValidate: [slug.beforeValidate, enforceZeroLeakage],
     beforeChange: [setPublishedAtOnPublish],
     afterChange: [blockLeakyPublish, revalidate.afterChange],
+    // S3-1: refuse to delete while still used somewhere live (named message).
+    beforeDelete: [blockDeleteIfReferenced()],
     afterDelete: [revalidate.afterDelete],
   },
   fields: [

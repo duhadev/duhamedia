@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { staffContentAccess } from '../access'
 import { contentVersions, validateHttpsUrl } from '../fields'
+import { blockDeleteIfReferenced } from '../hooks/blockDeleteIfReferenced'
 import { revalidateTagHooks } from '../hooks/revalidateTag'
 
 /** SCHEMA §10: public reads are cached under the `team-members` tag. */
@@ -32,6 +33,8 @@ export const TeamMembers: CollectionConfig = {
   versions: contentVersions,
   hooks: {
     afterChange: [revalidate.afterChange],
+    // S3-1: refuse to delete while still used somewhere live (named message).
+    beforeDelete: [blockDeleteIfReferenced()],
     afterDelete: [revalidate.afterDelete],
   },
   fields: [

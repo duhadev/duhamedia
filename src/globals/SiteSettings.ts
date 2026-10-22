@@ -23,10 +23,13 @@ import { revalidateGlobalHook } from '../hooks/revalidateTag'
  * closers for the p2/p13/p14 templates and empty NewsletterBand/FinalCTA
  * headings.
  *
- * Real facts only (MERGED §10 R5): the only defaults that are facts are
+ * Real facts only (MERGED §10 R5): the only code defaults that are facts are
  * Lombard, IL (location). Legal name, contact email, socials, GBP link,
- * coordinates, postal address and rating start EMPTY; the seed fills
- * placeholders. Copy defaults (newsletter closer lines) are design copy.
+ * coordinates, postal address and rating have NO code default: their values
+ * are content, entered in the admin or by the seed. The legal name, contact
+ * email and map coordinates are set there now (human-confirmed values,
+ * PROGRESS F1, F2, F4); fields with no confirmed fact stay empty until one
+ * is known. Copy defaults (newsletter closer lines) are design copy.
  *
  * No drafts (SCHEMA §7): a save is live immediately. Defaults are applied
  * when the global is first saved (admin form / Local API update), NOT on read:

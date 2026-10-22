@@ -3,6 +3,8 @@ import type { CollectionConfig, TextFieldSingleValidation } from 'payload'
 import { text } from 'payload/shared'
 
 import { staffOnly } from '../access'
+import { DEFAULT_OG_IMAGE_HINT, blockDeleteIfReferenced } from '../hooks/blockDeleteIfReferenced'
+import { missingFileHandler } from '../lib/missingFileHandler'
 
 /**
  * `media` (SCHEMA.md §6.9, §4.3, §10 — Gate S approved 2026-10-17; DECISIONS §G).
@@ -45,6 +47,8 @@ const validateAlt: TextFieldSingleValidation = (value, options) => {
   return true
 }
 
+const MEDIA_STATIC_DIR = path.join(MEDIA_DIR, 'media')
+
 export const Media: CollectionConfig = {
   slug: 'media',
   admin: {
@@ -59,8 +63,21 @@ export const Media: CollectionConfig = {
     update: staffOnly,
     delete: staffOnly,
   },
+  hooks: {
+    // S3-1/S3-2 (F14): refuse to delete an image still used anywhere live
+    // (incl. SEO defaults' NOT NULL default social share image) BEFORE
+    // Payload unlinks the files; names every place.
+    beforeDelete: [
+      blockDeleteIfReferenced({
+        noun: 'image',
+        hints: { 'seo-defaults:defaultOgImage': DEFAULT_OG_IMAGE_HINT },
+      }),
+    ],
+  },
   upload: {
-    staticDir: path.join(MEDIA_DIR, 'media'),
+    staticDir: MEDIA_STATIC_DIR,
+    // S3-3: a file missing on disk → 404 "File not found." (not a 500).
+    handlers: [missingFileHandler(MEDIA_STATIC_DIR)],
     mimeTypes: ['image/*'],
     focalPoint: true,
     adminThumbnail: 'thumbnail',

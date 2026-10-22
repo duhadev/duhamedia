@@ -24,6 +24,7 @@ import { number } from 'payload/shared'
 import { adminOrMarketingUnpublished, postsRead, staffOnly, staffOnlyField, staffOrPipeline, staffOrPipelineDrafts } from '../access'
 import { forbidPipelineOnPublished, forbidPipelinePublish, pipelineNeverPublishes } from '../access/pipeline'
 import { accentPhraseAdminField, contentVersions, linkField, metricFields, pricingNote, richTextLinkFeature, validateAccentPhrase } from '../fields'
+import { blockDeleteIfReferenced } from '../hooks/blockDeleteIfReferenced'
 import { setPublishedAtOnPublish } from '../hooks/publishedAt'
 import { revalidateTagHooks } from '../hooks/revalidateTag'
 import { uniqueSlugHooks } from '../hooks/uniqueSlug'
@@ -212,6 +213,8 @@ export const Posts: CollectionConfig = {
     beforeValidate: [slug.beforeValidate],
     beforeChange: [forbidPipelinePublish, forbidPipelineOnPublished, setPublishedAtOnPublish, fillReadTime],
     afterChange: [pipelineNeverPublishes, revalidate.afterChange],
+    // S3-1: refuse to delete while still used somewhere live (named message).
+    beforeDelete: [blockDeleteIfReferenced()],
     afterDelete: [revalidate.afterDelete],
   },
   fields: [

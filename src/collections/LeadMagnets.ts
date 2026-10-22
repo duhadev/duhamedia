@@ -9,6 +9,7 @@ import { text, upload } from 'payload/shared'
 
 import { staffContentAccessDraftDelete, staffOnlyField } from '../access'
 import { accentPhraseAdminField, contentVersions, validateAccentPhrase } from '../fields'
+import { blockDeleteIfReferenced, leadMagnetSubmissionsSentence } from '../hooks/blockDeleteIfReferenced'
 import { setPublishedAtOnPublish } from '../hooks/publishedAt'
 import { revalidateTagHooks } from '../hooks/revalidateTag'
 import { uniqueSlugHooks } from '../hooks/uniqueSlug'
@@ -130,6 +131,8 @@ export const LeadMagnets: CollectionConfig = {
     beforeValidate: [slug.beforeValidate],
     beforeChange: [setPublishedAtOnPublish],
     afterChange: [revalidate.afterChange],
+    // S3-1: refuse to delete while still used somewhere live (named message).
+    beforeDelete: [blockDeleteIfReferenced({ counted: { 'form-submissions': leadMagnetSubmissionsSentence } })],
     afterDelete: [revalidate.afterDelete],
   },
   fields: [

@@ -39,8 +39,18 @@ import { youtubeVideoId } from '../lib/youtube'
 /** SCHEMA §5.1: drafts on every content-facing collection. */
 export const contentVersions = {
   drafts: {
-    // Autosave exists for live preview (SCHEMA §5.1).
-    autosave: { interval: 375 },
+    // NO autosave (F21, human 2026-10-21: no blank draft until the editor's
+    // first manual save). In payload@3.91.0 the admin's create view CREATES a
+    // draft the moment it opens whenever autosave is on and `drafts.validate`
+    // is off (@payloadcms/next/dist/views/Document/index.js:247-279); there is
+    // no option to defer that, and `validate: true` would enforce required
+    // fields on every draft save. Without autosave the editor gets "Save
+    // draft" + "Publish" (@payloadcms/ui/dist/elements/DocumentControls/
+    // index.js:227). Live preview: client-side `useLivePreview` still updates
+    // on every keystroke (ui elements/LivePreview/Window/index.js:41-70);
+    // server-rendered preview (`RefreshRouteOnSave`) refreshes on Save draft
+    // instead of every 375 ms (index.js:75-93).
+    autosave: false,
     // Off: a scheduled job could publish without a human.
     schedulePublish: false,
     // Required fields are enforced on publish only.

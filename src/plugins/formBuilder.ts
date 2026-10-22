@@ -13,6 +13,7 @@ import { select, text } from 'payload/shared'
 
 import { adminOnly, adminOnlyField, staffOnly, turnstileVerifiedOrAdmin } from '../access'
 import { richTextLinkFeature } from '../fields'
+import { blockDeleteIfReferenced, formSubmissionsSentence } from '../hooks/blockDeleteIfReferenced'
 import { stampSubmissionDelivery } from '../hooks/formSubmissions'
 import { revalidateLiveCollectionHooks } from '../hooks/revalidateTag'
 
@@ -320,7 +321,15 @@ export const formBuilder: Plugin = formBuilderPlugin({
     // overrideAccess (definitions hold notification addresses). Writes: admin.
     access: { read: staffOnly, create: adminOnly, update: adminOnly, delete: adminOnly },
     admin: { defaultColumns: ['title', 'formKey', 'eventType', 'sendEvent', 'updatedAt'] },
-    hooks: { afterChange: [formsRevalidate.afterChange], afterDelete: [formsRevalidate.afterDelete] },
+    hooks: {
+      // S3-1/S3-2 (F18): a form with submissions (NOT NULL FK) or still used by a
+      // live lead magnet / site settings cannot be deleted; named message.
+      // The plugin has no forms hooks of its own; `formOverrides` is spread
+      // into the collection (plugin-form-builder@3.91.0 collections/Forms/index.js:273-274).
+      beforeDelete: [blockDeleteIfReferenced({ counted: { 'form-submissions': formSubmissionsSentence } })],
+      afterChange: [formsRevalidate.afterChange],
+      afterDelete: [formsRevalidate.afterDelete],
+    },
     fields: ({ defaultFields }) => [...adaptPluginFields(defaultFields), ...formIntegrationFields],
   },
   formSubmissionOverrides: {

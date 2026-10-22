@@ -2,6 +2,8 @@ import path from 'path'
 import type { CollectionConfig } from 'payload'
 
 import { staffOnly } from '../access'
+import { blockDeleteIfReferenced } from '../hooks/blockDeleteIfReferenced'
+import { missingFileHandler } from '../lib/missingFileHandler'
 import { MEDIA_DIR } from './Media'
 
 /**
@@ -19,6 +21,8 @@ import { MEDIA_DIR } from './Media'
  * `focalPoint`, `crop` in uploads/types.d.ts; `mimeTypes` enforced
  * server-side in uploads/checkFileRestrictions.js.
  */
+const DOWNLOADS_STATIC_DIR = path.join(MEDIA_DIR, 'downloads')
+
 export const Downloads: CollectionConfig = {
   slug: 'downloads',
   admin: {
@@ -33,8 +37,15 @@ export const Downloads: CollectionConfig = {
     update: staffOnly,
     delete: staffOnly,
   },
+  hooks: {
+    // S3-1: refuse to delete a file a live lead magnet still delivers.
+    beforeDelete: [blockDeleteIfReferenced({ noun: 'file' })],
+  },
   upload: {
-    staticDir: path.join(MEDIA_DIR, 'downloads'),
+    staticDir: DOWNLOADS_STATIC_DIR,
+    // S3-3: missing on disk → 404 "File not found." Read access (staff only)
+    // is checked BEFORE handlers run, so the public still gets 403.
+    handlers: [missingFileHandler(DOWNLOADS_STATIC_DIR)],
     mimeTypes: [
       'application/pdf',
       'text/csv',

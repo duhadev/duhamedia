@@ -10,6 +10,7 @@ import { number, upload } from 'payload/shared'
 
 import { staffContentAccess } from '../access'
 import { contentVersions, sortOrderField, validateHttpsUrl, validateYouTubeUrl } from '../fields'
+import { blockDeleteIfReferenced } from '../hooks/blockDeleteIfReferenced'
 import { revalidateTagHooks } from '../hooks/revalidateTag'
 
 /**
@@ -96,6 +97,8 @@ export const Testimonials: CollectionConfig = {
   versions: contentVersions,
   hooks: {
     afterChange: [revalidate.afterChange],
+    // S3-1: refuse to delete while still used somewhere live (named message).
+    beforeDelete: [blockDeleteIfReferenced()],
     afterDelete: [revalidate.afterDelete],
   },
   fields: [

@@ -15,6 +15,7 @@ import * as migration_20261021_233028_p1_form_builder from './20261021_233028_p1
 import * as migration_20261021_235030_p2_redirects from './20261021_235030_p2_redirects';
 import * as migration_20261022_000002_s2_scarcity_seo_delta from './20261022_000002_s2_scarcity_seo_delta';
 import * as migration_20261022_001520_p3_seo from './20261022_001520_p3_seo';
+import * as migration_20261022_014336_s3_friendly_errors from './20261022_014336_s3_friendly_errors';
 
 export const migrations = [
   {
@@ -100,6 +101,11 @@ export const migrations = [
   {
     up: migration_20261022_001520_p3_seo.up,
     down: migration_20261022_001520_p3_seo.down,
-    name: '20261022_001520_p3_seo'
+    name: '20261022_001520_p3_seo',
+  },
+  {
+    up: migration_20261022_014336_s3_friendly_errors.up,
+    down: migration_20261022_014336_s3_friendly_errors.down,
+    name: '20261022_014336_s3_friendly_errors'
   },
 ];
