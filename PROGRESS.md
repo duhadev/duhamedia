@@ -212,6 +212,6 @@ Decisions deferred to the human; each has a safe default applied so work continu
 | F35 | S3 | Fixing a blocked delete means editing the docs that use it first (as designed) | marketing note |
 
 ## Session handoff
-- **In flight:** big step 2 — G1 site-settings (schema-architect, opus), then G2 scarcity, G3 navigation, G4 seo-defaults, P1 form-builder, P2 redirects, P3 seo. Serial (shared payload.config.ts / types / migrations).
-- **Next up:** big checkpoint with the human: flags table above + any modifications → then blocks (page build order).
-- **Blockers:** OPS_REQUESTS #1–#6 unanswered; postal address (first broadcast only).
+- **In flight:** S3 dev + marketing docs. Big step 2 (G1–G4, P1–P3, S2, S3) otherwise complete.
+- **Next up:** final checkpoint with the human: flags F26–F35 (all have defaults applied). Then the blocks phase (23 blocks in page build order; re-add `pages.layout` via `pageLayoutField` inside the Pages "Content" tab with the first block; NewsletterBand slug `newsletterBand`).
+- **Blockers:** OPS_REQUESTS #1–#8 unanswered; postal address (first broadcast only).
