@@ -185,17 +185,17 @@ Decisions deferred to the human; each has a safe default applied so work continu
 | F12 | G4 | ~~MarketingAgency~~ **RESOLVED 2026-10-21 (human: a): remove MarketingAgency; options = ProfessionalService only**; ships in S2 (enum migration) | — |
 | F13 | G4 | ~~type default~~ **RESOLVED 2026-10-21 (via F12 a): default ProfessionalService**; ships in S2 | — |
 | F14 | **RESOLVED 2026-10-21 (human: a) → unit S3 friendly errors** — G4 | Deleting the media used as default OG image fails with a raw "Failed query" (NOT NULL FK). Rec: friendly media beforeDelete check (validation only) or marketing note | image protected; message unclear |
-| F15 | G4 | Added min-size check: OG image must produce the 1200×630 `og` size (validation only). Keep? | kept |
-| F16 | P1 | New optional env `FORMS_DEFAULT_TO_EMAIL` (notification fallback; unset → from-address). Server should set it? (OPS) | name in .env.example only |
-| F17 | P1 | Forms writes admin-only (SCHEMA) → marketing can't edit form copy / notification addresses. Keep? | admin-only |
+| F15 | G4 | ~~OG min size~~ **RESOLVED 2026-10-21 (human: a): keep the ≥1200×630 check** | — |
+| F16 | P1 | ~~notification fallback~~ **RESOLVED 2026-10-21 (human: a): FORMS_DEFAULT_TO_EMAIL=hello@duhamedia.com** — OPS #8 for staging/prod; set in local .env by human if wanted | — |
+| F17 | P1 | ~~forms edit rights~~ **RESOLVED 2026-10-21 (human: keep admin-only)** | — |
 | F18 | **RESOLVED 2026-10-21 (human: a) → unit S3 friendly errors** — P1 | Deleting a form that has submissions → raw DB error (NOT NULL + set null, like F14). Rec: friendly beforeDelete check | protected; message unclear |
-| F19 | P1 | Deleting a page used as a form redirect silently clears that redirect | accepted |
-| F20 | P1 | Plugin's notification email is awaited inside the submit request (visitor waits on Resend). CLAUDE.md wants it parallel/not blocking. Rec: integration unit moves it off the request path | plugin default for now; fix in contact integration unit |
-| F21 | all | Opening a drafts-enabled collection's create view autosaves a blank draft (stray drafts pile up if the editor leaves). Rec: accept (stock) + marketing note, or disable autosave on create | stock; strays deleted by id during QA |
-| F22 | P2 | Should a redirect override a LIVE page at the same address? | no — router applies redirects only on not-found (website-template pattern) |
-| F23 | P2 | Deleting a redirect's target page leaves a dead redirect (reference emptied) | router skips it → 404; alternative = block delete while redirects point at it (hook, mini Gate S) |
-| F24 | P2 | Two-step loops (A→B, B→A) not blocked, only self-loops | accepted; router never chains server-side |
-| F25 | P2 | Old address is case-sensitive (/Old ≠ /old) | exact match kept |
+| F19 | **RESOLVED 2026-10-21 (human: a): block the delete with a message naming what uses the page → S3** — P1 | Deleting a page used as a form redirect silently clears that redirect | accepted |
+| F20 | P1 | ~~notification email blocks submit~~ **RESOLVED 2026-10-21 (human: a): send notification email in the background (job), built in the contact integration unit** | — |
+| F21 | all | ~~blank drafts on create~~ **RESOLVED 2026-10-21 (human: b): no blank draft until the editor's first manual save** → S3. Verify a 3.91.0 option for "no autosave on create"; if none exists, disable autosave on drafts collections (keep Save draft button) and report back | — |
+| F22 | P2 | **ACCEPTED 2026-10-21 (human)** — Should a redirect override a LIVE page at the same address? | no — router applies redirects only on not-found (website-template pattern) |
+| F23 | **RESOLVED 2026-10-21 (human: a): block the delete with a message naming what uses the page → S3** — P2 | Deleting a redirect's target page leaves a dead redirect (reference emptied) | router skips it → 404; alternative = block delete while redirects point at it (hook, mini Gate S) |
+| F24 | P2 | **ACCEPTED 2026-10-21 (human)** — Two-step loops (A→B, B→A) not blocked, only self-loops | accepted; router never chains server-side |
+| F25 | P2 | **ACCEPTED 2026-10-21 (human)** — Old address is case-sensitive (/Old ≠ /old) | exact match kept |
 
 ## Session handoff
 - **In flight:** big step 2 — G1 site-settings (schema-architect, opus), then G2 scarcity, G3 navigation, G4 seo-defaults, P1 form-builder, P2 redirects, P3 seo. Serial (shared payload.config.ts / types / migrations).
