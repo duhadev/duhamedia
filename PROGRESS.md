@@ -190,6 +190,7 @@ Append-only. New sessions: read this before asking the human anything.
 | 2026-10-22 | B0: breakpoints = Tailwind defaults; design mobile build < `md` (768), desktop ≥ `md`; mobile-first classes. Fonts DM Sans + Archivo Black (next/font, self-hosted) + system mono (MERGED R16). Default Tailwind palette removed — design colours only | B0 integrator |
 | 2026-10-22 | Block registry: config in `src/blocks/index.ts` (`pageBlocks`), component in `src/blocks/components.ts`, fixtures in `src/showcase/registry.ts`; `/_showcase` lives at `src/app/(frontend)/%5Fshowcase/`. `pages.layout` only exists once ≥1 block registered (3.91 admin crashes on empty blocks field) | B0 integrator |
 | 2026-10-22 | `AccentHeadline level="section"` = section h2 size (1.75rem mobile / 3rem desktop, per Homepage.dc.html DS level 3→2); `metricFields({ required })` option | batch2 integrator |
+| 2026-10-22 | Fonts self-hosted via `next/font/local` (woff2 + OFL licences in `src/app/(frontend)/fonts/`): Dockerfile builds with `--network=none`, so `next/font/google` broke CI from B0 until this fix | PM / integrator |
 | 2026-10-22 | Big step 3 builds homepage variants only; other pages' variants are added (not restyles) when their page is built | PM |
 
 ## Flags for checkpoint (big step 2: G1–G4 + P1–P3)
