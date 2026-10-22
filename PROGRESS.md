@@ -214,6 +214,13 @@ Decisions deferred to the human; each has a safe default applied so work continu
 | F35 | S3 | **ACCEPTED (by design) 2026-10-22 (human)** — Fixing a blocked delete means editing the docs that use it first (as designed) | marketing note |
 
 ## Session handoff
-- **In flight:** S3 dev + marketing docs. Big step 2 (G1–G4, P1–P3, S2, S3) otherwise complete.
-- **Next up:** final checkpoint with the human: flags F26–F35 (all have defaults applied). Then the blocks phase (23 blocks in page build order; re-add `pages.layout` via `pageLayoutField` inside the Pages "Content" tab with the first block; NewsletterBand slug `newsletterBand`).
-- **Blockers:** OPS_REQUESTS #1–#8 unanswered; postal address (first broadcast only).
+- **Last session ended:** 2026-10-22 — big step 2 complete (G1–G4, P1–P3, S1–S3 documented, pushed); checkpoint F1–F35 all decided. Human about to /clear.
+- **In flight:** nothing.
+- **Next up (big step 3, awaiting the human's "go"):**
+  1. Foundation unit: design tokens/fonts from `design-reference/` (MERGED.md + merged-tokens.css; gold standard = design project `project/`) into Tailwind; `(frontend)` layout; RenderBlocks; `/_showcase` (404 when APP_ENV=production, noindex, dotted dividers, monospace labels, viewport tags); re-add `pages.layout` via `pageLayoutField([...])` inside the Pages "Content" tab with the first block; S4 (F29 homepage SEO title "Duha Media — Integrated Ecommerce Growth Partner, Chicago" in src/plugins/seo.ts).
+  2. Homepage blocks in order (SCHEMA §8–9): Hero → ScarcityStrip/ProofStrip (scarcityRef() factory, import SCARCITY_KEYS from src/lib/scarcity.ts) → ClientLogoStrip → CaseStudyCards (designed empty state) → MiniCTAStrip → TwoTrackPanels → PhaseTimeline → TeamIntro → TestimonialRow → FinalCTA → standard footer. NewsletterBand slug must be `newsletterBand`.
+  3. Checkpoint: human reviews the showcase (phone + desktop) + flags.
+- **How this human works (binding):** run whole big steps autonomously; flag decisions with a safe default in "Flags for checkpoint" and batch them at the step's end (memory: feedback-defer-to-checkpoint). Model choice per memory feedback-model-choice. Standing rule: proper error reporting everywhere (Decision log 2026-10-21) — QA checks it every unit.
+- **Dispatch gotchas:** dev-docs/marketing-docs fail fast without an explicit **position** and, for marketing-docs, an explicit "Gate 1 cleared / Gate 2 cleared or N/A" line; qa-reviewer needs a **design crop path** (or "N/A — admin-only") and **states to capture**. QA uses only the human's logged-in Playwright Chromium session (re-login needed after idle). Opening admin create views no longer creates drafts (autosave off).
+- **Local dev:** `npx -y pnpm@11.28.3 dev` → http://localhost:3000 (admin /admin); Postgres container `duhamedia-postgres` on 127.0.0.1:5433 (`duha_site_dev`, push mode). Dev DB holds real site-settings values (Al-Amanah LLC, hello@duhamedia.com, Lombard 41.880/-88.008, copy from F5), scarcity placeholders 7/3/2/1 + one statement, seo-defaults placeholder description + media id 11 as OG image.
+- **Blockers:** OPS_REQUESTS #1–#8 unanswered (human relays to server agent); postal address (first broadcast only).
