@@ -74,6 +74,33 @@ Sources: `CLAUDE.md` → "Integration architecture" (locked, Oct 2026); `DECISIO
 6. Payload's notification email (via Resend) fires from form-builder config in parallel and is **not** gated on the event.
 7. Newsletter signups additionally sync the Resend Contact / Segment / Topic (see below), with the same job + retry + status pattern, tracked separately from event delivery.
 
+## Form submission path (S4-7, lead flow steps 1–2)
+
+Every public form (contact, pre-call homework, newsletter, lead-magnet capture, footer nudge) goes through ONE server path: **`POST /api/form-submit`** (`src/app/api/form-submit/route.ts`). Nothing in the browser can write a submission any other way: `form-submissions` create access is `turnstileVerifiedOrAdmin` (src/access/index.ts), so an anonymous `POST /api/form-submissions` returns **403** (verified 2026-10-21).
+
+| Step | Where | What happens | On failure |
+|---|---|---|---|
+| 1. Turnstile | `src/integrations/turnstile.ts` → `verifyTurnstile(token, remoteIp)` | `POST https://challenges.cloudflare.com/turnstile/v0/siteverify` (JSON: `secret`, `response`, `remoteip`, `idempotency_key` = fresh UUID), 10 s timeout. Never throws; returns `{ ok, codes }`. Outside development the reply `hostname` must equal the `SITE_URL` host. | Friendly "couldn't confirm you're a person" error; **nothing is read or stored**. Server log: `[turnstile] verification failed: <codes>` (codes only, no token/IP/form data). |
+| 2. Load form | `src/integrations/forms/handleSubmission.ts` | The form doc by id (trusted Local API read; forms are staff-read). | Unknown/deleted form → "This form has changed… refresh". |
+| 3. Validate | same, `validateSubmission()` | Against the form's OWN field definitions: required; email format (≤ 254); select value must be one of the options; text ≤ 500, textarea ≤ 5000; number finite; date `YYYY-MM-DD`; checkbox `true`/`false` (required = must be ticked). Unknown field names, duplicate keys or file values reject the whole submission. Empty optional fields are not stored. | Field errors inline ("Please check the highlighted fields"), or the "refresh" message for unknown/duplicate fields. Nothing stored. |
+| 4. Store | same | `payload.create('form-submissions', { overrideAccess: false, context: { turnstileVerified: true } })` with `form`, `submissionData` (`[{ field, value }]`), `sourcePath` (same-site path only) and `leadMagnet` (kept only if it is a published lead magnet whose capture form is this form). This is the **only** code that sets `turnstileVerified`. | Generic "something went wrong, please try again" (error name logged, no values). |
+| 5. Hooks (existing) | `src/hooks/formSubmissions.ts`, plugin `sendEmail` | `beforeChange`: fresh `eventId` (UUID); `deliveryStatus: pending` only when the form has **Send event** on and an event type; otherwise empty. `afterChange`: form-builder's notification email (Resend). | Not gated on the event. |
+| 6. Respond | `src/app/api/form-submit/route.ts` | JSON (`Accept: application/json`, what `PayloadForm` sends): `200 { ok: true, redirect? }` — `redirect` is the form's redirect confirmation, resolved from the stored form doc. No-JS form post: `303` to that redirect, or a minimal noindex HTML page with the outcome and a "Go back" link to `_source`. | `400 { ok: false, message, fieldErrors? }` (HTML page without JS). |
+
+- **Where event sending will hook in (not built yet):** a `form-submissions` `afterChange` (operation `create`) in `formSubmissionOverrides.hooks` (src/plugins/formBuilder.ts, `TODO(integration)`), after the plugin's `sendEmail`. It enqueues the delivery job when `deliveryStatus === 'pending'` (and the newsletter job for `newsletterSync` forms). Hooking the collection rather than the handler means admin-entered submissions follow the same path.
+- **Turnstile env behaviour:**
+  - `development`: an unset `TURNSTILE_SECRET_KEY` / `TURNSTILE_SITE_KEY` falls back to Cloudflare's always-pass test keys.
+  - `staging` / `production`: an unset secret, or any Cloudflare **test** secret, **fails closed** ("This form is unavailable right now") and logs `missing-secret` / `test-secret-in-production`. An unset site key renders the form with no widget; submitting shows the same message.
+  - Cloudflare's always-pass test secret passes **any** non-empty token (observed 2026-10-21; the docs say "accepts only the dummy token"). Local proofs of the reject path therefore use the always-fail secret `2x0000000000000000000000000000000AA`.
+- **Visitor IP** for `remoteip`: `CF-Connecting-IP`, else the first `X-Forwarded-For` hop. Sent to Cloudflare only; never stored or logged.
+- **Endpoint contract — `POST /api/form-submit`:**
+  - Static Next route outside both route groups (like `/api/health`). Next resolves it before Payload's `(payload)/api/[...slug]` catch-all, and no collection or global is called `form-submit` (verified: the route answers here, and `/api/forms` is still Payload's).
+  - Request: `multipart/form-data` or `application/x-www-form-urlencoded`, at most 64 KB (`MAX_BODY_BYTES`, enforced while streaming, so a missing or false `Content-Length` doesn't get round it). Keys: `_form` (form id), `f:<fieldName>` per field, optional `_source` (page path) and `_leadMagnet` (id), `cf-turnstile-response`.
+  - Guards: same-origin only (`Sec-Fetch-Site` must be `same-origin` when present; `Origin` must equal the `SITE_URL` origin, or the request host in development; a request with neither header is refused) → `403`. Other methods → `405` (`Allow: POST`). Wrong content type → `415`. Body too big → `413`.
+  - Every response is `Cache-Control: no-store, max-age=0`.
+- **Rate limiting** is a Cloudflare rule set by the human (OPS_REQUESTS.md) on the path `/api/form-submit`. The path only accepts POST, so matching on the path alone is enough on the Free/Pro plans, which cannot match on method or headers.
+- **Client:** `src/components/forms/` — `PayloadForm` posts with `fetch` (the form's own FormData), and its plain `action="/api/form-submit" method="post"` is the no-JS fallback (a no-JS visitor has no Turnstile token, so they get the friendly Turnstile page). `CMSForm` (server: loads the form, strips `emails` and integration settings, reads the site key at runtime, renders rich-text confirmation/message blocks), `PayloadForm` (client renderer), `TurnstileWidget` (`@marsidev/react-turnstile@1.6.2`, flexible width, auto-refresh on expiry, reset after every attempt since tokens are single-use).
+
 ## Retry schedule and implementation (DECISIONS §J)
 
 | Attempt | Delay before it |

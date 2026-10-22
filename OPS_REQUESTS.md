@@ -70,3 +70,13 @@ Requests from the duhamedia.com build to the server agent, relayed by the human.
 - **Need:** add `/_preview*` to the cache-bypass rule alongside `/admin*` and `/api/*` (never cache). Do NOT put `/_preview*` behind Cloudflare Access separately — it is gated by the Payload staff session, and logged-in staff must reach it from the admin's Preview button.
 - **Why:** draft preview routes (`/_preview?path=…`, `/_preview/exit`) set the Next draft-mode cookie and render unpublished content for staff; responses already send `Cache-Control: private, no-store`, this is belt-and-braces at the edge.
 - **Done when:** a request to `/_preview/exit` on staging shows `cf-cache-status: BYPASS` (or DYNAMIC).
+
+## #10 — Cloudflare rate-limit rule for public form submissions · 2026-10-22 · Open (human, Cloudflare dashboard)
+- **Need:** one WAF rate-limiting rule on the duhamedia.com zone (covers production and staging hostnames):
+  - Match: URI Path equals `/api/form-submit` (the endpoint only accepts POST, so no method condition is needed — Free/Pro rules cannot match method or headers anyway).
+  - Counting: per IP.
+  - Threshold: Free plan → 5 requests per 10 seconds, action Block, duration 10 seconds (Free allows only a 10 s period and 10 s timeout). Pro or higher → 10 requests per 1 minute, action Block for 10 minutes.
+  - Keep `/api/form-submit` inside the existing cache-bypass rule (`/api/*`) and OUTSIDE Cloudflare Access (public visitors must reach it).
+- **Why:** CLAUDE.md Security §1. Every public form (contact, pre-call homework, newsletter, lead magnet, footer nudge) submits only to this path; Turnstile is verified server-side before anything is stored, and this rule caps abuse before it reaches the server.
+- **Also:** `SITE_URL` must be exactly the public origin on staging and production (`https://staging.duhamedia.com`, `https://duhamedia.com`) — the form route's same-origin check and the Turnstile hostname check both depend on it; a wrong value makes every form submission fail.
+- **Done when:** 6+ rapid POSTs to `https://staging.duhamedia.com/api/form-submit` from one IP within 10 s return Cloudflare's 429/block page; a single normal form submit on staging still works.
