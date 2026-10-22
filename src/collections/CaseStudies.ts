@@ -27,7 +27,9 @@ import { blockDeleteIfReferenced } from '../hooks/blockDeleteIfReferenced'
 import { setPublishedAtOnPublish } from '../hooks/publishedAt'
 import { revalidateTagHooks } from '../hooks/revalidateTag'
 import { uniqueSlugHooks } from '../hooks/uniqueSlug'
+import { docPath } from '../lib/docPath'
 import { lexicalWordCount, readTimeMinutes } from '../lib/lexicalText'
+import { PREVIEW_BREAKPOINTS, previewUrl } from '../lib/preview'
 
 /**
  * `case-studies` (SCHEMA.md §6.2, §4.3, §5, §10 — Gate S approved 2026-10-17).
@@ -46,9 +48,10 @@ import { lexicalWordCount, readTimeMinutes } from '../lib/lexicalText'
  * validation, so it reports with every other field error in one attempt) and
  * backstopped by `blockUnapprovedPublish` (afterChange, rolls back).
  *
- * Deferred (not built yet): `meta` plugin-seo tab (TODO(plugins): plugin-seo
- * `collections: ['case-studies']`), live preview URL + draft mode (integrator,
- * with the `/work/<slug>` route). `linkField` targets and richText internal
+ * Preview (S4-12, with the `/work/<slug>` route): `admin.preview` +
+ * `admin.livePreview` → `/_preview?path=/work/<slug>` (src/lib/preview.ts),
+ * same staff-only draft mode as pages. The `meta` SEO tab comes from
+ * plugin-seo (SEO_COLLECTIONS). `linkField` targets and richText internal
  * links cover pages / case-studies / posts / lead-magnets since C10.
  *
  * Verified against payload@3.91.0: `slugField` (fields/baseFields/slug, marked
@@ -199,6 +202,15 @@ export const CaseStudies: CollectionConfig = {
     defaultColumns: ['title', 'client', 'track', 'figuresApproved', '_status', 'publishedAt', 'updatedAt'],
     description:
       'Client case studies (/work). All are drafts at launch; a study publishes only with client-approved figures.',
+    // Draft preview (new tab) + live preview pane, as on pages (B2): both open
+    // `/_preview?path=/work/<slug>`, which enables Next draft mode for staff only.
+    // No URL until the doc has a slug. payload@3.91.0 collections/config/types.d.ts
+    // `preview` / `livePreview`.
+    preview: (doc) => previewUrl(docPath('case-studies', { slug: typeof doc?.slug === 'string' ? doc.slug : null })),
+    livePreview: {
+      url: ({ data }) => previewUrl(docPath('case-studies', { slug: typeof data?.slug === 'string' ? data.slug : null })),
+      breakpoints: PREVIEW_BREAKPOINTS,
+    },
   },
   // Postgres sorts NULLs first on DESC and @payloadcms/drizzle@3.91.0 has no
   // nulls-last option (queries/buildOrderBy.js), so published studies are put

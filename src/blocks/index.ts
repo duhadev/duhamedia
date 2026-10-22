@@ -6,6 +6,7 @@ import { FinalCTA } from './FinalCTA/config'
 import { Hero } from './Hero/config'
 import { MetricEvent } from './MetricEvent/config'
 import { MiniCTAStrip } from './MiniCTAStrip/config'
+import { NewsletterBand } from './NewsletterBand/config'
 import { PhaseTimeline } from './PhaseTimeline/config'
 import { ProofStrip } from './ProofStrip/config'
 import { RichContent } from './RichContent/config'
@@ -46,5 +47,6 @@ export const pageBlocks: Block[] = [
   TeamIntro,
   RichContent,
   SpecLedger,
+  NewsletterBand,
   AccordionFAQ,
 ]

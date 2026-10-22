@@ -2,6 +2,7 @@ import config from '@payload-config'
 import type { MetadataRoute } from 'next'
 import { getPayload } from 'payload'
 
+import { docPath } from '@/lib/docPath'
 import { getSiteUrl } from '@/lib/env'
 import { NOT_FOUND_SLUG, pagePath } from '@/lib/pagePath'
 
@@ -16,7 +17,8 @@ import { NOT_FOUND_SLUG, pagePath } from '@/lib/pagePath'
  * - Left out: the reserved `404` doc, pages with `noindex`, zero-leakage
  *   (campaign landing) pages. `home` is listed once, as `/`. `/_showcase`
  *   and `/_preview` are not pages and never appear.
- * - case-studies / posts / lead-magnets join when their template routes land.
+ * - PUBLISHED `case-studies` at `/work/<slug>` (S4-12), after the pages, newest
+ *   first. posts / lead-magnets join when their template routes land.
  * - A DB failure is a 500 (crawlers retry), never a silently empty sitemap.
  */
 export const dynamic = 'force-dynamic'
@@ -40,10 +42,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Flags filtered here, not in SQL: `<> true` would also drop NULL rows.
     select: { slug: true, updatedAt: true, noindex: true, zeroLeakage: true },
   })
+  const { docs: studies } = await payload.find({
+    collection: 'case-studies',
+    where: { _status: { equals: 'published' } },
+    depth: 0,
+    draft: false,
+    overrideAccess: false,
+    pagination: false,
+    limit: 0,
+    sort: '-publishedAt',
+    select: { slug: true, updatedAt: true },
+  })
   const site = getSiteUrl()
-  return docs.flatMap((doc) => {
+  const pageEntries = docs.flatMap((doc) => {
     if (doc.noindex === true || doc.zeroLeakage === true) return []
     const path = pagePath(doc.slug)
     return path ? [{ url: `${site}${path}`, lastModified: doc.updatedAt }] : []
   })
+  const studyEntries = studies.flatMap((doc) => {
+    const path = docPath('case-studies', doc)
+    return path ? [{ url: `${site}${path}`, lastModified: doc.updatedAt }] : []
+  })
+  return [...pageEntries, ...studyEntries]
 }

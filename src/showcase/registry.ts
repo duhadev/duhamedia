@@ -751,7 +751,8 @@ export const showcaseEntries: ShowcaseEntry[] = [
   /* ---- Big step 4 (batches A + B): appended after the homepage groups, grouped by block in
    * SCHEMA §9 page order of first use, variants within a group in page order:
    * Hero article (p2), stats (p3), phaseStrip (p4), service (p5, p6) → RichContent (p2) →
-   * MetricEvent (p2) → TestimonialRow client-voice (p2) → CaseStudyCards next-link (p2), ledger (p3),
+   * MetricEvent (p2) → TestimonialRow client-voice (p2) → NewsletterBand (p2, p3) →
+ * CaseStudyCards next-link (p2), ledger (p3),
    * track build (p5), track growth (p6) → TwoTrackPanels doors/contrast (p4), primary-secondary (p5)
    * → PhaseTimeline arc/steps (p4), build-run (p5), engine-rollout (p6) → AccordionFAQ (p4) →
    * SpecLedger (p5, p6). */
@@ -975,6 +976,37 @@ export const showcaseEntries: ShowcaseEntry[] = [
     variant: 'client-voice — no testimonial',
     label: 'fallback: testimonial missing → renders nothing + server warning (by design; empty space below)',
     data: { ...clientVoiceBase, clientVoice: { testimonial: null, link: { type: 'custom' } } },
+  },
+  {
+    block: 'newsletterBand',
+    variant: 'band',
+    label:
+      'p2 band, template defaults (form shows only if Site settings > newsletter form is set; else Join links to the published /newsletter page; neither → renders nothing)',
+    data: { variant: 'band' },
+  },
+  {
+    block: 'newsletterBand',
+    variant: 'band — light, roomy',
+    label: 'p3 Work: custom heading + accent, white with a thin line underneath, roomier spacing',
+    data: {
+      variant: 'band',
+      heading: 'Studies land here first.',
+      accentPhrase: 'first',
+      line: 'One useful email a month. Numbers included.',
+      tone: 'light',
+      spacing: 'roomy',
+    },
+  },
+  {
+    block: 'newsletterBand',
+    variant: 'band — custom button',
+    label: 'custom heading, line and button label',
+    data: {
+      variant: 'band',
+      heading: 'One useful email a month.',
+      line: 'Numbers included. Unsubscribe anytime.',
+      buttonLabel: 'Subscribe',
+    },
   },
   {
     block: 'caseStudyCards',

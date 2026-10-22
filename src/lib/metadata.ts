@@ -7,8 +7,9 @@ import { cache } from 'react'
 
 import { DEFAULT_TITLE_TEMPLATE, TITLE_PLACEHOLDER } from '@/globals/SeoDefaults'
 import { getSiteUrl, isProduction } from '@/lib/env'
+import { docPath } from '@/lib/docPath'
 import { HOME_SLUG, pagePath } from '@/lib/pagePath'
-import type { Media, Page, SeoDefault } from '@/payload-types'
+import type { CaseStudy, Media, Page, SeoDefault } from '@/payload-types'
 import { HOME_SEO_TITLE } from '@/plugins/seo'
 
 /**
@@ -81,6 +82,8 @@ type MetaInput = {
   /** Public path for canonical / og:url, or `null` for none. */
   path: string | null
   noindex: boolean
+  /** Open Graph `article` (case studies, posts): dates in ISO-8601. Omitted = `website`. */
+  article?: { publishedTime?: string | null; modifiedTime?: string | null }
 }
 
 /** The shared metadata shape for a routable document (canonical, OG, Twitter, robots). */
@@ -97,7 +100,13 @@ const buildMetadata = async (input: MetaInput): Promise<Metadata> => {
     description,
     alternates: url ? { canonical: url } : undefined,
     openGraph: {
-      type: 'website',
+      ...(input.article
+        ? {
+            type: 'article' as const,
+            publishedTime: input.article.publishedTime ?? undefined,
+            modifiedTime: input.article.modifiedTime ?? undefined,
+          }
+        : { type: 'website' as const }),
       siteName: siteName(defaults),
       title,
       description,
@@ -131,3 +140,70 @@ export const pageMetadata = async (page: Page, { preview = false }: { preview?: 
 /** `/` before a `home` doc is published (fresh DB): brand title + seo-defaults description/image. */
 export const homeFallbackMetadata = (): Promise<Metadata> =>
   buildMetadata({ title: HOME_SEO_TITLE, path: '/', noindex: false })
+
+/**
+ * `/work/<slug>` (S4-12). Same precedence as pages, with the study's own
+ * fallbacks in between (the same ones plugin-seo's generate buttons use,
+ * src/plugins/seo.ts `summaryOf` / `generateImage`):
+ * - title: `meta.title` → seo-defaults template with `%s` = the study title.
+ * - description: `meta.description` → `cardSummary` → `inShort` → seo-defaults.
+ * - share image: `meta.image` → `heroMedia` (its `og` size) → seo-defaults.
+ * - canonical `/work/<slug>`; noindex outside production and in draft preview.
+ * - Open Graph type `article` with published / modified times.
+ */
+export const caseStudyMetadata = async (
+  study: CaseStudy,
+  { preview = false }: { preview?: boolean } = {},
+): Promise<Metadata> => {
+  const defaults = await getSeoDefaults()
+  const title = clean(study.meta?.title) || titleTemplate(defaults).replace(TITLE_PLACEHOLDER, clean(study.title))
+  const image = ogImage(study.meta?.image) ? study.meta?.image : ogImage(study.heroMedia) ? study.heroMedia : null
+  return buildMetadata({
+    title,
+    description: clean(study.meta?.description) || clean(study.cardSummary) || clean(study.inShort) || null,
+    image,
+    path: docPath('case-studies', study),
+    noindex: preview,
+    article: { publishedTime: study.publishedAt, modifiedTime: study.updatedAt },
+  })
+}
+
+/** Absolute URL for a media doc's public path (Media URLs are site-relative). */
+const absoluteMediaUrl = (media: number | Media | null | undefined): string | undefined => {
+  if (!media || typeof media !== 'object') return undefined
+  const url = media.sizes?.og?.url || media.url
+  if (!url) return undefined
+  return /^https?:\/\//.test(url) ? url : `${getSiteUrl()}${url.startsWith('/') ? '' : '/'}${url}`
+}
+
+/**
+ * schema.org `Article` for a case study (headline, dates, image, author and
+ * publisher = the Organization from seo-defaults, url = canonical). Facts
+ * only: everything comes from the document or seo-defaults; nothing invented.
+ * Serialised by the route with `<` escaped.
+ */
+export const caseStudyJsonLd = async (study: CaseStudy): Promise<Record<string, unknown>> => {
+  const defaults = await getSeoDefaults()
+  const site = getSiteUrl()
+  const path = docPath('case-studies', study)
+  const url = path ? `${site}${path}` : undefined
+  const logo = absoluteMediaUrl(defaults.organization?.logo)
+  const organization = {
+    '@type': 'Organization',
+    name: siteName(defaults),
+    url: site,
+    ...(logo ? { logo: { '@type': 'ImageObject', url: logo } } : {}),
+  }
+  const image = absoluteMediaUrl(study.heroMedia)
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: clean(study.title),
+    ...(study.publishedAt ? { datePublished: study.publishedAt } : {}),
+    ...(study.updatedAt ? { dateModified: study.updatedAt } : {}),
+    ...(image ? { image: [image] } : {}),
+    ...(url ? { url, mainEntityOfPage: { '@type': 'WebPage', '@id': url } } : {}),
+    author: organization,
+    publisher: organization,
+  }
+}

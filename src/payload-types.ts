@@ -219,6 +219,7 @@ export interface Page {
     | TeamIntroBlock
     | RichContentBlock
     | SpecLedgerBlock
+    | NewsletterBandBlock
     | AccordionFAQBlock
   )[];
   meta?: SeoMeta;
@@ -2634,6 +2635,43 @@ export interface SpecLedgerBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "NewsletterBandBlock".
+ */
+export interface NewsletterBandBlock {
+  /**
+   * How the newsletter section looks.
+   */
+  variant: 'band';
+  /**
+   * The short heading. Leave empty to use the default from Site settings > Newsletter & closers (and its default line).
+   */
+  heading?: string | null;
+  /**
+   * Optional: one word or phrase copied from the headline to show in the accent colour.
+   */
+  accentPhrase?: string | null;
+  /**
+   * The quiet line under the heading. If the heading is left empty, the default line from Site settings is used instead.
+   */
+  line?: string | null;
+  /**
+   * Text on the dark sign-up button. Defaults to "Join".
+   */
+  buttonLabel?: string | null;
+  /**
+   * Background of the band. The Work page uses white; the others use grey.
+   */
+  tone?: ('grey' | 'light') | null;
+  /**
+   * Space above and below. The Services page uses Roomier.
+   */
+  spacing?: ('standard' | 'roomy') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'newsletterBand';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "AccordionFAQBlock".
  */
 export interface AccordionFAQBlock {
@@ -3067,6 +3105,7 @@ export interface PagesSelect<T extends boolean = true> {
         teamIntro?: T | TeamIntroBlockSelect<T>;
         richContent?: T | RichContentBlockSelect<T>;
         specLedger?: T | SpecLedgerBlockSelect<T>;
+        newsletterBand?: T | NewsletterBandBlockSelect<T>;
         accordionFAQ?: T | AccordionFAQBlockSelect<T>;
       };
   meta?: T | SeoMetaSelect<T>;
@@ -3554,6 +3593,21 @@ export interface SpecLedgerBlockSelect<T extends boolean = true> {
         image?: T;
       };
   pricingNote?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "NewsletterBandBlock_select".
+ */
+export interface NewsletterBandBlockSelect<T extends boolean = true> {
+  variant?: T;
+  heading?: T;
+  accentPhrase?: T;
+  line?: T;
+  buttonLabel?: T;
+  tone?: T;
+  spacing?: T;
   id?: T;
   blockName?: T;
 }

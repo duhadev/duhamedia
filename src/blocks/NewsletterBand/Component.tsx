@@ -3,24 +3,14 @@ import { getPayload } from 'payload'
 import React from 'react'
 
 import { AccentHeadline, Container, ButtonLink, Section } from '@/components/ui'
+import type { BlockData } from '@/blocks/types'
 import { CMSForm } from '@/components/forms'
 import { docPath } from '@/lib/docPath'
 import type { Form, SiteSetting } from '@/payload-types'
 
 import { bandFormClassNames } from './formClassNames'
 
-/** Matches config.ts exactly (the generated BlockData<'newsletterBand'> exists only after registration). */
-export type NewsletterBandData = {
-  id?: string | null
-  blockType: 'newsletterBand'
-  variant?: 'band' | null
-  heading?: string | null
-  accentPhrase?: string | null
-  line?: string | null
-  buttonLabel?: string | null
-  tone?: 'grey' | 'light' | null
-  spacing?: 'standard' | 'roomy' | null
-}
+export type NewsletterBandData = BlockData<'newsletterBand'>
 
 type Loaded = {
   form: number | Form | null
@@ -107,6 +97,7 @@ export async function NewsletterBandBlock({
             tone="light"
             submitVariant="dark"
             submitSize="md"
+            turnstileAppearance="interaction-only"
             className="w-full md:w-auto"
             classNames={bandFormClassNames}
           />

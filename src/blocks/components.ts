@@ -6,6 +6,7 @@ import { FinalCTABlock } from './FinalCTA/Component'
 import { HeroBlock } from './Hero/Component'
 import { MetricEventBlock } from './MetricEvent/Component'
 import { MiniCTAStripBlock } from './MiniCTAStrip/Component'
+import { NewsletterBandBlock } from './NewsletterBand/Component'
 import { PhaseTimelineBlock } from './PhaseTimeline/Component'
 import { ProofStripBlock } from './ProofStrip/Component'
 import { RichContentBlock } from './RichContent/Component'
@@ -43,5 +44,6 @@ export const blockComponents: BlockComponents = {
   teamIntro: TeamIntroBlock,
   richContent: RichContentBlock,
   specLedger: SpecLedgerBlock,
+  newsletterBand: NewsletterBandBlock,
   accordionFAQ: AccordionFAQBlock,
 }
