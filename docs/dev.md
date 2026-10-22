@@ -9,6 +9,7 @@ Entry format for every unit: **Files** / **Fields & schema** / **Wiring** (regis
 ## Table of contents
 
 - [Frontend foundation (B0)](#frontend-foundation-unit-b0)
+- [Site chrome (B1)](#site-chrome-unit-b1)
 1. [Homepage](#1-homepage)
 2. [Case Study template](#2-case-study-template)
 3. [Work hub](#3-work-hub)
@@ -67,7 +68,7 @@ Sitewide frontend machinery, not tied to a page. Every block unit depends on it.
 **Files**
 - `src/app/(frontend)/styles.css`: Tailwind CSS 4 tokens in `@theme` (no `tailwind.config`). `--color-*: initial` removes the default palette, so only design colours exist. The header comment holds the design-var to Tailwind-name mapping table. Fonts are wired in a separate `@theme inline` block; `@layer base` sets html/body defaults, a 2px ink `:focus-visible` ring and a `prefers-reduced-motion` override.
 - `src/app/(frontend)/fonts.ts`: `archivoBlack` (Archivo Black, weight 400) and `dmSans` (DM Sans, variable) via `next/font/google`; downloaded at build time and self-hosted. CSS variables `--font-archivo-black` / `--font-dm-sans` feed `--font-display` / `--font-body` / `--font-sans`. Mono (`--font-mono`) is the system stack (`ui-monospace, "SF Mono", Menlo, monospace`), not loaded.
-- `src/app/(frontend)/layout.tsx`: `export const dynamic = 'force-dynamic'`; `<html lang="en">` carrying both font variable classes; `metadataBase` from `getSiteUrl()`; `robots` noindex/nofollow whenever not production. Comment slots for `SiteHeader` / `SiteFooter` (B1) are present, nothing rendered yet.
+- `src/app/(frontend)/layout.tsx`: `export const dynamic = 'force-dynamic'`; `<html lang="en">` carrying both font variable classes; `metadataBase` from `getSiteUrl()`; `robots` noindex/nofollow whenever not production. The layout renders no header or footer; chrome is rendered per page by `PageShell` in each route (see [Site chrome (B1)](#site-chrome-unit-b1)).
 - `src/app/(frontend)/page.tsx`: `/` renders the published `pages` doc with slug `home` through `RenderBlocks`. If none is published it renders a placeholder (`Duha Media` / `Site rebuild in progress.`), never a 404.
 - `src/app/(frontend)/[...slug]/page.tsx`: renders published `pages` docs at `/<slug>` (segments joined with `/`). `/home` and `/404` (`HOME_SLUG`, `NOT_FOUND_SLUG`) and any unknown or unpublished slug call `notFound()`.
 - `src/lib/pages.ts`: `getPublishedPage(slug)` (React `cache`-wrapped; Local API `find` on `pages`, `where` slug + `_status: published`, `draft: false`, `overrideAccess: false`, `depth: 2`) and `pageLayout(page)` (the `layout` rows, or `null` while the field does not exist).
@@ -105,6 +106,51 @@ Sitewide frontend machinery, not tied to a page. Every block unit depends on it.
 - Tokens come from `design-reference/merged-tokens.css` and `MERGED.md`; new tokens need a Decision-log entry. Not ported: the mobile canvas colour `#DED9D0` and the X/Twitter card colours.
 - `--color-gray-warm` is `#747069` (darkened from the design's `#8A857D`, which fails AA contrast at 3.66:1; the exact value is flagged for PM/human sign-off). Dividers keep the original rgba.
 - Page-level metadata, draft mode/live preview and redirect fallback are not in this unit (router unit). The home fallback title must match `HOME_SEO_TITLE`.
+
+---
+
+## Site chrome (unit B1)
+
+Sitewide header and footers. Not a block; not tied to one page.
+
+**Files**
+- `src/components/chrome/SiteHeader.tsx`: async server component. Variants `standard | logo-only | none` (`HeaderVariant`).
+- `src/components/chrome/MobileNav.tsx`: the only `'use client'` file in the chrome. Menu toggle (`aria-expanded` / `aria-controls`), Escape closes and returns focus to the button, closes on route change. Panel links are rendered on the server and passed in as `children`.
+- `src/components/chrome/SiteFooter.tsx`: async server component. Variants `standard | reduced-nav | legal-only` (`FooterVariant`).
+- `src/components/chrome/SiteLogo.tsx`, `NavLink.tsx`, `PageShell.tsx`, `index.ts` (barrel).
+- `src/lib/chrome.ts`: `getChrome()` (React `cache`, `server-only`; Local API `findGlobal` on `navigation` and `site-settings`, `depth: 1`, `overrideAccess: false`), plus `toNavItems` / `toNavItem` (drop links with no text or unresolved destination) and `getNewsletterHref()` (published `newsletter` page lookup).
+- `public/logo-duha.png`: logo mark, rendered unoptimised.
+
+**Fields & schema**
+- None changed. Reads existing fields only:
+  - Header links: `navigation.header.links`. Header CTA: `navigation.header.cta`.
+  - Footer brand line: `site-settings.footerTagline`.
+  - Footer columns: `navigation.footer.standard.columns[]`.
+  - Newsletter nudge: `navigation.footer.standard.newsletterNudge.{heading,line,buttonLabel}`.
+  - Reduced footer links: `navigation.footer.reduced.links`.
+  - Legal bar: `navigation.footer.legalLinks`, plus "© {current year} {`site-settings.legalName`}" (falls back to `Duha Media`).
+  - Variant selection: `pages.headerVariant` / `pages.footerVariant`.
+
+**Wiring**
+- Each route wraps its `<main>` in `<PageShell header={page.headerVariant} footer={page.footerVariant}>`, because the variants are per-page fields and the root layout cannot see the page. Routes: `src/app/(frontend)/page.tsx` (published `home`; the placeholder uses defaults), `[...slug]/page.tsx`, `not-found.tsx` and `%5Fshowcase/page.tsx` (the last two use standard/standard). `PageShell` defaults are `standard` / `standard`.
+- Variant behaviour:
+  - Header `standard`: sticky, logo (links to `/`), links and CTA; below `md` they sit in the MobileNav panel.
+  - Header `logo-only`: logo, not a link; never reads navigation.
+  - Header `none`: renders nothing.
+  - Footer `standard`: brand (logo + tagline), link columns, newsletter nudge, legal bar.
+  - Footer `reduced-nav`: logo + reduced links, legal bar.
+  - Footer `legal-only`: legal bar only.
+- The nudge button links to the published `newsletter` page; the button is hidden while that page is unpublished or missing.
+- Fallbacks:
+  - A global read failure logs `console.error` and renders minimal chrome (logo, no links, bare ©).
+  - Unresolved links and empty columns are dropped.
+  - The menu toggle renders only when there are links or a CTA.
+- Revalidation: unchanged. The globals already revalidate on save and the frontend is `force-dynamic`.
+- Migration: none.
+
+**Notes**
+- No inline newsletter form in the footer yet; the nudge is link-only (flag F42, pending the form-rendering block).
+- Gate 2 accessibility findings are pending a human decision (F41): skip link, logo double accessible name, footer column title semantics, duplicate `Main` nav label (desktop and mobile navs both use `aria-label="Main"`).
 
 ---
 
