@@ -203,6 +203,20 @@ export interface Page {
    * Admin title and the default browser-tab title.
    */
   title: string;
+  /**
+   * The page sections, top to bottom. Drag to reorder.
+   */
+  layout: (
+    | HeroBlock
+    | MiniCTAStripBlock
+    | FinalCTABlock
+    | ProofStripBlock
+    | CaseStudyCardsBlock
+    | TestimonialRowBlock
+    | TwoTrackPanelsBlock
+    | PhaseTimelineBlock
+    | TeamIntroBlock
+  )[];
   meta?: SeoMeta;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
@@ -242,266 +256,96 @@ export interface Page {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "SeoMeta".
+ * via the `definition` "HeroBlock".
  */
-export interface SeoMeta {
+export interface HeroBlock {
   /**
-   * The title shown in Google results, the browser tab and social share cards. Aim for 50–60 characters. "Auto-generate" fills it from the title and the SEO defaults template; if left empty, the site builds it the same way.
+   * The hero layout. More layouts arrive with the pages that need them.
    */
-  title?: string | null;
+  variant: 'typographic';
   /**
-   * The grey text under the title in Google results and share cards. Aim for 100–155 characters (155 at most). Leave empty to use the SEO defaults description.
+   * Small uppercase line above the headline, e.g. "Integrated ecommerce growth partner — Chicago".
    */
-  description?: string | null;
+  eyebrow?: string | null;
   /**
-   * The picture shown when this page is shared on LinkedIn, Facebook, X or in a message. Landscape, at least 1200 × 630 pixels. Leave empty to use the SEO defaults image.
+   * The small wine diamond before the eyebrow.
    */
-  image?: (number | null) | Media;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
- */
-export interface Media {
-  id: number;
+  eyebrowTick?: boolean | null;
   /**
-   * Describe the image for screen readers and search engines, e.g. "Founder at a whiteboard mapping a store launch". Not a file name.
+   * The page headline (the only h1 on the page). Shown in capitals.
    */
-  alt: string;
+  heading: string;
   /**
-   * Optional default caption when this image is used as a figure in an article.
+   * Optional: one word or phrase copied from the headline to show in the accent colour.
    */
-  caption?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-  sizes?: {
-    thumbnail?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    card?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    browser?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    wide?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    og?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
+  accentPhrase?: string | null;
+  /**
+   * Dark pill under the headline, e.g. "$X.XM client revenue tracked".
+   */
+  badge?: {
+    show?: boolean | null;
+    /**
+     * Badge text. Leave empty to hide the badge.
+     */
+    text?: string | null;
   };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "downloads".
- */
-export interface Download {
-  id: number;
   /**
-   * Shown in the admin. Used as the attachment name/label in the delivery email (no longer link text).
+   * The supporting paragraph under the headline.
    */
-  title: string;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-}
-/**
- * Client brands shown in logo strips and credited on testimonials and case studies.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "clients".
- */
-export interface Client {
-  id: number;
+  body?: string | null;
   /**
-   * Brand name. Shown as text in the logo strip when there is no logo.
+   * Small inline note only, e.g. 'Builds start at $5K'. Never put a price in a headline or metric.
    */
-  name: string;
+  pricingNote?: string | null;
   /**
-   * Optional monochrome logo (single colour on transparent). Without one, the name is shown.
+   * Up to two. The first is the solid main button, the second is the outlined one.
    */
-  logo?: (number | null) | Media;
-  /**
-   * Optional, full https:// address of the client site.
-   */
-  website?: string | null;
-  /**
-   * Show this client in the logo strips (Homepage, About, campaign pages).
-   */
-  showInLogoStrip?: boolean | null;
-  /**
-   * Order in the logo strip. Lower numbers come first.
-   */
-  sortOrder?: number | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * People shown in the founder/team sections and as article authors.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "team-members".
- */
-export interface TeamMember {
-  id: number;
-  /**
-   * Full name as it should appear on the site and in bylines.
-   */
-  name: string;
-  /**
-   * Short title line, e.g. "Founder · Chicago".
-   */
-  role: string;
-  /**
-   * One or two sentences, written by the person. Max 400 characters.
-   */
-  bio?: string | null;
-  /**
-   * Portrait for the founder/team card.
-   */
-  photo?: (number | null) | Media;
-  /**
-   * Icons on the founder card. Drag to reorder.
-   */
-  socials?:
+  ctas?:
     | {
-        platform: 'linkedin' | 'x' | 'github' | 'instagram' | 'youtube' | 'facebook';
-        /**
-         * Full https:// profile address.
-         */
-        url: string;
+        link: {
+          type: 'internal' | 'custom';
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'case-studies';
+                value: number | CaseStudy;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null)
+            | ({
+                relationTo: 'lead-magnets';
+                value: number | LeadMagnet;
+              } | null);
+          /**
+           * https://…, mailto:…, or a site path like /book-a-call.
+           */
+          url?: string | null;
+          label?: string | null;
+        };
         id?: string | null;
       }[]
     | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * Client quotes, video testimonials and public reviews (Google, LinkedIn).
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "testimonials".
- */
-export interface Testimonial {
-  id: number;
   /**
-   * The words of the testimonial or review.
+   * Optional quiet line, e.g. a minimum-term note.
    */
-  quote: string;
+  subNote?: string | null;
   /**
-   * e.g. "J. Alvarez".
+   * Short uppercase line, e.g. "Build · Operate · Hand over". Runs vertically down the left on desktop; sits under the paragraph on mobile.
    */
-  authorName: string;
+  verticalMicrocopy?: string | null;
   /**
-   * e.g. "3-location retailer, Chicago".
+   * The large decorative logo silhouette behind the headline.
    */
-  authorRole?: string | null;
-  /**
-   * Optional brand pairing. Its logo shows on video cards.
-   */
-  client?: (number | null) | Client;
-  /**
-   * Where this lives. Sets the source label shown on the card.
-   */
-  source: 'direct' | 'google-review' | 'linkedin';
-  /**
-   * Public link where a visitor can verify this review. Required for Google and LinkedIn.
-   */
-  sourceUrl?: string | null;
-  /**
-   * Required for Google reviews: never paraphrase them.
-   */
-  verbatim?: boolean | null;
-  /**
-   * Stars, 1 to 5. Leave empty for no stars.
-   */
-  rating?: number | null;
-  /**
-   * Video shows a playable tile with the quote beneath.
-   */
-  format: 'text' | 'video';
-  video?: {
-    /**
-     * The (unlisted) YouTube link. Required for video testimonials.
-     */
-    url?: string | null;
-    /**
-     * Still image shown before play. Required for video.
-     */
-    poster?: (number | null) | Media;
-    /**
-     * Optional, e.g. "1:42".
-     */
-    durationLabel?: string | null;
-  };
-  /**
-   * Optional headline result shown on the card, e.g. "+212%" / "Revenue, 12 mo".
-   */
-  metric?: {
-    /**
-     * A result, never a price.
-     */
-    value?: string | null;
-    label?: string | null;
-  };
-  /**
-   * Optional. Links "Read the full case study" once that study is published.
-   */
-  caseStudy?: (number | null) | CaseStudy;
-  /**
-   * When the review or quote was given.
-   */
-  reviewDate?: string | null;
-  /**
-   * Order in the feed and review wall. Lower numbers come first.
-   */
-  sortOrder?: number | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
+  geometry?: boolean | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'hero';
 }
 /**
  * Client case studies (/work). All are drafts at launch; a study publishes only with client-approved figures.
@@ -772,6 +616,190 @@ export interface CaseStudy {
    * Set automatically on first publish. Orders the Work page and "Next study".
    */
   publishedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Client brands shown in logo strips and credited on testimonials and case studies.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "clients".
+ */
+export interface Client {
+  id: number;
+  /**
+   * Brand name. Shown as text in the logo strip when there is no logo.
+   */
+  name: string;
+  /**
+   * Optional monochrome logo (single colour on transparent). Without one, the name is shown.
+   */
+  logo?: (number | null) | Media;
+  /**
+   * Optional, full https:// address of the client site.
+   */
+  website?: string | null;
+  /**
+   * Show this client in the logo strips (Homepage, About, campaign pages).
+   */
+  showInLogoStrip?: boolean | null;
+  /**
+   * Order in the logo strip. Lower numbers come first.
+   */
+  sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: number;
+  /**
+   * Describe the image for screen readers and search engines, e.g. "Founder at a whiteboard mapping a store launch". Not a file name.
+   */
+  alt: string;
+  /**
+   * Optional default caption when this image is used as a figure in an article.
+   */
+  caption?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    browser?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    wide?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    og?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * Client quotes, video testimonials and public reviews (Google, LinkedIn).
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials".
+ */
+export interface Testimonial {
+  id: number;
+  /**
+   * The words of the testimonial or review.
+   */
+  quote: string;
+  /**
+   * e.g. "J. Alvarez".
+   */
+  authorName: string;
+  /**
+   * e.g. "3-location retailer, Chicago".
+   */
+  authorRole?: string | null;
+  /**
+   * Optional brand pairing. Its logo shows on video cards.
+   */
+  client?: (number | null) | Client;
+  /**
+   * Where this lives. Sets the source label shown on the card.
+   */
+  source: 'direct' | 'google-review' | 'linkedin';
+  /**
+   * Public link where a visitor can verify this review. Required for Google and LinkedIn.
+   */
+  sourceUrl?: string | null;
+  /**
+   * Required for Google reviews: never paraphrase them.
+   */
+  verbatim?: boolean | null;
+  /**
+   * Stars, 1 to 5. Leave empty for no stars.
+   */
+  rating?: number | null;
+  /**
+   * Video shows a playable tile with the quote beneath.
+   */
+  format: 'text' | 'video';
+  video?: {
+    /**
+     * The (unlisted) YouTube link. Required for video testimonials.
+     */
+    url?: string | null;
+    /**
+     * Still image shown before play. Required for video.
+     */
+    poster?: (number | null) | Media;
+    /**
+     * Optional, e.g. "1:42".
+     */
+    durationLabel?: string | null;
+  };
+  /**
+   * Optional headline result shown on the card, e.g. "+212%" / "Revenue, 12 mo".
+   */
+  metric?: {
+    /**
+     * A result, never a price.
+     */
+    value?: string | null;
+    label?: string | null;
+  };
+  /**
+   * Optional. Links "Read the full case study" once that study is published.
+   */
+  caseStudy?: (number | null) | CaseStudy;
+  /**
+   * When the review or quote was given.
+   */
+  reviewDate?: string | null;
+  /**
+   * Order in the feed and review wall. Lower numbers come first.
+   */
+  sortOrder?: number | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -1345,6 +1373,698 @@ export interface Form {
   createdAt: string;
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "downloads".
+ */
+export interface Download {
+  id: number;
+  /**
+   * Shown in the admin. Used as the attachment name/label in the delivery email (no longer link text).
+   */
+  title: string;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SeoMeta".
+ */
+export interface SeoMeta {
+  /**
+   * The title shown in Google results, the browser tab and social share cards. Aim for 50–60 characters. "Auto-generate" fills it from the title and the SEO defaults template; if left empty, the site builds it the same way.
+   */
+  title?: string | null;
+  /**
+   * The grey text under the title in Google results and share cards. Aim for 100–155 characters (155 at most). Leave empty to use the SEO defaults description.
+   */
+  description?: string | null;
+  /**
+   * The picture shown when this page is shared on LinkedIn, Facebook, X or in a message. Landscape, at least 1200 × 630 pixels. Leave empty to use the SEO defaults image.
+   */
+  image?: (number | null) | Media;
+}
+/**
+ * People shown in the founder/team sections and as article authors.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-members".
+ */
+export interface TeamMember {
+  id: number;
+  /**
+   * Full name as it should appear on the site and in bylines.
+   */
+  name: string;
+  /**
+   * Short title line, e.g. "Founder · Chicago".
+   */
+  role: string;
+  /**
+   * One or two sentences, written by the person. Max 400 characters.
+   */
+  bio?: string | null;
+  /**
+   * Portrait for the founder/team card.
+   */
+  photo?: (number | null) | Media;
+  /**
+   * Icons on the founder card. Drag to reorder.
+   */
+  socials?:
+    | {
+        platform: 'linkedin' | 'x' | 'github' | 'instagram' | 'youtube' | 'facebook';
+        /**
+         * Full https:// profile address.
+         */
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MiniCTAStripBlock".
+ */
+export interface MiniCTAStripBlock {
+  /**
+   * The strip layout. More layouts arrive with the pages that need them.
+   */
+  variant: 'band';
+  /**
+   * The one-line statement on the strip, e.g. "One team. One dashboard. A handover date." Shown in capitals.
+   */
+  text: string;
+  /**
+   * The button text and where it goes. The whole strip is clickable.
+   */
+  link: {
+    type: 'internal' | 'custom';
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'case-studies';
+          value: number | CaseStudy;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null)
+      | ({
+          relationTo: 'lead-magnets';
+          value: number | LeadMagnet;
+        } | null);
+    /**
+     * https://…, mailto:…, or a site path like /book-a-call.
+     */
+    url?: string | null;
+    label?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'miniCTAStrip';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FinalCTABlock".
+ */
+export interface FinalCTABlock {
+  /**
+   * The big closing line. Leave empty to use the default from Site settings > Default closing sections.
+   */
+  heading?: string | null;
+  /**
+   * Optional: one word or phrase copied from the headline to show in the accent colour.
+   */
+  accentPhrase?: string | null;
+  /**
+   * Optional supporting line under the headline.
+   */
+  body?: string | null;
+  /**
+   * Which capacity statement to show under the headline (big line with its reason quietly beneath). Numbers and wording are edited once, in "Capacity & scarcity". Choose "None" to hide it.
+   */
+  capacity?: ('none' | 'ongoing' | 'capacity' | 'builds-line' | 'engines-line' | 'slots-line' | 'offer-line') | null;
+  /**
+   * One or two buttons. The first is the main one. Leave empty to use the default button from Site settings > Default closing sections.
+   */
+  buttons?:
+    | {
+        link: {
+          type: 'internal' | 'custom';
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'case-studies';
+                value: number | CaseStudy;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null)
+            | ({
+                relationTo: 'lead-magnets';
+                value: number | LeadMagnet;
+              } | null);
+          /**
+           * https://…, mailto:…, or a site path like /book-a-call.
+           */
+          url?: string | null;
+          label?: string | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'finalCTA';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProofStripBlock".
+ */
+export interface ProofStripBlock {
+  /**
+   * The strip layout. More layouts arrive with the pages that need them.
+   */
+  variant: 'scarcity';
+  /**
+   * Up to two capacity statements, shown side by side. Each shows a big line with its reason quietly underneath; both come from "Capacity & scarcity".
+   */
+  statements?:
+    | {
+        /**
+         * Pick which statement from "Capacity & scarcity" to show. Edit the numbers and wording there, not here.
+         */
+        key?: ('none' | 'ongoing' | 'capacity' | 'builds-line' | 'engines-line' | 'slots-line' | 'offer-line') | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Small inline note only, e.g. 'Builds start at $5K'. Never put a price in a headline or metric.
+   */
+  pricingNote?: string | null;
+  /**
+   * The row of client names / monochrome logos under the statements.
+   */
+  logos?: {
+    show?: boolean | null;
+    /**
+     * Small line above the logos.
+     */
+    eyebrow?: string | null;
+    /**
+     * Automatic uses every published client ticked "Show in logo strip" (in their order).
+     */
+    source?: ('flagged' | 'manual') | null;
+    /**
+     * Shown in this order. Unpublished clients are skipped. If none remain, the row is hidden.
+     */
+    clients?: (number | Client)[] | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'proofStrip';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CaseStudyCardsBlock".
+ */
+export interface CaseStudyCardsBlock {
+  /**
+   * The layout of the studies. More layouts arrive with the pages that need them.
+   */
+  layout: 'cards';
+  /**
+   * Small uppercase line above the headline (shown only when studies are live).
+   */
+  eyebrow?: string | null;
+  /**
+   * The small wine diamond before the eyebrow.
+   */
+  eyebrowTick?: boolean | null;
+  /**
+   * Headline shown above the study cards, e.g. "The work, in numbers." Shown only when studies are live.
+   */
+  heading?: string | null;
+  /**
+   * Optional: one word or phrase copied from the headline to show in the accent colour.
+   */
+  accentPhrase?: string | null;
+  /**
+   * Which studies appear. Only PUBLISHED studies ever show; a draft study is never shown, even if picked here.
+   */
+  source: 'featured' | 'latest' | 'manual';
+  /**
+   * Pick up to three, in order. Draft studies are skipped on the site until they are published.
+   */
+  caseStudies?: (number | CaseStudy)[] | null;
+  /**
+   * How many cards to show (1 to 3).
+   */
+  limit?: number | null;
+  /**
+   * The underlined text at the bottom of every card.
+   */
+  cardLinkLabel?: string | null;
+  /**
+   * Optional link under the cards, e.g. "All studies →". Shown only when studies are live.
+   */
+  allLink: {
+    type: 'internal' | 'custom';
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'case-studies';
+          value: number | CaseStudy;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null)
+      | ({
+          relationTo: 'lead-magnets';
+          value: number | LeadMagnet;
+        } | null);
+    /**
+     * https://…, mailto:…, or a site path like /book-a-call.
+     */
+    url?: string | null;
+    label?: string | null;
+  };
+  /**
+   * What this section shows while no case study is published (and again if all are unpublished). It switches to the cards on its own once a study is published.
+   */
+  fallbackMode: 'ledger' | 'note';
+  /**
+   * Small uppercase line above the fallback headline.
+   */
+  fallbackEyebrow?: string | null;
+  /**
+   * Headline of the fallback state.
+   */
+  fallbackHeading?: string | null;
+  /**
+   * Optional: one word or phrase copied from the fallback headline to show in the accent colour.
+   */
+  fallbackAccentPhrase?: string | null;
+  /**
+   * The line under the fallback headline. State what is true; never "coming soon".
+   */
+  fallbackBody?: string | null;
+  /**
+   * Up to three facts shown as a ruled list (ledger mode). Real, approved figures or counts only; never a price.
+   */
+  fallbackMetrics?:
+    | {
+        /**
+         * A result or count, never a price. e.g. "+212%".
+         */
+        value: string;
+        /**
+         * What the number measures, e.g. "Revenue, 12 months".
+         */
+        label: string;
+        /**
+         * Optional quiet line under the metric.
+         */
+        sub?: string | null;
+        /**
+         * Show the number in the accent colour.
+         */
+        accent?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Small inline note only, e.g. 'Builds start at $5K'. Never put a price in a headline or metric.
+   */
+  pricingNote?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'caseStudyCards';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TestimonialRowBlock".
+ */
+export interface TestimonialRowBlock {
+  /**
+   * The layout. More layouts arrive with the pages that need them.
+   */
+  variant: 'row';
+  /**
+   * Small uppercase line above the testimonial cards, e.g. "What clients say".
+   */
+  eyebrow?: string | null;
+  /**
+   * The small wine diamond before the eyebrow.
+   */
+  eyebrowTick?: boolean | null;
+  /**
+   * The section headline, e.g. "Proof, in their words."
+   */
+  heading?: string | null;
+  /**
+   * Optional: one word or phrase copied from the headline to show in the accent colour.
+   */
+  accentPhrase?: string | null;
+  /**
+   * Pick 1 to 3 testimonials, in the order shown. Only published testimonials appear on the site; drafts are skipped.
+   */
+  testimonials?: (number | Testimonial)[] | null;
+  /**
+   * The case-study card beside the testimonials. It only ever shows a PUBLISHED case study. Until one is published, the quiet figure below is shown instead, or nothing.
+   */
+  studyCard?: {
+    show?: boolean | null;
+    /**
+     * Small uppercase line above the card.
+     */
+    label?: string | null;
+    /**
+     * "Featured" uses the newest published study ticked "Featured".
+     */
+    source?: ('featured' | 'manual') | null;
+    /**
+     * Shown only once this study is published.
+     */
+    caseStudy?: (number | null) | CaseStudy;
+    /**
+     * Underlined text at the bottom of the card.
+     */
+    readLabel?: string | null;
+    /**
+     * Optional. Shown in the card slot until a case study is published. Leave empty to show testimonials only. Only enter a real, approved figure.
+     */
+    fallbackMetric?: {
+      /**
+       * A result or count, never a price. e.g. "+212%".
+       */
+      value?: string | null;
+      /**
+       * What the number measures, e.g. "Revenue, 12 months".
+       */
+      label?: string | null;
+      /**
+       * Optional quiet line under the metric.
+       */
+      sub?: string | null;
+      /**
+       * Show the number in the accent colour.
+       */
+      accent?: boolean | null;
+    };
+  };
+  /**
+   * Optional, e.g. "All studies". Leave empty to hide.
+   */
+  cta: {
+    type: 'internal' | 'custom';
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'case-studies';
+          value: number | CaseStudy;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null)
+      | ({
+          relationTo: 'lead-magnets';
+          value: number | LeadMagnet;
+        } | null);
+    /**
+     * https://…, mailto:…, or a site path like /book-a-call.
+     */
+    url?: string | null;
+    label?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'testimonialRow';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TwoTrackPanelsBlock".
+ */
+export interface TwoTrackPanelsBlock {
+  /**
+   * The panel layout. More layouts arrive with the pages that need them.
+   */
+  variant: 'equal';
+  /**
+   * Optional small uppercase line above the headline.
+   */
+  eyebrow?: string | null;
+  /**
+   * The small wine diamond before the eyebrow.
+   */
+  eyebrowTick?: boolean | null;
+  /**
+   * The section headline, e.g. "What we actually do".
+   */
+  heading: string;
+  /**
+   * Optional: one word or phrase copied from the headline to show in the accent colour.
+   */
+  accentPhrase?: string | null;
+  /**
+   * Exactly two tracks, shown in this order.
+   */
+  panels?:
+    | {
+        /**
+         * Optional small uppercase tag above the track, e.g. "Phase 1".
+         */
+        label?: string | null;
+        /**
+         * The track lead-in, shown in capitals, e.g. "First, we build it."
+         */
+        title: string;
+        accentTitle?: boolean | null;
+        /**
+         * What this track is. Runs on straight after the title.
+         */
+        body: string;
+        /**
+         * Small inline note only, e.g. 'Builds start at $5K'. Never put a price in a headline or metric.
+         */
+        pricingNote?: string | null;
+        /**
+         * Optional "how it works" link after the paragraph, e.g. "How the build works →".
+         */
+        link: {
+          type: 'internal' | 'custom';
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'case-studies';
+                value: number | CaseStudy;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null)
+            | ({
+                relationTo: 'lead-magnets';
+                value: number | LeadMagnet;
+              } | null);
+          /**
+           * https://…, mailto:…, or a site path like /book-a-call.
+           */
+          url?: string | null;
+          label?: string | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'twoTrackPanels';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PhaseTimelineBlock".
+ */
+export interface PhaseTimelineBlock {
+  /**
+   * The timeline layout. More layouts arrive with the pages that need them.
+   */
+  variant: 'accordion';
+  /**
+   * Small uppercase line above the headline, e.g. "How it runs".
+   */
+  eyebrow?: string | null;
+  /**
+   * The small wine diamond before the eyebrow.
+   */
+  eyebrowTick?: boolean | null;
+  /**
+   * The section headline, e.g. "Three phases. The last one is the point."
+   */
+  heading: string;
+  /**
+   * Optional: one word or phrase copied from the headline to show in the accent colour.
+   */
+  accentPhrase?: string | null;
+  /**
+   * Optional short paragraph under the headline.
+   */
+  intro?: string | null;
+  /**
+   * Up to three, in order. Each phase is a labelled bar its steps sit under. The LAST phase is always shown in the accent colour (the independence handover); that cannot be switched off.
+   */
+  phases?:
+    | {
+        /**
+         * Shown before the title, e.g. "Phase 1".
+         */
+        number?: string | null;
+        /**
+         * e.g. "Build foundation". Keep it short: it is cut off with "…" when the column is narrow.
+         */
+        title: string;
+        /**
+         * Short description of the phase (not shown in the accordion layout).
+         */
+        body?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * In order. Each step sits under the phase you pick. The first step starts open; on phones the step in the middle of the screen opens as visitors scroll.
+   */
+  steps?:
+    | {
+        /**
+         * e.g. "01".
+         */
+        number?: string | null;
+        /**
+         * e.g. "Intake". Keep it to about 14 characters: on desktop it runs vertically when closed.
+         */
+        title: string;
+        /**
+         * Which phase bar this step sits under.
+         */
+        phase: '1' | '2' | '3';
+        /**
+         * Shown when the step is open. One or two sentences (about 160 characters fits best).
+         */
+        detail?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional quiet line under the timeline.
+   */
+  closingLine?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'phaseTimeline';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TeamIntroBlock".
+ */
+export interface TeamIntroBlock {
+  /**
+   * Which layout to use.
+   */
+  variant: 'intro' | 'founder-card';
+  /**
+   * Small grey uppercase line above the headline, e.g. "Who you'd work with". Optional.
+   */
+  eyebrow?: string | null;
+  /**
+   * The small wine diamond before the eyebrow.
+   */
+  eyebrowTick?: boolean | null;
+  /**
+   * The section headline.
+   */
+  heading: string;
+  /**
+   * Optional: one word or phrase copied from the headline to show in the accent colour.
+   */
+  accentPhrase?: string | null;
+  /**
+   * The paragraph under the headline.
+   */
+  body?: string | null;
+  /**
+   * Portrait shown beside (desktop) or under (mobile) the text. Portrait 4:5 works best. Leave empty to show the text only.
+   */
+  photo?: (number | null) | Media;
+  /**
+   * The person shown on the card (photo, name, role, social links come from their Team members entry). They must be published, otherwise the card does not appear.
+   */
+  member?: (number | null) | TeamMember;
+  /**
+   * Optional link under the text, e.g. "More about us →". Leave empty for none.
+   */
+  link: {
+    type: 'internal' | 'custom';
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'case-studies';
+          value: number | CaseStudy;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null)
+      | ({
+          relationTo: 'lead-magnets';
+          value: number | LeadMagnet;
+        } | null);
+    /**
+     * https://…, mailto:…, or a site path like /book-a-call.
+     */
+    url?: string | null;
+    label?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'teamIntro';
+}
+/**
  * Questions and answers for the FAQ page and the FAQ sections on service pages.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1693,6 +2413,19 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
+  layout?:
+    | T
+    | {
+        hero?: T | HeroBlockSelect<T>;
+        miniCTAStrip?: T | MiniCTAStripBlockSelect<T>;
+        finalCTA?: T | FinalCTABlockSelect<T>;
+        proofStrip?: T | ProofStripBlockSelect<T>;
+        caseStudyCards?: T | CaseStudyCardsBlockSelect<T>;
+        testimonialRow?: T | TestimonialRowBlockSelect<T>;
+        twoTrackPanels?: T | TwoTrackPanelsBlockSelect<T>;
+        phaseTimeline?: T | PhaseTimelineBlockSelect<T>;
+        teamIntro?: T | TeamIntroBlockSelect<T>;
+      };
   meta?: T | SeoMetaSelect<T>;
   generateSlug?: T;
   slug?: T;
@@ -1705,6 +2438,283 @@ export interface PagesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroBlock_select".
+ */
+export interface HeroBlockSelect<T extends boolean = true> {
+  variant?: T;
+  eyebrow?: T;
+  eyebrowTick?: T;
+  heading?: T;
+  accentPhrase?: T;
+  badge?:
+    | T
+    | {
+        show?: T;
+        text?: T;
+      };
+  body?: T;
+  pricingNote?: T;
+  ctas?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+        id?: T;
+      };
+  subNote?: T;
+  verticalMicrocopy?: T;
+  geometry?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MiniCTAStripBlock_select".
+ */
+export interface MiniCTAStripBlockSelect<T extends boolean = true> {
+  variant?: T;
+  text?: T;
+  link?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FinalCTABlock_select".
+ */
+export interface FinalCTABlockSelect<T extends boolean = true> {
+  heading?: T;
+  accentPhrase?: T;
+  body?: T;
+  capacity?: T;
+  buttons?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProofStripBlock_select".
+ */
+export interface ProofStripBlockSelect<T extends boolean = true> {
+  variant?: T;
+  statements?:
+    | T
+    | {
+        key?: T;
+        id?: T;
+      };
+  pricingNote?: T;
+  logos?:
+    | T
+    | {
+        show?: T;
+        eyebrow?: T;
+        source?: T;
+        clients?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CaseStudyCardsBlock_select".
+ */
+export interface CaseStudyCardsBlockSelect<T extends boolean = true> {
+  layout?: T;
+  eyebrow?: T;
+  eyebrowTick?: T;
+  heading?: T;
+  accentPhrase?: T;
+  source?: T;
+  caseStudies?: T;
+  limit?: T;
+  cardLinkLabel?: T;
+  allLink?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
+  fallbackMode?: T;
+  fallbackEyebrow?: T;
+  fallbackHeading?: T;
+  fallbackAccentPhrase?: T;
+  fallbackBody?: T;
+  fallbackMetrics?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        sub?: T;
+        accent?: T;
+        id?: T;
+      };
+  pricingNote?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TestimonialRowBlock_select".
+ */
+export interface TestimonialRowBlockSelect<T extends boolean = true> {
+  variant?: T;
+  eyebrow?: T;
+  eyebrowTick?: T;
+  heading?: T;
+  accentPhrase?: T;
+  testimonials?: T;
+  studyCard?:
+    | T
+    | {
+        show?: T;
+        label?: T;
+        source?: T;
+        caseStudy?: T;
+        readLabel?: T;
+        fallbackMetric?:
+          | T
+          | {
+              value?: T;
+              label?: T;
+              sub?: T;
+              accent?: T;
+            };
+      };
+  cta?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TwoTrackPanelsBlock_select".
+ */
+export interface TwoTrackPanelsBlockSelect<T extends boolean = true> {
+  variant?: T;
+  eyebrow?: T;
+  eyebrowTick?: T;
+  heading?: T;
+  accentPhrase?: T;
+  panels?:
+    | T
+    | {
+        label?: T;
+        title?: T;
+        accentTitle?: T;
+        body?: T;
+        pricingNote?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PhaseTimelineBlock_select".
+ */
+export interface PhaseTimelineBlockSelect<T extends boolean = true> {
+  variant?: T;
+  eyebrow?: T;
+  eyebrowTick?: T;
+  heading?: T;
+  accentPhrase?: T;
+  intro?: T;
+  phases?:
+    | T
+    | {
+        number?: T;
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  steps?:
+    | T
+    | {
+        number?: T;
+        title?: T;
+        phase?: T;
+        detail?: T;
+        id?: T;
+      };
+  closingLine?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TeamIntroBlock_select".
+ */
+export interface TeamIntroBlockSelect<T extends boolean = true> {
+  variant?: T;
+  eyebrow?: T;
+  eyebrowTick?: T;
+  heading?: T;
+  accentPhrase?: T;
+  body?: T;
+  photo?: T;
+  member?: T;
+  link?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
+  id?: T;
+  blockName?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

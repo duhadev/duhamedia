@@ -26,7 +26,10 @@ export function RenderBlocks({ blocks }: { blocks?: readonly LayoutRow[] | null 
     <>
       {blocks.map((block, index) => {
         const key = block.id ?? `${block.blockType}-${index}`
-        const Component = (blockComponents as Record<string, AnyBlockComponent | undefined>)[block.blockType]
+        // Dynamic dispatch by `blockType`: the typed map (BlockComponents) is
+        // widened via `unknown` because a per-slug component type is not
+        // assignable to a string-indexed one. Props are the row itself.
+        const Component = (blockComponents as unknown as Record<string, AnyBlockComponent | undefined>)[block.blockType]
 
         if (Component) {
           return (

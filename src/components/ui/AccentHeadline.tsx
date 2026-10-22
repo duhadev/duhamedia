@@ -7,6 +7,13 @@ const LEVELS = {
   1: 'text-h1-mobile md:text-h1', // 2.5rem / 4.5rem, lh 1
   2: 'text-h2-mobile md:text-h2', // 2rem / 3rem, lh 1.05
   3: 'text-h3-mobile md:text-h3', // 1.375rem / 1.75rem, lh 1.15
+  /**
+   * Section headline of the finals (Homepage.dc.html): the mobile build uses DS
+   * `AccentHeadline level 3` = `--text-h3` (1.75rem, lh 1.15) and the desktop
+   * build DS `level 2` = `--text-h2` (3rem, lh 1.05). Not the `-mobile` tokens:
+   * the DS component always reads the desktop-named size var.
+   */
+  section: 'text-h3 md:text-h2', // 1.75rem / 3rem
 } as const
 
 const ACCENTS = {
@@ -24,8 +31,10 @@ const ACCENTS = {
  * accent renders the plain heading. Colour is inherited (ink on light
  * sections, cream on dark), except the accent span.
  *
- * `level` = visual size; `as` = the HTML element (pick it for the page outline:
- * only the hero is `h1`).
+ * `level` = visual size (decoupled from the element); `as` = the HTML element
+ * (pick it for the page outline: only the hero is `h1`). `level="section"` is
+ * the finals' section-headline pair (1.75rem mobile / 3rem desktop); use it
+ * instead of overriding the size with a class.
  */
 export function AccentHeadline({
   text,

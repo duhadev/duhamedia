@@ -7,12 +7,15 @@ import type {
   GroupField,
   NumberField,
   RelationshipFieldSingleValidation,
+  RowField,
+  SelectField,
   TextField,
   TextFieldSingleValidation,
 } from 'payload'
 import { relationship, text } from 'payload/shared'
 
 import { accentPhraseError } from '../lib/accentPhrase'
+import { SCARCITY_KEYS, type ScarcityKey } from '../lib/scarcity'
 import { youtubeVideoId } from '../lib/youtube'
 
 /**
@@ -21,8 +24,9 @@ import { youtubeVideoId } from '../lib/youtube'
  * §3 factories are added with the first unit that uses them. C7
  * (case-studies) added `metricFields`, `linkField` and `validateAccentPhrase`
  * (the substring rule `headlineFields()` will reuse). C8 (posts) added
- * `pricingNote`. Still to come with their first block: `scarcityRef`,
- * `headlineFields`, `eyebrowField`.
+ * `pricingNote`. B1 (Hero, the first block) added `eyebrowField` and
+ * `headlineFields`. B3 (ProofStrip + FinalCTA) added `scarcityRef`; B3 batch 2 added
+ * `metricFields({ required })`.
  *
  * Verified against payload@3.91.0 (installed `payload/dist`):
  * - versions options: versions/types.d.ts (`drafts.autosave.interval`,
@@ -109,21 +113,25 @@ export const validateYouTubeUrl: TextFieldSingleValidation = (value, options) =>
  * DS `Metric` = value / label / sub / accent (MERGED §4.1). R13: never a price.
  * R5: no defaults; every number is entered (and seeded as placeholder).
  * Spread inside a named group, e.g. `{ name: 'headlineMetric', type: 'group', fields: metricFields() }`.
+ *
+ * `required: false` (B3 batch 2, TestimonialRow `studyCard.fallbackMetric`)
+ * makes `value` and `label` optional for a metric that is optional as a whole;
+ * the field shapes (and so the DB columns) are identical either way.
  */
-export const metricFields = (): Field[] => [
+export const metricFields = ({ required = true }: { required?: boolean } = {}): Field[] => [
   {
     type: 'row',
     fields: [
       {
         name: 'value',
         type: 'text',
-        required: true,
+        required,
         admin: { width: '40%', description: 'A result or count, never a price. e.g. "+212%".' },
       },
       {
         name: 'label',
         type: 'text',
-        required: true,
+        required,
         admin: { width: '60%', description: 'What the number measures, e.g. "Revenue, 12 months".' },
       },
     ],
@@ -336,4 +344,94 @@ export const pricingNote = (name = 'pricingNote'): TextField => ({
   admin: {
     description: "Small inline note only, e.g. 'Builds start at $5K'. Never put a price in a headline or metric.",
   },
+})
+
+/* -------------------------------------------------------------------------- */
+/* §3 factories (B1, Hero: the first block)                                   */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * SCHEMA §3 `eyebrowField()`: `eyebrow` text + `eyebrowTick` checkbox, side by
+ * side (DS `Eyebrow` `tick`). A row (no data nesting): spread nothing, use it
+ * directly in `fields`. Both optional; an empty eyebrow renders nothing.
+ */
+export const eyebrowField = ({
+  defaultTick = true,
+  description = 'Small uppercase line above the headline.',
+}: { defaultTick?: boolean; description?: string } = {}): RowField => ({
+  type: 'row',
+  fields: [
+    {
+      name: 'eyebrow',
+      type: 'text',
+      admin: { width: '70%', description },
+    },
+    {
+      name: 'eyebrowTick',
+      type: 'checkbox',
+      label: 'Show the diamond marker',
+      defaultValue: defaultTick,
+      admin: { width: '30%', description: 'The small wine diamond before the eyebrow.' },
+    },
+  ],
+})
+
+/**
+ * SCHEMA §3 `headlineFields()`: `heading` text + `accentPhrase` text, the
+ * accent validated as a case-insensitive substring of `heading` (server
+ * `validateAccentPhrase` + the same rule inline in the admin). Spread into
+ * `fields`. `required: false` for blocks whose empty heading falls back to
+ * template defaults (e.g. FinalCTA, NewsletterBand).
+ */
+export const headlineFields = ({
+  required = true,
+  description = 'The section headline.',
+}: { required?: boolean; description?: string } = {}): Field[] => [
+  {
+    name: 'heading',
+    type: 'text',
+    required,
+    admin: { description },
+  },
+  {
+    name: 'accentPhrase',
+    type: 'text',
+    label: 'Accent phrase',
+    validate: validateAccentPhrase('heading'),
+    admin: {
+      components: { Field: accentPhraseAdminField('heading') },
+      description: 'Optional: one word or phrase copied from the headline to show in the accent colour.',
+    },
+  },
+]
+
+/* -------------------------------------------------------------------------- */
+/* §3 factories (B3, ProofStrip + FinalCTA)                                   */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * SCHEMA §3 `scarcityRef()`: a select of the `scarcity` global's statement keys
+ * (`SCARCITY_KEYS`, src/lib/scarcity.ts) plus `none`. The block stores only the
+ * KEY; the number and its reason are read from the global at render, so
+ * capacity is edited in exactly one place. Defaults: name `key`, default value
+ * `none`. Used by ProofStrip (`statements[].key`) and FinalCTA (`capacity`,
+ * default `builds-line`).
+ */
+export const scarcityRef = ({
+  name = 'key',
+  label = 'Statement',
+  description = 'Pick which statement from "Capacity & scarcity" to show. Edit the numbers and wording there, not here.',
+  defaultValue = 'none',
+}: {
+  name?: string
+  label?: string
+  description?: string
+  defaultValue?: ScarcityKey | 'none'
+} = {}): SelectField => ({
+  name,
+  label,
+  type: 'select',
+  defaultValue,
+  options: [{ label: 'None (hide)', value: 'none' }, ...SCARCITY_KEYS.map(({ label: l, value }) => ({ label: l, value }))],
+  admin: { description },
 })

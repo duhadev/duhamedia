@@ -1,5 +1,14 @@
 import type React from 'react'
 
+import { CaseStudyCardsBlock } from './CaseStudyCards/Component'
+import { FinalCTABlock } from './FinalCTA/Component'
+import { HeroBlock } from './Hero/Component'
+import { MiniCTAStripBlock } from './MiniCTAStrip/Component'
+import { PhaseTimelineBlock } from './PhaseTimeline/Component'
+import { ProofStripBlock } from './ProofStrip/Component'
+import { TeamIntroBlock } from './TeamIntro/Component'
+import { TestimonialRowBlock } from './TestimonialRow/Component'
+import { TwoTrackPanelsBlock } from './TwoTrackPanels/Component'
 import type { BlockData, PageBlockType } from './types'
 
 /**
@@ -17,4 +26,14 @@ export type BlockComponents = {
   [K in PageBlockType]: React.ComponentType<BlockData<K>>
 }
 
-export const blockComponents: BlockComponents = {}
+export const blockComponents: BlockComponents = {
+  hero: HeroBlock,
+  miniCTAStrip: MiniCTAStripBlock,
+  finalCTA: FinalCTABlock,
+  proofStrip: ProofStripBlock,
+  caseStudyCards: CaseStudyCardsBlock,
+  testimonialRow: TestimonialRowBlock,
+  twoTrackPanels: TwoTrackPanelsBlock,
+  phaseTimeline: PhaseTimelineBlock,
+  teamIntro: TeamIntroBlock,
+}

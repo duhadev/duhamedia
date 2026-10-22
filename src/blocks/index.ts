@@ -1,5 +1,15 @@
 import type { Block } from 'payload'
 
+import { CaseStudyCards } from './CaseStudyCards/config'
+import { FinalCTA } from './FinalCTA/config'
+import { Hero } from './Hero/config'
+import { MiniCTAStrip } from './MiniCTAStrip/config'
+import { PhaseTimeline } from './PhaseTimeline/config'
+import { ProofStrip } from './ProofStrip/config'
+import { TeamIntro } from './TeamIntro/config'
+import { TestimonialRow } from './TestimonialRow/config'
+import { TwoTrackPanels } from './TwoTrackPanels/config'
+
 /**
  * Block CONFIG registry (B0): the one place a page-layout block is registered
  * on the Payload side. `pages.layout` is built from this list
@@ -19,4 +29,14 @@ import type { Block } from 'payload'
  * creates no tables, so the first block's migration is the one that adds the
  * `pages_blocks_*` tables.
  */
-export const pageBlocks: Block[] = []
+export const pageBlocks: Block[] = [
+  Hero,
+  MiniCTAStrip,
+  FinalCTA,
+  ProofStrip,
+  CaseStudyCards,
+  TestimonialRow,
+  TwoTrackPanels,
+  PhaseTimeline,
+  TeamIntro,
+]

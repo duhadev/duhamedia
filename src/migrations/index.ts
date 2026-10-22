@@ -16,6 +16,9 @@ import * as migration_20261021_235030_p2_redirects from './20261021_235030_p2_re
 import * as migration_20261022_000002_s2_scarcity_seo_delta from './20261022_000002_s2_scarcity_seo_delta';
 import * as migration_20261022_001520_p3_seo from './20261022_001520_p3_seo';
 import * as migration_20261022_014336_s3_friendly_errors from './20261022_014336_s3_friendly_errors';
+import * as migration_20261022_025136_b3_hero from './20261022_025136_b3_hero';
+import * as migration_20261022_030147_b3_homepage_batch1 from './20261022_030147_b3_homepage_batch1';
+import * as migration_20261022_031049_b3_homepage_batch2 from './20261022_031049_b3_homepage_batch2';
 
 export const migrations = [
   {
@@ -106,6 +109,21 @@ export const migrations = [
   {
     up: migration_20261022_014336_s3_friendly_errors.up,
     down: migration_20261022_014336_s3_friendly_errors.down,
-    name: '20261022_014336_s3_friendly_errors'
+    name: '20261022_014336_s3_friendly_errors',
+  },
+  {
+    up: migration_20261022_025136_b3_hero.up,
+    down: migration_20261022_025136_b3_hero.down,
+    name: '20261022_025136_b3_hero',
+  },
+  {
+    up: migration_20261022_030147_b3_homepage_batch1.up,
+    down: migration_20261022_030147_b3_homepage_batch1.down,
+    name: '20261022_030147_b3_homepage_batch1',
+  },
+  {
+    up: migration_20261022_031049_b3_homepage_batch2.up,
+    down: migration_20261022_031049_b3_homepage_batch2.down,
+    name: '20261022_031049_b3_homepage_batch2'
   },
 ];

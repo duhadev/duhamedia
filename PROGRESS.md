@@ -36,16 +36,17 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 | plugin | P3 seo | all | documented | Gate 1 cleared 2026-10-22 under standing approval. Rework done: help text via plugin-seo i18n override (stock lines replaced; PM browser-verified, no 'hero image'); coded: src/plugins/seo.ts; SEO tab (meta title/description/image) on pages, case-studies, posts, lead-magnets; Pages title moved into a 'Content' tab (layout only); generators never throw (title template, doc summary, hero≥og else default OG, SITE_URL+docPath); pipeline may set meta title/desc on own drafts; migration `p3_seo` proven; 52/52 smoke; QA: all checks pass except **custom SEO help text not rendering (stock plugin copy shown; image says 'hero image') → rework**. Cosmetic accepted (stock): stale inline length message until next save; plugin 'Too short'/'Good' badges; error tooltip overlaps help line. TODO(router): generateMetadata, JSON-LD, sitemap/robots, live preview |
 | foundation | B0 tokens/fonts, (frontend) layout, RenderBlocks, /_showcase, pages.layout, S4 | all | documented | integrator 2026-10-22; no gate (machinery); no migration (layout field appears with first block); tsc/lint/types clean |
 | chrome | B1 SiteHeader (+mobile) + SiteFooter standard/reduced/legal-only | all | gate1 | Gate 1 QA done 2026-10-22 (admin add/remove/reorder/save ✓; 768/1440 no discrepancies; 390 nudge heading hidden + menu overlays — both deliberate per design/agent); Gate 2: 4 minor a11y findings (F41). Human review at checkpoint. Dev nav now populated by QA (nudge line ends "(test nudge)" — revert before public) |
+| router | B2 page router: per-page generateMetadata (plugin-seo + seo-defaults template, HOME_SEO_TITLE), draft mode + live preview (F32 — QA found no preview control in Pages edit view), redirects-on-not-found (F22), sitemap/robots excluding /_showcase, readingProgress flag | all | queued | after batch-2 integration; before checkpoint |
 | block | 23 blocks in page build order (SCHEMA.md §8–9) | — | queued; homepage set first (Hero → ProofStrip → CaseStudyCards → MiniCTAStrip → TwoTrackPanels → PhaseTimeline → TeamIntro → TestimonialRow → FinalCTA) | homepage variants only this step; appended to /_showcase on Gate 1 |
-| block | Hero (typographic) | 1 | integrated | migration b3_hero; shared eyebrowField()/headlineFields() added to src/fields; Gate 1/2 pending (QA serialized behind B1) |
-| block | ProofStrip (scarcity) | 1 | coding | block-coder (parallel; headless-chromium self-check) |
-| block | CaseStudyCards (cards + fallback ledger) | 1 | coding | block-coder (parallel; headless-chromium self-check) |
-| block | MiniCTAStrip (band) | 1 | coding | block-coder (parallel; headless-chromium self-check) |
-| block | TwoTrackPanels (equal) | 1 | coding | block-coder (parallel; headless-chromium self-check) |
-| block | PhaseTimeline (accordion) | 1 | coding | block-coder (parallel; headless-chromium self-check) |
-| block | TeamIntro (intro, founder-card) | 1 | coding | block-coder (parallel; headless-chromium self-check) |
-| block | TestimonialRow (row) | 1 | coding | block-coder (parallel; headless-chromium self-check) |
-| block | FinalCTA | 1 | coding | block-coder (parallel; headless-chromium self-check) |
+| block | Hero (typographic) | 1 | rework | Gate 1: 768 h1 overlaps geometry/microcopy — rework queued; | migration b3_hero; shared eyebrowField()/headlineFields() added to src/fields; Gate 1/2 pending (QA serialized behind B1) |
+| block | ProofStrip (scarcity) | 1 | rework | Gate 1 findings 2026-10-22 queued (after batch-2 integration frees the files) |
+| block | CaseStudyCards (cards + fallback ledger) | 1 | integrated | batch2 migration; Gate 1/2 next |
+| block | MiniCTAStrip (band) | 1 | gate2 | Gate 1: no discrepancies 390/768/1440 + admin ✓ |
+| block | TwoTrackPanels (equal) | 1 | gate1 | Gate 1 ✓ then batch2 changed mobile section headline 1.375→1.75rem (design value, AccentHeadline level="section") — re-check 390 |
+| block | PhaseTimeline (accordion) | 1 | integrated | batch2 migration; Gate 1/2 next |
+| block | TeamIntro (intro, founder-card) | 1 | integrated | batch2 migration; Gate 1/2 next |
+| block | TestimonialRow (row) | 1 | integrated | batch2 migration; Gate 1/2 next |
+| block | FinalCTA | 1 | rework | Gate 1 findings 2026-10-22 queued (after batch-2 integration frees the files) |
 | integration | contact · newsletter (DOI) · lead_magnet · site_error | — | queued after triggering units clear | Gate A |
 
 ## Page assembly status
@@ -74,6 +75,8 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 | 2026-10-17 | `src/migrations/20261017_193341_c1_users_role.ts` | users: + name, role (enum admin/marketing/pipeline), API-key cols; data step keeps admins; drops users_roles | scratch proofs (up/down/from-zero); dev DB via same SQL / no / no |
 | 2026-10-17 | `src/migrations/20261017_181819_initial.ts` | Boot scaffolding: users (+roles, sessions), media, payload_kv, locked_documents, preferences, migrations | scratch + image-check DBs only (dev uses push) / no / no |
 | 2026-10-22 | `20261022_025136_b3_hero` | adds `pages.layout` + Hero block tables (`pages_blocks_hero*`, versions) + `pages_rels`/`_pages_v_rels` (first Pages relationship). Additive only; up/down/up tested on scratch DB | dev (push) / — / — |
+| 2026-10-22 | `20261022_030147_b3_homepage_batch1` | 14 pages/_pages_v block tables (MiniCTAStrip, FinalCTA+buttons, ProofStrip+statements, TwoTrackPanels+panels), 18 enums, nullable `clients_id` (FK+index) on pages_rels/_pages_v_rels. Additive; scratch up/down/up ✓ | dev (push) / — / — |
+| 2026-10-22 | `20261022_031049_b3_homepage_batch2` | 14 pages/_pages_v block tables (CaseStudyCards + fallback_metrics, TestimonialRow, PhaseTimeline + phases + steps, TeamIntro), 22 enums, nullable `testimonials_id` (FK+index) on pages_rels/_pages_v_rels. Additive; scratch up/down/up ✓; two FK names >63 chars truncated deterministically by Postgres (same as C7) | dev (push) / — / — |
 
 ## Releases
 | Date | Tag | Ordered by human | Notes |
@@ -186,6 +189,7 @@ Append-only. New sessions: read this before asking the human anything.
 | 2026-10-17 | Local Postgres image provisional `postgres:17-alpine` until server major is known; local port 5433 | OPS #6 open |
 | 2026-10-22 | B0: breakpoints = Tailwind defaults; design mobile build < `md` (768), desktop ≥ `md`; mobile-first classes. Fonts DM Sans + Archivo Black (next/font, self-hosted) + system mono (MERGED R16). Default Tailwind palette removed — design colours only | B0 integrator |
 | 2026-10-22 | Block registry: config in `src/blocks/index.ts` (`pageBlocks`), component in `src/blocks/components.ts`, fixtures in `src/showcase/registry.ts`; `/_showcase` lives at `src/app/(frontend)/%5Fshowcase/`. `pages.layout` only exists once ≥1 block registered (3.91 admin crashes on empty blocks field) | B0 integrator |
+| 2026-10-22 | `AccentHeadline level="section"` = section h2 size (1.75rem mobile / 3rem desktop, per Homepage.dc.html DS level 3→2); `metricFields({ required })` option | batch2 integrator |
 | 2026-10-22 | Big step 3 builds homepage variants only; other pages' variants are added (not restyles) when their page is built | PM |
 
 ## Flags for checkpoint (big step 2: G1–G4 + P1–P3)
@@ -242,6 +246,10 @@ Decisions deferred to the human; each has a safe default applied so work continu
 | F48 | CaseStudyCards | Built `featured`/`latest`/`manual` sources and `ledger`/`note` fallbacks; `track` source + testimonials/metric-strip/logo-strip fallbacks deferred to their pages. `featured` with zero featured (but some published) → fallback, not latest. Extra field `cardLinkLabel` | as stated |
 | F49 | FinalCTA | Design capacity line is body-size; rendered loud stat + quiet reason (rule 2). Second button = dimmer ghost-light (design shows one) | as stated |
 | F50 | TeamIntro | founder-card with no published member renders nothing (+console.error); `member.bio` not rendered (body field carries it); social links 44px at all widths | as stated |
+| F52 | batch1 | Shared `scarcityRef()` in src/fields. Dev scarcity global has only the `capacity` statement row; homepage needs `ongoing` (ProofStrip) + `builds-line` (FinalCTA default) rows — p1 seed must create them or neither line shows | seed will add; human may enter real wording |
+| F53 | PhaseTimeline | Design's desktop auto-advance (cycles every 2.2s until first click) NOT ported — fails WCAG 2.2.2 and MERGED says desktop opens on click; mobile scroll-open off under reduced motion; open steps grow to fit text on mobile (design fixed 146px); one phase title for both builds ("Build independence") | off / as stated |
+| F54 | QA | Publish-time validation (required fields, exactly-2 panels, accentPhrase substring) is unproven: drafts skip validation and the permission classifier blocks QA from clicking Publish. Needs either the human to publish one test page, or a permission rule for QA | human to test or allow |
+| F55 | batch1 SEO | Gate 2 (0 blockers): (1 med) ProofStrip + FinalCTA loud stat and quiet reason not programmatically associated → role=group + aria-labelledby/describedby (or figure/figcaption); (2 med) TwoTrackPanels track titles are run-in spans → h3 inline inside a div wrapper (visual unchanged); (3 low) MiniCTAStrip whole-strip link name is the full sentence + label → optional aria-label; (4 low) ProofStrip logo list unnamed → aria-labelledby eyebrow / aria-label "Clients"; (5 low) Hero vertical microcopy aria-hidden on desktop but read on mobile → pick one (recommend decorative both) | none applied (SEO fixes need human OK); recommend 1, 2, 4, 5 |
 | F51 | TestimonialRow | Empty (no testimonials, no study, no figure) → section renders nothing; `featured` study = newest published featured by `-publishedAt`; video = poster + link-out to YouTube (shared VideoTile later) | as stated |
 
 ## Session handoff
