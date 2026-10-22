@@ -212,10 +212,14 @@ export interface Page {
     | FinalCTABlock
     | ProofStripBlock
     | CaseStudyCardsBlock
+    | MetricEventBlock
     | TestimonialRowBlock
     | TwoTrackPanelsBlock
     | PhaseTimelineBlock
     | TeamIntroBlock
+    | RichContentBlock
+    | SpecLedgerBlock
+    | AccordionFAQBlock
   )[];
   meta?: SeoMeta;
   /**
@@ -262,7 +266,7 @@ export interface HeroBlock {
   /**
    * The hero layout. More layouts arrive with the pages that need them.
    */
-  variant: 'typographic';
+  variant: 'typographic' | 'service' | 'article';
   /**
    * Small uppercase line above the headline, e.g. "Integrated ecommerce growth partner — Chicago".
    */
@@ -290,7 +294,7 @@ export interface HeroBlock {
     text?: string | null;
   };
   /**
-   * The supporting paragraph under the headline.
+   * The supporting paragraph under the headline. In the article layout it is the left line of the thin rule under the headline (e.g. the engagement scope).
    */
   body?: string | null;
   /**
@@ -343,6 +347,117 @@ export interface HeroBlock {
    * The large decorative logo silhouette behind the headline.
    */
   geometry?: boolean | null;
+  /**
+   * The trail above the headline, e.g. Services / Shopify theme development / Phase 01. The LAST crumb is the current page and never links. Leave a middle crumb without a destination to show it as plain text.
+   */
+  breadcrumb?:
+    | {
+        /**
+         * The crumb text.
+         */
+        label: string;
+        /**
+         * Pick a page on this site, or use the address instead.
+         */
+        page?:
+          | ({
+              relationTo: 'pages';
+              value: number | Page;
+            } | null)
+          | ({
+              relationTo: 'case-studies';
+              value: number | CaseStudy;
+            } | null)
+          | ({
+              relationTo: 'posts';
+              value: number | Post;
+            } | null)
+          | ({
+              relationTo: 'lead-magnets';
+              value: number | LeadMagnet;
+            } | null);
+        /**
+         * A site path like /work or a full https:// address.
+         */
+        url?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Short facts shown beside the headline on desktop and as a strip under it on mobile, e.g. "$3.1M" / "Client revenue added". Results or counts only, never a price.
+   */
+  stats?:
+    | {
+        /**
+         * The figure, e.g. "$3.1M".
+         */
+        value: string;
+        /**
+         * What it measures.
+         */
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * A compact three-step strip under the buttons, e.g. 01 Build / 02 Operate / 03 Independence. The last step is always shown at full weight.
+   */
+  phaseStrip?:
+    | {
+        /**
+         * e.g. "01".
+         */
+        number: string;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The oversized result figure under the headline, e.g. "+212%" / "Revenue, 12 months". Results only, never a price.
+   */
+  resultMetric?: {
+    /**
+     * A result or count, never a price. e.g. "+212%".
+     */
+    value?: string | null;
+    /**
+     * What the number measures, e.g. "Revenue, 12 months".
+     */
+    label?: string | null;
+    /**
+     * Optional quiet line under the metric.
+     */
+    sub?: string | null;
+    /**
+     * Show the number in the accent colour.
+     */
+    accent?: boolean | null;
+  };
+  /**
+   * Right side of the thin rule under the headline: byline, date and read time as plain text.
+   */
+  metaLine?: string | null;
+  /**
+   * The grey "In short" box.
+   */
+  summary?: {
+    /**
+     * Small uppercase title of the box.
+     */
+    label?: string | null;
+    /**
+     * The summary. Leave empty to hide the whole box.
+     */
+    body?: string | null;
+  };
+  /**
+   * Image shown under the header (a screenshot of the work, for example).
+   */
+  media?: (number | null) | Media;
+  /**
+   * How the lead image is presented.
+   */
+  mediaFrame?: ('none' | 'browser' | 'full-bleed') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'hero';
@@ -1214,6 +1329,10 @@ export interface Form {
             label?: string | null;
             width?: number | null;
             required?: boolean | null;
+            /**
+             * Hint shown inside the empty field, e.g. "you@store.com". Optional; the label still shows.
+             */
+            placeholder?: string | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'email';
@@ -1272,6 +1391,10 @@ export interface Form {
             width?: number | null;
             defaultValue?: string | null;
             required?: boolean | null;
+            /**
+             * Hint shown inside the empty field, e.g. "you@store.com". Optional; the label still shows.
+             */
+            placeholder?: string | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'text';
@@ -1282,6 +1405,10 @@ export interface Form {
             width?: number | null;
             defaultValue?: string | null;
             required?: boolean | null;
+            /**
+             * Hint shown inside the empty field, e.g. "you@store.com". Optional; the label still shows.
+             */
+            placeholder?: string | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'textarea';
@@ -1609,9 +1736,13 @@ export interface ProofStripBlock {
  */
 export interface CaseStudyCardsBlock {
   /**
-   * The layout of the studies. More layouts arrive with the pages that need them.
+   * The layout of the studies. "Next study" is meant for the case-study template: it links to the study after the one being read.
    */
-  layout: 'cards';
+  layout: 'cards' | 'ledger' | 'next-link';
+  /**
+   * Background colour of the whole section (live and fallback).
+   */
+  tone?: ('light' | 'grey') | null;
   /**
    * Small uppercase line above the headline (shown only when studies are live).
    */
@@ -1629,11 +1760,15 @@ export interface CaseStudyCardsBlock {
    */
   accentPhrase?: string | null;
   /**
-   * Which studies appear. Only PUBLISHED studies ever show; a draft study is never shown, even if picked here.
+   * Which studies appear. Only PUBLISHED studies ever show; a draft study is never shown, even if picked here. For "Next study", anything but "Pick by hand" means: the next study after the one being read.
    */
-  source: 'featured' | 'latest' | 'manual';
+  source: 'featured' | 'latest' | 'track' | 'manual';
   /**
-   * Pick up to three, in order. Draft studies are skipped on the site until they are published.
+   * Show studies whose engagement type is any of these, e.g. Build + "Build + engine" on the Shopify page, Growth engine + "Build + engine" on the Marketing page.
+   */
+  track?: ('build' | 'growth' | 'build-and-growth' | 'handover')[] | null;
+  /**
+   * Pick studies in order (cards show up to three; "Next study" uses the first). Draft studies are skipped on the site until they are published.
    */
   caseStudies?: (number | CaseStudy)[] | null;
   /**
@@ -1645,7 +1780,39 @@ export interface CaseStudyCardsBlock {
    */
   cardLinkLabel?: string | null;
   /**
-   * Optional link under the cards, e.g. "All studies →". Shown only when studies are live.
+   * How many rows show at first (and per "Load more" click).
+   */
+  pageSize?: number | null;
+  /**
+   * Adds the next rows under the list on click (no page numbers). Hidden when every study is already shown.
+   */
+  loadMore?: boolean | null;
+  loadMoreLabel?: string | null;
+  loadMoreLoadingLabel?: string | null;
+  loadMoreErrorLabel?: string | null;
+  /**
+   * Fixed text of the ledger. The rows themselves come from the studies.
+   */
+  ledgerLabels?: {
+    number?: string | null;
+    client?: string | null;
+    summary?: string | null;
+    metric?: string | null;
+    /**
+     * Shown after the client name on phones, e.g. "Client A · Case study".
+     */
+    kind?: string | null;
+    /**
+     * Bottom line of every row on phones. Large screens show an arrow.
+     */
+    readLabel?: string | null;
+  };
+  nextLabels?: {
+    label?: string | null;
+    readLabel?: string | null;
+  };
+  /**
+   * Optional link, e.g. "All studies →". Cards: under the cards, only when studies are live. Next study: shown on its own when there is no other published study to link to.
    */
   allLink: {
     type: 'internal' | 'custom';
@@ -1676,9 +1843,9 @@ export interface CaseStudyCardsBlock {
   /**
    * What this section shows while no case study is published (and again if all are unpublished). It switches to the cards on its own once a study is published.
    */
-  fallbackMode: 'ledger' | 'note';
+  fallbackMode?: ('ledger' | 'note' | 'testimonials' | 'metric-strip') | null;
   /**
-   * Small uppercase line above the fallback headline.
+   * Small uppercase line above the fallback headline. In Testimonials mode it sits above the quotes, e.g. "What clients say".
    */
   fallbackEyebrow?: string | null;
   /**
@@ -1690,11 +1857,11 @@ export interface CaseStudyCardsBlock {
    */
   fallbackAccentPhrase?: string | null;
   /**
-   * The line under the fallback headline. State what is true; never "coming soon".
+   * The line under the fallback headline (leave empty for none). State what is true; never "coming soon".
    */
   fallbackBody?: string | null;
   /**
-   * Up to three facts shown as a ruled list (ledger mode). Real, approved figures or counts only; never a price.
+   * Up to three facts: a ruled list in Ledger mode, a grey strip in Metric strip mode. Real, approved figures or counts only; never a price (use the pricing note).
    */
   fallbackMetrics?:
     | {
@@ -1718,6 +1885,10 @@ export interface CaseStudyCardsBlock {
       }[]
     | null;
   /**
+   * Up to three quotes, in order (Testimonials mode). Draft testimonials are skipped until published.
+   */
+  fallbackTestimonials?: (number | Testimonial)[] | null;
+  /**
    * Small inline note only, e.g. 'Builds start at $5K'. Never put a price in a headline or metric.
    */
   pricingNote?: string | null;
@@ -1727,13 +1898,99 @@ export interface CaseStudyCardsBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MetricEventBlock".
+ */
+export interface MetricEventBlock {
+  /**
+   * The metrics layout. More layouts arrive with the pages that need them.
+   */
+  variant: 'table';
+  /**
+   * Small line above the table, e.g. "Results — 12 months, client-reported".
+   */
+  eyebrow?: string | null;
+  /**
+   * The small wine diamond before the eyebrow.
+   */
+  eyebrowTick?: boolean | null;
+  /**
+   * Optional heading above the table. Leave empty for the eyebrow alone.
+   */
+  heading?: string | null;
+  /**
+   * Optional: one word or phrase copied from the headline to show in the accent colour.
+   */
+  accentPhrase?: string | null;
+  /**
+   * Headings of the four table columns. Empty ones fall back to the defaults shown.
+   */
+  columns?: {
+    /**
+     * Default "Measure".
+     */
+    measure?: string | null;
+    /**
+     * Default "Before".
+     */
+    baseline?: string | null;
+    /**
+     * Default "After".
+     */
+    after?: string | null;
+    /**
+     * Default "Change".
+     */
+    change?: string | null;
+  };
+  /**
+   * One row per measured result. Drag to reorder. On a case study this is filled from the case study itself.
+   */
+  items?:
+    | {
+        /**
+         * A result or count, never a price. e.g. "+212%".
+         */
+        value: string;
+        /**
+         * What the number measures, e.g. "Revenue, 12 months".
+         */
+        label: string;
+        /**
+         * Optional quiet line under the metric.
+         */
+        sub?: string | null;
+        /**
+         * Show the number in the accent colour.
+         */
+        accent?: boolean | null;
+        /**
+         * The figure before the engagement, e.g. "[$N]/yr". Optional.
+         */
+        baseline?: string | null;
+        /**
+         * The change, e.g. "+[N]%" or "-[N]pt". A leading + or - shows an up/down arrow; any other text (e.g. "Handover") shows as written.
+         */
+        change?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Quiet line under the table: how the numbers were measured and who reported them.
+   */
+  note?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'metricEvent';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "TestimonialRowBlock".
  */
 export interface TestimonialRowBlock {
   /**
    * The layout. More layouts arrive with the pages that need them.
    */
-  variant: 'row';
+  variant: 'row' | 'client-voice';
   /**
    * Small uppercase line above the testimonial cards, e.g. "What clients say".
    */
@@ -1800,7 +2057,7 @@ export interface TestimonialRowBlock {
   /**
    * Optional, e.g. "All studies". Leave empty to hide.
    */
-  cta: {
+  cta?: {
     type: 'internal' | 'custom';
     newTab?: boolean | null;
     reference?:
@@ -1826,6 +2083,69 @@ export interface TestimonialRowBlock {
     url?: string | null;
     label?: string | null;
   };
+  /**
+   * On a case-study template this is filled from the study itself. Fill it by hand only for a standalone use.
+   */
+  clientVoice?: {
+    /**
+     * The client's testimonial. A video testimonial plays first; a text one shows as a quote. Only a published testimonial appears; if none, this section is omitted.
+     */
+    testimonial?: (number | null) | Testimonial;
+    doDifferently?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    phaseMapping?: string | null;
+    /**
+     * Optional button under the phases box, e.g. "See the two tracks".
+     */
+    link: {
+      type: 'internal' | 'custom';
+      newTab?: boolean | null;
+      reference?:
+        | ({
+            relationTo: 'pages';
+            value: number | Page;
+          } | null)
+        | ({
+            relationTo: 'case-studies';
+            value: number | CaseStudy;
+          } | null)
+        | ({
+            relationTo: 'posts';
+            value: number | Post;
+          } | null)
+        | ({
+            relationTo: 'lead-magnets';
+            value: number | LeadMagnet;
+          } | null);
+      /**
+       * https://…, mailto:…, or a site path like /book-a-call.
+       */
+      url?: string | null;
+      label?: string | null;
+    };
+  };
+  /**
+   * The small wine number above the heading. Clear it to hide.
+   */
+  differentlyNumber?: string | null;
+  differentlyHeading?: string | null;
+  /**
+   * Small grey label at the top of the phases box.
+   */
+  phaseLabel?: string | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'testimonialRow';
@@ -1836,9 +2156,9 @@ export interface TestimonialRowBlock {
  */
 export interface TwoTrackPanelsBlock {
   /**
-   * The panel layout. More layouts arrive with the pages that need them.
+   * The panel layout. Equal = two paragraphs; Contrast = two "sold to you as" cards; Primary / secondary = a lead option plus a quieter alternative.
    */
-  variant: 'equal';
+  variant: 'equal' | 'contrast' | 'primary-secondary' | 'doors';
   /**
    * Optional small uppercase line above the headline.
    */
@@ -1861,18 +2181,22 @@ export interface TwoTrackPanelsBlock {
   panels?:
     | {
         /**
-         * Optional small uppercase tag above the track, e.g. "Phase 1".
+         * Optional small uppercase tag above the track, e.g. "Phase 1". In the Contrast layout this is the small label above the struck claim (e.g. "Sold to you as").
          */
         label?: string | null;
         /**
-         * The track lead-in, shown in capitals, e.g. "First, we build it."
+         * The claim that was sold, shown struck through, quotes included, e.g. "We'll build you a beautiful store."
+         */
+        claim?: string | null;
+        /**
+         * The track lead-in, shown in capitals, e.g. "First, we build it." In the Contrast layout this is the reality line under the struck claim.
          */
         title: string;
         accentTitle?: boolean | null;
         /**
          * What this track is. Runs on straight after the title.
          */
-        body: string;
+        body?: string | null;
         /**
          * Small inline note only, e.g. 'Builds start at $5K'. Never put a price in a headline or metric.
          */
@@ -1880,7 +2204,7 @@ export interface TwoTrackPanelsBlock {
         /**
          * Optional "how it works" link after the paragraph, e.g. "How the build works →".
          */
-        link: {
+        link?: {
           type: 'internal' | 'custom';
           newTab?: boolean | null;
           reference?:
@@ -1909,6 +2233,10 @@ export interface TwoTrackPanelsBlock {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Closing statement under the two tracks (Contrast and Primary / secondary layouts). Leave empty to hide.
+   */
+  conclusion?: string | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'twoTrackPanels';
@@ -1919,9 +2247,9 @@ export interface TwoTrackPanelsBlock {
  */
 export interface PhaseTimelineBlock {
   /**
-   * The timeline layout. More layouts arrive with the pages that need them.
+   * The timeline layout. Each layout shows only the fields it uses.
    */
-  variant: 'accordion';
+  variant: 'accordion' | 'arc' | 'steps' | 'build-run' | 'engine-rollout';
   /**
    * Small uppercase line above the headline, e.g. "How it runs".
    */
@@ -1943,12 +2271,12 @@ export interface PhaseTimelineBlock {
    */
   intro?: string | null;
   /**
-   * Up to three, in order. Each phase is a labelled bar its steps sit under. The LAST phase is always shown in the accent colour (the independence handover); that cannot be switched off.
+   * Up to three, in order. Accordion: each phase is a labelled bar its steps sit under. Arc: each phase is a row with its description and link. The LAST phase is always shown in the accent colour (the independence handover); that cannot be switched off.
    */
   phases?:
     | {
         /**
-         * Shown before the title, e.g. "Phase 1".
+         * Shown before (accordion) or above (arc) the title, e.g. "Phase 01".
          */
         number?: string | null;
         /**
@@ -1956,40 +2284,115 @@ export interface PhaseTimelineBlock {
          */
         title: string;
         /**
-         * Short description of the phase (not shown in the accordion layout).
+         * What happens in this phase, in two to four sentences.
          */
         body?: string | null;
+        /**
+         * Optional link under the description, e.g. "See Phase 01 →" to the service page. Leave the text empty for no link.
+         */
+        link?: {
+          type: 'internal' | 'custom';
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'case-studies';
+                value: number | CaseStudy;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null)
+            | ({
+                relationTo: 'lead-magnets';
+                value: number | LeadMagnet;
+              } | null);
+          /**
+           * https://…, mailto:…, or a site path like /book-a-call.
+           */
+          url?: string | null;
+          label?: string | null;
+        };
         id?: string | null;
       }[]
     | null;
   /**
-   * In order. Each step sits under the phase you pick. The first step starts open; on phones the step in the middle of the screen opens as visitors scroll.
+   * In order. Accordion: each step sits under the phase you pick; the first starts open. Step cards: three or four fit side by side. Build run: three per row. Engine rollout: one row (six fit). The LAST step is the handover and always shows at full weight.
    */
   steps?:
     | {
         /**
-         * e.g. "01".
+         * e.g. "01" (step cards: "Step 01").
          */
         number?: string | null;
         /**
-         * e.g. "Intake". Keep it to about 14 characters: on desktop it runs vertically when closed.
+         * e.g. "Intake". Keep it to about 14 characters: in the accordion it runs vertically on desktop when closed.
          */
         title: string;
         /**
          * Which phase bar this step sits under.
          */
-        phase: '1' | '2' | '3';
+        phase?: ('1' | '2' | '3') | null;
         /**
-         * Shown when the step is open. One or two sentences (about 160 characters fits best).
+         * Accordion: shown when the step is open (about 160 characters). Step cards: the sentence under the title. Build run / Engine rollout: the line under the title on phones (computers show the tag instead).
          */
         detail?: string | null;
+        /**
+         * Short label, e.g. a timing ("Week one") or "Your sign-off". Step cards: the boxed tag. Build run / Engine rollout: the line under the title on computers.
+         */
+        tag?: string | null;
+        /**
+         * Marks a step the client approves: on phones it shows the tag with a diamond.
+         */
+        isSignOff?: boolean | null;
+        /**
+         * Bullets under "You leave with" at the foot of the card. One short line each.
+         */
+        outcomes?:
+          | {
+              text: string;
+              id?: string | null;
+            }[]
+          | null;
         id?: string | null;
       }[]
     | null;
   /**
-   * Optional quiet line under the timeline.
+   * Optional quiet line under the timeline, e.g. "Then Phase 02, if the numbers say it fits."
    */
   closingLine?: string | null;
+  /**
+   * Optional button under the cards, e.g. "Book a Call". Leave the text empty for no button.
+   */
+  cta?: {
+    type: 'internal' | 'custom';
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'case-studies';
+          value: number | CaseStudy;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null)
+      | ({
+          relationTo: 'lead-magnets';
+          value: number | LeadMagnet;
+        } | null);
+    /**
+     * https://…, mailto:…, or a site path like /book-a-call.
+     */
+    url?: string | null;
+    label?: string | null;
+  };
   id?: string | null;
   blockName?: string | null;
   blockType: 'phaseTimeline';
@@ -2063,6 +2466,242 @@ export interface TeamIntroBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'teamIntro';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RichContentBlock".
+ */
+export interface RichContentBlock {
+  /**
+   * The text layout. Legal-document and grey-band layouts arrive with their pages.
+   */
+  variant: 'article';
+  /**
+   * Optional small uppercase line above the heading.
+   */
+  eyebrow?: string | null;
+  /**
+   * The small wine diamond before the eyebrow.
+   */
+  eyebrowTick?: boolean | null;
+  /**
+   * Optional heading above the text. Leave empty when the text starts with its own section headings.
+   */
+  heading?: string | null;
+  /**
+   * Optional: one word or phrase copied from the headline to show in the accent colour.
+   */
+  accentPhrase?: string | null;
+  /**
+   * Adds 01, 02, 03… above every big (H2) heading in the text, in order. Untick for text where numbers would be wrong.
+   */
+  numberSections?: boolean | null;
+  /**
+   * Use "Heading 2" for each section title (they are numbered). Type "/" or use the toolbar to add an image with a caption, a quote or a divider.
+   */
+  body: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'richContent';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SpecLedgerBlock".
+ */
+export interface SpecLedgerBlock {
+  /**
+   * Which layout to use.
+   */
+  variant: 'cards' | 'expandable' | 'signal-flow';
+  /**
+   * Template cards suit a coded set such as T-01 to T-04. Feature cards suit two big pictures.
+   */
+  cardLayout?: ('anatomy' | 'feature') | null;
+  /**
+   * Automatic: grey for template cards and signal flow, white for the others.
+   */
+  tone?: ('auto' | 'light' | 'grey') | null;
+  /**
+   * The small grey caption above the content, e.g. "Specification — what every build ships with". Optional.
+   */
+  eyebrow?: string | null;
+  /**
+   * The small wine diamond before the eyebrow.
+   */
+  eyebrowTick?: boolean | null;
+  /**
+   * Optional headline above the caption. The designs use only the small caption, so leave this empty unless you need a full headline.
+   */
+  heading?: string | null;
+  /**
+   * Optional: one word or phrase copied from the headline to show in the accent colour.
+   */
+  accentPhrase?: string | null;
+  /**
+   * Short grey line beside the caption (under the cards on mobile), e.g. "Four templates carry almost every order."
+   */
+  note?: string | null;
+  /**
+   * The cards, rows or tiles. Add, remove and drag to reorder.
+   */
+  items?:
+    | {
+        /**
+         * Short code, e.g. "D-01", "T-02" or "E-03". Optional.
+         */
+        code?: string | null;
+        /**
+         * The item name, e.g. "Conversion build". Shown in capitals.
+         */
+        title: string;
+        /**
+         * The short line beside the title (rows), under the picture (template cards), or under the title (feature cards). Not used by signal flow tiles.
+         */
+        line?: string | null;
+        /**
+         * The picture for this card (template cards 4:3, feature cards wide). The card keeps its shape if left empty.
+         */
+        image?: (number | null) | Media;
+        /**
+         * Small label above the first detail, e.g. "What we build" or "What we run".
+         */
+        whatLabel?: string | null;
+        /**
+         * Shown when the row is opened.
+         */
+        what?: string | null;
+        /**
+         * Small label above the second detail, e.g. "How you'll know it worked" or "What you'll see on the dashboard".
+         */
+        proofLabel?: string | null;
+        /**
+         * Shown when the row is opened, next to the first detail.
+         */
+        proof?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Show the first row already open. Visitors can open and close any number of rows.
+   */
+  firstOpen?: boolean | null;
+  /**
+   * The card the tiles feed into. Leave empty to show only the tiles.
+   */
+  hub?: {
+    /**
+     * e.g. "Everything reports here".
+     */
+    kicker?: string | null;
+    /**
+     * The card headline, e.g. "One dashboard. You see what we see."
+     */
+    heading?: string | null;
+    /**
+     * The supporting paragraph.
+     */
+    body?: string | null;
+    /**
+     * Optional small grey line under the paragraph (desktop only).
+     */
+    note?: string | null;
+    /**
+     * A screenshot of the dashboard. The card keeps its shape if left empty.
+     */
+    image?: (number | null) | Media;
+  };
+  /**
+   * Small inline note only, e.g. 'Builds start at $5K'. Never put a price in a headline or metric.
+   */
+  pricingNote?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'specLedger';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AccordionFAQBlock".
+ */
+export interface AccordionFAQBlock {
+  /**
+   * The accordion layout. The full FAQ-page layout arrives with that page.
+   */
+  variant: 'mini';
+  /**
+   * Optional small uppercase line above the heading.
+   */
+  eyebrow?: string | null;
+  /**
+   * The small wine diamond before the eyebrow.
+   */
+  eyebrowTick?: boolean | null;
+  /**
+   * Section heading, e.g. "Routing questions". Shown in capitals.
+   */
+  heading: string;
+  /**
+   * Only published questions are ever shown.
+   */
+  source: 'selected' | 'category';
+  /**
+   * Show the published questions of this FAQ category.
+   */
+  category?: ('pricing-contracts' | 'builds' | 'marketing' | 'process-trust') | null;
+  /**
+   * Drag to set the order. Unpublished questions are skipped on the live site.
+   */
+  faqs?: (number | Faq)[] | null;
+  /**
+   * Most questions to show (1–12).
+   */
+  limit?: number | null;
+  openFirst?: boolean | null;
+  /**
+   * Optional underlined link under the list, e.g. "All questions, answered straight →".
+   */
+  allLink: {
+    type: 'internal' | 'custom';
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'case-studies';
+          value: number | CaseStudy;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null)
+      | ({
+          relationTo: 'lead-magnets';
+          value: number | LeadMagnet;
+        } | null);
+    /**
+     * https://…, mailto:…, or a site path like /book-a-call.
+     */
+    url?: string | null;
+    label?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'accordionFAQ';
 }
 /**
  * Questions and answers for the FAQ page and the FAQ sections on service pages.
@@ -2421,10 +3060,14 @@ export interface PagesSelect<T extends boolean = true> {
         finalCTA?: T | FinalCTABlockSelect<T>;
         proofStrip?: T | ProofStripBlockSelect<T>;
         caseStudyCards?: T | CaseStudyCardsBlockSelect<T>;
+        metricEvent?: T | MetricEventBlockSelect<T>;
         testimonialRow?: T | TestimonialRowBlockSelect<T>;
         twoTrackPanels?: T | TwoTrackPanelsBlockSelect<T>;
         phaseTimeline?: T | PhaseTimelineBlockSelect<T>;
         teamIntro?: T | TeamIntroBlockSelect<T>;
+        richContent?: T | RichContentBlockSelect<T>;
+        specLedger?: T | SpecLedgerBlockSelect<T>;
+        accordionFAQ?: T | AccordionFAQBlockSelect<T>;
       };
   meta?: T | SeoMetaSelect<T>;
   generateSlug?: T;
@@ -2474,6 +3117,45 @@ export interface HeroBlockSelect<T extends boolean = true> {
   subNote?: T;
   verticalMicrocopy?: T;
   geometry?: T;
+  breadcrumb?:
+    | T
+    | {
+        label?: T;
+        page?: T;
+        url?: T;
+        id?: T;
+      };
+  stats?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        id?: T;
+      };
+  phaseStrip?:
+    | T
+    | {
+        number?: T;
+        label?: T;
+        id?: T;
+      };
+  resultMetric?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        sub?: T;
+        accent?: T;
+      };
+  metaLine?: T;
+  summary?:
+    | T
+    | {
+        label?: T;
+        body?: T;
+      };
+  media?: T;
+  mediaFrame?: T;
   id?: T;
   blockName?: T;
 }
@@ -2552,14 +3234,37 @@ export interface ProofStripBlockSelect<T extends boolean = true> {
  */
 export interface CaseStudyCardsBlockSelect<T extends boolean = true> {
   layout?: T;
+  tone?: T;
   eyebrow?: T;
   eyebrowTick?: T;
   heading?: T;
   accentPhrase?: T;
   source?: T;
+  track?: T;
   caseStudies?: T;
   limit?: T;
   cardLinkLabel?: T;
+  pageSize?: T;
+  loadMore?: T;
+  loadMoreLabel?: T;
+  loadMoreLoadingLabel?: T;
+  loadMoreErrorLabel?: T;
+  ledgerLabels?:
+    | T
+    | {
+        number?: T;
+        client?: T;
+        summary?: T;
+        metric?: T;
+        kind?: T;
+        readLabel?: T;
+      };
+  nextLabels?:
+    | T
+    | {
+        label?: T;
+        readLabel?: T;
+      };
   allLink?:
     | T
     | {
@@ -2583,7 +3288,41 @@ export interface CaseStudyCardsBlockSelect<T extends boolean = true> {
         accent?: T;
         id?: T;
       };
+  fallbackTestimonials?: T;
   pricingNote?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MetricEventBlock_select".
+ */
+export interface MetricEventBlockSelect<T extends boolean = true> {
+  variant?: T;
+  eyebrow?: T;
+  eyebrowTick?: T;
+  heading?: T;
+  accentPhrase?: T;
+  columns?:
+    | T
+    | {
+        measure?: T;
+        baseline?: T;
+        after?: T;
+        change?: T;
+      };
+  items?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        sub?: T;
+        accent?: T;
+        baseline?: T;
+        change?: T;
+        id?: T;
+      };
+  note?: T;
   id?: T;
   blockName?: T;
 }
@@ -2624,6 +3363,25 @@ export interface TestimonialRowBlockSelect<T extends boolean = true> {
         url?: T;
         label?: T;
       };
+  clientVoice?:
+    | T
+    | {
+        testimonial?: T;
+        doDifferently?: T;
+        phaseMapping?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+      };
+  differentlyNumber?: T;
+  differentlyHeading?: T;
+  phaseLabel?: T;
   id?: T;
   blockName?: T;
 }
@@ -2641,6 +3399,7 @@ export interface TwoTrackPanelsBlockSelect<T extends boolean = true> {
     | T
     | {
         label?: T;
+        claim?: T;
         title?: T;
         accentTitle?: T;
         body?: T;
@@ -2656,6 +3415,7 @@ export interface TwoTrackPanelsBlockSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  conclusion?: T;
   id?: T;
   blockName?: T;
 }
@@ -2676,6 +3436,15 @@ export interface PhaseTimelineBlockSelect<T extends boolean = true> {
         number?: T;
         title?: T;
         body?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
         id?: T;
       };
   steps?:
@@ -2685,9 +3454,26 @@ export interface PhaseTimelineBlockSelect<T extends boolean = true> {
         title?: T;
         phase?: T;
         detail?: T;
+        tag?: T;
+        isSignOff?: T;
+        outcomes?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
         id?: T;
       };
   closingLine?: T;
+  cta?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
   id?: T;
   blockName?: T;
 }
@@ -2705,6 +3491,87 @@ export interface TeamIntroBlockSelect<T extends boolean = true> {
   photo?: T;
   member?: T;
   link?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "RichContentBlock_select".
+ */
+export interface RichContentBlockSelect<T extends boolean = true> {
+  variant?: T;
+  eyebrow?: T;
+  eyebrowTick?: T;
+  heading?: T;
+  accentPhrase?: T;
+  numberSections?: T;
+  body?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SpecLedgerBlock_select".
+ */
+export interface SpecLedgerBlockSelect<T extends boolean = true> {
+  variant?: T;
+  cardLayout?: T;
+  tone?: T;
+  eyebrow?: T;
+  eyebrowTick?: T;
+  heading?: T;
+  accentPhrase?: T;
+  note?: T;
+  items?:
+    | T
+    | {
+        code?: T;
+        title?: T;
+        line?: T;
+        image?: T;
+        whatLabel?: T;
+        what?: T;
+        proofLabel?: T;
+        proof?: T;
+        id?: T;
+      };
+  firstOpen?: T;
+  hub?:
+    | T
+    | {
+        kicker?: T;
+        heading?: T;
+        body?: T;
+        note?: T;
+        image?: T;
+      };
+  pricingNote?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AccordionFAQBlock_select".
+ */
+export interface AccordionFAQBlockSelect<T extends boolean = true> {
+  variant?: T;
+  eyebrow?: T;
+  eyebrowTick?: T;
+  heading?: T;
+  source?: T;
+  category?: T;
+  faqs?: T;
+  limit?: T;
+  openFirst?: T;
+  allLink?:
     | T
     | {
         type?: T;
@@ -3168,6 +4035,7 @@ export interface FormsSelect<T extends boolean = true> {
               label?: T;
               width?: T;
               required?: T;
+              placeholder?: T;
               id?: T;
               blockName?: T;
             };
@@ -3216,6 +4084,7 @@ export interface FormsSelect<T extends boolean = true> {
               width?: T;
               defaultValue?: T;
               required?: T;
+              placeholder?: T;
               id?: T;
               blockName?: T;
             };
@@ -3227,6 +4096,7 @@ export interface FormsSelect<T extends boolean = true> {
               width?: T;
               defaultValue?: T;
               required?: T;
+              placeholder?: T;
               id?: T;
               blockName?: T;
             };

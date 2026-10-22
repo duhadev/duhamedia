@@ -1,11 +1,15 @@
 import type React from 'react'
 
+import { AccordionFAQBlock } from './AccordionFAQ/Component'
 import { CaseStudyCardsBlock } from './CaseStudyCards/Component'
 import { FinalCTABlock } from './FinalCTA/Component'
 import { HeroBlock } from './Hero/Component'
+import { MetricEventBlock } from './MetricEvent/Component'
 import { MiniCTAStripBlock } from './MiniCTAStrip/Component'
 import { PhaseTimelineBlock } from './PhaseTimeline/Component'
 import { ProofStripBlock } from './ProofStrip/Component'
+import { RichContentBlock } from './RichContent/Component'
+import { SpecLedgerBlock } from './SpecLedger/Component'
 import { TeamIntroBlock } from './TeamIntro/Component'
 import { TestimonialRowBlock } from './TestimonialRow/Component'
 import { TwoTrackPanelsBlock } from './TwoTrackPanels/Component'
@@ -32,8 +36,12 @@ export const blockComponents: BlockComponents = {
   finalCTA: FinalCTABlock,
   proofStrip: ProofStripBlock,
   caseStudyCards: CaseStudyCardsBlock,
+  metricEvent: MetricEventBlock,
   testimonialRow: TestimonialRowBlock,
   twoTrackPanels: TwoTrackPanelsBlock,
   phaseTimeline: PhaseTimelineBlock,
   teamIntro: TeamIntroBlock,
+  richContent: RichContentBlock,
+  specLedger: SpecLedgerBlock,
+  accordionFAQ: AccordionFAQBlock,
 }

@@ -19,6 +19,7 @@ import * as migration_20261022_014336_s3_friendly_errors from './20261022_014336
 import * as migration_20261022_025136_b3_hero from './20261022_025136_b3_hero';
 import * as migration_20261022_030147_b3_homepage_batch1 from './20261022_030147_b3_homepage_batch1';
 import * as migration_20261022_031049_b3_homepage_batch2 from './20261022_031049_b3_homepage_batch2';
+import * as migration_20261022_052303_b4_pages_2_6_blocks from './20261022_052303_b4_pages_2_6_blocks';
 
 export const migrations = [
   {
@@ -124,6 +125,11 @@ export const migrations = [
   {
     up: migration_20261022_031049_b3_homepage_batch2.up,
     down: migration_20261022_031049_b3_homepage_batch2.down,
-    name: '20261022_031049_b3_homepage_batch2'
+    name: '20261022_031049_b3_homepage_batch2',
+  },
+  {
+    up: migration_20261022_052303_b4_pages_2_6_blocks.up,
+    down: migration_20261022_052303_b4_pages_2_6_blocks.down,
+    name: '20261022_052303_b4_pages_2_6_blocks'
   },
 ];

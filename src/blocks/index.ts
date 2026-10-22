@@ -1,11 +1,15 @@
 import type { Block } from 'payload'
 
+import { AccordionFAQ } from './AccordionFAQ/config'
 import { CaseStudyCards } from './CaseStudyCards/config'
 import { FinalCTA } from './FinalCTA/config'
 import { Hero } from './Hero/config'
+import { MetricEvent } from './MetricEvent/config'
 import { MiniCTAStrip } from './MiniCTAStrip/config'
 import { PhaseTimeline } from './PhaseTimeline/config'
 import { ProofStrip } from './ProofStrip/config'
+import { RichContent } from './RichContent/config'
+import { SpecLedger } from './SpecLedger/config'
 import { TeamIntro } from './TeamIntro/config'
 import { TestimonialRow } from './TestimonialRow/config'
 import { TwoTrackPanels } from './TwoTrackPanels/config'
@@ -35,8 +39,12 @@ export const pageBlocks: Block[] = [
   FinalCTA,
   ProofStrip,
   CaseStudyCards,
+  MetricEvent,
   TestimonialRow,
   TwoTrackPanels,
   PhaseTimeline,
   TeamIntro,
+  RichContent,
+  SpecLedger,
+  AccordionFAQ,
 ]

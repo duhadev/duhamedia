@@ -1,12 +1,11 @@
 import 'server-only'
 
 import config from '@payload-config'
-import { RichText, type JSXConvertersFunction } from '@payloadcms/richtext-lexical/react'
 import { getPayload } from 'payload'
 import React from 'react'
 
+import { RichText } from '@/components/RichText'
 import { getTurnstileSiteKey } from '@/integrations/turnstile'
-import { docPath } from '@/lib/docPath'
 import type { Form } from '@/payload-types'
 
 import { PayloadForm, type PayloadFormProps } from './PayloadForm'
@@ -33,37 +32,6 @@ export type CMSFormProps = Omit<PayloadFormProps, 'form' | 'siteKey' | 'confirma
   confirmation?: React.ReactNode
 }
 
-type LinkFields = {
-  linkType?: string
-  url?: string
-  newTab?: boolean
-  doc?: { relationTo: string; value: unknown }
-}
-
-/** Internal links resolve through `docPath`; drafts/unresolved targets render as text, never a dead link. */
-const converters: JSXConvertersFunction = ({ defaultConverters }) => ({
-  ...defaultConverters,
-  link: ({ node, nodesToJSX }) => {
-    const children = nodesToJSX({ nodes: node.children })
-    const fields = node.fields as LinkFields
-    let href: string | null = fields.url ?? null
-    if (fields.linkType === 'internal') {
-      const value = fields.doc?.value as { slug?: string | null; track?: string | null; _status?: string | null } | undefined
-      href =
-        value && typeof value === 'object' && (value._status ?? 'published') === 'published'
-          ? docPath(fields.doc!.relationTo, value)
-          : null
-    }
-    if (!href) return <>{children}</>
-    const newTab = fields.newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {}
-    return (
-      <a href={href} {...newTab}>
-        {children}
-      </a>
-    )
-  },
-})
-
 async function loadForm(value: CMSFormProps['form']): Promise<Form | null> {
   const id = typeof value === 'object' && value !== null ? value.id : value
   if (typeof id !== 'number') return null
@@ -83,14 +51,14 @@ export async function CMSForm({ form: formValue, confirmation, ...rest }: CMSFor
   const messages: Record<string, React.ReactNode> = {}
   for (const [index, field] of (form.fields ?? []).entries()) {
     if (field.blockType === 'message' && field.message) {
-      messages[field.id ?? `message-${index}`] = <RichText data={field.message} converters={converters} disableContainer />
+      messages[field.id ?? `message-${index}`] = <RichText data={field.message} disableContainer />
     }
   }
 
   const confirmationNode =
     confirmation ??
     (form.confirmationType !== 'redirect' && form.confirmationMessage ? (
-      <RichText data={form.confirmationMessage} converters={converters} disableContainer />
+      <RichText data={form.confirmationMessage} disableContainer />
     ) : undefined)
 
   return (

@@ -3,7 +3,8 @@ import React from 'react'
 
 import { loadFeaturedStudy } from './loadFeaturedStudy'
 import type { BlockData } from '@/blocks/types'
-import { CMSLink, Container, Media, Section } from '@/components/ui'
+import { RichText } from '@/components/RichText'
+import { ButtonLink, CMSLink, Container, Eyebrow, Media, Section } from '@/components/ui'
 import { resolveLinkHref } from '@/components/ui/CMSLink'
 import { AccentHeadline } from '@/components/ui/AccentHeadline'
 import { cx } from '@/lib/cx'
@@ -259,8 +260,87 @@ export function TestimonialRowView({
   )
 }
 
+/* ---------------------------- client-voice variant ---------------------------- */
+
+type ClientVoiceData = NonNullable<TestimonialRowProps['clientVoice']>
+
+/** True when the Lexical state holds at least one non-blank text node. */
+function hasText(node: unknown): boolean {
+  if (!node || typeof node !== 'object') return false
+  const n = node as { text?: unknown; children?: unknown }
+  if (typeof n.text === 'string' && n.text.trim()) return true
+  return Array.isArray(n.children) && n.children.some(hasText)
+}
+
+/**
+ * Pure render of the `client-voice` variant (Case Study.dc.html "Client voice",
+ * desktop + mobile builds). Takes the same shape as `case-studies.clientVoice`,
+ * so the case-study template passes the study's group straight through.
+ *
+ * Video-first: a video testimonial shows its poster (link-out to YouTube) above
+ * the quote; a text testimonial shows the quote only. Only a PUBLISHED, populated
+ * testimonial renders; without one the whole section renders nothing (the case
+ * study still reads whole) and a server-side warning is logged.
+ */
+export function TestimonialClientVoiceView({
+  clientVoice,
+  differentlyNumber,
+  differentlyHeading,
+  phaseLabel,
+}: Pick<TestimonialRowProps, 'differentlyNumber' | 'differentlyHeading' | 'phaseLabel'> & { clientVoice?: ClientVoiceData | null }) {
+  const t = clientVoice?.testimonial
+  const testimonial = t && typeof t === 'object' && (t._status === undefined || t._status === 'published') ? t : null
+  if (!testimonial) {
+    console.warn('[TestimonialRow] client-voice has no published testimonial; rendering nothing')
+    return null
+  }
+
+  const differently = hasText(clientVoice?.doDifferently?.root) ? clientVoice?.doDifferently : null
+  const phases = clientVoice?.phaseMapping?.trim() ? clientVoice.phaseMapping : null
+  const hasLink = Boolean(resolveLinkHref(clientVoice?.link) && clientVoice?.link?.label?.trim())
+  const heading = differentlyHeading?.trim()
+  const number = differentlyNumber?.trim()
+
+  return (
+    <Section tone="light" pad="none" className="pt-9 pb-2 md:py-14">
+      <Container>
+        <div className="mx-auto max-w-205">
+          <TestimonialCard t={testimonial} />
+          {differently ? (
+            <div className="mt-8 flex max-w-[66ch] flex-col gap-4 text-[1.0625rem] leading-[1.7] md:mt-10 md:gap-5.5">
+              {heading || number ? (
+                <div className="flex flex-col gap-1.5 md:gap-2">
+                  {number ? <span className="font-display text-[0.8125rem] text-wine md:text-[0.875rem]">{number}</span> : null}
+                  {heading ? (
+                    <h2 className="m-0 font-display text-[1.25rem] leading-[1.15] font-normal uppercase md:text-[1.375rem]">{heading}</h2>
+                  ) : null}
+                </div>
+              ) : null}
+              <div className="flex flex-col gap-4 [&_a]:underline [&_ol]:list-decimal [&_ol]:pl-6 [&_p]:m-0 [&_ul]:list-disc [&_ul]:pl-6">
+                <RichText data={differently} disableContainer />
+              </div>
+            </div>
+          ) : null}
+          {phases || hasLink ? (
+            <div className="mt-6 max-w-[66ch] border-2 border-ink p-5 md:mt-7 md:px-6 md:py-5.5">
+              {phaseLabel?.trim() ? <Eyebrow muted>{phaseLabel}</Eyebrow> : null}
+              {phases ? <p className="m-0 mt-2.5 text-[0.9375rem] leading-[1.6] whitespace-pre-line">{phases}</p> : null}
+              {hasLink ? (
+                <div className="mt-4">
+                  <ButtonLink link={clientVoice?.link} variant="ghost" size="md" className="max-md:flex max-md:w-full" />
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+        </div>
+      </Container>
+    </Section>
+  )
+}
+
 /** Server component: resolves the featured study (only when needed), then renders the view. */
 export async function TestimonialRowBlock(props: TestimonialRowProps) {
+  if (props.variant === 'client-voice') return <TestimonialClientVoiceView {...props} />
   const needsFeatured = props.studyCard?.show !== false && (props.studyCard?.source ?? 'featured') === 'featured'
   const featuredStudy = needsFeatured ? await loadFeaturedStudy() : null
   return <TestimonialRowView {...props} featuredStudy={featuredStudy} />

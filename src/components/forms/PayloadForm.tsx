@@ -18,7 +18,7 @@ import {
 } from '@/integrations/forms/shared'
 import { cx } from '@/lib/cx'
 
-import { TurnstileWidget } from './TurnstileWidget'
+import { TurnstileWidget, type TurnstileAppearance } from './TurnstileWidget'
 
 /**
  * Renders one form-builder form and submits it to POST /api/form-submit
@@ -40,6 +40,13 @@ import { TurnstileWidget } from './TurnstileWidget'
  * without JS, so that visitor gets the friendly Turnstile message).
  */
 
+/**
+ * Slot classes. Layout slots (`form`, `fields`, `footer`, `turnstile`, `submit`)
+ * REPLACE the default layout classes when set; the others are appended.
+ * Defaults: form `flex flex-col gap-6`, fields `flex flex-wrap gap-4`,
+ * footer `flex flex-col gap-3`, submit `self-start`, turnstile `min-h-[65px] w-full`
+ * (`w-full` with interaction-only).
+ */
 export type PayloadFormClassNames = Partial<
   Record<'form' | 'fields' | 'field' | 'label' | 'control' | 'error' | 'turnstile' | 'footer' | 'submit' | 'status' | 'success', string>
 >
@@ -58,6 +65,12 @@ export type PayloadFormProps = {
   leadMagnetId?: number
   /** Overrides the form's own `submitButtonLabel`. */
   submitLabel?: string
+  /**
+   * Turnstile footprint. `'always'` (default): the managed widget shows (≈65px row).
+   * `'interaction-only'`: invisible and zero-height unless Cloudflare needs the visitor
+   * to click; the token is still issued and verified the same way. For inline layouts.
+   */
+  turnstileAppearance?: TurnstileAppearance
   tone?: 'light' | 'dark'
   submitVariant?: ButtonVariant
   submitSize?: ButtonSize
@@ -92,6 +105,7 @@ export function PayloadForm({
   sourcePath,
   leadMagnetId,
   submitLabel,
+  turnstileAppearance = 'always',
   tone = 'light',
   submitVariant = 'primary',
   submitSize = 'md',
@@ -160,13 +174,13 @@ export function PayloadForm({
       method="post"
       onSubmit={onSubmit}
       aria-busy={pending}
-      className={cx('flex flex-col gap-6', classNames.form, className)}
+      className={cx(classNames.form ?? 'flex flex-col gap-6', className)}
     >
       <input type="hidden" name={FORM_ID_KEY} value={form.id} />
       {sourcePath ? <input type="hidden" name={SOURCE_PATH_KEY} value={sourcePath} /> : null}
       {leadMagnetId ? <input type="hidden" name={LEAD_MAGNET_KEY} value={leadMagnetId} /> : null}
 
-      <div className={cx('flex flex-wrap gap-4', classNames.fields)}>
+      <div className={classNames.fields ?? 'flex flex-wrap gap-4'}>
         {form.fields.map((field) =>
           field.blockType === 'message' ? (
             <div key={field.key} className={cx('w-full font-body', classNames.field)}>
@@ -186,12 +200,19 @@ export function PayloadForm({
       </div>
 
       {siteKey ? (
-        <div className={cx('min-h-[65px] w-full', classNames.turnstile)}>
-          <TurnstileWidget ref={turnstileRef} siteKey={siteKey} theme={tone} onTokenChange={() => setLocalError(null)} />
+        // interaction-only: no reserved height, so the row collapses unless Cloudflare needs a click.
+        <div className={classNames.turnstile ?? (turnstileAppearance === 'interaction-only' ? 'w-full' : 'min-h-[65px] w-full')}>
+          <TurnstileWidget
+            ref={turnstileRef}
+            siteKey={siteKey}
+            theme={tone}
+            appearance={turnstileAppearance}
+            onTokenChange={() => setLocalError(null)}
+          />
         </div>
       ) : null}
 
-      <div className={cx('flex flex-col gap-3', classNames.footer)}>
+      <div className={classNames.footer ?? 'flex flex-col gap-3'}>
         <div
           ref={statusRef}
           tabIndex={-1}
@@ -206,7 +227,7 @@ export function PayloadForm({
           size={submitSize}
           disabled={pending}
           aria-disabled={pending}
-          className={cx('self-start disabled:cursor-wait disabled:opacity-70', classNames.submit)}
+          className={cx(classNames.submit ?? 'self-start', 'disabled:cursor-wait disabled:opacity-70')}
         >
           {pending ? 'Sending…' : submitLabel || form.submitButtonLabel}
         </Button>
@@ -289,7 +310,15 @@ function FieldControl({
   let input: React.ReactNode
   switch (field.blockType) {
     case 'textarea':
-      input = <textarea {...common} rows={4} maxLength={MAX_LENGTH.textarea} defaultValue={field.defaultValue} />
+      input = (
+        <textarea
+          {...common}
+          rows={4}
+          maxLength={MAX_LENGTH.textarea}
+          placeholder={field.placeholder}
+          defaultValue={field.defaultValue}
+        />
+      )
       break
     case 'select':
       input = (
@@ -313,7 +342,14 @@ function FieldControl({
       break
     case 'email':
       input = (
-        <input {...common} type="email" autoComplete="email" maxLength={MAX_LENGTH.email} defaultValue={field.defaultValue} />
+        <input
+          {...common}
+          type="email"
+          autoComplete="email"
+          maxLength={MAX_LENGTH.email}
+          placeholder={field.placeholder}
+          defaultValue={field.defaultValue}
+        />
       )
       break
     default:
@@ -323,6 +359,7 @@ function FieldControl({
           type="text"
           autoComplete={/name/i.test(field.name) ? 'name' : /company/i.test(field.name) ? 'organization' : undefined}
           maxLength={MAX_LENGTH.text}
+          placeholder={field.placeholder}
           defaultValue={field.defaultValue}
         />
       )

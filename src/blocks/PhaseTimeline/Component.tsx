@@ -5,6 +5,9 @@ import { AccentHeadline, Container, Eyebrow, Section } from '@/components/ui'
 import { cx } from '@/lib/cx'
 
 import { AccordionSteps } from './AccordionSteps'
+import { ArcPhases } from './ArcPhases'
+import { StepCards } from './StepCards'
+import { StepRun } from './StepRun'
 
 type PhaseTimelineProps = BlockData<'phaseTimeline'>
 
@@ -62,7 +65,22 @@ const groupVars = (count: number): React.CSSProperties => {
  * The LAST phase always renders at full visual weight (wine label + bar);
  * there is no field to turn that off (CLAUDE.md PhaseTimeline rule).
  */
-export function PhaseTimelineBlock({ eyebrow, eyebrowTick, heading, accentPhrase, intro, phases, steps, closingLine }: PhaseTimelineProps) {
+export function PhaseTimelineBlock(props: PhaseTimelineProps) {
+  switch (props.variant) {
+    case 'arc':
+      return <ArcPhases {...props} />
+    case 'steps':
+      return <StepCards {...props} />
+    case 'build-run':
+    case 'engine-rollout':
+      return <StepRun {...props} />
+    default:
+      return <Accordion {...props} />
+  }
+}
+
+/** The `accordion` variant (B3, cleared Gate 1): unchanged. */
+function Accordion({ eyebrow, eyebrowTick, heading, accentPhrase, intro, phases, steps, closingLine }: PhaseTimelineProps) {
   const phaseRows = (phases ?? []).filter((p) => p?.title?.trim())
   const stepRows = (steps ?? []).filter((s) => s?.title?.trim())
   if ((phases ?? []).length !== phaseRows.length) {

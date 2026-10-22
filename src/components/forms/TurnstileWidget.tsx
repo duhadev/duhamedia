@@ -19,8 +19,13 @@ import { TURNSTILE_RESPONSE_KEY } from '@/integrations/forms/shared'
  *
  * `size: 'flexible'` = full width (min 300px) so it fits a 390px viewport.
  */
+/** Cloudflare `appearance` (https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/#configurations). */
+export type TurnstileAppearance = 'always' | 'interaction-only'
+
 export type TurnstileWidgetProps = {
   siteKey: string
+  /** `'interaction-only'`: hidden unless a challenge needs the visitor. Default `'always'`. */
+  appearance?: TurnstileAppearance
   /** Fires with a fresh token, and with `null` when it expires or errors. */
   onTokenChange?: (token: string | null) => void
   theme?: 'auto' | 'light' | 'dark'
@@ -28,7 +33,7 @@ export type TurnstileWidgetProps = {
 }
 
 export const TurnstileWidget = React.forwardRef<TurnstileInstance | undefined, TurnstileWidgetProps>(
-  function TurnstileWidget({ siteKey, onTokenChange, theme = 'light', className }, ref) {
+  function TurnstileWidget({ siteKey, appearance = 'always', onTokenChange, theme = 'light', className }, ref) {
     return (
       <Turnstile
         ref={ref}
@@ -36,6 +41,7 @@ export const TurnstileWidget = React.forwardRef<TurnstileInstance | undefined, T
         className={className}
         options={{
           theme,
+          appearance,
           size: 'flexible',
           language: 'en',
           responseFieldName: TURNSTILE_RESPONSE_KEY,

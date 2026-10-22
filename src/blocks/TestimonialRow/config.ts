@@ -1,11 +1,22 @@
-import type { Block } from 'payload'
+import { BoldFeature, InlineToolbarFeature, ItalicFeature, lexicalEditor, OrderedListFeature, ParagraphFeature, UnorderedListFeature } from '@payloadcms/richtext-lexical'
+import type { Block, Condition, Field } from 'payload'
 
-import { eyebrowField, headlineFields, linkField, metricFields } from '../../fields'
+import { eyebrowField, headlineFields, linkField, metricFields, richTextLinkFeature } from '../../fields'
+
+const isRow: Condition = (_d, s) => (s?.variant ?? 'row') === 'row'
+const isClientVoice: Condition = (_d, s) => s?.variant === 'client-voice'
+
+/** Same small editor as `case-studies.clientVoice.doDifferently` (same Lexical state shape, so the doc group passes straight through). */
+const asideEditor = lexicalEditor({
+  features: [ParagraphFeature(), BoldFeature(), ItalicFeature(), UnorderedListFeature(), OrderedListFeature(), richTextLinkFeature(), InlineToolbarFeature()],
+})
+
+/** Shows a field only for the `row` variant (existing field names/shapes are untouched). */
+const rowOnly = (f: Field): Field => ({ ...f, admin: { ...(f as { admin?: object }).admin, condition: isRow } }) as Field
 
 /**
- * TestimonialRow block (SCHEMA §8.2 item 9). This unit ships ONLY the `row`
- * variant (homepage §Testimonials); `client-voice` (p2) is added later as a new
- * option with its own fields. `leadMetric` (p16) is deliberately omitted until
+ * TestimonialRow block (SCHEMA §8.2 item 9). `row` = homepage §Testimonials;
+ * `client-voice` = p2 §Client voice (S4-10). `leadMetric` (p16) is deliberately omitted until
  * the Newsletter page builds it.
  *
  * `fallbackMetric` reuses the `metricFields()` shape with `required: false`:
@@ -25,14 +36,19 @@ export const TestimonialRow: Block = {
       type: 'select',
       required: true,
       defaultValue: 'row',
-      options: [{ label: 'Row (testimonial cards + "A study in full")', value: 'row' }],
+      options: [
+        { label: 'Row (testimonial cards + "A study in full")', value: 'row' },
+        { label: 'Client voice (case study: one testimonial + what we\'d do differently)', value: 'client-voice' },
+      ],
       admin: { description: 'The layout. More layouts arrive with the pages that need them.' },
     },
-    eyebrowField({
-      defaultTick: false,
-      description: 'Small uppercase line above the testimonial cards, e.g. "What clients say".',
-    }),
-    ...headlineFields({ required: false, description: 'The section headline, e.g. "Proof, in their words."' }),
+    rowOnly(
+      eyebrowField({
+        defaultTick: false,
+        description: 'Small uppercase line above the testimonial cards, e.g. "What clients say".',
+      }),
+    ),
+    ...headlineFields({ required: false, description: 'The section headline, e.g. "Proof, in their words."' }).map(rowOnly),
     {
       name: 'testimonials',
       type: 'relationship',
@@ -44,6 +60,7 @@ export const TestimonialRow: Block = {
       admin: {
         description:
           'Pick 1 to 3 testimonials, in the order shown. Only published testimonials appear on the site; drafts are skipped.',
+        condition: isRow,
       },
     },
     {
@@ -53,6 +70,7 @@ export const TestimonialRow: Block = {
       admin: {
         description:
           'The case-study card beside the testimonials. It only ever shows a PUBLISHED case study. Until one is published, the quiet figure below is shown instead, or nothing.',
+        condition: isRow,
       },
       fields: [
         { name: 'show', type: 'checkbox', label: 'Show this card', defaultValue: true },
@@ -107,10 +125,59 @@ export const TestimonialRow: Block = {
         },
       ],
     },
-    linkField({
-      name: 'cta',
-      label: 'Link under the cards',
-      description: 'Optional, e.g. "All studies". Leave empty to hide.',
-    }),
+    rowOnly(
+      linkField({
+        name: 'cta',
+        label: 'Link under the cards',
+        description: 'Optional, e.g. "All studies". Leave empty to hide.',
+      }),
+    ),
+    // ---- client-voice variant (p2 case-study template). `clientVoice` mirrors `case-studies.clientVoice`
+    // field-for-field so the template can pass the study's group straight through.
+    {
+      name: 'clientVoice',
+      type: 'group',
+      label: 'Client voice',
+      admin: { description: 'On a case-study template this is filled from the study itself. Fill it by hand only for a standalone use.', condition: isClientVoice },
+      fields: [
+        {
+          name: 'testimonial',
+          type: 'relationship',
+          relationTo: 'testimonials',
+          maxDepth: 2,
+          admin: { description: "The client's testimonial. A video testimonial plays first; a text one shows as a quote. Only a published testimonial appears; if none, this section is omitted." },
+        },
+        { name: 'doDifferently', type: 'richText', label: "What we'd do differently", editor: asideEditor },
+        { name: 'phaseMapping', type: 'textarea', label: 'How this maps to our phases' },
+        linkField({ name: 'link', label: 'Link', description: 'Optional button under the phases box, e.g. "See the two tracks".' }),
+      ],
+    },
+    {
+      type: 'row',
+      admin: { condition: isClientVoice },
+      fields: [
+        {
+          name: 'differentlyNumber',
+          type: 'text',
+          label: 'Small number',
+          defaultValue: '04',
+          admin: { width: '20%', description: 'The small wine number above the heading. Clear it to hide.' },
+        },
+        {
+          name: 'differentlyHeading',
+          type: 'text',
+          label: 'Heading',
+          defaultValue: "What we'd do differently",
+          admin: { width: '80%' },
+        },
+      ],
+    },
+    {
+      name: 'phaseLabel',
+      type: 'text',
+      label: 'Phases box label',
+      defaultValue: 'How this maps to our phases',
+      admin: { description: 'Small grey label at the top of the phases box.', condition: isClientVoice },
+    },
   ],
 }

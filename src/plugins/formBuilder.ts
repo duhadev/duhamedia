@@ -178,6 +178,41 @@ const formIntegrationFields: Field[] = [
   },
 ]
 
+/**
+ * S4-7 (delta): `placeholder` on the text / email / textarea field blocks.
+ * plugin-form-builder@3.91.0 gives only `select` a placeholder
+ * (dist/collections/Forms/fields.js:27-32, 123-168). Passing a block object in
+ * the plugin's `fields` option would REPLACE the block's field list
+ * (Forms/index.js:104 → deepMergeWithSourceArrays: arrays from the source win),
+ * so the field is appended here, to the already-built `fields` blocks field.
+ * Additive: one nullable column per block table (forms_blocks_text /
+ * _email / _textarea), no data step.
+ */
+const PLACEHOLDER_BLOCKS = new Set(['text', 'email', 'textarea'])
+
+const inputPlaceholderField: Field = {
+  name: 'placeholder',
+  type: 'text',
+  label: 'Placeholder',
+  admin: {
+    description: 'Hint shown inside the empty field, e.g. "you@store.com". Optional; the label still shows.',
+  },
+}
+
+const withInputPlaceholders = (fields: Field[]): Field[] =>
+  fields.map((field) =>
+    field.type === 'blocks' && field.name === 'fields'
+      ? {
+          ...field,
+          blocks: field.blocks.map((block) =>
+            PLACEHOLDER_BLOCKS.has(block.slug) && !block.fields.some((f) => 'name' in f && f.name === 'placeholder')
+              ? { ...block, fields: [...block.fields, inputPlaceholderField] }
+              : block,
+          ),
+        }
+      : field,
+  )
+
 const formsRevalidate = revalidateLiveCollectionHooks('forms')
 
 /* -------------------------------------------------------------------------- */
@@ -330,7 +365,7 @@ export const formBuilder: Plugin = formBuilderPlugin({
       afterChange: [formsRevalidate.afterChange],
       afterDelete: [formsRevalidate.afterDelete],
     },
-    fields: ({ defaultFields }) => [...adaptPluginFields(defaultFields), ...formIntegrationFields],
+    fields: ({ defaultFields }) => [...withInputPlaceholders(adaptPluginFields(defaultFields)), ...formIntegrationFields],
   },
   formSubmissionOverrides: {
     access: {

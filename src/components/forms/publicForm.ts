@@ -32,12 +32,19 @@ export function toPublicForm(form: Form): PublicForm {
         })
         break
       case 'email':
-        fields.push({ ...base, blockType: 'email' })
+        fields.push({ ...base, blockType: 'email', placeholder: f.placeholder ?? undefined })
         break
       case 'text':
       case 'textarea':
+        fields.push({
+          ...base,
+          blockType: f.blockType,
+          defaultValue: f.defaultValue ?? undefined,
+          placeholder: f.placeholder ?? undefined,
+        })
+        break
       case 'date':
-        fields.push({ ...base, blockType: f.blockType, defaultValue: f.defaultValue ?? undefined })
+        fields.push({ ...base, blockType: 'date', defaultValue: f.defaultValue ?? undefined })
         break
     }
   }

@@ -1,23 +1,40 @@
 import type { Block, Condition } from 'payload'
 
-import { eyebrowField, headlineFields } from '../../fields'
+import { eyebrowField, headlineFields, linkField } from '../../fields'
 
 /**
- * PhaseTimeline block (SCHEMA.md §8.3 item 11). This unit ships ONLY the
- * `accordion` variant (homepage §Process, Homepage.dc.html "Process": steps
- * grouped under up to three phase bars, one step open at a time). Later units
- * append `arc` / `build-run` / `engine-rollout` / `steps` to `variant.options`
- * together with their own fields (`phases.link`, `steps.tag`, `isSignOff`,
- * `outcomes`, `cta`).
+ * PhaseTimeline block (SCHEMA.md §8.3 item 11). Variants:
+ * - `accordion` (B3, homepage §Process, Homepage.dc.html "Process"): steps
+ *   grouped under up to three phase bars, one step open at a time.
+ * - `arc` (S4, p4 Services Hub "The arc"): up to three phases, each with a
+ *   body and a link. Uses `phases` only.
+ * - `steps` (S4, p4 "How it starts"; p9 "What happens next" later): numbered
+ *   step cards with a tag, "You leave with" outcomes, a closing line and a CTA.
+ * - `build-run` (S4, p5 Shopify "Build run"): ink band of numbered steps with
+ *   a short tag; sign-off steps carry a diamond on phones.
+ * - `engine-rollout` (S4, p6 Marketing "Engine rollout"): ink band, one row of
+ *   numbered steps with timing tags.
+ * Each variant shows only its own fields (`admin.condition`).
  *
- * Binding rule (CLAUDE.md, SCHEMA §8.3): the LAST phase (the independence
+ * Binding rule (CLAUDE.md, SCHEMA §8.3): the LAST phase/step (the independence
  * handover) always renders at full visual weight. There is deliberately no
  * field to turn that off.
  */
 
-/** Fields only some layouts show. `accordion` renders no phase body. */
-const notAccordion: Condition = (_data, _siblingData, { blockData }) =>
-  (blockData as { variant?: string } | undefined)?.variant !== 'accordion'
+type Variant = 'accordion' | 'arc' | 'steps' | 'build-run' | 'engine-rollout'
+
+/** Admin condition: show the field only for the listed variants. */
+const onlyFor =
+  (...variants: Variant[]): Condition =>
+  (_data, siblingData, { blockData }) => {
+    // `blockData` is the nearest block row (payload@3.91.0 fields/hooks/
+    // beforeChange/promise.js:246), for top-level block fields too; the
+    // sibling fallback covers a top-level field if it is ever undefined.
+    const variant =
+      (blockData as { variant?: string } | undefined)?.variant ??
+      (siblingData as { variant?: string } | undefined)?.variant
+    return variants.includes((variant ?? 'accordion') as Variant)
+  }
 
 export const PhaseTimeline: Block = {
   slug: 'phaseTimeline',
@@ -29,21 +46,30 @@ export const PhaseTimeline: Block = {
       type: 'select',
       required: true,
       defaultValue: 'accordion',
-      options: [{ label: 'Accordion (steps grouped by phase, one open at a time)', value: 'accordion' }],
+      options: [
+        { label: 'Accordion (steps grouped by phase, one open at a time)', value: 'accordion' },
+        { label: 'Arc (up to three phases, each with a description and a link)', value: 'arc' },
+        { label: 'Step cards (numbered cards with "You leave with" outcomes and a button)', value: 'steps' },
+        { label: 'Build run (dark band of numbered steps, sign-offs marked)', value: 'build-run' },
+        { label: 'Engine rollout (dark band, one row of steps with timings)', value: 'engine-rollout' },
+      ],
       admin: {
         isClearable: false,
-        description: 'The timeline layout. More layouts arrive with the pages that need them.',
+        description: 'The timeline layout. Each layout shows only the fields it uses.',
       },
     },
-    eyebrowField({
-      defaultTick: false,
-      description: 'Small uppercase line above the headline, e.g. "How it runs".',
-    }),
+    {
+      ...eyebrowField({
+        defaultTick: false,
+        description: 'Small uppercase line above the headline, e.g. "How it runs".',
+      }),
+      admin: { condition: onlyFor('accordion', 'build-run', 'engine-rollout') },
+    },
     ...headlineFields({ description: 'The section headline, e.g. "Three phases. The last one is the point."' }),
     {
       name: 'intro',
       type: 'textarea',
-      admin: { description: 'Optional short paragraph under the headline.' },
+      admin: { condition: onlyFor('accordion'), description: 'Optional short paragraph under the headline.' },
     },
     {
       name: 'phases',
@@ -54,8 +80,9 @@ export const PhaseTimeline: Block = {
       labels: { singular: 'Phase', plural: 'Phases' },
       admin: {
         initCollapsed: false,
+        condition: onlyFor('accordion', 'arc'),
         description:
-          'Up to three, in order. Each phase is a labelled bar its steps sit under. The LAST phase is always shown in the accent colour (the independence handover); that cannot be switched off.',
+          'Up to three, in order. Accordion: each phase is a labelled bar its steps sit under. Arc: each phase is a row with its description and link. The LAST phase is always shown in the accent colour (the independence handover); that cannot be switched off.',
       },
       fields: [
         {
@@ -64,7 +91,7 @@ export const PhaseTimeline: Block = {
             {
               name: 'number',
               type: 'text',
-              admin: { width: '30%', description: 'Shown before the title, e.g. "Phase 1".' },
+              admin: { width: '30%', description: 'Shown before (accordion) or above (arc) the title, e.g. "Phase 01".' },
             },
             {
               name: 'title',
@@ -78,8 +105,21 @@ export const PhaseTimeline: Block = {
           name: 'body',
           type: 'textarea',
           admin: {
-            condition: notAccordion,
-            description: 'Short description of the phase (not shown in the accordion layout).',
+            condition: onlyFor('arc'),
+            description: 'What happens in this phase, in two to four sentences.',
+          },
+        },
+        {
+          ...linkField({
+            name: 'link',
+            label: 'Link',
+            description:
+              'Optional link under the description, e.g. "See Phase 01 →" to the service page. Leave the text empty for no link.',
+          }),
+          admin: {
+            condition: onlyFor('arc'),
+            description:
+              'Optional link under the description, e.g. "See Phase 01 →" to the service page. Leave the text empty for no link.',
           },
         },
       ],
@@ -93,8 +133,9 @@ export const PhaseTimeline: Block = {
       labels: { singular: 'Step', plural: 'Steps' },
       admin: {
         initCollapsed: true,
+        condition: onlyFor('accordion', 'steps', 'build-run', 'engine-rollout'),
         description:
-          'In order. Each step sits under the phase you pick. The first step starts open; on phones the step in the middle of the screen opens as visitors scroll.',
+          'In order. Accordion: each step sits under the phase you pick; the first starts open. Step cards: three or four fit side by side. Build run: three per row. Engine rollout: one row (six fit). The LAST step is the handover and always shows at full weight.',
       },
       fields: [
         {
@@ -103,7 +144,7 @@ export const PhaseTimeline: Block = {
             {
               name: 'number',
               type: 'text',
-              admin: { width: '20%', description: 'e.g. "01".' },
+              admin: { width: '20%', description: 'e.g. "01" (step cards: "Step 01").' },
             },
             {
               name: 'title',
@@ -111,7 +152,7 @@ export const PhaseTimeline: Block = {
               required: true,
               admin: {
                 width: '50%',
-                description: 'e.g. "Intake". Keep it to about 14 characters: on desktop it runs vertically when closed.',
+                description: 'e.g. "Intake". Keep it to about 14 characters: in the accordion it runs vertically on desktop when closed.',
               },
             },
             {
@@ -124,7 +165,12 @@ export const PhaseTimeline: Block = {
                 { label: 'Phase 2 (second phase)', value: '2' },
                 { label: 'Phase 3 (third phase)', value: '3' },
               ],
-              admin: { width: '30%', isClearable: false, description: 'Which phase bar this step sits under.' },
+              admin: {
+                width: '30%',
+                isClearable: false,
+                condition: onlyFor('accordion'),
+                description: 'Which phase bar this step sits under.',
+              },
             },
           ],
         },
@@ -132,8 +178,47 @@ export const PhaseTimeline: Block = {
           name: 'detail',
           type: 'textarea',
           admin: {
-            description: 'Shown when the step is open. One or two sentences (about 160 characters fits best).',
+            description:
+              'Accordion: shown when the step is open (about 160 characters). Step cards: the sentence under the title. Build run / Engine rollout: the line under the title on phones (computers show the tag instead).',
           },
+        },
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'tag',
+              type: 'text',
+              admin: {
+                width: '70%',
+                condition: onlyFor('steps', 'build-run', 'engine-rollout'),
+                description:
+                  'Short label, e.g. a timing ("Week one") or "Your sign-off". Step cards: the boxed tag. Build run / Engine rollout: the line under the title on computers.',
+              },
+            },
+            {
+              name: 'isSignOff',
+              type: 'checkbox',
+              label: 'Client sign-off step',
+              defaultValue: false,
+              admin: {
+                width: '30%',
+                condition: onlyFor('build-run'),
+                description: 'Marks a step the client approves: on phones it shows the tag with a diamond.',
+              },
+            },
+          ],
+        },
+        {
+          name: 'outcomes',
+          type: 'array',
+          label: 'You leave with',
+          maxRows: 4,
+          labels: { singular: 'Outcome', plural: 'Outcomes' },
+          admin: {
+            condition: onlyFor('steps'),
+            description: 'Bullets under "You leave with" at the foot of the card. One short line each.',
+          },
+          fields: [{ name: 'text', type: 'text', required: true }],
         },
       ],
     },
@@ -141,7 +226,21 @@ export const PhaseTimeline: Block = {
       name: 'closingLine',
       type: 'text',
       label: 'Closing line',
-      admin: { description: 'Optional quiet line under the timeline.' },
+      admin: {
+        condition: onlyFor('accordion', 'steps', 'build-run', 'engine-rollout'),
+        description: 'Optional quiet line under the timeline, e.g. "Then Phase 02, if the numbers say it fits."',
+      },
+    },
+    {
+      ...linkField({
+        name: 'cta',
+        label: 'Button',
+        description: 'Optional button under the cards, e.g. "Book a Call". Leave the text empty for no button.',
+      }),
+      admin: {
+        condition: onlyFor('steps'),
+        description: 'Optional button under the cards, e.g. "Book a Call". Leave the text empty for no button.',
+      },
     },
   ],
 }

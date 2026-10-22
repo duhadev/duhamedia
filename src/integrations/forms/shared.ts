@@ -31,7 +31,15 @@ export const MAX_LENGTH = {
 
 /** The form-builder field types this site enables (src/plugins/formBuilder.ts), minus payment/country/state/upload. */
 export type PublicFormField =
-  | { blockType: 'text' | 'email' | 'textarea'; name: string; label: string; required: boolean; defaultValue?: string; width?: number }
+  | {
+      blockType: 'text' | 'email' | 'textarea'
+      name: string
+      label: string
+      required: boolean
+      defaultValue?: string
+      placeholder?: string
+      width?: number
+    }
   | { blockType: 'number'; name: string; label: string; required: boolean; defaultValue?: number; width?: number }
   | { blockType: 'date'; name: string; label: string; required: boolean; defaultValue?: string; width?: number }
   | {
