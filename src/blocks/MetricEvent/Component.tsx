@@ -52,7 +52,7 @@ const TH = 'text-[10px] font-bold uppercase tracking-[0.1em] text-gray-warm'
  * elements are re-displayed as grid. The change never relies on colour: it
  * carries its own sign, an arrow glyph (aria-hidden) and a screen-reader word.
  */
-export function MetricEventBlock({ eyebrow, eyebrowTick, heading, accentPhrase, columns, items, note }: MetricEventData) {
+function MetricTable({ eyebrow, eyebrowTick, heading, accentPhrase, columns, items, note }: MetricEventData) {
   const rows = (items ?? []).filter((r) => r?.label?.trim() && r?.value?.trim())
   if (!rows.length) {
     console.warn('[MetricEvent] table variant has no valid rows (label + value required); rendering nothing.')
@@ -191,4 +191,65 @@ export function MetricEventBlock({ eyebrow, eyebrowTick, heading, accentPhrase, 
       </Container>
     </Section>
   )
+}
+
+/**
+ * MetricEvent, `facts` variant (About.dc.html "Company facts", desktop + mobile
+ * builds: identical markup). A two-column ruled list: label left, value right
+ * in the display face (an editor-ticked "accent" row = the headline fact). The eyebrow is
+ * the table caption ("The company, in numbers"). A real <table>; no colour-only
+ * meaning. Rows without both label and value are skipped (never a blank row).
+ */
+function MetricFacts({ eyebrow, heading, accentPhrase, items, note }: MetricEventData) {
+  const rows = (items ?? []).filter((r) => r?.label?.trim() && r?.value?.trim())
+  if (!rows.length) {
+    console.warn('[MetricEvent] facts variant has no valid rows (label + value required); rendering nothing.')
+    return null
+  }
+  const title = heading?.trim()
+  const caption = eyebrow?.trim()
+  const methodNote = note?.trim()
+
+  return (
+    <Section tone="light" pad="none" className="pt-3 pb-8">
+      <Container className="md:max-w-205">
+        {title ? <AccentHeadline text={title} accent={accentPhrase} level={3} className="mt-2" /> : null}
+        <table className="mt-3.5 w-full border-collapse text-left text-[1rem]">
+          {caption ? (
+            <caption className={cx(TH, 'pb-3 text-left tracking-[0.12em]')} style={{ captionSide: 'top' }}>
+              {caption}
+            </caption>
+          ) : (
+            <caption className="sr-only">{title || 'Facts'}</caption>
+          )}
+          <tbody>
+            {rows.map((r, i) => {
+              const sub = r.sub?.trim()
+              return (
+                <tr key={r.id ?? i} className={i === 0 ? 'border-t-2 border-ink' : 'border-t border-divider'}>
+                  <th scope="row" className="py-3.5 text-left font-medium">
+                    {r.label}
+                    {sub ? <span className="mt-0.5 block text-[0.8125rem] font-normal text-gray-warm">{sub}</span> : null}
+                  </th>
+                  <td
+                    className={cx(
+                      'py-3.5 pl-4 text-right align-top font-display whitespace-nowrap',
+                      r.accent && 'text-ground-accent',
+                    )}
+                  >
+                    {r.value}
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+        {methodNote ? <p className="mt-3 text-[0.8125rem] leading-[1.6] text-gray-warm">{methodNote}</p> : null}
+      </Container>
+    </Section>
+  )
+}
+
+export function MetricEventBlock(props: MetricEventData) {
+  return props.variant === 'facts' ? <MetricFacts {...props} /> : <MetricTable {...props} />
 }

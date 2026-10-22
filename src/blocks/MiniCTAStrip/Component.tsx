@@ -12,7 +12,9 @@ const TEXT = 'font-display text-[1rem] font-normal uppercase leading-[1.15] md:t
  * Server component. The whole strip is one link; the pill is its visual
  * button. With an unresolved link the strip renders the text alone.
  */
-export function MiniCTAStripBlock({ text, link }: BlockData<'miniCTAStrip'>) {
+export function MiniCTAStripBlock(props: BlockData<'miniCTAStrip'>) {
+  if (props.variant === 'inline') return <MiniCTAInline {...props} />
+  const { text, link } = props
   const label = link?.label?.trim()
   const linked = Boolean(resolveLinkHref(link) && label)
 
@@ -33,6 +35,39 @@ export function MiniCTAStripBlock({ text, link }: BlockData<'miniCTAStrip'>) {
           <span className={TEXT}>{text}</span>
         </div>
       )}
+    </Section>
+  )
+}
+
+/**
+ * `inline` variant (Book a Call.dc.html, foot of "Social proof": "Have a quick
+ * question first? Contact us", desktop + mobile). Quiet one-line escape, never
+ * a button. The link keeps a 44px hit area via an expanded pseudo-element so
+ * the underline stays tight to the text. An unresolved link renders the
+ * sentence alone.
+ */
+function MiniCTAInline({ text, link }: BlockData<'miniCTAStrip'>) {
+  const label = link?.label?.trim()
+  const linked = Boolean(resolveLinkHref(link) && label)
+
+  return (
+    <Section tone="light" pad="none">
+      <div className="mx-auto w-full max-w-site px-container-mobile pt-5.5 pb-11 md:px-container md:pt-8 md:pb-16">
+        <p className="m-0 text-[0.9375rem] text-gray-warm">
+          {text}
+          {linked ? (
+            <>
+              {' '}
+              <CMSLink
+                link={link}
+                className="relative font-bold text-ink no-underline border-b-2 border-ink after:absolute after:inset-x-0 after:-inset-y-3 after:content-['']"
+              >
+                {label}
+              </CMSLink>
+            </>
+          ) : null}
+        </p>
+      </div>
     </Section>
   )
 }

@@ -1,4 +1,5 @@
-import type { Block, Field } from 'payload'
+import type { Block, Field, TextFieldSingleValidation } from 'payload'
+import { text } from 'payload/shared'
 
 import { Faqs } from '../../collections/Faqs'
 import { eyebrowField, linkField } from '../../fields'
@@ -10,10 +11,19 @@ import { eyebrowField, linkField } from '../../fields'
 const categoryField = Faqs.fields.find((f): f is Extract<Field, { type: 'select' }> => 'name' in f && f.name === 'category')
 const categoryOptions = categoryField?.options ?? []
 
+/** Lowercase slug: a-z, 0-9 and single hyphens. Empty is allowed. */
+const validateAnchorId: TextFieldSingleValidation = (value, options) => {
+  const base = text(value, options)
+  if (base !== true) return base
+  if (typeof value !== 'string' || value.trim() === '') return true
+  return /^[a-z0-9]+(-[a-z0-9]+)*$/.test(value) ? true : 'Use lowercase letters, numbers and single hyphens only, e.g. "pricing".'
+}
+
+const isGroup = (_data: unknown, siblingData: { variant?: string } | undefined) => siblingData?.variant === 'group'
+
 /**
- * AccordionFAQ (SCHEMA §8.5 item 19). This unit ships ONLY the `mini` variant
- * (p4, p5, p6 FAQ section); `group` (p11) is appended later together with
- * `anchorId`.
+ * AccordionFAQ (SCHEMA §8.5 item 19). `mini` (p4, p5, p6 FAQ section) and
+ * `group` (p11, one block per category; `anchorId` + `spacing` belong to it).
  */
 export const AccordionFAQ: Block = {
   slug: 'accordionFAQ',
@@ -25,8 +35,37 @@ export const AccordionFAQ: Block = {
       type: 'select',
       required: true,
       defaultValue: 'mini',
-      options: [{ label: 'Mini (short list of questions on a service page)', value: 'mini' }],
-      admin: { description: 'The accordion layout. The full FAQ-page layout arrives with that page.' },
+      options: [
+        { label: 'Mini (short list of questions on a service page)', value: 'mini' },
+        { label: 'Group (one category section of the FAQ page)', value: 'group' },
+      ],
+      admin: { description: 'Mini is the compact boxed list; Group is one category section on the full FAQ page (add one block per category).' },
+    },
+    {
+      name: 'anchorId',
+      type: 'text',
+      label: 'Anchor ID',
+      validate: validateAnchorId,
+      admin: {
+        description:
+          'Group only. The jump-link target for the category tabs, lowercase, e.g. "pricing", "builds", "marketing", "process". Must match what the tabs link to.',
+        condition: isGroup,
+      },
+    },
+    {
+      name: 'spacing',
+      type: 'select',
+      defaultValue: 'middle',
+      options: [
+        { label: 'Middle (between other groups)', value: 'middle' },
+        { label: 'First group (extra space above)', value: 'first' },
+        { label: 'Last group (extra space below)', value: 'last' },
+        { label: 'Only group (extra space above and below)', value: 'only' },
+      ],
+      admin: {
+        description: 'Group only. Where this section sits in the stack of groups, so the first and last get the page-edge spacing.',
+        condition: isGroup,
+      },
     },
     eyebrowField({ description: 'Optional small uppercase line above the heading.' }),
     {

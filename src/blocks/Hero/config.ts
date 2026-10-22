@@ -47,6 +47,20 @@ export const Hero: Block = {
       ],
       admin: { description: 'The hero layout. More layouts arrive with the pages that need them.' },
     },
+    {
+      name: 'size',
+      type: 'select',
+      defaultValue: 'default',
+      options: [
+        { label: 'Default (large, homepage proportions)', value: 'default' },
+        { label: 'Compact (shorter, narrow column, small corner logo shape)', value: 'compact' },
+      ],
+      admin: {
+        description:
+          'Compact is the shorter header used on the testimonials, book-a-call, thank-you, FAQ and contact pages: less padding, a narrow text column and a small logo shape tucked in the corner.',
+        condition: forVariants('typographic'),
+      },
+    },
     eyebrowField({
       description: 'Small uppercase line above the headline, e.g. "Integrated ecommerce growth partner — Chicago".',
     }),
@@ -97,6 +111,34 @@ export const Hero: Block = {
         condition: forVariants('typographic', 'service'),
       },
       fields: [linkField({ name: 'link', label: 'Button', required: true })],
+    },
+    {
+      name: 'callouts',
+      type: 'array',
+      label: 'Two-up callouts',
+      maxRows: 2,
+      labels: { singular: 'Callout', plural: 'Callouts' },
+      admin: {
+        description:
+          'Short bold-label statements under the paragraph, side by side on desktop, e.g. "What it is:" / "What it isn\'t:".',
+        initCollapsed: true,
+        condition: forVariants('typographic'),
+      },
+      fields: [
+        { name: 'label', type: 'text', required: true, admin: { description: 'Bold lead-in, e.g. "What it is:".' } },
+        { name: 'text', type: 'textarea', required: true, admin: { description: 'The statement after the label.' } },
+      ],
+    },
+    {
+      name: 'showAggregateRating',
+      type: 'checkbox',
+      label: 'Show the average rating',
+      defaultValue: false,
+      admin: {
+        description:
+          'Adds the average star rating and count to the line above the headline (e.g. "Testimonials · 5.0 avg · 12 ratings"). Calculated from published testimonials that have a rating; if none do, nothing is shown.',
+        condition: forVariants('typographic'),
+      },
     },
     {
       name: 'subNote',

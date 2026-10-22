@@ -1,3 +1,5 @@
+import config from '@payload-config'
+import { getPayload } from 'payload'
 import React from 'react'
 
 import type { BlockData } from '@/blocks/types'
@@ -12,10 +14,40 @@ import { ServiceHero } from './ServiceHero'
  * Hero (SCHEMA §8.1 item 1). Picks the layout by `variant`; every variant
  * renders exactly one h1. Server component: no interactivity.
  */
-export function HeroBlock(props: BlockData<'hero'>) {
+export async function HeroBlock(props: BlockData<'hero'>) {
   if (props.variant === 'service') return <ServiceHero {...props} />
   if (props.variant === 'article') return <ArticleHero {...props} />
-  return <TypographicHero {...props} />
+  const rating = props.showAggregateRating ? await loadAggregateRating() : null
+  return <TypographicHero {...props} rating={rating} />
+}
+
+type AggregateRating = { average: string; count: number }
+
+/**
+ * Average star rating over PUBLISHED testimonials that carry a rating
+ * (Testimonials.rating, 1-5). Computed at render, never stored. Nothing rated
+ * (or a failed read) -> null, so no number is ever invented. No Review /
+ * AggregateRating JSON-LD on purpose (self-serving reviews, F64/F78).
+ */
+async function loadAggregateRating(): Promise<AggregateRating | null> {
+  try {
+    const payload = await getPayload({ config })
+    const { docs } = await payload.find({
+      collection: 'testimonials',
+      where: { _status: { equals: 'published' }, rating: { exists: true } },
+      select: { rating: true },
+      depth: 0,
+      pagination: false,
+      overrideAccess: false,
+    })
+    const ratings = docs.map((d) => d.rating).filter((r): r is number => typeof r === 'number' && r >= 1 && r <= 5)
+    if (!ratings.length) return null
+    const average = (ratings.reduce((sum, r) => sum + r, 0) / ratings.length).toFixed(1)
+    return { average, count: ratings.length }
+  } catch (error) {
+    console.error('[Hero] could not compute the aggregate rating; rating line hidden', error)
+    return null
+  }
 }
 
 /**
@@ -38,22 +70,34 @@ function TypographicHero({
   geometry,
   stats,
   phaseStrip,
-}: BlockData<'hero'>) {
+  size,
+  callouts,
+  rating,
+}: BlockData<'hero'> & { rating?: AggregateRating | null }) {
+  const compact = size === 'compact'
   const badgeText = badge?.show !== false ? badge?.text?.trim() : ''
   const paragraph = [body?.trim(), pricingNote?.trim()].filter(Boolean).join(' ')
   const buttons = (ctas ?? []).slice(0, 2)
   const figures = stats ?? []
   const phases = (phaseStrip ?? []).slice(0, 3)
+  const pairs = (callouts ?? []).filter((c) => c.label?.trim() && c.text?.trim()).slice(0, 2)
+  const ratingText = rating ? `${rating.average} avg · ${rating.count} ${rating.count === 1 ? 'rating' : 'ratings'}` : ''
+  const eyebrowText = [eyebrow?.trim(), ratingText].filter(Boolean).join(' · ')
 
   const copy = (
     <>
-        {eyebrow ? <Eyebrow tick={eyebrowTick !== false}>{eyebrow}</Eyebrow> : null}
+        {eyebrowText ? <Eyebrow tick={eyebrowTick !== false}>{ratingText ? eyebrowText : eyebrow}</Eyebrow> : null}
         <AccentHeadline
           text={heading}
           accent={accentPhrase}
           level={1}
           as="h1"
-          className="mt-4.5 md:mt-5.5 md:max-w-[20ch] md:max-lg:!text-h1-mobile"
+          className={
+            compact
+              ? // Testimonials/Book/Thank You/FAQ/Contact.dc.html: 2.25rem on mobile, no width cap
+                'mt-4 md:mt-5 max-md:!text-[2.25rem]'
+              : 'mt-4.5 md:mt-5.5 md:max-w-[20ch] md:max-lg:!text-h1-mobile'
+          }
         />
         {badgeText ? (
           <div className="mt-4.5 md:mt-5.5">
@@ -63,7 +107,24 @@ function TypographicHero({
           </div>
         ) : null}
         {paragraph ? (
-          <p className="mt-4.5 max-w-[34ch] text-body-mobile md:mt-6 md:max-w-[52ch] md:text-body">{paragraph}</p>
+          <p
+            className={
+              compact
+                ? 'mt-4 max-w-[52ch] text-body-mobile md:mt-6 md:text-body'
+                : 'mt-4.5 max-w-[34ch] text-body-mobile md:mt-6 md:max-w-[52ch] md:text-body'
+            }
+          >
+            {paragraph}
+          </p>
+        ) : null}
+        {pairs.length ? (
+          <div className="mt-6 flex flex-col gap-4.5 text-body-mobile md:mt-8 md:grid md:grid-cols-2 md:gap-6">
+            {pairs.map((c, i) => (
+              <div key={c.id ?? i} className="border-t-2 border-ink pt-3 md:pt-3.5">
+                <span className="font-bold">{c.label}</span> {c.text}
+              </div>
+            ))}
+          </div>
         ) : null}
         {verticalMicrocopy ? (
           <span className="mt-3 block text-[11px] font-bold uppercase tracking-[0.2em] text-gray-warm lg:hidden">
@@ -113,7 +174,10 @@ function TypographicHero({
           aria-hidden="true"
           style={LOGO_MASK}
           className={
-            figures.length
+            compact
+              ? // Testimonials.dc.html: 340px, right -160 top -80 (mobile 220px, -110 / -50)
+                'pointer-events-none absolute -right-27.5 -top-12.5 z-0 size-55 bg-ground-accent md:-right-40 md:-top-20 md:size-85'
+              : figures.length
               ? // stats sit in the right column on desktop: park the shape in the corner (Work.dc.html: 300px, right -140, top -60)
                 'pointer-events-none absolute -right-20 top-22.5 z-0 size-70 bg-ground-accent lg:-right-35 lg:-top-15 lg:size-75'
               : 'pointer-events-none absolute -right-20 top-22.5 z-0 size-70 bg-ground-accent lg:right-[8%] lg:top-[46%] lg:size-115 lg:-translate-y-1/2'
@@ -128,7 +192,7 @@ function TypographicHero({
           {verticalMicrocopy}
         </span>
       ) : null}
-      <Container className="relative z-10 pt-14 pb-12 md:pt-26 md:pb-24">
+      <Wrap compact={compact} narrow={compact && !figures.length}>
         {figures.length ? (
           <div className="lg:grid lg:grid-cols-[1fr_320px] lg:items-end lg:gap-14">
             <div>{copy}</div>
@@ -144,7 +208,7 @@ function TypographicHero({
         ) : (
           copy
         )}
-      </Container>
+      </Wrap>
     </Section>
   )
 
@@ -172,5 +236,20 @@ function TypographicHero({
         </ul>
       </div>
     </>
+  )
+}
+
+/** Hero content column. Default = the site Container; compact (80/56 desktop, 48/36 mobile) is the 820px column of the sub-page heroes. */
+function Wrap({ compact, narrow, children }: { compact: boolean; narrow: boolean; children: React.ReactNode }) {
+  if (!compact) return <Container className="relative z-10 pt-14 pb-12 md:pt-26 md:pb-24">{children}</Container>
+  return (
+    <div
+      className={cx(
+        'relative z-10 mx-auto w-full px-container-mobile pt-12 pb-9 md:px-container md:pt-20 md:pb-14',
+        narrow ? 'max-w-205' : 'max-w-site',
+      )}
+    >
+      {children}
+    </div>
   )
 }

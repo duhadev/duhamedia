@@ -475,7 +475,9 @@ const usableTestimonials = (items: CaseStudyCardsData['fallbackTestimonials']): 
  *   with nothing published there is no study to show).
  * - `metric-strip` (p6 Marketing `fallbackStrip`, DS MetricStrip): the text
  *   block, then a strip of up to three facts. Prices only via `pricingNote`.
- * A mode with nothing to show (no usable testimonials / no facts) degrades to
+ * - `logo-strip` (p8 About "Logo strip at launch"): the text block, then the
+ *   client logo row (ProofStrip's rendering and client rule).
+ * A mode with nothing to show (no usable testimonials / no facts / no clients) degrades to
  * the `note` text block, so the section never renders an empty frame.
  */
 function Fallback(props: CaseStudyCardsProps) {
@@ -491,6 +493,7 @@ function Fallback(props: CaseStudyCardsProps) {
     if (quotes.length > 0) return <TestimonialsFallback {...props} tone={tone} quotes={quotes} />
   }
   if (mode === 'metric-strip' && metrics.length > 0) return <MetricStripFallback {...props} tone={tone} />
+  if (mode === 'logo-strip') return <LogoStripFallback {...props} tone={tone} />
 
   const showLedger = mode === 'ledger' && metrics.length > 0
 
@@ -715,6 +718,107 @@ function MetricStripFallback({
               </span>
               {m.label ? <span className="mt-2 block text-label uppercase tracking-eyebrow">{m.label}</span> : null}
               {m.sub ? <span className="mt-1 block text-small-mobile font-medium text-gray-warm">{m.sub}</span> : null}
+            </li>
+          ))}
+        </ul>
+        {note ? <p className="mt-3 text-small-mobile text-gray-warm md:text-small">{note}</p> : null}
+      </Container>
+    </Section>
+  )
+}
+
+/* -------------------------------------------------------------------------- */
+/* `logo-strip` fallback (p8 About: "Logo strip at launch, case study pull later") */
+/* -------------------------------------------------------------------------- */
+
+const LOGO_COLS = ['', 'md:grid-cols-1', 'md:grid-cols-2', 'md:grid-cols-3', 'md:grid-cols-2', 'md:grid-cols-3', 'md:grid-cols-3']
+
+/**
+ * Same rule as ProofStrip: picked clients if any (published only), otherwise
+ * every published client flagged `showInLogoStrip`, in `sortOrder`. Never throws.
+ * FLAG: ProofStrip keeps this resolver and the row markup private, so both are
+ * duplicated here (ProofStrip is a cleared block and must not be touched).
+ */
+async function resolveLogoClients(picks: CaseStudyCardsData['fallbackLogos']): Promise<Client[]> {
+  const published = (c: Client) => c._status !== 'draft'
+  try {
+    const items = picks ?? []
+    if (items.length > 0) {
+      const ids = items.filter((c): c is number => typeof c === 'number')
+      let fetched: Client[] = []
+      if (ids.length) {
+        const payload = await getPayload({ config })
+        fetched = (
+          await payload.find({
+            collection: 'clients',
+            where: { id: { in: ids }, _status: { equals: 'published' } },
+            depth: 1,
+            limit: ids.length,
+            pagination: false,
+            overrideAccess: false,
+          })
+        ).docs
+      }
+      return items
+        .map((c) => (typeof c === 'number' ? fetched.find((f) => f.id === c) : c))
+        .filter((c): c is Client => !!c && published(c))
+    }
+    const payload = await getPayload({ config })
+    return (
+      await payload.find({
+        collection: 'clients',
+        where: { showInLogoStrip: { equals: true }, _status: { equals: 'published' } },
+        sort: 'sortOrder',
+        depth: 1,
+        limit: 12,
+        pagination: false,
+        overrideAccess: false,
+      })
+    ).docs
+  } catch (error) {
+    console.error('[CaseStudyCards] could not load clients for the logo strip; falling back to the note', error)
+    return []
+  }
+}
+
+async function LogoStripFallback({ tone, ...props }: CaseStudyCardsProps & { tone: Tone }) {
+  const { fallbackEyebrow, fallbackHeading, fallbackAccentPhrase, fallbackBody, pricingNote } = props
+  const clients = await resolveLogoClients(props.fallbackLogos)
+  // Zero clients: the designed `note` fallback (text block only).
+  if (clients.length === 0) return <Fallback {...props} tone={tone} fallbackMode="note" />
+  const note = pricingNote?.trim()
+  return (
+    <Section tone={tone} pad="tight">
+      <Container>
+        {fallbackEyebrow ? <Eyebrow muted>{fallbackEyebrow}</Eyebrow> : null}
+        {fallbackHeading ? (
+          <AccentHeadline
+            text={fallbackHeading}
+            accent={fallbackAccentPhrase}
+            level="section"
+            accentColor="primary"
+            className={fallbackEyebrow ? 'mt-3.5 md:mt-4.5' : undefined}
+          />
+        ) : null}
+        {fallbackBody ? (
+          <p className="mt-3.5 max-w-[44ch] text-body-mobile text-gray-warm md:mt-5 md:text-body">{fallbackBody}</p>
+        ) : null}
+        <ul
+          className={cx(
+            'm-0 grid list-none grid-cols-2 items-start justify-items-center gap-x-4 gap-y-5 p-0 opacity-55 md:items-center md:gap-x-10 md:gap-y-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-14',
+            LOGO_COLS[Math.min(clients.length, 6)],
+            fallbackEyebrow || fallbackHeading || fallbackBody ? 'mt-7 md:mt-9' : undefined,
+          )}
+        >
+          {clients.map((c) => (
+            <li key={c.id} className="flex min-h-7 items-center">
+              {c.logo && typeof c.logo === 'object' ? (
+                <Media resource={c.logo} alt={c.name} className="h-7 w-auto max-w-36 object-contain grayscale md:h-8" />
+              ) : (
+                <span className="whitespace-nowrap font-display text-[0.9375rem] uppercase tracking-[0.01em] md:text-[1.25rem] md:tracking-[0.02em]">
+                  {c.name}
+                </span>
+              )}
             </li>
           ))}
         </ul>

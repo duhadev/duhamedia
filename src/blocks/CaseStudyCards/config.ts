@@ -17,7 +17,9 @@ import {
  *   `next-link` (p2 §Next study), the `track` source, `tone`, and the
  *   `testimonials` / `metric-strip` fallback modes with their fields.
  *   Not built (flagged): the `staggered` layout (Gate S Q1 default: the Work
- *   page uses the ledger look) and the `logo-strip` fallback (p8 only).
+ *   page uses the ledger look).
+ * - S5-4 (p8): the `logo-strip` fallback mode (client logo row) and its
+ *   optional `fallbackLogos` override.
  *
  * LAUNCH STATE (CLAUDE.md rule 1, SCHEMA §5): there is deliberately NO field
  * that forces the "live" state. The component renders cards only from
@@ -37,6 +39,8 @@ const isNextLink: Condition = (_data, siblingData) => layoutOf(siblingData) === 
 const notNextLink: Condition = (_data, siblingData) => layoutOf(siblingData) !== 'next-link'
 const hasFallbackMetrics: Condition = (_data, siblingData) =>
   layoutOf(siblingData) !== 'next-link' && ['ledger', 'metric-strip'].includes(modeOf(siblingData))
+const isLogoStripFallback: Condition = (_data, siblingData) =>
+  layoutOf(siblingData) !== 'next-link' && modeOf(siblingData) === 'logo-strip'
 const isTestimonialsFallback: Condition = (_data, siblingData) =>
   layoutOf(siblingData) !== 'next-link' && modeOf(siblingData) === 'testimonials'
 
@@ -265,6 +269,7 @@ export const CaseStudyCards: Block = {
         { label: 'Note: a short text block only', value: 'note' },
         { label: 'Testimonials: the headline, then picked client quotes', value: 'testimonials' },
         { label: 'Metric strip: the text block, then a grey strip of up to three facts', value: 'metric-strip' },
+        { label: 'Logo strip: the text block, then the client logos (falls back to the note if there are none)', value: 'logo-strip' },
       ],
       admin: {
         condition: notNextLink,
@@ -337,6 +342,20 @@ export const CaseStudyCards: Block = {
       admin: {
         condition: isTestimonialsFallback,
         description: 'Up to three quotes, in order (Testimonials mode). Draft testimonials are skipped until published.',
+      },
+    },
+    {
+      name: 'fallbackLogos',
+      type: 'relationship',
+      relationTo: 'clients',
+      hasMany: true,
+      maxRows: 12,
+      maxDepth: 1,
+      label: 'Fallback logos (optional)',
+      admin: {
+        condition: isLogoStripFallback,
+        description:
+          'Leave empty to show every client ticked "Show in logo strip" (Clients, in their set order). Pick clients here to choose and order them by hand. Draft clients are skipped.',
       },
     },
     { ...pricingNote(), admin: { ...pricingNote().admin, condition: notNextLink } },

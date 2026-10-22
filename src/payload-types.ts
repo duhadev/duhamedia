@@ -269,6 +269,10 @@ export interface HeroBlock {
    */
   variant: 'typographic' | 'service' | 'article';
   /**
+   * Compact is the shorter header used on the testimonials, book-a-call, thank-you, FAQ and contact pages: less padding, a narrow text column and a small logo shape tucked in the corner.
+   */
+  size?: ('default' | 'compact') | null;
+  /**
    * Small uppercase line above the headline, e.g. "Integrated ecommerce growth partner — Chicago".
    */
   eyebrow?: string | null;
@@ -336,6 +340,26 @@ export interface HeroBlock {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Short bold-label statements under the paragraph, side by side on desktop, e.g. "What it is:" / "What it isn't:".
+   */
+  callouts?:
+    | {
+        /**
+         * Bold lead-in, e.g. "What it is:".
+         */
+        label: string;
+        /**
+         * The statement after the label.
+         */
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Adds the average star rating and count to the line above the headline (e.g. "Testimonials · 5.0 avg · 12 ratings"). Calculated from published testimonials that have a rating; if none do, nothing is shown.
+   */
+  showAggregateRating?: boolean | null;
   /**
    * Optional quiet line, e.g. a minimum-term note.
    */
@@ -1585,15 +1609,15 @@ export interface TeamMember {
  */
 export interface MiniCTAStripBlock {
   /**
-   * The strip layout. More layouts arrive with the pages that need them.
+   * The strip layout. Band is the dark call-to-action strip; Inline is a quiet one-liner such as "Have a quick question first? Contact us".
    */
-  variant: 'band';
+  variant: 'band' | 'inline';
   /**
-   * The one-line statement on the strip, e.g. "One team. One dashboard. A handover date." Shown in capitals.
+   * The one-line statement on the strip. Band: e.g. "One team. One dashboard. A handover date." (shown in capitals). Inline: the lead-in before the link, e.g. "Have a quick question first?" (shown as written).
    */
   text: string;
   /**
-   * The button text and where it goes. The whole strip is clickable.
+   * The link text and where it goes. Band: the whole strip is clickable and this is the button text. Inline: this is the underlined link after the sentence, e.g. "Contact us".
    */
   link: {
     type: 'internal' | 'custom';
@@ -1844,7 +1868,7 @@ export interface CaseStudyCardsBlock {
   /**
    * What this section shows while no case study is published (and again if all are unpublished). It switches to the cards on its own once a study is published.
    */
-  fallbackMode?: ('ledger' | 'note' | 'testimonials' | 'metric-strip') | null;
+  fallbackMode?: ('ledger' | 'note' | 'testimonials' | 'metric-strip' | 'logo-strip') | null;
   /**
    * Small uppercase line above the fallback headline. In Testimonials mode it sits above the quotes, e.g. "What clients say".
    */
@@ -1890,6 +1914,10 @@ export interface CaseStudyCardsBlock {
    */
   fallbackTestimonials?: (number | Testimonial)[] | null;
   /**
+   * Leave empty to show every client ticked "Show in logo strip" (Clients, in their set order). Pick clients here to choose and order them by hand. Draft clients are skipped.
+   */
+  fallbackLogos?: (number | Client)[] | null;
+  /**
    * Small inline note only, e.g. 'Builds start at $5K'. Never put a price in a headline or metric.
    */
   pricingNote?: string | null;
@@ -1905,9 +1933,9 @@ export interface MetricEventBlock {
   /**
    * The metrics layout. More layouts arrive with the pages that need them.
    */
-  variant: 'table';
+  variant: 'table' | 'facts';
   /**
-   * Small line above the table, e.g. "Results — 12 months, client-reported".
+   * Small line above the table, e.g. "Results — 12 months, client-reported". For Company facts this is the caption, e.g. "The company, in numbers".
    */
   eyebrow?: string | null;
   /**
@@ -1976,7 +2004,7 @@ export interface MetricEventBlock {
       }[]
     | null;
   /**
-   * Quiet line under the table: how the numbers were measured and who reported them.
+   * Quiet line under the table or facts: how the numbers were measured and who reported them.
    */
   note?: string | null;
   id?: string | null;
@@ -2676,9 +2704,17 @@ export interface NewsletterBandBlock {
  */
 export interface AccordionFAQBlock {
   /**
-   * The accordion layout. The full FAQ-page layout arrives with that page.
+   * Mini is the compact boxed list; Group is one category section on the full FAQ page (add one block per category).
    */
-  variant: 'mini';
+  variant: 'mini' | 'group';
+  /**
+   * Group only. The jump-link target for the category tabs, lowercase, e.g. "pricing", "builds", "marketing", "process". Must match what the tabs link to.
+   */
+  anchorId?: string | null;
+  /**
+   * Group only. Where this section sits in the stack of groups, so the first and last get the page-edge spacing.
+   */
+  spacing?: ('middle' | 'first' | 'last' | 'only') | null;
   /**
    * Optional small uppercase line above the heading.
    */
@@ -3127,6 +3163,7 @@ export interface PagesSelect<T extends boolean = true> {
  */
 export interface HeroBlockSelect<T extends boolean = true> {
   variant?: T;
+  size?: T;
   eyebrow?: T;
   eyebrowTick?: T;
   heading?: T;
@@ -3153,6 +3190,14 @@ export interface HeroBlockSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  callouts?:
+    | T
+    | {
+        label?: T;
+        text?: T;
+        id?: T;
+      };
+  showAggregateRating?: T;
   subNote?: T;
   verticalMicrocopy?: T;
   geometry?: T;
@@ -3328,6 +3373,7 @@ export interface CaseStudyCardsBlockSelect<T extends boolean = true> {
         id?: T;
       };
   fallbackTestimonials?: T;
+  fallbackLogos?: T;
   pricingNote?: T;
   id?: T;
   blockName?: T;
@@ -3617,6 +3663,8 @@ export interface NewsletterBandBlockSelect<T extends boolean = true> {
  */
 export interface AccordionFAQBlockSelect<T extends boolean = true> {
   variant?: T;
+  anchorId?: T;
+  spacing?: T;
   eyebrow?: T;
   eyebrowTick?: T;
   heading?: T;

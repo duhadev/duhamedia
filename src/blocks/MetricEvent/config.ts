@@ -1,16 +1,18 @@
-import type { Block } from 'payload'
+import type { Block, Condition } from 'payload'
 
 import { eyebrowField, headlineFields, metricFields } from '../../fields'
 
 /**
- * MetricEvent (SCHEMA §8.2 item 7). This unit ships ONLY the `table` variant
- * (p2 case-study "Results table": measure / baseline / after / change). `facts`
- * (p8) and `strip` are appended by later units.
+ * MetricEvent (SCHEMA §8.2 item 7). Variants shipped: `table` (p2 case-study
+ * "Results table": measure / baseline / after / change) and `facts` (p8
+ * "The company, in numbers": label / value rows). `strip` is appended by a later unit.
  *
  * The row shape mirrors `case-studies.resultsTable.rows` after the mapping in
  * `Component.tsx` (`resultsTableToMetricEvent`): measure → `label`, after →
  * `value`, baseline → `baseline`, change → `change`.
  */
+const isTable: Condition = (_data, _sibling, { blockData }) => (blockData?.variant ?? 'table') === 'table'
+
 export const MetricEvent: Block = {
   slug: 'metricEvent',
   interfaceName: 'MetricEventBlock',
@@ -21,10 +23,17 @@ export const MetricEvent: Block = {
       type: 'select',
       required: true,
       defaultValue: 'table',
-      options: [{ label: 'Table (measure / before / after / change)', value: 'table' }],
+      options: [
+        { label: 'Table (measure / before / after / change)', value: 'table' },
+        { label: 'Company facts (label and value rows)', value: 'facts' },
+      ],
       admin: { description: 'The metrics layout. More layouts arrive with the pages that need them.' },
     },
-    eyebrowField({ defaultTick: false, description: 'Small line above the table, e.g. "Results — 12 months, client-reported".' }),
+    eyebrowField({
+      defaultTick: false,
+      description:
+        'Small line above the table, e.g. "Results — 12 months, client-reported". For Company facts this is the caption, e.g. "The company, in numbers".',
+    }),
     ...headlineFields({
       required: false,
       description: 'Optional heading above the table. Leave empty for the eyebrow alone.',
@@ -33,7 +42,7 @@ export const MetricEvent: Block = {
       name: 'columns',
       type: 'group',
       label: 'Column headings',
-      admin: { description: 'Headings of the four table columns. Empty ones fall back to the defaults shown.' },
+      admin: { condition: isTable, description: 'Headings of the four table columns. Empty ones fall back to the defaults shown.' },
       fields: [
         {
           type: 'row',
@@ -61,6 +70,7 @@ export const MetricEvent: Block = {
         ...metricFields(),
         {
           type: 'row',
+          admin: { condition: isTable },
           fields: [
             {
               name: 'baseline',
@@ -85,7 +95,7 @@ export const MetricEvent: Block = {
       type: 'textarea',
       label: 'Note / method',
       admin: {
-        description: 'Quiet line under the table: how the numbers were measured and who reported them.',
+        description: 'Quiet line under the table or facts: how the numbers were measured and who reported them.',
         placeholder: '[… fill in from client-approved records — no estimates published.]',
       },
     },

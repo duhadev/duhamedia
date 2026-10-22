@@ -2,7 +2,7 @@
 
 import type { TurnstileInstance } from '@marsidev/react-turnstile'
 import { useRouter } from 'next/navigation'
-import React, { useEffect, useId, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useId, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 
 import { Button, type ButtonSize, type ButtonVariant } from '@/components/ui'
 import {
@@ -10,46 +10,71 @@ import {
   FORM_ID_KEY,
   FORM_SUBMIT_PATH,
   LEAD_MAGNET_KEY,
-  MAX_LENGTH,
   SOURCE_PATH_KEY,
   type FormSubmitResponse,
   type PublicForm,
-  type PublicFormField,
 } from '@/integrations/forms/shared'
 import { cx } from '@/lib/cx'
 
+import { ERROR_TEXT, FieldControl } from './FieldControl'
+import { resolveSteps, type FormStep } from './steps'
 import { TurnstileWidget, type TurnstileAppearance } from './TurnstileWidget'
 
 /**
  * Renders one form-builder form and submits it to POST /api/form-submit
- * (src/app/api/form-submit/route.ts: Turnstile → validation → store). Client component: it needs
- * the Turnstile widget, pending state and inline errors.
+ * (src/app/api/form-submit/route.ts: Turnstile → validation → store). Client
+ * component: it needs the Turnstile widget, pending state, inline errors and
+ * the stepped layout's state.
  *
  * Use it through the server wrapper `CMSForm` (./CMSForm.tsx), which loads the
  * form, strips `emails`/integration settings, reads the site key at runtime
  * and renders the rich-text confirmation + message blocks on the server.
  *
- * Styling: DS `Input` (design-system-project/components/core/Input.jsx):
- * uppercase label, 2px border, `--radius-sm`, 44px min height, accent focus.
- * Blocks restyle via `className`/`classNames` slots and `tone`, never by forking.
- *
  * With JS: `fetch` with the form's own FormData and `Accept: application/json`;
  * inputs are kept on error, the outcome is announced and focused. Before
  * hydration / without JS the plain `action`+`method="post"` posts to the same
- * route, which answers with a minimal HTML page or a 303 (no Turnstile token
- * without JS, so that visitor gets the friendly Turnstile message).
+ * route, which answers with a minimal HTML page or a 303.
+ *
+ * Stepped layout (`layout="stepped"`, p12 Contact phone build): progressive
+ * enhancement. Server render, no-JS and viewports at/above `steppedBelow` are
+ * the stacked form; below it, after hydration, one step shows at a time. All
+ * fields stay in the DOM (hidden), so the submission is the same FormData.
+ * No step animation is built in (reduced-motion safe by construction); a block
+ * may add one via `classNames.step` with `motion-safe:`.
  */
 
 /**
- * Slot classes. Layout slots (`form`, `fields`, `footer`, `turnstile`, `submit`)
- * REPLACE the default layout classes when set; the others are appended.
- * Defaults: form `flex flex-col gap-6`, fields `flex flex-wrap gap-4`,
- * footer `flex flex-col gap-3`, submit `self-start`, turnstile `min-h-[65px] w-full`
- * (`w-full` with interaction-only).
+ * Slot classes. Layout slots REPLACE the defaults when set: `form`
+ * (`flex flex-col gap-6`), `fields` (`flex flex-wrap gap-4`, also each step's
+ * field area), `footer` (`flex flex-col gap-3`), `submit` (`self-start`),
+ * `turnstile` (`min-h-[65px] w-full`; `w-full` with interaction-only),
+ * `progress`, `stepHeader`, `stepNav`, `step` (stepped-only, defaults below).
+ * The others (`field`, `label`, `control`, `error`, `option`, `status`,
+ * `success`) are appended.
  */
 export type PayloadFormClassNames = Partial<
-  Record<'form' | 'fields' | 'field' | 'label' | 'control' | 'error' | 'turnstile' | 'footer' | 'submit' | 'status' | 'success', string>
+  Record<
+    | 'form'
+    | 'fields'
+    | 'field'
+    | 'label'
+    | 'control'
+    | 'error'
+    | 'option'
+    | 'turnstile'
+    | 'footer'
+    | 'submit'
+    | 'status'
+    | 'success'
+    | 'progress'
+    | 'step'
+    | 'stepHeader'
+    | 'stepNav',
+    string
+  >
 >
+
+export type { FormStep }
 
 export type PayloadFormProps = {
   form: PublicForm
@@ -71,6 +96,21 @@ export type PayloadFormProps = {
    * to click; the token is still issued and verified the same way. For inline layouts.
    */
   turnstileAppearance?: TurnstileAppearance
+  /** `'stepped'`: one step at a time below `steppedBelow` (default `'md'`); stacked above it. Default `'stacked'`. */
+  layout?: 'stacked' | 'stepped'
+  steppedBelow?: 'sm' | 'md' | 'lg'
+  /** Step grouping for the stepped layout. Omitted: one field per step, heading = field label. */
+  steps?: FormStep[]
+  /** Stepped layout only: render select fields as tap-to-pick option rows. */
+  selectAsOptions?: boolean
+  /** Progress text; `{n}` and `{m}` are replaced. Default "Question {n} of {m}". */
+  progressLabel?: string
+  /** Next button text. Default "Next". */
+  nextLabel?: string
+  /** Next button text on the first step (design: "Start"). Default = `nextLabel`. */
+  startLabel?: string
+  /** Accessible name of the Back button (it shows an arrow). Default "Back". */
+  backLabel?: string
   tone?: 'light' | 'dark'
   submitVariant?: ButtonVariant
   submitSize?: ButtonSize
@@ -78,24 +118,34 @@ export type PayloadFormProps = {
   classNames?: PayloadFormClassNames
 }
 
-const LABEL = 'font-body text-label uppercase tracking-eyebrow'
-const CONTROL_BASE =
-  'w-full min-h-target rounded-sm border-2 px-3.5 py-3 font-body text-base font-medium outline-none transition-colors duration-180 ease-out'
-const CONTROL_TONE = {
-  light: 'bg-cream text-ink',
-  dark: 'bg-transparent text-cream',
-} as const
-/** Border colour is chosen as one class (no tailwind-merge, so never two competing border colours). */
-const CONTROL_BORDER = {
-  light: 'border-ink focus:border-accent-primary',
-  dark: 'border-cream',
-} as const
-const ERROR_TEXT = { light: 'text-wine', dark: 'text-gold-pale' } as const
-
 const DEFAULT_SUCCESS = 'Thanks — we have it.'
-const NO_TOKEN = "Please wait for the security check to finish, then send again."
+const NO_TOKEN = 'Please wait for the security check to finish, then send again.'
 const NETWORK = 'Something went wrong sending your message. Please check your connection and try again.'
 const NO_SITE_KEY = 'This form is unavailable right now. Please try again in a few minutes.'
+
+/** Tailwind 4 default breakpoints. */
+const BREAKPOINT = { sm: '40rem', md: '48rem', lg: '64rem' } as const
+
+/** True below the breakpoint, false on the server and before hydration (→ stacked SSR markup). */
+function useBelow(bp: keyof typeof BREAKPOINT, enabled: boolean): boolean {
+  const query = `(width < ${BREAKPOINT[bp]})`
+  const subscribe = useCallback(
+    (notify: () => void) => {
+      if (!enabled) return () => {}
+      const mql = window.matchMedia(query)
+      mql.addEventListener('change', notify)
+      return () => mql.removeEventListener('change', notify)
+    },
+    [enabled, query],
+  )
+  return useSyncExternalStore(
+    subscribe,
+    () => enabled && window.matchMedia(query).matches,
+    () => false,
+  )
+}
+
+const CONTROLS = 'input:not([type=hidden]),select,textarea'
 
 export function PayloadForm({
   form,
@@ -106,6 +156,14 @@ export function PayloadForm({
   leadMagnetId,
   submitLabel,
   turnstileAppearance = 'always',
+  layout = 'stacked',
+  steppedBelow = 'md',
+  steps: stepDefs,
+  selectAsOptions = false,
+  progressLabel = 'Question {n} of {m}',
+  nextLabel = 'Next',
+  startLabel,
+  backLabel = 'Back',
   tone = 'light',
   submitVariant = 'primary',
   submitSize = 'md',
@@ -118,18 +176,107 @@ export function PayloadForm({
   const [localError, setLocalError] = useState<string | null>(null)
   const turnstileRef = useRef<TurnstileInstance | undefined>(undefined)
   const statusRef = useRef<HTMLDivElement>(null)
+  const formRef = useRef<HTMLFormElement>(null)
   const idBase = useId()
 
-  // Tokens are single-use: reset after every server response; move focus to the outcome.
+  const stepped = useBelow(steppedBelow, layout === 'stepped')
+  const steps = useMemo(() => resolveSteps(form.fields, stepDefs), [form.fields, stepDefs])
+  const lastStep = steps.length - 1
+  const [step, setStepState] = useState(0)
+  const [reachedLast, setReachedLast] = useState(false)
+  /** What to focus after the next step change (`name: null` = the step's first control). */
+  const focusTarget = useRef<{ name: string | null; report: boolean } | null>(null)
+  const current = Math.min(step, lastStep)
+
+  const focusIn = (index: number, name: string | null, report: boolean) => {
+    const group = formRef.current?.querySelector<HTMLElement>(`[data-step="${index}"]`)
+    const target =
+      (name && group?.querySelector<HTMLInputElement>(`[name="${CSS.escape(FIELD_PREFIX + name)}"]`)) ||
+      group?.querySelector<HTMLInputElement>(CONTROLS)
+    target?.focus()
+    if (report) target?.reportValidity()
+  }
+
+  const goTo = (index: number, focusName: string | null = null, report = false) => {
+    if (index === current) return focusIn(index, focusName, report)
+    focusTarget.current = { name: focusName, report }
+    setStepState(index)
+    if (index === lastStep) setReachedLast(true)
+  }
+
+  // Focus the new step's first control (or the errored field) once it is visible.
+  useEffect(() => {
+    if (!stepped || !focusTarget.current) return
+    const { name, report } = focusTarget.current
+    focusTarget.current = null
+    focusIn(current, name, report)
+  }, [current, stepped])
+
+  // After a server response: move focus to the outcome, unless `onResult` jumped to an errored step.
+  const skipStatusFocus = useRef(false)
   useEffect(() => {
     if (!state) return
-    if (!state.ok) turnstileRef.current?.reset()
-    statusRef.current?.focus()
+    if (skipStatusFocus.current) skipStatusFocus.current = false
+    else statusRef.current?.focus()
   }, [state])
+
+  /** Handle a server response (event-handler path, not an effect). */
+  const onResult = (result: FormSubmitResponse) => {
+    if (!result.ok) turnstileRef.current?.reset() // tokens are single-use
+    setPending(false)
+    setState(result)
+    if (stepped && !result.ok && result.fieldErrors) {
+      const errored = Object.keys(result.fieldErrors)
+      for (const [index, s] of steps.entries()) {
+        const hit = s.fields.find((f) => 'name' in f && errored.includes(f.name))
+        if (hit && 'name' in hit) {
+          skipStatusFocus.current = true
+          goTo(index, hit.name)
+          return
+        }
+      }
+    }
+  }
+
+  /** First invalid control within `root` (native constraint validation), or null. */
+  const firstInvalid = (root: ParentNode | null | undefined) =>
+    root
+      ? ([...root.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(CONTROLS)].find(
+          (c) => !c.checkValidity(),
+        ) ?? null)
+      : null
+
+  const next = () => {
+    const invalid = firstInvalid(formRef.current?.querySelector(`[data-step="${current}"]`))
+    if (invalid) {
+      invalid.reportValidity()
+      return
+    }
+    if (current < lastStep) goTo(current + 1)
+  }
+
+  const onKeyDown = (event: React.KeyboardEvent<HTMLFormElement>) => {
+    if (!stepped || current === lastStep || event.key !== 'Enter') return
+    const target = event.target as HTMLElement
+    if (target.tagName === 'INPUT') {
+      event.preventDefault()
+      next()
+    }
+  }
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (pending) return
+    if (stepped) {
+      // The form is noValidate while stepped (hidden steps can't show a native bubble): validate here.
+      const invalid = firstInvalid(formRef.current)
+      if (invalid) {
+        const index = Number(invalid.closest<HTMLElement>('[data-step]')?.dataset.step ?? current)
+        if (index === current) invalid.reportValidity()
+        else goTo(index, invalid.name.slice(FIELD_PREFIX.length), true)
+        return
+      }
+    }
     if (!siteKey) return setLocalError(NO_SITE_KEY)
     if (!turnstileRef.current?.getResponse()) return setLocalError(NO_TOKEN)
     setLocalError(null)
@@ -147,8 +294,7 @@ export function PayloadForm({
           else window.location.assign(result.redirect)
           return // stay pending while navigating
         }
-        setPending(false)
-        setState(result)
+        onResult(result)
       })
   }
 
@@ -167,209 +313,176 @@ export function PayloadForm({
 
   const fieldErrors = state && !state.ok ? (state.fieldErrors ?? {}) : {}
   const message = localError ?? (state && !state.ok ? state.message : null)
+  const fieldsClass = classNames.fields ?? 'flex flex-wrap gap-4'
 
-  return (
-    <form
-      action={FORM_SUBMIT_PATH}
-      method="post"
-      onSubmit={onSubmit}
-      aria-busy={pending}
-      className={cx(classNames.form ?? 'flex flex-col gap-6', className)}
+  const renderFields = (list: PublicForm['fields'], hideSingleLabel: boolean) =>
+    list.map((field) =>
+      field.blockType === 'message' ? (
+        <div key={field.key} className={cx('w-full font-body', classNames.field)}>
+          {messages?.[field.key]}
+        </div>
+      ) : (
+        <FieldControl
+          key={field.name}
+          field={field}
+          id={`${idBase}-${field.name}`}
+          error={fieldErrors[field.name]}
+          tone={tone}
+          slots={classNames}
+          hideLabel={hideSingleLabel}
+          selectAsOptions={stepped && selectAsOptions}
+        />
+      ),
+    )
+
+  const turnstile =
+    siteKey && (!stepped || reachedLast || lastStep === 0) ? (
+      // interaction-only: no reserved height, so the row collapses unless Cloudflare needs a click.
+      <div
+        hidden={stepped && current !== lastStep}
+        className={classNames.turnstile ?? (turnstileAppearance === 'interaction-only' ? 'w-full' : 'min-h-[65px] w-full')}
+      >
+        <TurnstileWidget
+          ref={turnstileRef}
+          siteKey={siteKey}
+          theme={tone}
+          appearance={turnstileAppearance}
+          onTokenChange={() => setLocalError(null)}
+        />
+      </div>
+    ) : null
+
+  const status = (
+    <div
+      ref={statusRef}
+      tabIndex={-1}
+      aria-live="polite"
+      className={cx('font-body text-small outline-none', ERROR_TEXT[tone], classNames.status)}
     >
+      {message ? <p role="alert">{message}</p> : null}
+    </div>
+  )
+
+  const submitButton = (
+    <Button
+      type="submit"
+      variant={submitVariant}
+      size={submitSize}
+      disabled={pending}
+      aria-disabled={pending}
+      className={cx(classNames.submit ?? (stepped ? 'flex-1' : 'self-start'), 'disabled:cursor-wait disabled:opacity-70')}
+    >
+      {pending ? 'Sending…' : submitLabel || form.submitButtonLabel}
+    </Button>
+  )
+
+  const hidden = (
+    <>
       <input type="hidden" name={FORM_ID_KEY} value={form.id} />
       {sourcePath ? <input type="hidden" name={SOURCE_PATH_KEY} value={sourcePath} /> : null}
       {leadMagnetId ? <input type="hidden" name={LEAD_MAGNET_KEY} value={leadMagnetId} /> : null}
-
-      <div className={classNames.fields ?? 'flex flex-wrap gap-4'}>
-        {form.fields.map((field) =>
-          field.blockType === 'message' ? (
-            <div key={field.key} className={cx('w-full font-body', classNames.field)}>
-              {messages?.[field.key]}
-            </div>
-          ) : (
-            <FieldControl
-              key={field.name}
-              field={field}
-              id={`${idBase}-${field.name}`}
-              error={fieldErrors[field.name]}
-              tone={tone}
-              classNames={classNames}
-            />
-          ),
-        )}
-      </div>
-
-      {siteKey ? (
-        // interaction-only: no reserved height, so the row collapses unless Cloudflare needs a click.
-        <div className={classNames.turnstile ?? (turnstileAppearance === 'interaction-only' ? 'w-full' : 'min-h-[65px] w-full')}>
-          <TurnstileWidget
-            ref={turnstileRef}
-            siteKey={siteKey}
-            theme={tone}
-            appearance={turnstileAppearance}
-            onTokenChange={() => setLocalError(null)}
-          />
-        </div>
-      ) : null}
-
-      <div className={classNames.footer ?? 'flex flex-col gap-3'}>
-        <div
-          ref={statusRef}
-          tabIndex={-1}
-          aria-live="polite"
-          className={cx('font-body text-small outline-none', ERROR_TEXT[tone], classNames.status)}
-        >
-          {message ? <p role="alert">{message}</p> : null}
-        </div>
-        <Button
-          type="submit"
-          variant={submitVariant}
-          size={submitSize}
-          disabled={pending}
-          aria-disabled={pending}
-          className={cx(classNames.submit ?? 'self-start', 'disabled:cursor-wait disabled:opacity-70')}
-        >
-          {pending ? 'Sending…' : submitLabel || form.submitButtonLabel}
-        </Button>
-      </div>
-    </form>
-  )
-}
-
-function FieldControl({
-  field,
-  id,
-  error,
-  tone,
-  classNames,
-}: {
-  field: Exclude<PublicFormField, { blockType: 'message' }>
-  id: string
-  error?: string
-  tone: 'light' | 'dark'
-  classNames: PayloadFormClassNames
-}) {
-  const name = `${FIELD_PREFIX}${field.name}`
-  const errorId = `${id}-error`
-  const describedBy = error ? errorId : undefined
-  const control = cx(CONTROL_BASE, CONTROL_TONE[tone], error ? 'border-wine' : CONTROL_BORDER[tone], classNames.control)
-  const width = field.width && field.width < 100 ? field.width : null
-  const wrapper = cx(
-    'flex w-full flex-col gap-1.5 font-body',
-    width !== null && 'sm:w-[calc(var(--field-w)-0.5rem)]',
-    tone === 'dark' ? 'text-cream' : 'text-ink',
-    classNames.field,
-  )
-  const style = width ? ({ '--field-w': `${width}%` } as React.CSSProperties) : undefined
-  const errorNode = error ? (
-    <span id={errorId} className={cx('text-small', ERROR_TEXT[tone], classNames.error)}>
-      {error}
-    </span>
-  ) : null
-  const label = (
-    <span className={cx(LABEL, classNames.label)}>
-      {field.label}
-      {field.required ? <span aria-hidden="true"> *</span> : null}
-    </span>
+    </>
   )
 
-  if (field.blockType === 'checkbox') {
+  if (!stepped) {
     return (
-      <div className={wrapper} style={style}>
-        <label htmlFor={id} className="flex min-h-target cursor-pointer items-center gap-3">
-          <input
-            id={id}
-            name={name}
-            type="checkbox"
-            value="true"
-            defaultChecked={field.defaultValue === true}
-            required={field.required}
-            aria-invalid={error ? true : undefined}
-            aria-describedby={describedBy}
-            className="size-5 shrink-0 cursor-pointer accent-ink"
-          />
-          <span className={cx('text-small', classNames.label)}>
-            {field.label}
-            {field.required ? <span aria-hidden="true"> *</span> : null}
-          </span>
-        </label>
-        {errorNode}
-      </div>
+      <form
+        ref={formRef}
+        action={FORM_SUBMIT_PATH}
+        method="post"
+        onSubmit={onSubmit}
+        aria-busy={pending}
+        className={cx(classNames.form ?? 'flex flex-col gap-6', className)}
+      >
+        {hidden}
+        <div className={fieldsClass}>{renderFields(form.fields, false)}</div>
+        {turnstile}
+        <div className={classNames.footer ?? 'flex flex-col gap-3'}>
+          {status}
+          {submitButton}
+        </div>
+      </form>
     )
   }
 
-  const common = {
-    id,
-    name,
-    required: field.required,
-    'aria-invalid': error ? true : undefined,
-    'aria-describedby': describedBy,
-    className: control,
-  } as const
-
-  let input: React.ReactNode
-  switch (field.blockType) {
-    case 'textarea':
-      input = (
-        <textarea
-          {...common}
-          rows={4}
-          maxLength={MAX_LENGTH.textarea}
-          placeholder={field.placeholder}
-          defaultValue={field.defaultValue}
-        />
-      )
-      break
-    case 'select':
-      input = (
-        <select {...common} defaultValue={field.defaultValue ?? ''}>
-          <option value="" disabled={field.required}>
-            {field.placeholder || 'Choose one'}
-          </option>
-          {field.options.map((o) => (
-            <option key={o.value} value={o.value}>
-              {o.label}
-            </option>
-          ))}
-        </select>
-      )
-      break
-    case 'number':
-      input = <input {...common} type="number" inputMode="decimal" defaultValue={field.defaultValue} />
-      break
-    case 'date':
-      input = <input {...common} type="date" defaultValue={field.defaultValue} />
-      break
-    case 'email':
-      input = (
-        <input
-          {...common}
-          type="email"
-          autoComplete="email"
-          maxLength={MAX_LENGTH.email}
-          placeholder={field.placeholder}
-          defaultValue={field.defaultValue}
-        />
-      )
-      break
-    default:
-      input = (
-        <input
-          {...common}
-          type="text"
-          autoComplete={/name/i.test(field.name) ? 'name' : /company/i.test(field.name) ? 'organization' : undefined}
-          maxLength={MAX_LENGTH.text}
-          placeholder={field.placeholder}
-          defaultValue={field.defaultValue}
-        />
-      )
-  }
+  const total = steps.length
+  const progressText = progressLabel.replace('{n}', String(current + 1)).replace('{m}', String(total))
+  const ink = tone === 'dark' ? 'bg-cream' : 'bg-ink'
 
   return (
-    <div className={wrapper} style={style}>
-      <label htmlFor={id}>{label}</label>
-      {input}
-      {errorNode}
-    </div>
+    <form
+      ref={formRef}
+      action={FORM_SUBMIT_PATH}
+      method="post"
+      noValidate
+      onSubmit={onSubmit}
+      onKeyDown={onKeyDown}
+      aria-busy={pending}
+      className={cx(classNames.form ?? 'flex flex-col gap-6', className)}
+    >
+      {hidden}
+
+      <div className={classNames.progress ?? 'flex flex-col gap-4'}>
+        <div className="flex gap-1.5" aria-hidden="true">
+          {steps.map((_, i) => (
+            <span key={i} className={cx('h-[5px] flex-1', i <= current ? ink : 'bg-divider')} />
+          ))}
+        </div>
+        <p aria-live="polite" className="font-mono text-label uppercase tracking-eyebrow text-gray-warm">
+          {progressText}
+        </p>
+      </div>
+
+      {steps.map((s, i) => {
+        const headingId = `${idBase}-step-${i}`
+        return (
+          <div
+            key={i}
+            data-step={i}
+            hidden={i !== current}
+            role="group"
+            aria-labelledby={s.heading ? headingId : undefined}
+            className={classNames.step ?? 'flex flex-col gap-6'}
+          >
+            {s.heading || s.hint ? (
+              <div className={classNames.stepHeader ?? 'flex flex-col gap-3'}>
+                {s.heading ? (
+                  <h3 id={headingId} className="font-display text-h2-mobile font-normal uppercase">
+                    {s.heading}
+                  </h3>
+                ) : null}
+                {s.hint ? <div className="font-body text-small text-gray-warm">{s.hint}</div> : null}
+              </div>
+            ) : null}
+            <div className={fieldsClass}>{renderFields(s.fields, !!s.heading && s.inputCount === 1)}</div>
+          </div>
+        )
+      })}
+
+      {turnstile}
+      {status}
+
+      <div className={classNames.stepNav ?? 'flex gap-3'}>
+        <button
+          type="button"
+          disabled={current === 0}
+          onClick={() => goTo(current - 1)}
+          className={cx(
+            'inline-flex min-h-target w-16 shrink-0 cursor-pointer items-center justify-center border-2 font-body text-body font-bold disabled:cursor-not-allowed disabled:opacity-40',
+            tone === 'dark' ? 'border-cream text-cream' : 'border-ink text-ink',
+          )}
+        >
+          <span aria-hidden="true">←</span>
+          <span className="sr-only">{backLabel}</span>
+        </button>
+        {current === lastStep ? (
+          submitButton
+        ) : (
+          <Button variant={submitVariant} size={submitSize} onClick={next} className="flex-1">
+            {current === 0 ? (startLabel ?? nextLabel) : nextLabel} <span aria-hidden="true">→</span>
+          </Button>
+        )}
+      </div>
+    </form>
   )
 }
