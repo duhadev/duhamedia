@@ -193,6 +193,7 @@ export const Posts: CollectionConfig = {
   // no nulls-last in @payloadcms/drizzle@3.91.0).
   defaultSort: ['-_status', '-publishedAt'],
   // Link targets (linkField → posts) and lists only need these; never the body.
+  // _status: defaultPopulate is the populated doc's select (payload@3.91.0 relationshipPopulationPromise.js:38) and is never forced in (sanitizeSelect.js); link renderers check it.
   defaultPopulate: {
     title: true,
     slug: true,
@@ -200,6 +201,7 @@ export const Posts: CollectionConfig = {
     dek: true,
     publishedAt: true,
     issueNumber: true,
+    _status: true,
   },
   access: {
     read: postsRead,

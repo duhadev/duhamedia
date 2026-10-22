@@ -124,7 +124,8 @@ export const LeadMagnets: CollectionConfig = {
   // Published first, newest first, then drafts (no nulls-last in @payloadcms/drizzle@3.91.0; see case-studies).
   defaultSort: ['-_status', '-publishedAt'],
   // Link targets (linkField → lead-magnets) need only these. Never the asset or the delivery email.
-  defaultPopulate: { title: true, slug: true },
+  // _status: defaultPopulate is the populated doc's select (payload@3.91.0 relationshipPopulationPromise.js:38) and is never forced in (sanitizeSelect.js); link renderers check it.
+  defaultPopulate: { title: true, slug: true, _status: true },
   access: staffContentAccessDraftDelete,
   versions: contentVersions,
   hooks: {

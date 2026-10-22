@@ -213,7 +213,8 @@ export const Pages: CollectionConfig = {
     },
   },
   // Link targets (linkField → pages, rich-text internal links) need only these.
-  defaultPopulate: { title: true, slug: true },
+  // _status: defaultPopulate is the populated doc's select (payload@3.91.0 relationshipPopulationPromise.js:38) and is never forced in (sanitizeSelect.js); link renderers check it.
+  defaultPopulate: { title: true, slug: true, _status: true },
   access: staffContentAccessDraftDelete,
   versions: contentVersions,
   hooks: {

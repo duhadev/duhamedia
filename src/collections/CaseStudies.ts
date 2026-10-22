@@ -207,15 +207,24 @@ export const CaseStudies: CollectionConfig = {
   // The admin list honours an array via find's fallback (operations/find.js:89).
   defaultSort: ['-_status', '-publishedAt'],
   // SCHEMA §6.2: card fields only, so pulls (cards, ledger, testimonial deep links) never over-fetch.
+  // defaultPopulate is the `select` of every populated relationship to this
+  // collection (payload@3.91.0 fields/hooks/afterRead/relationshipPopulationPromise.js:38),
+  // and nothing forces `_status` into it (utilities/sanitizeSelect.js), so it is
+  // listed explicitly: the blocks drop any pick whose `_status` is not 'published'.
+  // studyNumber/engagementLine: ledger rows + TestimonialRow kicker; featured: same flags as a queried study.
   defaultPopulate: {
     title: true,
     slug: true,
     client: true,
     track: true,
+    studyNumber: true,
+    engagementLine: true,
     headlineMetric: true,
     cardSummary: true,
     heroMedia: true,
+    featured: true,
     publishedAt: true,
+    _status: true,
   },
   access: {
     read: publishedOrStaff,
