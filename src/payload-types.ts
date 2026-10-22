@@ -1519,7 +1519,7 @@ export interface FinalCTABlock {
    */
   capacity?: ('none' | 'ongoing' | 'capacity' | 'builds-line' | 'engines-line' | 'slots-line' | 'offer-line') | null;
   /**
-   * One or two buttons. The first is the main one. Leave empty to use the default button from Site settings > Default closing sections.
+   * One or two buttons; at least one is required. The first is the main one.
    */
   buttons?:
     | {

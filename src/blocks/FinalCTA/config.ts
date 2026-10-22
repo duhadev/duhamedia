@@ -36,7 +36,7 @@ export const FinalCTA: Block = {
       labels: { singular: 'Button', plural: 'Buttons' },
       admin: {
         description:
-          'One or two buttons. The first is the main one. Leave empty to use the default button from Site settings > Default closing sections.',
+          'One or two buttons; at least one is required. The first is the main one.',
         initCollapsed: false,
       },
       fields: [linkField({ name: 'link', label: 'Button', required: true })],

@@ -11,8 +11,8 @@ import React, { useEffect, useRef } from 'react'
  * 1. One step open at a time, always one open (the design never shows all
  *    closed): a click on the open step's summary is ignored; opening a step
  *    closes the others.
- * 2. Mobile (< md, 768px): the step whose header is nearest 45% of the
- *    viewport height opens as the visitor scrolls (rAF-throttled scroll
+ * 2. Below `lg` (1024px; the mobile layout, also used on tablet): the step
+ *    whose header is nearest 45% of the viewport height opens as the visitor scrolls (rAF-throttled scroll
  *    listener, as in the design). It never moves focus. After an explicit
  *    click the scroll behaviour pauses until the visitor has scrolled half a
  *    screen away, so it never fights the click. Off with
@@ -30,7 +30,7 @@ export function AccordionSteps({ className, children }: { className?: string; ch
     if (!root) return
 
     const items = (): HTMLDetailsElement[] => Array.from(root.querySelectorAll('details'))
-    const desktop = window.matchMedia('(min-width: 48rem)')
+    const desktop = window.matchMedia('(min-width: 64rem)')
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
 
     const openOnly = (target: HTMLDetailsElement) => {

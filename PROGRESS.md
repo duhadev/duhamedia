@@ -43,10 +43,10 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 | block | CaseStudyCards (cards + fallback ledger) | 1 | gate2 | Gate 1 2026-10-22: no layout discrepancies; content notes → F61/F63; maxDepth fix done |
 | block | MiniCTAStrip (band) | 1 | gate2 | Gate 1: no discrepancies 390/768/1440 + admin ✓ |
 | block | TwoTrackPanels (equal) | 1 | gate2 | Gate 1 ✓ incl. 390 re-check after headline size change |
-| block | PhaseTimeline (accordion) | 1 | rework | re-check FAIL @768 (41px columns clip numbers, last label clipped) + bar/card misalign @1024/1440 — 2nd rework (opus): mobile layout below lg |
+| block | PhaseTimeline (accordion) | 1 | gate2 | re-check #2 PASS 390/768/1024/1440 + resize (mobile layout below lg; bars = cards; labels never truncated) |
 | block | TeamIntro (intro, founder-card) | 1 | gate2 | re-check PASS (no h-scroll at 390/768/1024/1440; link 47px) |
 | block | TestimonialRow (row) | 1 | gate2 | Gate 1 2026-10-22: no discrepancies beyond F61 (public placeholder figure); picker max-3/reorder untested |
-| block | FinalCTA | 1 | rework | minRows 1 ✓; field description still says "leave empty" — text fix running |
+| block | FinalCTA | 1 | gate2 | re-check #2 PASS (minRows 1, description fixed) |
 | integration | contact · newsletter (DOI) · lead_magnet · site_error | — | queued after triggering units clear | Gate A |
 
 ## Page assembly status
@@ -263,13 +263,11 @@ Decisions deferred to the human; each has a safe default applied so work continu
 | F51 | TestimonialRow | Empty (no testimonials, no study, no figure) → section renders nothing; `featured` study = newest published featured by `-publishedAt`; video = poster + link-out to YouTube (shared VideoTile later) | as stated |
 
 ## Session handoff
-- **Last session ended:** 2026-10-22 — big step 2 complete (G1–G4, P1–P3, S1–S3 documented, pushed); checkpoint F1–F35 all decided. Human about to /clear.
-- **In flight:** big step 3 started 2026-10-22 (human "move to the next step"). B0 foundation dispatched to integrator.
-- **Next up (big step 3, awaiting the human's "go"):**
-  1. Foundation unit: design tokens/fonts from `design-reference/` (MERGED.md + merged-tokens.css; gold standard = design project `project/`) into Tailwind; `(frontend)` layout; RenderBlocks; `/_showcase` (404 when APP_ENV=production, noindex, dotted dividers, monospace labels, viewport tags); re-add `pages.layout` via `pageLayoutField([...])` inside the Pages "Content" tab with the first block; S4 (F29 homepage SEO title "Duha Media — Integrated Ecommerce Growth Partner, Chicago" in src/plugins/seo.ts).
-  2. Homepage blocks in order (SCHEMA §8–9): Hero → ScarcityStrip/ProofStrip (scarcityRef() factory, import SCARCITY_KEYS from src/lib/scarcity.ts) → ClientLogoStrip → CaseStudyCards (designed empty state) → MiniCTAStrip → TwoTrackPanels → PhaseTimeline → TeamIntro → TestimonialRow → FinalCTA → standard footer. NewsletterBand slug must be `newsletterBand`.
-  3. Checkpoint: human reviews the showcase (phone + desktop) + flags.
-- **How this human works (binding):** run whole big steps autonomously; flag decisions with a safe default in "Flags for checkpoint" and batch them at the step's end (memory: feedback-defer-to-checkpoint). Model choice per memory feedback-model-choice. Standing rule: proper error reporting everywhere (Decision log 2026-10-21) — QA checks it every unit.
-- **Dispatch gotchas:** dev-docs/marketing-docs fail fast without an explicit **position** and, for marketing-docs, an explicit "Gate 1 cleared / Gate 2 cleared or N/A" line; qa-reviewer needs a **design crop path** (or "N/A — admin-only") and **states to capture**. QA uses only the human's logged-in Playwright Chromium session (re-login needed after idle). Opening admin create views no longer creates drafts (autosave off).
-- **Local dev:** `npx -y pnpm@11.28.3 dev` → http://localhost:3000 (admin /admin); Postgres container `duhamedia-postgres` on 127.0.0.1:5433 (`duha_site_dev`, push mode). Dev DB holds real site-settings values (Al-Amanah LLC, hello@duhamedia.com, Lombard 41.880/-88.008, copy from F5), scarcity placeholders 7/3/2/1 + one statement, seo-defaults placeholder description + media id 11 as OG image.
-- **Blockers:** OPS_REQUESTS #1–#8 unanswered (human relays to server agent); postal address (first broadcast only).
+- **Last session ended:** 2026-10-22 — big step 3 (blocks) built; CHECKPOINT presented to the human.
+- **State:** B0 foundation, B1 chrome, B2 page router, all 9 homepage blocks built, integrated (migrations b3_hero, b3_homepage_batch1, b3_homepage_batch2), Gate 1 QA passed for all (after reworks), Gate 2 SEO run for all — every SEO finding parked as a flag for the human (F41, F55, F64, F65). /_showcase holds 27 entries in homepage order. Dev draft page "QA blocks test" (id 10) holds test data; dev nav populated by QA (nudge line ends "(test nudge)").
+- **Awaiting the human (checkpoint):** review /_showcase on phone + desktop; decide F57 (live preview approach — recommend A: install @payloadcms/live-preview-react@3.91.0); approve/deny SEO fixes F41/F55/F64/F65; F61 launch placeholders; publish-time validation test (F54); redirect create/verify/delete test; all other F36–F65 defaults.
+- **Next up after checkpoint:** apply approved fixes → marketing-docs for cleared units → homepage seed (Phase 4 needs Gate K first; showcase must hold every block) → continue page 2+ blocks.
+- **How this human works (binding):** run whole big steps autonomously; flag decisions with a safe default in "Flags for checkpoint" and batch them at the step's end (memory: feedback-defer-to-checkpoint). Model choice per memory feedback-model-choice. Standing rule: proper error reporting everywhere — QA checks it every unit.
+- **Dispatch gotchas:** block-coders self-check with headless chromium (`chromium --headless=new …` or CDP scripts in scratchpad), never the Playwright MCP (QA owns it; parallel use collides). QA's browser has a 15px scrollbar (768 window = 753 content). Common block brief template lives in the session scratchpad (recreate from docs/dev.md "How to add a block"). pnpm not on PATH: `npx -y pnpm@11.28.3`. Parallel source edits cause Fast Refresh resets of unsaved admin forms during QA. QA cannot click Publish (permission classifier). dev-docs/marketing-docs need explicit position; marketing-docs needs "Gate 1 cleared / Gate 2 cleared or N/A".
+- **Local dev:** `npx -y pnpm@11.28.3 dev` → http://localhost:3000 (admin /admin); Postgres container `duhamedia-postgres` on 127.0.0.1:5433 (`duha_site_dev`, push mode).
+- **Blockers:** OPS_REQUESTS #1–#9 unanswered (human relays); postal address (first broadcast only).
