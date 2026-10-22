@@ -31,6 +31,7 @@ Sections are added here as each part of the site is finished and approved.
 | Create a lead magnet (free download page) | Upload the file first: **Admin → Collections → Downloads → Create New**. Then **Admin → Collections → Lead magnets → Create New** → fill the **Capture**, **What's inside**, **Asset & email** and **Delivered state** tabs → **Publish changes**. See [Lead magnets](#lead-magnets-the-collection). |
 | Review and publish a pipeline draft (article) | **Admin → Collections → Posts** → filter **Status: Draft** → open the draft → check the copy, set **Author** and **Hero image** → **Publish changes**. See [Posts](#posts-articles-and-newsletter-issues). |
 | Create a page, or change its header/footer | **Admin → Collections → Pages → Create New** (or open the page) → set **Header** and **Footer** in the right-hand sidebar → **Publish changes**. See [Pages](#pages-site-pages). |
+| Delete something that's in use | The admin refuses and lists where it is used. Change those places first, then delete again. See [Why can't I delete this?](#why-cant-i-delete-this). |
 | Someone is locked out after wrong passwords | Wait 10 minutes, or ask an Admin to open **Admin → Collections → Users → (person) → Force Unlock**. See [Users and roles](#users-and-roles). |
 
 ## Table of contents
@@ -39,6 +40,7 @@ Sections are added here as each part of the site is finished and approved.
   - [Users and roles](#users-and-roles)
   - [Media library (images)](#media-library-images)
   - [Downloads (lead-magnet files)](#downloads-lead-magnet-files)
+  - [Why can't I delete this?](#why-cant-i-delete-this)
 - [Content libraries (site-wide)](#content-libraries-site-wide)
   - [Clients (logo strips)](#clients-logo-strips)
   - [Team members](#team-members)
@@ -125,7 +127,7 @@ These parts of the admin are not tied to one page. They are the accounts people 
 - Accepted types: JPG, PNG, WebP, GIF and SVG.
 - **Caption** (optional): a default caption shown under the image when it is used as a figure inside an article.
 - **Focal point:** after choosing the file, you can click the part of the image that matters most (a face, a product). When the site crops the image to fit a card or banner, it keeps that point in frame. The focal-point tool only appears on desktop-width screens, not on a phone.
-- **Replace or remove:** open the image in **Admin → Collections → Media**, then edit or delete it. Before deleting, check the image is not still used on a page, or that spot will lose its picture.
+- **Replace or remove:** open the image in **Admin → Collections → Media**, then edit or delete it. If the image is still used somewhere on the live site, the delete is refused and the message tells you where (see [Why can't I delete this?](#why-cant-i-delete-this)). Images placed inside article or case-study text are the exception: check those yourself first.
 - Sizes are made automatically when you upload: a small admin thumbnail, card, wide and full-width versions, and a **1200 × 630** version used when a page is shared on social media. You never resize images yourself.
 
 **Forms & leads:** n/a.
@@ -155,6 +157,27 @@ A **lead magnet** is a free resource (a guide, checklist or worksheet) that visi
 **Other**
 - Each file gets a **public web link**: anyone with the link can download it. Never upload anything confidential.
 
+### Why can't I delete this?
+
+**SEO:** n/a.
+
+**Editable by marketing**
+- Anything still **in use on the live site** cannot be deleted: an image, a client, a testimonial, a page, a form, a free download and so on. This protects the site from ending up with a hole where the item used to be.
+- When you try, the admin shows a message that says where the item is used. It lists up to **5 places**, then "(+N more)" for the rest. The same message appears if you delete several items at once: one line per item that was refused.
+- **How to fix it:** go to each place listed and remove the item or choose a different one, **Publish changes** where the place is a published item, then delete again.
+- **Example, a page in the menu:** the message names the menu spot, for example "Navigation → Header → Menu links (row 1) → Link". Open **Admin → Globals → Navigation**, remove or change that link, **Save**, then delete the page.
+- **Example, the default share image:** the message ends with "How: Globals → SEO defaults → Default social share image → choose another image → Save." Do exactly that, then delete the image.
+
+**Forms & leads**
+- A **form** or a **free download (lead magnet)** that has leads (submissions) cannot be deleted, so the leads stay on record. The message gives the number of submissions. If you really want it gone, an Admin must first delete its submissions (**Admin → Form submissions**, filter by that form or by Lead magnet). Marketing cannot delete submissions.
+
+**Social share:** n/a.
+
+**Other**
+- **Drafts do not block.** If only an unpublished draft mentions the item, you can still delete it. That draft will have an empty spot, so fix it before publishing.
+- **Links or images inside article and case-study text do not block.** The admin cannot see inside written text, so deleting the item leaves a gap there. The site hides a broken link or image instead of showing an error, but check the text first so nothing quietly disappears.
+- **Create New does not save.** Clicking **Create New** no longer creates an empty draft. Nothing is saved until you click **Save Draft** or **Publish changes**, so there are no blank drafts to delete.
+
 ## Content libraries (site-wide)
 
 These four collections hold reusable content: client brands, team members, testimonials and reviews, and FAQs. You write each item once here, and the page sections that show it (logo strips, testimonial rows, FAQ lists) pull it in automatically. Those page sections are built later and are described under each page as they land.
@@ -164,7 +187,7 @@ Case studies are a library too, but because each one is a full page of its own, 
 **How drafts work in these four libraries** (the same for all of them):
 - **Save draft** stores your work at any time, even when required fields (marked with a red asterisk) are still empty. Visitors never see drafts.
 - **Publish** checks that every required field is filled, then makes the item live on the site. Only published items ever appear to visitors. Publishing is always done by a person.
-- **Autosave:** as soon as you click **Create New**, the admin saves a blank draft for you and keeps saving as you type. If you start an item and abandon it, delete that blank draft so the list stays tidy.
+- **Nothing is saved until you say so:** clicking **Create New** opens an empty form but does not save anything. The item only exists once you click **Save Draft** or **Publish changes**. If you back out, nothing is left behind to tidy up. The page preview refreshes when you click **Save Draft**.
 - **Internal links:** wherever an answer or story has a link button (FAQ answers, case-study stories, articles), choose **Internal link** to pick a page, case study, article or lead magnet from a list instead of typing its address. A link to something not yet published is simply not shown to visitors. **External link** is for other websites.
 - **Sort Order** (right-hand sidebar): a number that sets the display order. Lower numbers come first. To reorder items, change their numbers (tip: use 10, 20, 30… so you can slot a new one in between later, e.g. 15).
 - Some fields are only required in certain cases (for example a link to a Google review). Those show **no red asterisk**; their grey help text under the field says when they are needed, and **Publish** tells you if one is missing.
@@ -290,7 +313,7 @@ Every ordinary page of the site is a **Page**: Homepage, About, Services pages, 
 - Adding, removing and reordering sections: described here once blocks exist (they will be drag-to-reorder).
 
 *Saving and publishing*
-- The admin autosaves your draft as you type. Clicking **Create New** saves a blank draft straight away, so delete any you abandon.
+- Clicking **Create New** does not save anything; the page exists only after you click **Save Draft** or **Publish changes**. The page preview refreshes when you click **Save Draft**.
 - Edits to a published page only reach visitors after you click **Publish changes** again. Publishing is always done by a person.
 
 *Removing a page*
@@ -345,7 +368,7 @@ Every form on the website (Contact, the pre-call homework, newsletter sign-ups, 
 
 **Other**
 - **Where forms are connected:** a lead magnet's **Capture form** (**Admin → Collections → Lead magnets → (lead magnet) → Capture tab**) chooses which form collects the email for that download. The one **Newsletter form** used by every newsletter box and the footer is chosen at **Admin → Globals → Site settings → Newsletter & closers tab → Newsletter form**.
-- **Blank drafts:** opening a **Create New** screen on a collection with drafts (Pages, Case studies, Lead magnets and so on) saves a blank draft automatically. If you back out without writing anything, delete that blank draft from the list so it does not clutter it.
+- **Deleting forms and downloads:** a form or free download that already has leads cannot be deleted, so the leads stay on record. See [Why can't I delete this?](#why-cant-i-delete-this).
 - Never copy real leads' details into notes, chat or documents. Refer to a submission by its ID.
 
 ## 1. Homepage
@@ -418,7 +441,7 @@ The edit screen has five **tabs** (the headings across the top of the form: Summ
 - **Published** (date): set automatically the first time the study is published. It orders the Work page and the "Next study" link. You can set it yourself; a date you enter is never overwritten.
 
 *Saving and publishing*
-- The admin saves your draft automatically as you type (**autosave**). As with the libraries, clicking **Create New** creates a blank draft straight away, so delete any you abandon.
+- Clicking **Create New** does not save anything; the study exists only after you click **Save Draft** or **Publish changes**. The preview refreshes when you click **Save Draft**.
 - **Publish changes** checks everything at once: if anything is missing or invalid (including an unticked **Client approved the figures**), nothing is published and every problem is highlighted together, so you can fix them all in one pass.
 - Publishing is always done by a person. Edits to a published study are only visible to visitors after you click **Publish changes** again.
 
@@ -528,7 +551,7 @@ Open **Admin → Collections → Posts** and click **Create New**, or open an ex
 - **Newsletter heading** and **Final CTA heading** (call to action; the "book a call" section at the end): optional. Empty means the site-wide defaults.
 
 *Saving and publishing*
-- The admin saves your draft automatically as you type (**autosave**). Clicking **Create New** creates a blank draft straight away, so delete any you abandon.
+- Clicking **Create New** does not save anything; the post exists only after you click **Save Draft** or **Publish changes**. The preview refreshes when you click **Save Draft**.
 - **Publish changes** checks everything at once. If anything required is missing, nothing is published and every problem is listed together. The error badge on a tab can read one higher than the list; that is normal (the section itself is counted).
 - Edits to a published post only reach visitors after you click **Publish changes** again.
 
@@ -607,7 +630,7 @@ Open **Admin → Collections → Lead magnets** and click **Create New**, or ope
 - **Published** (date): set automatically the first time you publish. You can set it yourself.
 
 *Saving and publishing*
-- The admin saves your draft automatically as you type (**autosave**). Clicking **Create New** saves a blank draft straight away, so delete any you abandon.
+- Clicking **Create New** does not save anything; the lead magnet exists only after you click **Save Draft** or **Publish changes**. The preview refreshes when you click **Save Draft**.
 - **Publish changes** checks everything at once: if anything is missing or invalid (for example both a file and a link, or only 2 bullets), nothing is published and every problem is shown together, so you can fix them in one pass.
 - Edits to a published lead magnet only reach visitors after you click **Publish changes** again. Publishing is always done by a person.
 

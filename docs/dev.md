@@ -51,6 +51,7 @@ Entry format for every unit: **Files** / **Fields & schema** / **Wiring** (regis
     - [`form-builder` (P1)](#form-builder-unit-p1)
     - [`redirects` (P2)](#redirects-unit-p2)
     - [`seo` (P3)](#seo-unit-p3)
+  - [Error handling (S3)](#error-handling-unit-s3)
 - [Block showcase sandbox (`/_showcase`)](#block-showcase-sandbox-_showcase)
 - [Deploy](#deploy)
 - [Integrations](#integrations)
@@ -283,13 +284,15 @@ Access:
 - A request for a missing file returns **500** "Something went wrong." (stock 3.91.0 behaviour, not 404). The `site_error` reporter must ignore or rate-limit these.
 - Non-image assets never go in `media`, so every `media` document has a meaningful alt.
 - S1: `downloads` files are no longer publicly fetchable by URL. The `lead_magnet` integration delivers them as email attachments (not yet built); it must read the file with `overrideAccess`. No migration for this change.
+- S3: `media` has `beforeDelete: [blockDeleteIfReferenced({ noun: 'image', hints })]` with the default-OG-image hint (`seo-defaults:defaultOgImage`), and `upload.handlers: [missingFileHandler(MEDIA_STATIC_DIR)]`. `downloads` has `beforeDelete: [blockDeleteIfReferenced({ noun: 'file' })]` and `upload.handlers: [missingFileHandler(DOWNLOADS_STATIC_DIR)]`. See [Error handling](#error-handling-unit-s3).
 
 #### Shared helpers for content collections (C3–C6)
 
 Introduced with C3–C6 and reused by later content collections.
 
 - `src/fields/index.ts`:
-  - `contentVersions`: `drafts.autosave.interval: 375`, `drafts.schedulePublish: false`, `drafts.validate: false`, `maxPerDoc: 50`. With `validate: false`, draft saves skip all field validation (built-in and custom), so "required" means "required to publish".
+  - `contentVersions`: `drafts.autosave: false` (S3; was `autosave.interval: 375`), `drafts.schedulePublish: false`, `drafts.validate: false`, `maxPerDoc: 50`. With `validate: false`, draft saves skip all field validation (built-in and custom), so "required" means "required to publish".
+  - S3 autosave off (F21): used by the 8 `contentVersions` collections (`pages`, `clients`, `team-members`, `testimonials`, `faqs`, `case-studies`, `posts`, `lead-magnets`). In payload@3.91.0 the admin create view creates a draft as soon as it opens when autosave is on and `drafts.validate` is off (`@payloadcms/next` `views/Document/index.js:247-279`); there is no option to skip that, and `drafts.validate: true` would enforce required fields on every draft save (breaks "required to publish"). The editor now gets "Save draft" + "Publish". Live preview: client-side `useLivePreview` still updates on every keystroke; server-rendered preview (`RefreshRouteOnSave`) refreshes on Save draft. The slug is fixed at first save unless regenerated. Migration and flags: [Error handling](#error-handling-unit-s3).
   - `sortOrderField(description?)`: `sortOrder` number field, indexed, sidebar, step 1. Lower numbers first. Used instead of `orderable` (experimental in 3.91.0).
   - `validateHttpsUrl`: text validator; runs `text()` from `payload/shared` first (a custom `validate` replaces the built-in one); empty passes unless `required`; otherwise must parse as an `https:` URL.
   - `validateYouTubeUrl`: same pattern; non-empty value must yield a video id from `youtubeVideoId`.
@@ -335,6 +338,7 @@ Drafts on (`contentVersions`); `useAsTitle: 'name'`; `defaultSort: 'sortOrder'`;
 
 **Notes**
 - All client names are placeholders at launch; the seed labels them as such.
+- S3: `beforeDelete: [blockDeleteIfReferenced()]`; autosave off. See [Error handling](#error-handling-unit-s3).
 
 #### `team-members` (unit C4)
 
@@ -366,6 +370,7 @@ Drafts on (`contentVersions`); `useAsTitle: 'name'`; default columns `name`, `ro
 - A collection rather than a global (Gate S §2.3): post bylines need a public relationship target, and a global cannot be one.
 - No "latest posts" field (R12).
 - The bio stays placeholder until the founder writes it; no invented founder facts.
+- S3: `beforeDelete: [blockDeleteIfReferenced()]`; autosave off. See [Error handling](#error-handling-unit-s3).
 
 #### `testimonials` (unit C5)
 
@@ -410,6 +415,7 @@ Drafts on (`contentVersions`); `useAsTitle: 'authorName'`; `defaultSort: 'sortOr
 - Video = unlisted YouTube; poster stored locally in `media` (Gate S Q5).
 - `caseStudy` relationship (SCHEMA §6.4) was added in C7 with the C7 migration (the former `TODO(C7)` is resolved).
 - All reviewers, quotes and metrics are placeholders at launch.
+- S3: `beforeDelete: [blockDeleteIfReferenced()]`; autosave off. See [Error handling](#error-handling-unit-s3).
 
 #### `faqs` (unit C6)
 
@@ -573,6 +579,7 @@ S1: the delete rule is now the shared `adminOrMarketingUnpublished` helper (see 
   - SEO `meta` tab (plugin-seo unit, `collections: ['case-studies']`).
   - Live preview URL and draft mode for `/work/<slug>` (when the route lands).
 - Reading progress on p2 is a template behaviour of `/work/<slug>`, not a field (R10).
+- S3: `beforeDelete: [blockDeleteIfReferenced()]`; autosave off. See [Error handling](#error-handling-unit-s3).
 
 #### `posts` (unit C8)
 
@@ -681,6 +688,7 @@ Access:
 - Deferred: live preview and draft mode with the `/insights/<slug>` and `/newsletter/<slug>` routes; rich-text internal links in `bodyEditor`/`shortEditor` and `linkField` target `pages`: done in [C10](#pages-unit-c10) (`lead-magnets` added in [C9](#lead-magnets-unit-c9)).
 - `/work/<slug>` is not purged when a post linked from a case study changes (open; not addressed in C10).
 - Reading progress (p11/p13/p14) is a template behaviour, not a field (R10). The FAQ renders through the AccordionFAQ component when it exists.
+- S3: `beforeDelete: [blockDeleteIfReferenced()]`; autosave off. See [Error handling](#error-handling-unit-s3).
 
 #### `lead-magnets` (unit C9)
 
@@ -761,6 +769,9 @@ Slug: `uniqueSlugHooks('lead-magnets')` (`beforeValidate` fills from title, `-2`
   - Up: `lead_magnets.whats_inside_heading` and `_lead_magnets_v.version_whats_inside_heading`, both nullable `varchar DEFAULT 'What''s inside'`.
   - Down: drops both columns. The `downloads` read change needed no migration.
 
+**S3 pointer**
+- `beforeDelete: [blockDeleteIfReferenced({ counted: { 'form-submissions': leadMagnetSubmissionsSentence } })]`: blocked while form submissions requested the lead magnet; autosave off. See [Error handling](#error-handling-unit-s3).
+
 #### `pages` (unit C10)
 
 The single-document pages (all 21 page types except the templates p2, p13, p14, p18, which are their own collections): p1 `home`, p3 `work`, p4 `services`, p5 `services/shopify-theme-development`, p6 `services/marketing`, p7 `testimonials`, p8 `about`, p9 `book-a-call`, p10 `thank-you`, p11 `faq`, p12 `contact`, p15 `lp/<campaign>`, p16 `newsletter`, p17 `links`, p19 `reviews`, p20 `privacy`/`terms`/`cookies`/`gdpr`, p21 `404`. Shell only: `layout` has no blocks registered yet.
@@ -818,6 +829,7 @@ Access: `staffContentAccessDraftDelete` (SCHEMA §4.3 + Delta 2026-10-18; S1 cha
 **Notes**
 - P3 (see [`seo` (P3)](#seo-unit-p3)): `title` now sits inside an unnamed "Content" tab (the first top-level field is a `tabs` field so plugin-seo can append its SEO tab). Admin layout only; no schema or column change. The future `layout` field (`pageLayoutField(...)`, `TODO(blocks)` in `Pages.ts`) goes inside that Content tab. The sidebar fields and `slug` stay top-level. The `meta` group is added by P3 (migration `20261022_001520_p3_seo`).
 - Deferred: live preview and draft mode.
+- S3: `beforeDelete: [blockDeleteIfReferenced()]`; autosave off. Blocks paths on other collections (e.g. a future `layout` block holding a relationship to `pages`) are scanned, not queried. See [Error handling](#error-handling-unit-s3).
 - Router checklist (for the router unit):
   - `[...slug]` route and `not-found.tsx` (reads the `404` doc), both fetching with the `pages` tag.
   - Handle a request for `/home` (404 or 301 to `/`).
@@ -1194,6 +1206,7 @@ Plugin options:
 - "Failed deliveries" is a shared preset document (`payload-query-presets`), not config, so it exists only after the seed or an admin creates it.
 - The precall-homework form is created with `sendEvent` off at launch (X13); its submissions get no `deliveryStatus`, so they never appear in "Failed deliveries".
 - Payload's `queryPresets` access function (default) was verified in `payload@3.91.0` `query-presets/access.js`; the config overrides it for all four operations.
+- S3: `forms` has `beforeDelete: [blockDeleteIfReferenced({ counted: { 'form-submissions': formSubmissionsSentence } })]` (`src/plugins/formBuilder.ts`): a form with submissions cannot be deleted. See [Error handling](#error-handling-unit-s3).
 
 #### `redirects` (unit P2)
 
@@ -1324,6 +1337,72 @@ Generators (all catch errors and return a usable string, `''` as last resort, be
   2. JSON-LD (Organization / LocalBusiness from `seo-defaults`, plus per-type schemas).
   3. `sitemap.xml` and `robots.txt`.
   4. Live preview and draft mode.
+
+### Error handling (unit S3)
+
+Commit `eecd05c`. Standing rule (2026-10-21, "proper error reporting throughout"): no raw database or stack error reaches editors or visitors; a blocked action names what blocks it and how to fix it.
+
+**Files**
+- `src/hooks/blockDeleteIfReferenced.ts`: `blockDeleteIfReferenced(options)` (`CollectionBeforeDeleteHook` factory), `formSubmissionsSentence`, `leadMagnetSubmissionsSentence`, `DEFAULT_OG_IMAGE_HINT`.
+- `src/lib/missingFileHandler.ts`: `missingFileHandler(staticDir)` (`upload.handlers` entry).
+- `src/components/errors/ErrorMessage.tsx`: shared visitor message (client component).
+- `src/app/(frontend)/error.tsx`: error boundary for public pages.
+- `src/app/global-error.tsx`: root-layout boundary (covers `(frontend)` and `(payload)`).
+- `src/fields/index.ts`: `contentVersions.drafts.autosave: false`.
+- Collections using the hook: `Media.ts`, `Downloads.ts`, `Clients.ts`, `TeamMembers.ts`, `Testimonials.ts`, `CaseStudies.ts`, `Posts.ts`, `LeadMagnets.ts`, `Pages.ts`, and `forms` in `src/plugins/formBuilder.ts`. `missingFileHandler` is on `Media.ts` and `Downloads.ts`.
+- `src/migrations/20261022_014336_s3_friendly_errors.ts` (+ `.json` snapshot), registered in `src/migrations/index.ts`.
+
+**Delete protection: `blockDeleteIfReferenced`**
+- Runs in `beforeDelete`. In payload@3.91.0 `deleteByID` runs `beforeDelete` hooks (`collections/operations/deleteByID.js:70-79`) before it unlinks upload files (`:90`) and before the row delete (`:127`). A failed foreign-key delete would otherwise already have removed the files and returned a raw "Failed query". Bulk delete (`operations/delete.js:105-116`) runs the hook per doc and collects each message in `errors[]`.
+- Error: `APIError(message, 409)`. A non-500 `APIError` is public, so REST returns the message verbatim; the admin shows it as a toast on single delete and one line per blocked doc on bulk delete.
+- References are derived at runtime from the config, cached per target slug (per config, for the life of the process):
+  - every `relationship` / `upload` field whose `relationTo` includes the target, at any depth: groups, named tabs, arrays, blocks (incl. block references), walked over `flattenedFields`;
+  - in every global, and in every collection except `payload-*` internals.
+- Not counted:
+  - Drafts-enabled referencing collections: only published docs count (`_status = published` on the main table). `_v` tables are never read.
+  - Rich-text (Lexical) links and uploads (JSON, no FK). The renderer must drop links whose target no longer resolves.
+  - Join fields (virtual).
+  - Self-references (`id not_equals` the doc being deleted).
+- Query method: Local API with `overrideAccess: true` and the operation's `req` (same transaction); `depth: 0`; collections via `find` with one OR of the matching paths, globals via `findGlobal`. Polymorphic paths query `{ relationTo, value }`. Paths inside a `blocks` field are scanned (all published docs, `pagination: false`), not queried, because drizzle resolves `layout.<field>` against the first block that has a field of that name only (`@payloadcms/drizzle@3.91.0` `queries/getTableColumnFromPath.js:140`). Matching docs are walked to name the exact place (e.g. "row 2").
+- Message: names the document, lists up to 5 places then "(+N more)", and says to remove it there or choose a different one. Places read `<Collection> "<title>" → <field path>`; globals lead the list.
+- Options: `noun` (lower-case noun in the message), `counted` (a referencing collection reported as a count sentence instead of a list), `hints` (extra sentence when a specific place blocks; key `<slug>:<dot path>`).
+- Specials:
+  - `media`: if the default social share image blocks (`seo-defaults:defaultOgImage`), appends `DEFAULT_OG_IMAGE_HINT` (Globals → SEO defaults → Default social share image → choose another → Save).
+  - `forms`: blocked while `form-submissions` exist (`formSubmissionsSentence`; leads stay on record; delete the submissions first).
+  - `lead-magnets`: blocked while submissions requested it (`leadMagnetSubmissionsSentence`).
+- Bypass: `context.skipReferenceCheck = true` (seed resets, QA cleanup).
+
+**Missing files: `missingFileHandler`**
+- Without it payload@3.91.0 answers a missing file with `500 Something went wrong.` (`uploads/endpoints/getFile.js:61-79`).
+- GET/HEAD only. Other methods return `undefined` (falls through), because `upload.handlers` is also called for client uploads from a multipart POST/PATCH; that path keeps failing as before.
+- On ENOENT: logs a warning and answers `404` with body `{"errors":[{"message":"File not found."}]}` and the same CORS headers as Payload's file responses (`headersWithCors`).
+- Read access is checked before handlers run, so a staff-only `downloads` file still answers 403 to the public; the handler cannot reveal whether a file exists to someone without read access.
+- A path that resolves outside `staticDir` returns `undefined`; Payload rejects it (400 "Invalid filename.").
+
+**Error pages**
+- `src/app/(frontend)/error.tsx`: boundary for public pages and nested layouts; does not wrap `(frontend)/layout.tsx` itself. Props `error` and `retry` (the Next 16.3.8 prop for re-rendering the segment; the legacy name is `reset`).
+- `src/app/global-error.tsx`: resolved once at the app root (Next 16.3.8), used for both root layouts including the admin. Renders its own `<html>`/`<body>`, gets no global CSS, uses a React `<title>` and `noindex`.
+- `ErrorMessage`: never shows `error.message`. Shows the `digest` as "Reference" when present (server component errors; client-side errors have none). Buttons: "Try again" (calls `retry`), link to the homepage; 44px minimum height; inline styles only so it renders without the site CSS.
+- Copy is placeholder (F34); the real error state is designed later with the page-21 Error404 block family.
+
+**Autosave off (F21)**
+- `contentVersions.drafts.autosave: false` on the 8 collections (see [Shared helpers](#shared-helpers-for-content-collections-c3c6)). Reason: with autosave on and `drafts.validate` off, the 3.91.0 admin create view creates a draft the moment it opens; there is no option to defer it, and `drafts.validate: true` would break required-to-publish.
+- Live preview: client-side `useLivePreview` still updates instantly; server-rendered preview refreshes on Save draft (`RefreshRouteOnSave`).
+- The slug is fixed at first save unless regenerated.
+
+**Wiring**
+- Registration: hooks and handlers are set on each collection config (see Files); the error files are Next file conventions, no registration.
+- Revalidation: none (no public data rendered by this unit).
+- Migration: `20261022_014336_s3_friendly_errors`. A deliberate no-op expand step. The generated diff would have dropped `autosave` and its `_<slug>_v_autosave_idx` index on the 8 `_v` tables; replaced by a no-op so the previous image (which still reads/writes `autosave` during deploy overlap) keeps working. The new image never names the column. The JSON snapshot already reflects the new schema, so later `migrate:create` runs do not regenerate the drop. `down()` is a no-op.
+- Contract migration owed (F31), once no image that declares `autosave` can run: hand-written, `DROP INDEX IF EXISTS "_<slug>_v_autosave_idx"` and `ALTER TABLE "_<slug>_v" DROP COLUMN IF EXISTS "autosave"` for the 8 `_v` tables (`_pages_v`, `_clients_v`, `_team_members_v`, `_testimonials_v`, `_faqs_v`, `_case_studies_v`, `_posts_v`, `_lead_magnets_v`). The column holds version metadata only.
+
+**Notes**
+- What the `site_error` integration unit needs from this unit's surface:
+  - Payload `afterError` for non-public errors and status >= 500.
+  - Next `instrumentation` `onRequestError`, `nodejs` runtime only; skip `/api/health`; include the `digest`, which matches the "Reference" shown to the visitor.
+  - Ignore the client-upload "Expected response from the upload handler." 500 (see `missingFileHandler`, GET/HEAD only).
+  - The error boundaries do not report anything themselves.
+- Flags F31–F35: F31 contract migration owed (above); F32 autosave off → server-rendered live preview refreshes on Save Draft, new docs preview after first save (router unit may use client-side `useLivePreview` for instant preview); F33 Lexical links/uploads aren't delete-protected — the rich-text renderer must skip unresolved targets; F34 placeholder error copy (above); F35 a blocked delete is fixed by editing the referencing docs first (by design).
 
 ## Block showcase sandbox (`/_showcase`)
 
