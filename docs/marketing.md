@@ -318,6 +318,7 @@ Every form on the website (Contact, the pre-call homework, newsletter sign-ups, 
 - What an Admin sets on each form, so you recognise the labels (in the right-hand sidebar):
   - **Form key**: a short, fixed code name for the form, e.g. `contact` or `precall-homework`. It is how the system tells forms apart. Never renamed once the form is live.
   - **Event type**: what kind of lead notification a submission produces: **None**, **Contact**, **Newsletter** or **Lead magnet**.
+  - **Email to** (in the form's email settings): the address that receives the email notification for each submission. If it is left empty, notifications go to hello@duhamedia.com (once the server has that address set up).
   - **Send event**: when ticked, each submission is announced (sent as an "event") to the business's assistant system, which tells the human. When unticked, submissions are still saved here but nothing is announced. The pre-call homework form starts with this off.
   - **Newsletter sync**: when ticked, the person is also added to the newsletter list in Resend (the email service). For lead-magnet forms an **Opt-in field name** appears, naming the tick box the visitor must tick; leave it empty to add everyone who submits (the newsletter form).
 - The kinds of question a form can ask: short text, email address, long text, dropdown (select), tick box, number, date, and a plain message (text shown to the visitor, with no answer). There is no file upload, payment or country/state picker.
@@ -691,7 +692,7 @@ Facts the whole site shares: the company name in the footer, contact email, soci
 - **Default closing sections**: used at the end of case studies and articles, and by any newsletter or final call-to-action section whose own heading is left empty.
   - **Newsletter heading** and **Newsletter line** (the quiet line underneath).
   - **Final call-to-action heading** (the big closing line before the footer) and **Final call-to-action button** (usually "Book a Call"). The button is a link: choose **Page on this site** to pick a page from a list, or **Custom address** to type one.
-- **Postal address (newsletter emails)**: address lines, city, state, ZIP code and country. **US law requires a postal address at the bottom of every newsletter email**, so it is used in the newsletter footer. **It is not shown on the website pages.** The first newsletter cannot be sent until this is filled in.
+- **Postal address (newsletter emails)**: address lines, city, state, ZIP code and country. **US law requires a postal address at the bottom of every newsletter email**, so it is used in the newsletter footer. **It is private: it is not shown on the website pages and is not included in the site's public data feed.** It is only used in the newsletter footer. The first newsletter cannot be sent until this is filled in.
 
 **Forms & leads:** n/a here. The postal address is read when a newsletter is sent; see the Quick reference once newsletter sending is documented. The newsletter sign-up form itself is chosen in the **Newsletter form** field on the same tab; sign-ups will land in **Admin → Form submissions** (see [Forms and form submissions](#forms-and-form-submissions)).
 
@@ -699,7 +700,7 @@ Facts the whole site shares: the company name in the footer, contact email, soci
 
 **Other**
 - Defaults are filled in the first time the screen is saved; until the first save some fields show their placeholders only.
-- Never enter invented facts. Leave a field empty rather than guess: legal name, email, social profiles, the Google link, map position, postal address and rating all start empty on purpose.
+- Never enter invented facts. Leave a field empty rather than guess. The legal company name, contact email, reply-time note, footer brand line and map position (centred on Lombard) are filled in with real values; the social profiles, Google link, postal address and rating are still filled in only when you have the real details.
 - Marketing and Admins can edit this screen; ordinary visitors only see the results.
 
 ### Capacity & scarcity
@@ -715,11 +716,12 @@ How busy we are, kept in one place. The site uses these numbers in several spots
 **Editable by marketing**
 
 *The four counts* (all required whole numbers, 0 or more; the cap must be at least 1)
-- **Client cap**: the most clients we take at once ("We cap at 7").
+- **Client cap**: the most clients we take at once ("We cap at 7"). It starts at **7**, which is the real cap; change it only if the cap itself changes.
 - **Active clients**: clients we are working with now ("Slots open 3/7"). **It can never be more than the Client cap.** If you type a bigger number, Save is refused with a message saying so. Raise the cap first, or lower the number.
-- **Builds in progress**: store builds running now ("3 builds in progress").
-- **Engines running**: growth engines running now ("3 engines running").
-- These start empty on purpose, so no made-up number can ever appear. Fill in the real ones.
+- **Builds in progress**: store builds running now ("3 builds in progress"). **Also can never be more than the Client cap.**
+- **Engines running**: growth engines running now ("3 engines running"). **Also can never be more than the Client cap.**
+- If any of the three live counts is above the cap, Save is refused and the message names which number to lower (or raise the cap if it has really changed).
+- The three live counts (Active clients, Builds in progress, Engines running) start empty on purpose, so no made-up number can ever appear. Fill in the real ones.
 
 *Statements* (the wording the site shows)
 - Each statement has a **loud** part and a **quiet** part. The **loud** part is the big line or number ("3 builds in progress. We cap at 7."). The **quiet** part is the one-line **reason** underneath, in small text ("The cap keeps every build senior-staffed.").
@@ -750,7 +752,7 @@ How busy we are, kept in one place. The site uses these numbers in several spots
 **Social share:** n/a.
 
 **Other**
-- The four counts have no defaults and the statements list starts empty; the example numbers come from demonstration content that is clearly not final.
+- The Client cap starts at 7. The other three counts have no defaults and the statements list starts empty; the example numbers come from demonstration content that is clearly not final.
 - Never enter numbers that are not true. Update the counts whenever capacity really changes.
 
 ### Navigation (header menu and footers)
@@ -834,7 +836,7 @@ All on **Admin → Globals → SEO defaults**; there are no tabs, just one scree
   - **Founded**: optional. A real year (`2021`), year and month (`2021-04`) or full date (`2021-04-15`). **Leave it empty unless you know the real date**; a wrong date is refused only for format, not for truth.
   - **Logo**: optional. The logo Google may show beside the company in search results. Pick or upload a square or near-square image, at least 112 × 112 pixels, on a plain background.
 - **Local business (for Google)**
-  - **Business type**: pick from **Professional service** (recommended) or **Marketing agency**. It starts empty; choose Professional service.
+  - **Business type**: **Professional service** is the only option and is already selected. There is nothing to choose.
   - **Area served**: starts as "Chicago metropolitan area". Where clients are served.
   - **Opening hours**: optional. **Leave empty unless there are real, set hours.** If you enter some, use the format `Mo-Fr 09:00-17:00` (days Mo Tu We Th Fr Sa Su, 24-hour times). Separate several entries with `;`, for example `Mo-Fr 09:00-17:00; Sa 10:00-14:00`. A wrong format is refused with a message.
   - The business **address** is not entered here. It comes from [Site settings](#site-settings) (**Location** tab), and the company's social profiles come from Site settings (**Brand & contact** tab).
@@ -853,7 +855,7 @@ All on **Admin → Globals → SEO defaults**; there are no tabs, just one scree
 
 **Other**
 - **The image currently used as the default share image cannot be deleted from Media.** Trying shows an error. To remove it, first choose a different image here and Save, then delete the old one in Media.
-- Only enter real facts. Company name, area served and business type are the only things filled in or suggested; founding date and opening hours start empty on purpose.
+- Only enter real facts. Company name, area served and business type are the only things filled in for you; founding date and opening hours start empty on purpose.
 - Changes appear on the site as soon as you save; no rebuild or developer is needed.
 - Before the first save, the screen may show only its starting values; the share image has to be chosen before it can be saved.
 

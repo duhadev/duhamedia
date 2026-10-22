@@ -914,7 +914,7 @@ Access:
 **Notes**
 - In payload@3.91.0 a global has no stored row until it is first saved (`findOne` returns an empty-shaped result), and field defaults apply on that first save, not on read. The frontend must treat every field as optional. The seed must save the global, including the required `legalName` and `contactEmail`.
 - `aggregateRating` values are returned by the public API even when `show` is false. The frontend must check `show` before rendering or emitting JSON-LD.
-- `postalAddress` is publicly readable through the public `read` access (it is not rendered on the site). Open flag F6 in `PROGRESS.md`.
+- `postalAddress` group has field-level `access.read: staffOnlyField` (F6, S1 delta, commit 986a432): omitted from public and pipeline responses. `src/payload-types.ts` still types it as present, so the frontend must treat it as absent. The newsletter broadcast job reads it server-side with `overrideAccess` (the Local API default).
 - P1 (commit e370604): `newsletterForm` added in tab "Newsletter & closers": relationship → `forms`, `maxDepth: 1`, label "Newsletter form"; the one signup form behind every NewsletterBand, the footer nudge and the p16 hero. Forms are staff-read, so the frontend loads it server-side. Migration `20261021_233028_p1_form_builder` adds nullable `site_settings.newsletter_form_id` (FK → `forms`, ON DELETE set null, indexed). See [P1](#form-builder-unit-p1).
 - `SocialRowLabel` keeps its own copy of the six platform labels, because a `'use client'` module cannot share constants with the server config.
 
@@ -924,7 +924,7 @@ The one place capacity and scarcity statements are edited (SCHEMA §7.2, §4.3, 
 
 **Files**
 - `src/globals/Scarcity.ts`: global config.
-- `src/lib/scarcity.ts`: dependency-free shared module (no server imports), read by the config, the admin row label and future blocks. Exports `SCARCITY_KEYS` (`{ label, value }` list), `ScarcityKey`, `SCARCITY_KEY_LABELS`, `ScarcityCounts`, `SCARCITY_TOKENS`, `unknownScarcityTokens(statistic)`, `fillScarcityTokens(statistic, counts)`, and the validation message constants/builders.
+- `src/lib/scarcity.ts`: dependency-free shared module (no server imports), read by the config, the admin row label and future blocks. Exports `SCARCITY_KEYS` (`{ label, value }` list), `ScarcityKey`, `SCARCITY_KEY_LABELS`, `ScarcityCounts`, `SCARCITY_TOKENS`, `unknownScarcityTokens(statistic)`, `fillScarcityTokens(statistic, counts)`, and the validation message constants/builders, including `overCapacityMessage(label, capacity)` (replaces `activeOverCapacityMessage`, S2).
 - `src/components/admin/ScarcityRowLabel.tsx`: client component (`useRowLabel`), row label for `statements`: `<Type label> — <statistic>`, falls back to `Statement NN`.
 - `src/payload.config.ts`: `globals: [SiteSettings, Scarcity]`.
 - `src/payload-types.ts` and `src/app/(payload)/admin/importMap.js`: regenerated.
@@ -936,10 +936,10 @@ Slug `scarcity`, label "Capacity & scarcity". No drafts, no versions: a save is 
 
 | Field | Type | Notes |
 |---|---|---|
-| `capacity` | number, required, `min` 1 | No default. Whole number |
+| `capacity` | number, required, `min` 1 | `defaultValue` 7 (real cap, F7). Whole number. Not capped |
 | `activeClients` | number, required, `min` 0 | No default. Whole number; must be ≤ `capacity` (read from `siblingData`) |
-| `buildsInProgress` | number, required, `min` 0 | No default. Whole number |
-| `enginesRunning` | number, required, `min` 0 | No default. Whole number |
+| `buildsInProgress` | number, required, `min` 0 | No default. Whole number; must be ≤ `capacity` (F8) |
+| `enginesRunning` | number, required, `min` 0 | No default. Whole number; must be ≤ `capacity` (F8) |
 | `statements` | array, required, `minRows` 1 | Sortable, `initCollapsed`, row label `ScarcityRowLabel` |
 | `statements.key` | select, required | Options from `SCARCITY_KEYS`: `ongoing`, `capacity`, `builds-line`, `engines-line`, `slots-line`, `offer-line`. Unique across rows |
 | `statements.label` | text | Optional caption; trimmed |
@@ -953,7 +953,7 @@ Tokens usable in `statistic`: `{active}`, `{capacity}`, `{builds}`, `{engines}`,
 Loud/quiet rule (CLAUDE.md content rule 2): `reason` is required and non-blank, so a statement cannot be saved without its reason. Blocks must have no render path that shows a statement or number without its reason.
 
 Validation (field validators, no throwing hooks; each calls the built-in validator from `payload/shared` first, because a custom `validate` replaces the built-in):
-- Counts: built-in `number()`, then `Number.isInteger`. `activeClients` additionally ≤ `capacity`.
+- Counts: built-in `number()`, then `Number.isInteger` (`validateCount`). `activeClients`, `buildsInProgress` and `enginesRunning` use `validateCappedCount(label)`: `validateCount`, then value ≤ sibling `capacity`, else `overCapacityMessage(label, capacity)`. `capacity` itself uses `validateCount` only.
 - `key`: built-in `select()`, then no other row in `data.statements` may use the same key.
 - `statistic`: blank check, built-in `text()`, then `unknownScarcityTokens` must be empty.
 - `reason`: blank check, then built-in `text()`.
@@ -974,13 +974,14 @@ Access:
 - Migration: `20261021_223802_g2_scarcity`. Additive.
   - Up: enum `enum_scarcity_statements_key`; tables `scarcity` (four `numeric NOT NULL` count columns) and `scarcity_statements` (FK to `scarcity` cascades; `_order` and `_parent_id` indexes).
   - Down: drops `scarcity_statements`, then `scarcity`, then the enum.
+- S2 delta migration: `src/migrations/20261022_000002_s2_scarcity_seo_delta.ts`. Up: sets `scarcity.capacity` column default 7 (also covers the `seo-defaults` change, see [G4](#seo-defaults-unit-g4)). Down: drops the default.
 
 **Notes**
 - In payload@3.91.0 a global has no stored row until first saved. The frontend must treat every field as optional, render nothing until the global is saved, and fetch with the `scarcity` tag. The seed must save all four counts and at least one statement (the counts and `statements` are required).
 - `fillScarcityTokens` returns `null` when a token's count is missing; the component must skip that statement rather than print a half-filled number.
 - Deferred: the `scarcityRef()` field factory (SCHEMA §3) ships with the first consuming block and must import `SCARCITY_KEYS` from `src/lib/scarcity.ts`.
-- SCHEMA §7.2's `capacity` default of 7 is deliberately not applied (no real-looking numbers as defaults). Open flag F7 in `PROGRESS.md`.
-- Open flag F8 in `PROGRESS.md`: `buildsInProgress` and `enginesRunning` are not validated against `capacity`; only `activeClients` is.
+- S2 (commit e0e4271, F7/F8 resolved): `capacity` has `defaultValue: 7` (the real cap). As with any global default, it applies on first save, not on read. `buildsInProgress` and `enginesRunning` are now capped by `capacity` the same way as `activeClients`.
+- S2 migration `20261022_000002_s2_scarcity_seo_delta` sets the `scarcity.capacity` column default to 7 (see Migration above).
 
 #### `navigation` (unit G3)
 
@@ -1043,7 +1044,7 @@ Access:
 Site-wide search and social fallbacks, plus Organization / LocalBusiness JSON-LD inputs (SCHEMA §7.4, §4.3, §10). Consumed by P3 (`@payloadcms/plugin-seo`, not installed in this unit).
 
 **Files**
-- `src/globals/SeoDefaults.ts`: global config, validators, and exports `TITLE_PLACEHOLDER` (`'%s'`), `DEFAULT_DESCRIPTION_MAX` (`155`), `LOCAL_BUSINESS_TYPES` (`['ProfessionalService', 'MarketingAgency']`) for P3.
+- `src/globals/SeoDefaults.ts`: global config, validators, and exports `TITLE_PLACEHOLDER` (`'%s'`), `DEFAULT_DESCRIPTION_MAX` (`155`), `LOCAL_BUSINESS_TYPES` (`['ProfessionalService']`) and `DEFAULT_LOCAL_BUSINESS_TYPE` (`'ProfessionalService'`) for P3.
 - `src/payload.config.ts`: `globals: [SiteSettings, Scarcity, Navigation, SeoDefaults]`.
 - `src/payload-types.ts`: regenerated.
 - `src/migrations/20261021_231646_g4_seo_defaults.ts` (+ `.json`), registered in `src/migrations/index.ts`.
@@ -1060,7 +1061,7 @@ Slug `seo-defaults`, label "SEO defaults". No drafts: a save is live immediately
 | `organization.name` | text, default `Duha Media`, `maxLength` 80 | Trimmed |
 | `organization.foundingDate` | text, optional | ISO date text: `YYYY`, `YYYY-MM` or `YYYY-MM-DD`. Trimmed. No default |
 | `organization.logo` | upload → `media`, optional, `maxDepth: 1` | |
-| `localBusiness.type` | select, optional | Options from `LOCAL_BUSINESS_TYPES`: `ProfessionalService`, `MarketingAgency`. No default |
+| `localBusiness.type` | select, optional | Options from `LOCAL_BUSINESS_TYPES`: `ProfessionalService` only. `defaultValue` `DEFAULT_LOCAL_BUSINESS_TYPE` (`ProfessionalService`) (F12/F13) |
 | `localBusiness.areaServed` | text, default `Chicago metropolitan area`, `maxLength` 120 | Trimmed |
 | `localBusiness.openingHours` | text, optional | schema.org format, e.g. `Mo-Fr 09:00-17:00`; several entries separated by `;`, e.g. `Mo-Fr 09:00-17:00; Sa 10:00-14:00`. Each entry validated (day list/ranges, 24h `HH:MM-HH:MM`). Trimmed. No default |
 
@@ -1085,14 +1086,14 @@ Access:
 - Migration: `20261021_231646_g4_seo_defaults`. Additive.
   - Up: enum `enum_seo_defaults_local_business_type` (`ProfessionalService`, `MarketingAgency`); table `seo_defaults` with `default_og_image_id` integer NOT NULL; FKs `seo_defaults_default_og_image_id_media_id_fk` and `seo_defaults_organization_logo_id_media_id_fk` to `media(id)`, both `ON DELETE set null`; two indexes on the media columns.
   - Down: `DROP TABLE "seo_defaults" CASCADE`, then `DROP TYPE` for the enum (order verified; no child tables).
+- Migration (S2 delta): `20261022_000002_s2_scarcity_seo_delta`. Data step first: `UPDATE "seo_defaults"` remaps stored `MarketingAgency` to `ProfessionalService`; then the column is cast to text, the enum `enum_seo_defaults_local_business_type` is dropped and recreated with `ProfessionalService` only, the column default is set to `ProfessionalService` and the column cast back. Also sets `scarcity.capacity` default 7. Down: re-adds `MarketingAgency` to the enum and drops both defaults; rows remapped by up stay `ProfessionalService`.
 
 **Notes**
 - A global has no stored row until its first save (payload@3.91.0). `findGlobal` on an unsaved global returns `{}`: consumers must treat every field as optional.
 - First save requires a `defaultOgImage` at least 1200×630. The seed must upload a ≥1200×630 placeholder OG image before the first save.
-- Open flag F12: `MarketingAgency` is not a schema.org type. P3 emits `ProfessionalService` when `localBusiness.type` is empty or `MarketingAgency`.
-- Open flag F13: whether `localBusiness.type` should default to `ProfessionalService` (currently empty; adding a default is a small migration).
-- Open flag F14: deleting the media document used as `defaultOgImage` fails with a raw foreign-key error (the column is NOT NULL while the FK is `set null`).
-- Open flag F15: the validator (not in SCHEMA) rejects a `defaultOgImage` that does not produce the `og` (1200×630) size, i.e. images too small for social previews. Validation only, no DB change; keep or drop is a human call.
+- F12/F13 resolved (S2): `MarketingAgency` removed from the options (not a schema.org type); `localBusiness.type` defaults to `ProfessionalService`.
+- F15 resolved (S2): the `defaultOgImage` validator that rejects images not producing the `og` (1200×630) size is kept.
+- Open flag F14: deleting the media document used as `defaultOgImage` fails with a raw foreign-key error (the column is NOT NULL while the FK is `set null`). To be fixed in unit S3 (friendly blocked deletes).
 
 ### Plugins
 
