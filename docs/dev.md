@@ -50,6 +50,7 @@ Entry format for every unit: **Files** / **Fields & schema** / **Wiring** (regis
   - [Plugins](#plugins)
     - [`form-builder` (P1)](#form-builder-unit-p1)
     - [`redirects` (P2)](#redirects-unit-p2)
+    - [`seo` (P3)](#seo-unit-p3)
 - [Block showcase sandbox (`/_showcase`)](#block-showcase-sandbox-_showcase)
 - [Deploy](#deploy)
 - [Integrations](#integrations)
@@ -815,7 +816,8 @@ Access: `staffContentAccessDraftDelete` (SCHEMA §4.3 + Delta 2026-10-18; S1 cha
   - Down: hand-fixed (drops those FKs/columns before dropping the pages tables).
 
 **Notes**
-- Deferred: SEO `meta` tab (`TODO(P3)`, plugin-seo `collections: ['pages']`); live preview and draft mode.
+- P3 (see [`seo` (P3)](#seo-unit-p3)): `title` now sits inside an unnamed "Content" tab (the first top-level field is a `tabs` field so plugin-seo can append its SEO tab). Admin layout only; no schema or column change. The future `layout` field (`pageLayoutField(...)`, `TODO(blocks)` in `Pages.ts`) goes inside that Content tab. The sidebar fields and `slug` stay top-level. The `meta` group is added by P3 (migration `20261022_001520_p3_seo`).
+- Deferred: live preview and draft mode.
 - Router checklist (for the router unit):
   - `[...slug]` route and `not-found.tsx` (reads the `404` doc), both fetching with the `pages` tag.
   - Handle a request for `/home` (404 or 301 to `/`).
@@ -1041,7 +1043,7 @@ Access:
 
 #### `seo-defaults` (unit G4)
 
-Site-wide search and social fallbacks, plus Organization / LocalBusiness JSON-LD inputs (SCHEMA §7.4, §4.3, §10). Consumed by P3 (`@payloadcms/plugin-seo`, not installed in this unit).
+Site-wide search and social fallbacks, plus Organization / LocalBusiness JSON-LD inputs (SCHEMA §7.4, §4.3, §10). Consumed by P3 (`@payloadcms/plugin-seo`; see its entry under Plugins).
 
 **Files**
 - `src/globals/SeoDefaults.ts`: global config, validators, and exports `TITLE_PLACEHOLDER` (`'%s'`), `DEFAULT_DESCRIPTION_MAX` (`155`), `LOCAL_BUSINESS_TYPES` (`['ProfessionalService']`) and `DEFAULT_LOCAL_BUSINESS_TYPE` (`'ProfessionalService'`) for P3.
@@ -1076,7 +1078,7 @@ Access:
 - Registration: `src/payload.config.ts` → `globals: [SiteSettings, Scarcity, Navigation, SeoDefaults]`.
 - Revalidation: `afterChange: [revalidateGlobalHook('seo-defaults')]` calls `revalidateTag('seo-defaults', 'max')` and `revalidatePath('/', 'layout')`. Skipped when `context.disableRevalidate` is set (seed).
 - Pages using it: all (fallbacks for any document without its own SEO values). No consumer exists yet.
-- P3 plan:
+- P3 consumption (implemented in P3 except the router items):
   - `generateTitle`: replace `%s` in `titleTemplate` with the document title.
   - `generateDescription`: fall back to `defaultDescription`.
   - `generateImage`: `defaultOgImage` → `sizes.og.url`.
@@ -1093,6 +1095,7 @@ Access:
 - First save requires a `defaultOgImage` at least 1200×630. The seed must upload a ≥1200×630 placeholder OG image before the first save.
 - F12/F13 resolved (S2): `MarketingAgency` removed from the options (not a schema.org type); `localBusiness.type` defaults to `ProfessionalService`.
 - F15 resolved (S2): the `defaultOgImage` validator that rejects images not producing the `og` (1200×630) size is kept.
+- P3 (see [`seo` (P3)](#seo-unit-p3)) now consumes this global: `SeoDefaults.ts` exports `DEFAULT_TITLE_TEMPLATE` (`'%s — Duha Media'`) and `validateOgImage` (also used as the per-document share-image validator). `src/plugins/seo.ts` reads `titleTemplate`, `defaultDescription` and `defaultOgImage` through `findGlobal`.
 - Open flag F14: deleting the media document used as `defaultOgImage` fails with a raw foreign-key error (the column is NOT NULL while the FK is `set null`). To be fixed in unit S3 (friendly blocked deletes).
 
 ### Plugins
@@ -1255,6 +1258,72 @@ Plugin options: `collections: [...LINK_TARGETS]` (`pages`, `case-studies`, `post
   - F25: the old address is case-sensitive (`/Old` ≠ `/old`); exact match kept.
 - Self-loop checks run on save only; `validateReference` and the `to.url` loop check do not run on `onChange`.
 - Verified against the installed plugin (`node_modules/@payloadcms/plugin-redirects/dist`, 3.91.0): `overrides` is spread first (hooks pass through untouched; the plugin adds none), then `access` = `{ read: () => true, ...overrides.access }` and `admin` = `{ defaultColumns, ...overrides.admin }`.
+
+#### `seo` (unit P3)
+
+`@payloadcms/plugin-seo` at exactly `3.91.0` (lockstep with `payload`). Adds a `meta` group (title, description, share image) in an "SEO" tab on `pages`, `case-studies`, `posts` and `lead-magnets`, with generators fed by `seo-defaults`. SCHEMA refs: §0 "plugin-seo options", §6.1, §6.2, §6.3, §6.8 `meta` rows, §7.4. Commit `a22403c`.
+
+**Files**
+- `src/plugins/seo.ts`: exports `seo` (the configured plugin wrapper), `SEO_COLLECTIONS`, `META_TITLE_TARGET` (`60`), `generateTitle`, `generateDescription`, `generateImage`, `generateURL`, `truncate`, `siteOrigin`. Internal: `shapeFields`, `validateMetaDescription`, `trim`, `hideMetaGroupLabel`, `HELP_TEXT`, `withHelpText`.
+- `src/collections/Pages.ts`: `title` moved into an unnamed "Content" tab (see [C10](#pages-unit-c10)).
+- `src/globals/SeoDefaults.ts`: new exports `DEFAULT_TITLE_TEMPLATE`, `validateOgImage` (see [G4](#seo-defaults-unit-g4)).
+- `src/lib/docPath.ts` (P2): reused by `generateURL`.
+- `src/payload.config.ts`: `plugins: [formBuilder, redirects, seo]`.
+- `src/payload-types.ts`: regenerated (`SeoMeta` interface via `interfaceName`); `src/app/(payload)/admin/importMap.js` regenerated.
+- `src/migrations/20261022_001520_p3_seo.ts` (+ `.json`), registered in `src/migrations/index.ts`.
+
+**Fields & schema**
+
+Plugin options: `collections: ['pages', 'case-studies', 'posts', 'lead-magnets']`, `uploadsCollection: 'media'`, `tabbedUI: true`, `interfaceName: 'SeoMeta'`, `fields: shapeFields`, and the four generators below.
+
+`tabbedUI` behaviour (verified in `plugin-seo@3.91.0` `dist/index.js`): when a collection's first field is a `tabs` field, the plugin appends an "SEO" tab to it and leaves the later top-level fields (sidebar fields) top-level. Otherwise it wraps ALL fields in a new first tab, which would bury the sidebar fields. `posts`, `case-studies` and `lead-magnets` already started with tabs; `pages` did not, so its main fields were put in an unnamed "Content" tab in this unit. The plugin rebuilds the tabs field as `{ type: 'tabs', tabs }` only, so the original tabs field must carry no other props.
+
+The plugin's `meta` group is labelled "SEO" and sits in a tab also labelled "SEO"; `hideMetaGroupLabel` sets the group `label: false` so the admin and error paths do not read "SEO > SEO". Admin only: no schema or type change.
+
+| Path | Type | Notes |
+|---|---|---|
+| `meta.title` (label "Search title") | text | Plugin length indicator 50–60 (soft; never blocks a save). `beforeValidate` trim. `localized` forced `false` |
+| `meta.description` (label "Search description") | textarea, `maxLength` 155 (`DEFAULT_DESCRIPTION_MAX`) | Indicator 100–155. Custom `validateMetaDescription` (calls built-in `textarea()` first) rejects > 155 characters. Trimmed. `localized` forced `false` |
+| `meta.image` (label "Share image") | upload → `media`, `maxDepth: 1` | Field present because `uploadsCollection` is set. Validator `validateOgImage` (from `seo-defaults`): rejects a media doc with no `sizes.og.url`, i.e. smaller than 1200×630. Field `access.create` and `access.update` = `staffOnlyField`. `localized` forced `false` |
+
+- The plugin marks all three `localized: true`; `shapeFields` resets it to `false` (localization is permanently off).
+- Validation timing: `drafts.validate: false` (repo `contentVersions`), so the 155 limit and the image-size check run on publish only. Drafts and autosaves, including the pipeline's, are never rejected for length.
+- Access: the plugin adds none; `meta` fields inherit each collection's access. `meta.image` writes are staff only. The pipeline user can set `meta.title` and `meta.description` on its own `posts` drafts (F30); a `meta.image` value from the pipeline is dropped silently (not an error).
+- Help text: the plugin's field components ignore `admin.description` and print fixed i18n strings instead. The wrapper overrides `lengthTipTitle`, `lengthTipDescription` and `imageAutoGenerationTip` under the config's `i18n.translations.en['plugin-seo']` (the plugin merges its strings under the config's, `dist/index.js:348-351`). The `admin.description` values stay only as generated-type doc comments. Strings are shared by all four collections (copy says "this page").
+
+Generators (all catch errors and return a usable string, `''` as last resort, because a throwing generator makes the admin button silently set `''`):
+
+| Generator | Rule |
+|---|---|
+| `generateTitle` | `seo-defaults.titleTemplate` (fallback `DEFAULT_TITLE_TEMPLATE`; a template without exactly one `%s` also falls back) with `%s` = the doc `title`. Whitespace collapsed. Posts only: when the templated title is longer than 60 characters (`META_TITLE_TARGET`) and `targetKeyword` is set, `%s` = the keyword with its first letter capitalised (F27). Empty doc title → `''`. Home page generates "Home — Duha Media" (F29) |
+| `generateDescription` | Own summary: posts `dek`; case-studies `cardSummary`, else `inShort`; lead-magnets `pitch`; pages none. Else `seo-defaults.defaultDescription`. Else `''`. Truncated to 155 characters at a word boundary with a trailing `…` (`truncate`) |
+| `generateImage` | case-studies `heroMedia` / posts `heroImage` when that media doc has a `sizes.og.url`; otherwise `seo-defaults.defaultOgImage`; otherwise `''`. Pages and lead-magnets use the default image |
+| `generateURL` | `SITE_URL` origin + `docPath(collection, doc)`; relative path when `SITE_URL` is unset or invalid; `''` when the doc has no public path (e.g. the `404` page). `process.env.SITE_URL` is read directly because `src/lib/env.ts` imports `server-only` and the plugin runs in the admin bundle too |
+
+- `seo-defaults` is read with `findGlobal` (`depth: 0`); a read failure is logged as a warning and treated as `{}` (a global has no row until first save).
+- Generate endpoints: `POST /api/plugin-seo/generate-{title,description,url,image}`. Each requires a logged-in user with admin-panel access (`users` `access.admin` = staff only), so the pipeline key cannot call them. The admin buttons send the current (possibly unsaved) form data as `doc`; uploads arrive as ids.
+
+**Wiring**
+- Registration: `src/payload.config.ts` → `plugins: [formBuilder, redirects, seo]`. Order-independent (touches only the four collections, endpoints and translations); registered last. The `seo` export wraps the plugin to apply `hideMetaGroupLabel` and `withHelpText` after it runs.
+- Pages using it: every document on the four collections. No frontend consumer exists yet.
+- Revalidation: none of its own. `meta` is a field on collections that already revalidate (`pages`, `case-studies`, `posts`, `lead-magnets`); an edit to `meta` triggers their existing hooks.
+- Migration: `20261022_001520_p3_seo`. Additive.
+  - Up: adds `meta_title` varchar, `meta_description` varchar and `meta_image_id` integer to `pages`, `case_studies`, `posts`, `lead_magnets`, and `version_meta_title`, `version_meta_description`, `version_meta_image_id` to `_pages_v`, `_case_studies_v`, `_posts_v`, `_lead_magnets_v`; eight FKs from the image columns to `media(id)` (`ON DELETE set null`); eight indexes on the image columns. All columns nullable; no existing data touched.
+  - Down: drops the FKs, then the indexes, then the 24 columns.
+
+**Notes**
+- Flags (PROGRESS.md "Flags for checkpoint"):
+  - F26: title length is soft (indicator 50–60); description is a hard 155 limit on publish.
+  - F27: posts generated title becomes "Keyword — Duha Media" when title + template exceeds 60 characters and `targetKeyword` is set.
+  - F28: the per-document share image must also be at least 1200×630 on publish (same rule as F15 for `defaultOgImage`).
+  - F29: the homepage's generated title is "Home — Duha Media" (editable in the SEO tab).
+  - F30: the pipeline can set the SEO title and description on its post drafts, not the share image.
+- Empty `meta.*` values are not filled on save: the frontend must fall back to the generator rules and `seo-defaults` itself (the title help text states the site builds an empty title the same way).
+- `TODO(router)` (nothing below exists yet; the router unit):
+  1. `generateMetadata` for each route: title/description from `meta.*`, else the generator rules; `og:image` from `meta.image.sizes.og`, else the generated fallback; canonical from `generateURL` rules; `noindex` from `pages.noindex` and on staging.
+  2. JSON-LD (Organization / LocalBusiness from `seo-defaults`, plus per-type schemas).
+  3. `sitemap.xml` and `robots.txt`.
+  4. Live preview and draft mode.
 
 ## Block showcase sandbox (`/_showcase`)
 

@@ -20,7 +20,8 @@ Sections are added here as each part of the site is finished and approved.
 | Find form submissions and failed deliveries | **Admin → Form submissions** → apply the **Failed deliveries** saved filter (the shared saved view at the top of the list). See [Forms and form submissions](#forms-and-form-submissions). Public forms and the re-send button are not live yet. |
 | Change the booking link | **Admin → Globals → Site settings → Booking tab → Booking page address** → paste the full `https://` address → **Save**. Live straight away. See [Site settings](#site-settings). |
 | Send a newsletter broadcast (Resend dashboard steps) | [fill in once built] |
-| Change the social-share (OG) image | **Admin → Globals → SEO defaults → Default social share image** → choose or upload an image (at least 1200 × 630 pixels) → **Save**. Live straight away. This is the fallback for every page; individual pages will be able to override it once the SEO tab is added to Pages (a later release). See [SEO defaults](#seo-defaults). |
+| Change the social-share (OG) image | **Admin → Globals → SEO defaults → Default social share image** → choose or upload an image (at least 1200 × 630 pixels) → **Save**. Live straight away. This is the fallback for every page; a page, case study, article or free download can override it in its own SEO tab. See [SEO defaults](#seo-defaults). |
+| Change a page's Google title, description or share image | Open the item (**Admin → Collections → Pages / Case studies / Posts / Lead magnets → (item)**) → **SEO tab** (the last tab) → edit **Search title**, **Search description** or **Share image** (or click **Auto-generate**) → **Save draft** or **Publish changes**. Leave a box empty to use the site-wide defaults. See [SEO tab](#seo-tab-pages-case-studies-articles-free-downloads). |
 | Upload an image | **Admin → Collections → Media → Create New** → choose the file → write the **Alt** text (required) → **Save**. See [Media library](#media-library-images). |
 | Upload a lead-magnet file (PDF, CSV, Excel, ZIP) | **Admin → Collections → Downloads → Create New** → choose the file → give it a **Title** → **Save**. See [Downloads](#downloads-lead-magnet-files). |
 | Add a client logo to the logo strip | **Admin → Collections → Clients → Create New** (or open the client) → **Name**, **Logo** → tick **Show In Logo Strip** → set **Sort Order** → **Publish**. See [Clients](#clients-logo-strips). |
@@ -75,6 +76,7 @@ Sections are added here as each part of the site is finished and approved.
   - [Capacity & scarcity](#capacity--scarcity)
   - [Navigation (header menu and footers)](#navigation-header-menu-and-footers)
   - [SEO defaults](#seo-defaults)
+  - [SEO tab (pages, case studies, articles, free downloads)](#seo-tab-pages-case-studies-articles-free-downloads)
 - [Redirects (site-wide)](#redirects-site-wide)
 
 Each entry below covers: **SEO** (what is set, and where to change it) · **Editable by marketing** (what you can change, including adding, removing and reordering items) · **Forms & leads** (where submissions go, what gets announced, what "failed" means and how to re-send) · **Social share** · **Other**.
@@ -271,7 +273,7 @@ Every ordinary page of the site is a **Page**: Homepage, About, Services pages, 
 **Sections are not available yet.** A page's content is made of **blocks** (sections such as a hero or a testimonial row). Those arrive as each block is built, and each is described under its page. For now a Page is just a title plus the settings below.
 
 **SEO**
-- **Title** doubles as the default browser-tab title. Search-engine title, description and share image are not set here yet; they arrive with the SEO unit.
+- A page's **Title** now sits in a **Content** tab (the first tab); the **SEO tab** is the last tab. Search-engine title, description and share image are set in the SEO tab; see [SEO tab](#seo-tab-pages-case-studies-articles-free-downloads). Leave them empty and the site uses the [SEO defaults](#seo-defaults).
 - **Hide from search engines** (right-hand sidebar): tick it to keep the page out of Google and out of the sitemap. Used for Thank You, campaign landing pages, Link-in-Bio and 404.
 
 **Editable by marketing**
@@ -296,7 +298,7 @@ Every ordinary page of the site is a **Page**: Homepage, About, Services pages, 
 
 **Forms & leads:** n/a here (forms are sections, covered with their blocks).
 
-**Social share:** not set here yet; arrives with the SEO unit.
+**Social share:** set in the page's **SEO tab → Share image**; see [SEO tab](#seo-tab-pages-case-studies-articles-free-downloads). Empty means the default share image.
 
 **Other**
 - Changes appear on the site as soon as they are published; no developer is needed.
@@ -358,13 +360,13 @@ Each case study is its own long-form page on the site, at `duhamedia.com/work/(w
 
 **The launch rule:** every case study stays a **draft** at launch. No study is visible to visitors until a person publishes it. Wherever studies would appear, the site shows a designed alternative (for example a testimonial or metric strip) instead, so nothing looks empty or "coming soon". You can write and save studies freely in the meantime; visitors never see drafts.
 
-**SEO:** not here yet. Search-result title, description and share image fields for case studies arrive with the SEO unit and will be added to this entry then. The images a study uses take their **Alt** text from the [Media library](#media-library-images).
+**SEO:** the last tab, **SEO**, holds the search-result title, description and share image; see [SEO tab](#seo-tab-pages-case-studies-articles-free-downloads). The images a study uses take their **Alt** text from the [Media library](#media-library-images).
 
 **Editable by marketing**
 
 Open **Admin → Collections → Case studies** and click **Create New**, or open an existing study. The list shows each study's title, client, track, whether the figures are approved, and its status (Draft / Published). Published studies are listed first, newest first, then drafts.
 
-The edit screen has four **tabs** (the headings across the top of the form: Summary, Story, Results, Client voice & closing) plus a right-hand **sidebar**. Fields marked with a red asterisk must be filled before you can publish; you can save a draft with them empty.
+The edit screen has five **tabs** (the headings across the top of the form: Summary, Story, Results, Client voice & closing, and SEO) plus a right-hand **sidebar**. Fields marked with a red asterisk must be filled before you can publish; you can save a draft with them empty.
 
 *Summary tab*
 - **Title** (required): the study's headline, shown largest at the top of the page, e.g. "The demand was already there. The store was leaking it."
@@ -425,7 +427,7 @@ The edit screen has four **tabs** (the headings across the top of the form: Summ
 
 **Forms & leads:** n/a. (The newsletter sign-up and final call-to-action at the end of each study are covered under their own blocks once built.)
 
-**Social share:** not set here yet. The share image and text for a study arrive with the SEO unit. Every image uploaded to Media already gets a 1200 × 630 share-size version automatically.
+**Social share:** set in the **SEO tab → Share image**; "Auto-generate" picks the study's **Hero media** if it is big enough. See [SEO tab](#seo-tab-pages-case-studies-articles-free-downloads). Every image uploaded to Media already gets a 1200 × 630 share-size version automatically.
 
 **Other**
 - **Never invent figures or present a demonstration study as a real result.** Placeholder studies stay drafts.
@@ -488,7 +490,7 @@ The **Sections** and **FAQ** tabs only appear for the two article tracks; newsle
 
 **The content pipeline writes drafts here.** The "content pipeline" is the automated article writer (see [Users and roles](#users-and-roles)). It can create and edit **drafts** only. It cannot publish, delete, set the **Author**, pick the hero image, or change a post that is already live. **Publishing is always a person:** review the draft (fix the copy, set the **Author** and **Hero image**), then **Publish changes**.
 
-**SEO:** not here yet. Search-result title, description and share image fields for posts arrive with the SEO unit and will be added to this entry then. The **Target keyword** (sidebar) is recorded for that purpose. Images take their **Alt** text from the [Media library](#media-library-images).
+**SEO:** the last tab, **SEO**, holds the search-result title, description and share image; see [SEO tab](#seo-tab-pages-case-studies-articles-free-downloads). The **Target keyword** (sidebar) is used when a title is auto-generated (very long titles are replaced by the keyword). Images take their **Alt** text from the [Media library](#media-library-images).
 
 **Editable by marketing**
 
@@ -535,7 +537,7 @@ Open **Admin → Collections → Posts** and click **Create New**, or open an ex
 
 **Forms & leads:** n/a. (The newsletter sign-up and final call-to-action at the end of each article are covered under their own blocks once built.)
 
-**Social share:** not set here yet. The share image and text for posts arrive with the SEO unit. Every image uploaded to Media already gets a 1200 × 630 share-size version.
+**Social share:** set in the **SEO tab → Share image**; "Auto-generate" picks the article's **Hero image** if it is big enough. Pipeline drafts leave it empty (the pipeline cannot choose images). See [SEO tab](#seo-tab-pages-case-studies-articles-free-downloads). Every image uploaded to Media already gets a 1200 × 630 share-size version.
 
 **Other**
 - Never put prices in headings, facts or metrics; use the **Pricing note**.
@@ -565,11 +567,11 @@ Each **lead magnet** (a free download offered in exchange for an email address) 
 
 ### Lead magnets (the collection)
 
-**SEO:** lead-magnet pages are meant to be kept out of search engines (the page template does this itself, so there is no setting to tick). Search-result title, description and share image fields arrive with the SEO unit and will be added here then.
+**SEO:** lead-magnet pages are meant to be kept out of search engines (the page template does this itself, so there is no setting to tick). The search-result title, description and share image are in the last tab, **SEO**; see [SEO tab](#seo-tab-pages-case-studies-articles-free-downloads).
 
 **Editable by marketing**
 
-Open **Admin → Collections → Lead magnets** and click **Create New**, or open an existing one. The list shows title, web address, status (Draft / Published), published date and last update; published ones first, newest first, then drafts. The edit screen has four **tabs** (the headings across the top of the form) plus a right-hand **sidebar**. Fields with a red asterisk are needed to publish; you can save a draft with them empty.
+Open **Admin → Collections → Lead magnets** and click **Create New**, or open an existing one. The list shows title, web address, status (Draft / Published), published date and last update; published ones first, newest first, then drafts. The edit screen has five **tabs** (the headings across the top of the form; the last is **SEO**) plus a right-hand **sidebar**. Fields with a red asterisk are needed to publish; you can save a draft with them empty.
 
 *Capture tab* (the top of the page)
 - **Eyebrow**: the small line above the headline. Starts as "Free download".
@@ -614,7 +616,7 @@ Open **Admin → Collections → Lead magnets** and click **Create New**, or ope
 
 **Forms & leads:** submissions will land in **Admin → Form submissions** once the public forms are live; see [Forms and form submissions](#forms-and-form-submissions). The public form and the re-send button are not built yet.
 
-**Social share:** not set here yet. The share image and text arrive with the SEO unit.
+**Social share:** set in the **SEO tab → Share image**; lead magnets have no main image of their own, so "Auto-generate" uses the default share image. See [SEO tab](#seo-tab-pages-case-studies-articles-free-downloads).
 
 **Other**
 - **Treat files as shareable.** The download link is not yet hidden behind the sign-up form: anyone who gets the link to the file (or the external link) can use it without signing up. Do not upload anything you would not want passed around.
@@ -814,7 +816,7 @@ What you edit for each footer:
 
 ### SEO defaults
 
-**SEO** (search engine optimisation) means helping Google and similar search engines understand the site and show it well. This screen holds the site-wide **fallbacks**: the settings used whenever a page has not got its own. Today that is every page, because the per-page SEO tab arrives in a later release. Once it does, any page that fills in its own title, description or share image will use that instead, and anything it leaves empty falls back to what you set here.
+**SEO** (search engine optimisation) means helping Google and similar search engines understand the site and show it well. This screen holds the site-wide **fallbacks**: the settings used whenever a page has not got its own. Any page, case study, article or free download that fills in its own title, description or share image in its [SEO tab](#seo-tab-pages-case-studies-articles-free-downloads) uses that instead, and anything it leaves empty falls back to what you set here.
 
 **Where:** **Admin → Globals → SEO defaults** (address `duhamedia.com/admin/globals/seo-defaults`). Click **Save** when done. Both Admins and Marketing can edit it.
 
@@ -850,7 +852,7 @@ All on **Admin → Globals → SEO defaults**; there are no tabs, just one scree
 - **Change it:** **Admin → Globals → SEO defaults → Default social share image** → choose an image from Media or upload a new one → **Save**.
 - **Size:** at least **1200 × 630 pixels**, landscape. The site crops it to that shape around the image's focal point (see [Media library](#media-library-images)). An image that is too small is refused with a message ("too small for social previews"); upload a bigger one.
 - Remember the image needs **Alt** text like any other upload.
-- Individual pages will be able to set their own share image once the SEO tab is added to Pages (a later release). Until then this default is used everywhere.
+- Individual pages, case studies, articles and free downloads can set their own share image in their SEO tab. This default is used wherever they leave it empty.
 - **Social networks remember previews.** After you change the image, a link that has already been shared may keep showing the old picture for a while. That is the social network's memory, not a fault on the site.
 
 **Other**
@@ -858,6 +860,41 @@ All on **Admin → Globals → SEO defaults**; there are no tabs, just one scree
 - Only enter real facts. Company name, area served and business type are the only things filled in for you; founding date and opening hours start empty on purpose.
 - Changes appear on the site as soon as you save; no rebuild or developer is needed.
 - Before the first save, the screen may show only its starting values; the share image has to be chosen before it can be saved.
+
+### SEO tab (pages, case studies, articles, free downloads)
+
+Every **page**, **case study**, **article / newsletter issue (post)** and **lead magnet (free download)** has an **SEO** tab. It controls how that one item looks in Google results and in share cards on LinkedIn, Facebook, X and in messages. Anything you leave empty falls back to [SEO defaults](#seo-defaults).
+
+**Where:** open the item (**Admin → Collections → Pages / Case studies / Posts / Lead magnets → (item)**) and click the **SEO** tab. It is the **last tab**. On Pages the page **Title** now sits in the first tab, called **Content**.
+
+**Not on the public site yet:** these settings are saved and ready, but the public page routes that print them arrive in a later release.
+
+**SEO**
+- **Checklist:** at the top of the tab, a short checklist shows whether the title, description and image are filled in and a good length. It is guidance only.
+- **Search title:** the headline in Google results, the browser tab and share cards.
+  - Aim for **50–60 characters**.
+  - **Auto-generate** fills it from the item's title plus the SEO defaults **Title template** (for example "About" becomes "About — Duha Media"). If you leave it empty, the site builds it the same way.
+  - **Articles:** if the generated title would be longer than about 60 characters and the article has a **Target keyword** (sidebar), the keyword is used in the title instead of the long headline.
+- **Search description:** the grey text under the title in Google results and share cards.
+  - Aim for **100–155 characters**. **155 is the maximum: publishing is refused above that**, with a message saying how long it is now. Drafts can still be saved.
+  - **Auto-generate** uses the item's own summary (cut to 155 characters if longer): a case study's **Card summary** (or its **In short** if that is empty), an article's **Standfirst**, a lead magnet's **Pitch**. Pages have no summary, so they get the SEO defaults description. If the item has no summary either, the SEO defaults description is used. Leave it empty to use that default.
+- **Share image:** the picture on share cards.
+  - Landscape, at least **1200 × 630 pixels**. A smaller image is refused with a message.
+  - **Auto-generate** uses the item's own main image (a case study's **Hero media**, an article's **Hero image**) if it is at least 1200 × 630; otherwise the default share image from SEO defaults. Pages and lead magnets have no main image, so they get the default. Leave it empty to use the default.
+  - Only people (Admin or Marketing) can choose it; the article pipeline cannot.
+- **Preview:** a sample of how the item will look in Google results, updated as you type.
+- **"Too short / Too long / Good" badges** next to the length counters are guidance only. They do not block saving; only the 155-character description limit and the image size are enforced, at publish.
+- Auto-generate uses what is on screen, including changes you have not saved yet. It overwrites whatever is in the box, so click it before you hand-edit, not after.
+
+**Editable by marketing:** all three fields, on any item you can edit. No lists to add, remove or reorder. Marketing can edit them on drafts and published items.
+
+**Forms & leads:** n/a.
+
+**Social share:** this is where it is set; see the **Share image** above. Social networks remember previews, so a link already shared may show the old picture for a while.
+
+**Other**
+- Edits to a published item reach visitors only after **Publish changes**.
+- Lead-magnet pages are kept out of Google by the page template regardless of what is written here.
 
 ---
 
