@@ -80,7 +80,8 @@ export const TestimonialRow: Block = {
           name: 'caseStudy',
           type: 'relationship',
           relationTo: 'case-studies',
-          maxDepth: 1,
+          // 2 so the study's `client` populates for the kicker (nested population is capped at maxDepth).
+          maxDepth: 2,
           admin: {
             description: 'Shown only once this study is published.',
             condition: (_d, s) => s?.show !== false && s?.source === 'manual',

@@ -31,7 +31,7 @@ export const FinalCTA: Block = {
     {
       name: 'buttons',
       type: 'array',
-      minRows: 0,
+      minRows: 1,
       maxRows: 2,
       labels: { singular: 'Button', plural: 'Buttons' },
       admin: {

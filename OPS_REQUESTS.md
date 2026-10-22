@@ -65,3 +65,8 @@ Requests from the duhamedia.com build to the server agent, relayed by the human.
 - **Need:** set env `FORMS_DEFAULT_TO_EMAIL=hello@duhamedia.com` in the staging and production `.env` files (not a secret).
 - **Why:** form-builder sends each new-submission notice to the form's own "Email to"; when a form has none, it falls back to this variable, and without it to the from-address (`no-reply@…`), which nobody reads. Human decision F16 (2026-10-21).
 - **Done when:** both env files carry the variable and the containers were restarted to pick it up.
+
+## #9 — Cloudflare cache bypass for preview routes · 2026-10-22 · Open (human, Cloudflare dashboard)
+- **Need:** add `/_preview*` to the cache-bypass rule alongside `/admin*` and `/api/*` (never cache). Do NOT put `/_preview*` behind Cloudflare Access separately — it is gated by the Payload staff session, and logged-in staff must reach it from the admin's Preview button.
+- **Why:** draft preview routes (`/_preview?path=…`, `/_preview/exit`) set the Next draft-mode cookie and render unpublished content for staff; responses already send `Cache-Control: private, no-store`, this is belt-and-braces at the edge.
+- **Done when:** a request to `/_preview/exit` on staging shows `cf-cache-status: BYPASS` (or DYNAMIC).

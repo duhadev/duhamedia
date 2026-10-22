@@ -40,13 +40,13 @@ export function HeroBlock({
         <div
           aria-hidden="true"
           style={LOGO_MASK}
-          className="pointer-events-none absolute -right-20 top-22.5 z-0 size-70 bg-ground-accent md:right-[8%] md:top-[46%] md:size-115 md:-translate-y-1/2"
+          className="pointer-events-none absolute -right-20 top-22.5 z-0 size-70 bg-ground-accent lg:right-[8%] lg:top-[46%] lg:size-115 lg:-translate-y-1/2"
         />
       ) : null}
       {verticalMicrocopy ? (
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute top-[38%] left-6 z-0 hidden origin-top-left whitespace-nowrap text-[11px] font-bold uppercase tracking-[0.2em] text-gray-warm md:block md:[transform:rotate(-90deg)_translateX(-50%)_translateY(-100%)]"
+          className="pointer-events-none absolute top-[38%] left-6 z-0 hidden origin-top-left whitespace-nowrap text-[11px] font-bold uppercase tracking-[0.2em] text-gray-warm lg:block lg:[transform:rotate(-90deg)_translateX(-50%)_translateY(-100%)]"
         >
           {verticalMicrocopy}
         </span>
@@ -58,7 +58,7 @@ export function HeroBlock({
           accent={accentPhrase}
           level={1}
           as="h1"
-          className="mt-4.5 md:mt-5.5 md:max-w-[20ch]"
+          className="mt-4.5 md:mt-5.5 md:max-w-[20ch] md:max-lg:!text-h1-mobile"
         />
         {badgeText ? (
           <div className="mt-4.5 md:mt-5.5">
@@ -71,7 +71,7 @@ export function HeroBlock({
           <p className="mt-4.5 max-w-[34ch] text-body-mobile md:mt-6 md:max-w-[52ch] md:text-body">{paragraph}</p>
         ) : null}
         {verticalMicrocopy ? (
-          <span className="mt-3 block text-[11px] font-bold uppercase tracking-[0.2em] text-gray-warm md:hidden">
+          <span className="mt-3 block text-[11px] font-bold uppercase tracking-[0.2em] text-gray-warm lg:hidden">
             {verticalMicrocopy}
           </span>
         ) : null}

@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import React from 'react'
 
 import { loadFeaturedStudy } from './loadFeaturedStudy'
@@ -171,9 +172,9 @@ function StudyCard({ study, readLabel }: { study: Study; readLabel: string }) {
     </>
   )
   return href ? (
-    <a href={href} className={cx(CARD, 'no-underline')}>
+    <Link href={href} className={cx(CARD, 'no-underline')}>
       {inner}
-    </a>
+    </Link>
   ) : (
     <div className={CARD}>{inner}</div>
   )

@@ -62,7 +62,8 @@ export const TeamMembers: CollectionConfig = {
       name: 'photo',
       type: 'upload',
       relationTo: 'media',
-      maxDepth: 1,
+      // 2: populates when this doc is itself reached from a page block at page depth 2 (maxDepth caps against absolute depth).
+      maxDepth: 2,
       admin: { description: 'Portrait for the founder/team card.' },
     },
     {

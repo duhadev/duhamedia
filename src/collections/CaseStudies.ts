@@ -260,7 +260,8 @@ export const CaseStudies: CollectionConfig = {
                   name: 'client',
                   type: 'relationship',
                   relationTo: 'clients',
-                  maxDepth: 1,
+                  // 2: populates when this doc is itself reached from a page block at page depth 2 (maxDepth caps against absolute depth).
+                  maxDepth: 2,
                   required: true,
                   admin: { width: '50%', description: 'The client this study is about.' },
                 },
@@ -331,7 +332,8 @@ export const CaseStudies: CollectionConfig = {
               type: 'upload',
               label: 'Hero media',
               relationTo: 'media',
-              maxDepth: 1,
+              // 2: populates when this doc is itself reached from a page block at page depth 2 (maxDepth caps against absolute depth).
+              maxDepth: 2,
               required: true,
               admin: { description: 'Main visual, shown in a browser frame (e.g. a screenshot of the store).' },
             },

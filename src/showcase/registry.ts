@@ -51,6 +51,8 @@ const fixtureClients: Client[] = ['[Client A]', '[Client B]', '[Client C]', '[Cl
   (name, i) => ({ id: i + 1, name, logo: i % 2 ? logoMedia : null, updatedAt: '', createdAt: '' }),
 )
 
+const wordmarkClients: Client[] = fixtureClients.map((c) => ({ ...c, logo: null }))
+
 /**
  * Placeholder image: public/logo.svg (the square Duha mark, 100×100). Used for the TeamIntro
  * photo/portrait and the video-testimonial poster: the only square-ish asset in public/, so a
@@ -265,7 +267,7 @@ export const showcaseEntries: ShowcaseEntry[] = [
         { id: 'fx-ps-2', key: 'capacity' },
       ],
       pricingNote: 'Builds start at $5K',
-      logos: { show: true, eyebrow: "Stores we've run numbers for", source: 'manual', clients: fixtureClients },
+      logos: { show: true, eyebrow: "Stores we've run numbers for", source: 'manual', clients: wordmarkClients },
     },
   },
   {
@@ -288,7 +290,26 @@ export const showcaseEntries: ShowcaseEntry[] = [
     data: {
       variant: 'scarcity',
       statements: [{ id: 'fx-ps-5', key: 'capacity' }],
-      logos: { show: true, eyebrow: "Stores we've run numbers for", source: 'manual', clients: fixtureClients },
+      logos: { show: true, eyebrow: "Stores we've run numbers for", source: 'manual', clients: wordmarkClients },
+    },
+  },
+  {
+    block: 'proofStrip',
+    variant: 'scarcity — logo images',
+    label: 'logo images for all six clients',
+    data: {
+      variant: 'scarcity',
+      statements: [
+        { id: 'fx-ps-6', key: 'ongoing' },
+        { id: 'fx-ps-7', key: 'capacity' },
+      ],
+      pricingNote: 'Builds start at $5K',
+      logos: {
+        show: true,
+        eyebrow: "Stores we've run numbers for",
+        source: 'manual',
+        clients: fixtureClients.map((c) => ({ ...c, logo: logoMedia })),
+      },
     },
   },
   {

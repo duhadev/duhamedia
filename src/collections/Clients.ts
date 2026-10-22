@@ -49,7 +49,8 @@ export const Clients: CollectionConfig = {
       name: 'logo',
       type: 'upload',
       relationTo: 'media',
-      maxDepth: 1,
+      // 2: populates when this doc is itself reached from a page block at page depth 2 (maxDepth caps against absolute depth).
+      maxDepth: 2,
       admin: {
         description: 'Optional monochrome logo (single colour on transparent). Without one, the name is shown.',
       },

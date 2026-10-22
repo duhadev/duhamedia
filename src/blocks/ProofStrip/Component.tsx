@@ -8,6 +8,8 @@ import { cx } from '@/lib/cx'
 import { fillScarcityTokens, type ScarcityKey } from '@/lib/scarcity'
 import type { Client, Scarcity } from '@/payload-types'
 
+const MD_COLS = ['', 'md:grid-cols-1', 'md:grid-cols-2', 'md:grid-cols-3', 'md:grid-cols-2', 'md:grid-cols-3', 'md:grid-cols-3']
+
 type Statement = NonNullable<Scarcity['statements']>[number]
 type Resolved = { loud: string; label?: string; reason: string; big: boolean }
 
@@ -58,11 +60,11 @@ export async function ProofStripBlock({ statements, pricingNote, logos }: BlockD
                 ) : (
                   <span
                     className={cx(
-                      'block font-display text-h3-mobile font-normal uppercase tracking-[0.02em] md:text-h3',
+                      'block text-balance font-display text-h3-mobile font-normal uppercase tracking-[0.02em] md:text-h3',
                       i === 0 && 'text-ground-accent',
                     )}
                   >
-                    {s.loud}
+                    {s.loud.replace(/ (\S+)$/, '\u00A0$1')}
                   </span>
                 )}
                 <span className="mt-2 block text-[0.75rem] leading-[1.4] text-gray-warm md:text-[0.8125rem]">
@@ -82,7 +84,9 @@ export async function ProofStripBlock({ statements, pricingNote, logos }: BlockD
         <div className={cx(resolved.length || note ? 'border-t border-divider' : '')}>
           <Container className="pt-8 pb-10 text-center md:pt-10 md:pb-12">
             {logos?.eyebrow?.trim() ? <Eyebrow muted>{logos.eyebrow.trim()}</Eyebrow> : null}
-            <ul className="mt-5 grid list-none grid-cols-2 items-start justify-items-center gap-x-4 gap-y-5 p-0 opacity-55 md:mt-6 md:flex md:flex-wrap md:items-center md:justify-center md:gap-14">
+            <ul className={cx('mt-5 grid list-none grid-cols-2 items-start justify-items-center gap-x-4 gap-y-5 p-0 opacity-55 md:mt-6 md:items-center md:gap-x-10 md:gap-y-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-14',
+                MD_COLS[Math.min(clients.length, 6)],
+              )}>
               {clients.map((c) => (
                 <li key={c.id} className="flex min-h-7 items-center">
                   {c.logo && typeof c.logo === 'object' ? (

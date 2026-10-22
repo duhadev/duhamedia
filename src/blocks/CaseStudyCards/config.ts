@@ -63,7 +63,8 @@ export const CaseStudyCards: Block = {
       type: 'relationship',
       relationTo: 'case-studies',
       hasMany: true,
-      maxDepth: 1,
+      // 2 so each study's own `client` and `heroMedia` populate (nested population is capped at maxDepth).
+      maxDepth: 2,
       label: 'Studies to show',
       admin: {
         condition: isManual,

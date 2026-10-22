@@ -2,6 +2,7 @@ import React from 'react'
 
 import type { BlockData } from '@/blocks/types'
 import { AccentHeadline, CMSLink, Container, Eyebrow, Media, Section } from '@/components/ui'
+import { resolveLinkHref } from '@/components/ui/CMSLink'
 import type { Media as MediaDoc, TeamMember } from '@/payload-types'
 
 type TeamIntroData = BlockData<'teamIntro'>
@@ -35,8 +36,20 @@ const SOCIAL: Record<Platform, { label: string; path: string }> = {
   },
 }
 
-const LINK_CLASS =
-  'inline-block border-b-2 border-ink py-1 text-[15px] font-bold text-ink no-underline'
+// Padding on the anchor gives the 44px target; the underline lives on the inner
+// span so the look is unchanged.
+const LINK_CLASS = 'inline-block py-3 text-[15px] font-bold text-ink no-underline'
+const LINK_TEXT_CLASS = 'border-b-2 border-ink py-1'
+
+function IntroLink({ link, className }: { link: TeamIntroData['link']; className: string }) {
+  const label = resolveLinkHref(link) ? link?.label?.trim() : ''
+  if (!label) return null
+  return (
+    <CMSLink link={link} className={`${LINK_CLASS} ${className}`}>
+      <span className={LINK_TEXT_CLASS}>{label}</span>
+    </CMSLink>
+  )
+}
 
 /**
  * TeamIntro (Homepage.dc.html "Founder" x2, desktop + mobile builds).
@@ -79,7 +92,7 @@ export function TeamIntroBlock({
           ) : null}
           <AccentHeadline text={heading} accent={accentPhrase} level={2} accentColor="ground" className="mb-5 md:mb-4.5" />
           {body ? <p className="max-w-[68ch] text-body-mobile leading-[1.7] text-[#3A3630] md:text-[1.0625rem] md:leading-[1.65]">{body}</p> : null}
-          {link ? <CMSLink link={link} className={`${LINK_CLASS} mt-4.5`} /> : null}
+          <IntroLink link={link} className="mt-1.5" />
           <div className="mt-7 flex items-center gap-4 border-t border-divider pt-6">
             {portrait ? (
               <div className="relative size-19 flex-none overflow-hidden rounded-full border-2 border-ink md:size-20">
@@ -119,7 +132,7 @@ export function TeamIntroBlock({
 
   return (
     <Section tone="light" pad="none" className={`pt-12 md:py-section ${hasPhoto ? '' : 'pb-12'}`}>
-      <Container className={hasPhoto ? 'flex flex-col gap-7 md:grid md:grid-cols-[1fr_380px] md:items-center md:gap-16' : ''}>
+      <Container className={hasPhoto ? 'flex flex-col gap-7 md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,300px)] md:items-center md:gap-10 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-16' : ''}>
         <div>
           {eyebrow ? (
             <Eyebrow muted tick={eyebrowTick === true}>
@@ -133,11 +146,11 @@ export function TeamIntroBlock({
             className="mt-3.5 md:mt-4"
           />
           {body ? <p className="mt-4 max-w-[52ch] text-[1.0625rem] leading-[1.6] md:mt-5 md:text-body">{body}</p> : null}
-          {link ? <CMSLink link={link} className={`${LINK_CLASS} mt-4.5 md:mt-5`} /> : null}
+          <IntroLink link={link} className="mt-1.5 md:mt-2" />
         </div>
         {hasPhoto ? (
           <div className="relative -mx-5 aspect-4/5 bg-gray-light md:mx-0">
-            <Media resource={photo as MediaDoc} fill sizes="(min-width: 768px) 380px, 100vw" className="object-cover" />
+            <Media resource={photo as MediaDoc} fill sizes="(min-width: 1024px) 380px, (min-width: 768px) 300px, 100vw" className="object-cover" />
           </div>
         ) : null}
       </Container>

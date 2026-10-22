@@ -22,6 +22,7 @@ import { setPublishedAtOnPublish } from '../hooks/publishedAt'
 import { revalidateTagHooks } from '../hooks/revalidateTag'
 import { uniqueSlugHooks } from '../hooks/uniqueSlug'
 import { pagePath, pageSlugError, slugifyPath } from '../lib/pagePath'
+import { PREVIEW_BREAKPOINTS, previewUrl } from '../lib/preview'
 
 /**
  * `pages` (SCHEMA.md §6.1, §4.3, §5, §9, §10, X2, X6 — Gate S approved 2026-10-17).
@@ -62,10 +63,8 @@ import { pagePath, pageSlugError, slugifyPath } from '../lib/pagePath'
  * public and the pipeline user read published docs only; only staff write;
  * versions staff-only; marketing deletes drafts only, admin deletes any.
  *
- * Deferred: `meta` plugin-seo tab (TODO(P3): plugin-seo `collections:
- * ['pages']`); live preview + draft mode (integrator, URL from server-side
- * `SITE_URL`); the frontend router (`[...slug]`, `not-found.tsx` reading the
- * `404` doc).
+ * Preview (B2): `admin.preview` + `admin.livePreview` → `/_preview` (draft
+ * mode, staff only). Deferred: `not-found.tsx` reading the `404` doc (Error404).
  *
  * Verified against payload@3.91.0: `slugField({ slugify, overrides })` and the
  * `Slugify` signature (fields/baseFields/slug/index.d.ts; the custom slugify
@@ -202,6 +201,16 @@ export const Pages: CollectionConfig = {
     useAsTitle: 'title',
     defaultColumns: ['title', 'slug', 'footerVariant', '_status', 'updatedAt'],
     description: 'Site pages built from sections. Case studies, posts and lead magnets have their own collections.',
+    // B2 router: draft preview (new tab) + live preview pane. Both open
+    // `/_preview?path=…` (src/lib/preview.ts), which enables Next draft mode for
+    // staff only. No URL until the doc has a slug (set at first save) or for
+    // the `404` doc (no path of its own). payload@3.91.0 collections/config/
+    // types.d.ts:430 `livePreview`, :439 `preview`.
+    preview: (doc) => previewUrl(pagePath(typeof doc?.slug === 'string' ? doc.slug : null)),
+    livePreview: {
+      url: ({ data }) => previewUrl(pagePath(typeof data?.slug === 'string' ? data.slug : null)),
+      breakpoints: PREVIEW_BREAKPOINTS,
+    },
   },
   // Link targets (linkField → pages, rich-text internal links) need only these.
   defaultPopulate: { title: true, slug: true },

@@ -29,8 +29,10 @@ const groupVars = (count: number): React.CSSProperties => {
   return {
     '--pt-flex': String(n),
     '--pt-flex-open': String(n + 3.5),
-    '--pt-min': `${n * 56 + (n - 1) * 8}px`,
-    '--pt-min-open': `${n * 56 + (n - 1) * 8 + 164}px`,
+    // 96px floor: the longest label word ("INDEPENDENCE") must never be clipped,
+    // least of all on the terminal phase.
+    '--pt-min': `max(${n * 56 + (n - 1) * 8}px, 96px)`,
+    '--pt-min-open': `max(${n * 56 + (n - 1) * 8 + 164}px, 96px)`,
   } as React.CSSProperties
 }
 
@@ -112,7 +114,7 @@ export function PhaseTimelineBlock({ eyebrow, eyebrowTick, heading, accentPhrase
                       <h3
                         title={label}
                         className={cx(
-                          'text-[10px] font-bold uppercase tracking-[0.1em] md:truncate',
+                          'text-[10px] font-bold uppercase tracking-[0.1em] md:flex md:min-h-[3.75em] xl:min-h-[2.5em] md:items-end md:leading-tight',
                           isLast ? 'text-ground-accent' : 'text-gray-warm',
                         )}
                       >

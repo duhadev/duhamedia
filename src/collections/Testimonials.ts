@@ -128,7 +128,8 @@ export const Testimonials: CollectionConfig = {
       name: 'client',
       type: 'relationship',
       relationTo: 'clients',
-      maxDepth: 1,
+      // 2: populates when this doc is itself reached from a page block at page depth 2 (maxDepth caps against absolute depth).
+      maxDepth: 2,
       admin: { description: 'Optional brand pairing. Its logo shows on video cards.' },
     },
     {
@@ -205,7 +206,8 @@ export const Testimonials: CollectionConfig = {
               name: 'poster',
               type: 'upload',
               relationTo: 'media',
-              maxDepth: 1,
+              // 2: populates when this doc is itself reached from a page block at page depth 2 (maxDepth caps against absolute depth).
+              maxDepth: 2,
               validate: validatePoster,
               admin: { width: '50%', description: 'Still image shown before play. Required for video.' },
             },
