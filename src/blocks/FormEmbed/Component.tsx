@@ -2,38 +2,17 @@ import config from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
 
-import { CMSForm, type PayloadFormClassNames } from '@/components/forms'
-import { AccentHeadline, Eyebrow, Section } from '@/components/ui'
-import { cx } from '@/lib/cx'
-import type { Form } from '@/payload-types'
+import type { BlockData } from '@/blocks/types'
 
-import type { REASON_ICONS } from './config'
+import { CMSForm, type PayloadFormClassNames, type PayloadFormProps } from '@/components/forms'
+import { AccentHeadline, Eyebrow, Section } from '@/components/ui'
+import { splitAccentPhrase } from '@/lib/accentPhrase'
+import { cx } from '@/lib/cx'
+
 import { ReminderSwitch } from './ReminderSwitch'
 
-/**
- * Row shape of the `formEmbed` block. Local interface matching config.ts
- * exactly, until the integrator registers the block and `BlockData<'formEmbed'>`
- * resolves (then swap this for the generated type).
- */
-export type FormEmbedData = {
-  variant: 'standard' | 'reminder'
-  form: number | Form | null
-  eyebrow?: string | null
-  eyebrowTick?: boolean | null
-  alertLabel?: string | null
-  heading?: string | null
-  accentPhrase?: string | null
-  body?: string | null
-  reasons?: { icon: (typeof REASON_ICONS)[number]; text: string; id?: string | null }[] | null
-  submitLabel?: string | null
-  ground?: 'light' | 'grey' | null
-  mobileLayout?: 'stacked' | 'stepped' | null
-  doneHeading?: string | null
-  doneBody?: string | null
-  id?: string | null
-  blockName?: string | null
-  blockType: 'formEmbed'
-}
+/** The generated `formEmbed` row type (src/payload-types.ts `FormEmbedBlock`). */
+export type FormEmbedData = BlockData<'formEmbed'>
 
 /* Phosphor bold (the design's icon set, ph-bold), 256 viewBox. */
 const ICON_PATHS = {
@@ -110,11 +89,56 @@ export async function FormEmbedBlock(props: FormEmbedData) {
 
 /**
  * `standard` (Book a Call.dc.html §Homework form; Contact.dc.html §Contact form,
- * desktop builds). Phones: single column, full-width send button. `stepped`
- * (Contact mobile) is not built yet and renders stacked: PayloadForm has no
- * step API (reported to the PM).
+ * desktop builds). Phones: single column, full-width send button, or with
+ * `mobileLayout: 'stepped'` (Contact mobile) PayloadForm's stepped layout below
+ * md: the block's `steps` + `stepped` labels map 1:1 onto its props.
  */
-function Standard({ form, eyebrow, eyebrowTick, heading, accentPhrase, body, submitLabel, ground }: FormEmbedData) {
+/** Step heading with its accent span (PayloadForm renders it inside its own step h3). */
+function stepHeading(text: string | null | undefined, accent: string | null | undefined): React.ReactNode | undefined {
+  const t = text?.trim()
+  if (!t) return undefined
+  const parts = splitAccentPhrase(t, accent)
+  if (!parts) return t
+  return (
+    <>
+      {parts[0]}
+      <span className="text-accent-primary">{parts[1]}</span>
+      {parts[2]}
+    </>
+  )
+}
+
+/** `steps` rows → PayloadForm `FormStep[]` (blank names dropped; empty steps are dropped by resolveSteps). */
+function toFormSteps(steps: FormEmbedData['steps']): PayloadFormProps['steps'] {
+  const out = (steps ?? []).map((s) => ({
+    fieldNames: (s.fieldNames ?? []).map((n) => n.trim()).filter(Boolean),
+    heading: stepHeading(s.heading, s.accentPhrase),
+    hint: s.hint?.trim() || undefined,
+  }))
+  return out.length > 0 ? out : undefined
+}
+
+/** PayloadForm props for the stepped phone layout; `{}` (stacked) unless `mobileLayout` is `stepped`. */
+type SteppedProps = Partial<
+  Pick<PayloadFormProps, 'layout' | 'steppedBelow' | 'steps' | 'selectAsOptions' | 'progressLabel' | 'startLabel' | 'nextLabel' | 'backLabel'>
+>
+
+function steppedProps({ mobileLayout, steps, stepped }: FormEmbedData): SteppedProps {
+  if (mobileLayout !== 'stepped') return {}
+  return {
+    layout: 'stepped',
+    steppedBelow: 'md',
+    steps: toFormSteps(steps),
+    selectAsOptions: stepped?.selectAsOptions !== false,
+    progressLabel: stepped?.progressLabel?.trim() || undefined,
+    startLabel: stepped?.startLabel?.trim() || undefined,
+    nextLabel: stepped?.nextLabel?.trim() || undefined,
+    backLabel: stepped?.backLabel?.trim() || undefined,
+  }
+}
+
+function Standard(props: FormEmbedData) {
+  const { form, eyebrow, eyebrowTick, heading, accentPhrase, body, submitLabel, ground } = props
   const grey = ground === 'grey'
   const title = heading?.trim()
   const lead = body?.trim()
@@ -138,7 +162,15 @@ function Standard({ form, eyebrow, eyebrowTick, heading, accentPhrase, body, sub
         ) : null}
         {lead ? <p className="mt-4 max-w-[48ch] text-body-mobile md:text-body">{lead}</p> : null}
         <div className={hasHeader ? 'mt-8' : undefined}>
-          <CMSForm form={form} submitLabel={submitLabel?.trim() || undefined} tone="light" submitVariant="dark" submitSize="md" classNames={standardForm} />
+          <CMSForm
+            form={form}
+            submitLabel={submitLabel?.trim() || undefined}
+            tone="light"
+            submitVariant="dark"
+            submitSize="md"
+            classNames={standardForm}
+            {...steppedProps(props)}
+          />
         </div>
       </div>
     </Section>

@@ -2,31 +2,15 @@ import config from '@payload-config'
 import { getPayload, type Where } from 'payload'
 import React from 'react'
 
+import type { BlockData } from '@/blocks/types'
+
 import { AccentHeadline, CMSLink, DotMatrix, resolveLinkHref, Section } from '@/components/ui'
-import type { CMSLinkData } from '@/components/ui'
 import { docPath } from '@/lib/docPath'
 
 import { BookingLaunchLink } from './BookingLaunchLink'
 
-/**
- * Typed against a LOCAL interface that mirrors config.ts exactly, because
- * `BlockData<'bookingEmbed'>` only resolves once the integrator registers the
- * block and regenerates types. Swap to `BlockData<'bookingEmbed'>` then.
- */
-export type BookingEmbedData = {
-  heading: string
-  accentPhrase?: string | null
-  body?: string | null
-  buttonLabel: string
-  noteUnderButton?: string | null
-  newTabLabel?: string | null
-  thankYouPage?: number | { id: number; slug?: string | null } | null
-  fallbackHeading: string
-  fallbackBody?: string | null
-  fallbackLink?: CMSLinkData | null
-  id?: string | null
-  blockName?: string | null
-}
+/** The generated `bookingEmbed` row type (src/payload-types.ts `BookingEmbedBlock`). */
+export type BookingEmbedData = BlockData<'bookingEmbed'>
 
 export type BookingMode = 'embed' | 'link-out'
 

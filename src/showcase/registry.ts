@@ -1,3 +1,5 @@
+import type { BookingSettingsOverride } from '@/blocks/BookingEmbed/Component'
+import type { CategoryTab } from '@/blocks/CategoryTabs/Component'
 import type { BlockData, PageBlockType } from '@/blocks/types'
 import type { CaseStudy, Client, Faq, Media, TeamMember, Testimonial } from '@/payload-types'
 
@@ -28,8 +30,21 @@ type ShowcaseEntryFor<K extends PageBlockType> = {
   viewport?: ShowcaseViewport
   /** Short scaffolding note, e.g. "fallback: no published case studies". */
   label: string
-  /** The block row without `blockType` (taken from `block`). */
-  data: Omit<BlockData<K>, 'blockType'>
+  /** The block row without `blockType` (taken from `block`), plus any showcase-only props. */
+  data: Omit<BlockData<K>, 'blockType'> & (K extends keyof ShowcaseExtras ? ShowcaseExtras[K] : unknown)
+}
+
+/**
+ * Showcase-only props that are NOT schema fields (big step 5):
+ * - `bookingEmbed.settingsOverride`: forces the link-out / embed / no-URL state
+ *   instead of reading Site settings (BookingEmbed/Component.tsx).
+ * - `categoryTabs.tabs`: on a real page RenderBlocks derives the tabs from the
+ *   page's AccordionFAQ `group` blocks; the showcase renders one block at a
+ *   time, so the fixture supplies them (RenderBlocks keeps a row's own `tabs`).
+ */
+type ShowcaseExtras = {
+  bookingEmbed: { settingsOverride?: BookingSettingsOverride }
+  categoryTabs: { tabs?: CategoryTab[] }
 }
 
 export type ShowcaseEntry = { [K in PageBlockType]: ShowcaseEntryFor<K> }[PageBlockType]
@@ -358,6 +373,149 @@ const ledgerLabels = {
   kind: 'Case study',
   readLabel: 'Read the study →',
 } satisfies BlockData<'caseStudyCards'>['ledgerLabels']
+
+/* ---- Big step 5 fixtures (static; pages 7–12) ---- */
+
+/** p8 logo-strip fallback clients (placeholder names, no logos → wordmarks). */
+const stripClients: Client[] = ['[Client A]', '[Client B]', '[Client C]', '[Client D]'].map((name, i) => ({
+  id: i + 1,
+  name,
+  logo: null,
+  showInLogoStrip: true,
+  _status: 'published',
+  updatedAt: '',
+  createdAt: '',
+}))
+
+const logoStripBase = {
+  layout: 'cards',
+  source: 'latest',
+  fallbackEyebrow: 'Stores we have run numbers for',
+  fallbackHeading: 'Our clients, for now.',
+  fallbackAccentPhrase: 'for now.',
+  fallbackBody: 'Case studies publish here as clients sign off.',
+  pricingNote: null,
+  allLink: { type: 'custom' },
+} satisfies Partial<BlockData<'caseStudyCards'>>
+
+const compactHero = { variant: 'typographic', size: 'compact', eyebrowTick: true, geometry: true } satisfies Partial<BlockData<'hero'>>
+
+/* ReviewWall (p7). The draft study on card 4 proves "no link to an unpublished study". */
+const VIDEO_URL = 'https://www.youtube.com/watch?v=PLACEHOLDER'
+const draftStudy = { ...fixtureStudies[1], id: 950, slug: 'fx-draft', _status: 'draft' } as CaseStudy
+const feedTestimonials: Testimonial[] = [
+  tm(911, {
+    format: 'video',
+    quote: '[Placeholder pull quote from the video — they rebuilt the store, ran the ads, then trained our manager to run it.]',
+    authorName: '[Client name]',
+    authorRole: '[Business type, Chicago]',
+    rating: 5,
+    client: fixtureClients[1],
+    video: { url: VIDEO_URL, poster: placeholderImage, durationLabel: '1:42' },
+    metric: { value: '[+N%]', label: 'Revenue, [N] mo' },
+    caseStudy: fixtureStudies[0],
+  }),
+  tm(912, {
+    quote: '[GBP review placeholder — pulled verbatim from Google at launch, never paraphrased.]',
+    authorName: '[Reviewer]',
+    authorRole: 'Google review',
+    source: 'google-review',
+    sourceUrl: 'https://www.google.com/maps',
+    verbatim: true,
+    rating: 5,
+  }),
+  tm(913, {
+    quote: '[Placeholder quote — the call alone was worth it; they told me not to spend on ads yet, and why.]',
+    authorName: '[Client name]',
+    authorRole: '[Online-only, category]',
+    source: 'google-review',
+    sourceUrl: 'https://www.google.com/maps',
+    verbatim: true,
+    rating: 5,
+  }),
+  tm(914, {
+    format: 'video',
+    quote: '[Placeholder pull quote — the first team that showed us the dashboard instead of a deck.]',
+    authorName: '[Client name]',
+    authorRole: '[Online-only, category]',
+    rating: 5,
+    client: fixtureClients[0],
+    video: { url: VIDEO_URL, poster: placeholderImage },
+    metric: { value: '[N×]', label: 'ROAS after restructure' },
+    caseStudy: draftStudy,
+  }),
+  tm(915, {
+    format: 'video',
+    quote: "[Placeholder pull quote about the independence handover, in the client's words.]",
+    authorName: '[Client name]',
+    authorRole: '[Hybrid retail, N locations]',
+    rating: 5,
+    client: fixtureClients[3],
+    video: { url: VIDEO_URL, poster: placeholderImage },
+    metric: { value: 'MO [N]', label: 'Independence handover' },
+    caseStudy: fixtureStudies[2],
+  }),
+  tm(916, {
+    quote: '[Placeholder LinkedIn recommendation, quoted as posted.]',
+    authorName: '[Client name]',
+    authorRole: '[Role, Company]',
+    source: 'linkedin',
+    sourceUrl: 'https://www.linkedin.com/',
+    rating: 4,
+  }),
+  tm(917, {
+    quote: '[Placeholder direct quote with a headline figure.]',
+    authorName: '[Client name]',
+    authorRole: '[Role, Company]',
+    metric: { value: '[N]%', label: '[Metric label]' },
+    caseStudy: fixtureStudies[1],
+  }),
+]
+const reviewWallBase = {
+  variant: 'feed',
+  source: 'manual',
+  pageSize: 24,
+  showStudyLinks: true,
+  studyLinkLabel: 'Read the full case study',
+  labels: { video: 'Video', googleReview: 'Google review', linkedin: 'LinkedIn', play: 'Play the video testimonial from' },
+  loadMore: { label: 'Load more', loadingLabel: 'Loading…', errorLabel: 'Could not load more testimonials. Try again.' },
+} satisfies Partial<BlockData<'reviewWall'>>
+
+/* BookingEmbed (p9). */
+const bookingBase = {
+  heading: 'Pick a time that works for you.',
+  accentPhrase: 'works for you.',
+  body: 'Thirty minutes on your numbers. The calendar opens in a new tab; this page moves on to what to prepare. [STRATEGIC PLACEHOLDER — final copy TBD]',
+  buttonLabel: 'Book your call',
+  noteUnderButton: 'Opens our booking calendar in a new tab. Times show in your time zone.',
+  newTabLabel: 'Trouble with the calendar? Open it in a new tab',
+  thankYouPage: null,
+  fallbackHeading: 'Booking is offline. Write to us instead.',
+  fallbackBody: 'Send a line with two or three times that suit you and we will confirm one. [Placeholder — final copy TBD]',
+  fallbackLink: { type: 'custom', url: '/contact', label: 'Contact us', newTab: false },
+} satisfies Partial<BlockData<'bookingEmbed'>>
+
+/* AccordionFAQ group (p11) questions. */
+const a = (t: string) => root(p(`${t} [Placeholder copy.]`))
+const gPrice = fq(
+  961,
+  'What does it cost?',
+  'pricing-contracts',
+  root(p('Builds start at $5K. Engines start at $1K/mo. Exact scope is priced on the call, because a $500K retailer and a $5M brand need different machines. [Placeholder copy.]')),
+)
+const gP2 = fq(962, 'Do you lock clients into retainers?', 'pricing-contracts', a('No. The endgame is your team running it.'))
+const gP3 = fq(963, 'How long are contracts?', 'pricing-contracts', a('Builds are fixed-scope projects.'))
+const gB1 = fq(964, 'I already have a store. Do I have to start over?', 'builds', a('Usually not.'))
+const gB2 = fq(965, 'How long does a build take?', 'builds', root(p('Scope-dependent.'), p('Second paragraph. ', customLink('Book a Call', '/book-a-call'), ' [Placeholder copy.]')))
+const gM1 = fq(966, 'Why the 6-month minimum?', 'marketing', a('Six months is the honest window.'))
+const gM2 = fq(967, 'Can I just get ads?', 'marketing', a('No.'))
+const gT1 = fq(968, 'Will this work for my business?', 'process-trust', a('If you net $500K to $5M a year, probably.'))
+const gT2 = fq(969, 'What makes you different?', 'process-trust', a('Leaving is the deliverable.'))
+
+/* DirectContact (p12). */
+const rowLabels = { email: 'Email', socials: 'Socials', location: 'Location', replyTime: 'Reply time' }
+const mapCaption =
+  'Based in Lombard, IL — serving the greater Chicagoland area within a ~30-mile radius. Outside the ring? We work remote-first, so reach out anyway.'
 
 /*
  * Entries are grouped by block in p1 Homepage order (SCHEMA §9): Hero → ProofStrip →
@@ -1432,5 +1590,305 @@ export const showcaseEntries: ShowcaseEntry[] = [
       items: [{ id: 'fx-sl-x3', code: 'E-01', title: 'Email' }],
       hub: { kicker: 'Everything reports here', heading: '[Placeholder] One dashboard.' },
     },
+  },
+  /* ==== Big step 5 (pages 7–12), in page order ==== */
+
+  /* ---- p7 Testimonials ---- */
+  {
+    block: 'hero',
+    variant: 'typographic compact + rating',
+    label: 'p7 testimonials hero (rating from published testimonials; hidden if none)',
+    data: {
+      ...compactHero,
+      eyebrow: 'Testimonials',
+      heading: "[STRATEGIC PLACEHOLDER — final copy TBD] Don't take our word for it. Take theirs.",
+      accentPhrase: 'Take theirs.',
+      body: 'On camera and in writing — clients, their numbers, their words. Case studies link through as they publish.',
+      showAggregateRating: true,
+    },
+  },
+  {
+    block: 'reviewWall',
+    variant: 'feed',
+    label: 'p7 testimonial feed: hand-picked mix (video + Google + LinkedIn + direct); study links on (draft study on card 4 → no link)',
+    data: { ...reviewWallBase, testimonials: feedTestimonials },
+  },
+  {
+    block: 'reviewWall',
+    variant: 'feed',
+    label: 'state: case-study links switched off',
+    data: { ...reviewWallBase, showStudyLinks: false, testimonials: feedTestimonials.slice(0, 3) },
+  },
+  {
+    block: 'reviewWall',
+    variant: 'feed',
+    label: 'state: Load More (2 per load, hand-picked)',
+    data: { ...reviewWallBase, pageSize: 2, testimonials: feedTestimonials },
+  },
+  {
+    block: 'reviewWall',
+    variant: 'feed',
+    label: 'live: all published testimonials from the DB (renders nothing while none are published)',
+    data: { ...reviewWallBase, source: 'all', pageSize: 6 },
+  },
+  {
+    block: 'reviewWall',
+    variant: 'feed',
+    label: 'fallback: nothing matches, with an empty note (LinkedIn-only filter)',
+    data: {
+      ...reviewWallBase,
+      source: 'all',
+      sourceFilter: ['linkedin'],
+      eyebrow: 'Reviews',
+      eyebrowTick: true,
+      heading: 'In their words.',
+      accentPhrase: 'their words.',
+      emptyNote: '[Placeholder note — reviews publish here verbatim as clients post them.]',
+    },
+  },
+
+  /* ---- p8 About ---- */
+  {
+    block: 'metricEvent',
+    variant: 'facts',
+    label: 'Facts (4 rows + note)',
+    data: {
+      variant: 'facts',
+      eyebrow: 'The company, in numbers',
+      items: [
+        { id: 'a', label: 'Concurrent builds, capped', value: '[N]', accent: true },
+        { id: 'b', label: 'Builds in progress today', value: '[N]' },
+        { id: 'c', label: 'Client revenue band we serve', value: '$500K–$5M' },
+        { id: 'd', label: 'Typical handover', value: '[Month N]', sub: 'Quiet sub line' },
+      ],
+      note: '[Founding year, headcount and engagement counts fill in from client-approved records — no estimates published.]',
+    },
+  },
+  {
+    block: 'metricEvent',
+    variant: 'facts',
+    label: 'Facts (sparse)',
+    data: { variant: 'facts', items: [{ id: 'z', label: 'Base of operations', value: 'Chicago' }] },
+  },
+  {
+    block: 'caseStudyCards',
+    variant: 'logo-strip',
+    label: 'Logo strip (4 fixture clients)',
+    data: { ...logoStripBase, fallbackMode: 'logo-strip', fallbackLogos: stripClients },
+  },
+  {
+    block: 'caseStudyCards',
+    variant: 'logo-strip',
+    label: 'Logo strip (grey, 2 clients)',
+    data: { ...logoStripBase, fallbackMode: 'logo-strip', tone: 'grey', fallbackLogos: stripClients.slice(0, 2) },
+  },
+  {
+    block: 'caseStudyCards',
+    variant: 'logo-strip',
+    label: 'Logo strip (DB-backed; zero clients → note)',
+    data: { ...logoStripBase, fallbackMode: 'logo-strip' },
+  },
+
+  /* ---- p9 Book a Call ---- */
+  {
+    block: 'hero',
+    variant: 'typographic compact + callouts',
+    label: 'p9 book hero',
+    data: {
+      ...compactHero,
+      eyebrow: 'Book a Growth Strategy Call',
+      heading: '[STRATEGIC PLACEHOLDER — final copy TBD] 30 minutes. Your numbers, straight answers.',
+      accentPhrase: 'straight answers.',
+      callouts: [
+        { label: 'What it is:', text: "a working session on your store, your channels, and whether we're the right fit — with numbers on the table." },
+        { label: "What it isn't:", text: "a pitch deck, a hard close, or a junior SDR reading a script. If we're not the fit, we'll say who is." },
+      ],
+      subNote: 'For established businesses netting $500K–$5M a year. [Demonstrative CTA variant — final copy TBD]',
+    },
+  },
+  {
+    block: 'bookingEmbed',
+    variant: 'link-out',
+    label: 'link-out (launch state): opens booking in a new tab, this tab → /thank-you',
+    data: {
+      ...bookingBase,
+      settingsOverride: { bookingUrl: 'https://example.com/index.php/apps/calendar/appointment/placeholder', bookingMode: 'link-out', thankYouHref: '/thank-you' },
+    },
+  },
+  {
+    block: 'bookingEmbed',
+    variant: 'embed',
+    label: 'embed: iframe from md up, link-out panel below md',
+    data: { ...bookingBase, settingsOverride: { bookingUrl: 'https://example.com/', bookingMode: 'embed' } },
+  },
+  {
+    block: 'bookingEmbed',
+    variant: 'no-url',
+    label: 'fallback: no booking URL in Site settings',
+    data: { ...bookingBase, settingsOverride: { bookingUrl: null } },
+  },
+  {
+    block: 'formEmbed',
+    variant: 'standard',
+    label: 'FormEmbed · standard (homework, p9) — needs a seeded form (id 1); renders nothing without it',
+    data: {
+      variant: 'standard',
+      form: 1,
+      eyebrow: 'Pre-call homework',
+      eyebrowTick: false,
+      heading: 'A few fields. It makes the call worth both our time. [STRATEGIC PLACEHOLDER — final copy TBD]',
+      submitLabel: 'Submit homework',
+      ground: 'light',
+      mobileLayout: 'stacked',
+    },
+  },
+  {
+    block: 'miniCTAStrip',
+    variant: 'inline',
+    label: 'p9 quick-question escape line',
+    data: { variant: 'inline', text: 'Have a quick question first?', link: { type: 'custom', url: '/contact', newTab: false, label: 'Contact us' } },
+  },
+  {
+    block: 'miniCTAStrip',
+    variant: 'inline — link unresolved',
+    label: 'fallback: link does not resolve (sentence only)',
+    data: { variant: 'inline', text: 'Have a quick question first?', link: { type: 'internal', reference: null, label: 'Contact us' } },
+  },
+
+  /* ---- p10 Thank You ---- */
+  {
+    block: 'hero',
+    variant: 'typographic compact',
+    label: 'p10 confirmation hero, no CTAs',
+    data: {
+      ...compactHero,
+      eyebrow: 'Booked',
+      heading: "[STRATEGIC PLACEHOLDER — final copy TBD] Call booked. Invite's in your inbox.",
+      accentPhrase: "Invite's in your inbox.",
+      body: '30 minutes, your numbers, straight answers. We read your homework before we dial.',
+    },
+  },
+  {
+    block: 'formEmbed',
+    variant: 'reminder',
+    label: 'FormEmbed · reminder (p10; add ?homework=done for the done line) — needs a seeded form (id 1); renders nothing without it',
+    data: {
+      variant: 'reminder',
+      form: 1,
+      alertLabel: 'Required before your call',
+      heading: 'One thing left: the homework.',
+      body: 'A few fields, a few minutes. Calls with homework done cover more ground — that is why we ask.',
+      reasons: [
+        { icon: 'chart', text: 'We arrive knowing your numbers, not asking for them' },
+        { icon: 'clock', text: 'The 30 minutes goes to strategy, not intake' },
+        { icon: 'target', text: 'We can flag your biggest bottleneck before we dial' },
+      ],
+      submitLabel: 'Send the homework',
+      doneHeading: 'Homework received.',
+      doneBody: "We'll have read it before the call.",
+    },
+  },
+
+  /* ---- p11 FAQ: hero → CategoryTabs → the four groups (tabs target their anchors) ---- */
+  {
+    block: 'hero',
+    variant: 'typographic compact — minimal',
+    label: 'p11 FAQ hero (eyebrow + heading only)',
+    data: { ...compactHero, eyebrow: 'FAQ', heading: "[STRATEGIC PLACEHOLDER — final copy TBD] We'll give it to you straight.", accentPhrase: 'straight.' },
+  },
+  {
+    block: 'categoryTabs',
+    variant: 'default',
+    label: 'CategoryTabs / 4 categories (tabs supplied here; on a page they are derived from the group blocks)',
+    data: {
+      ariaLabel: 'FAQ categories',
+      tabs: [
+        { label: 'Pricing & Contracts', anchorId: 'pricing' },
+        { label: 'Builds', anchorId: 'builds' },
+        { label: 'Marketing', anchorId: 'marketing' },
+        { label: 'Process & Trust', anchorId: 'process' },
+      ],
+    },
+  },
+  {
+    block: 'accordionFAQ',
+    variant: 'group — pricing',
+    label: 'p11 group 1: Pricing & Contracts (openFirst, anchor pricing, first spacing)',
+    data: { variant: 'group', anchorId: 'pricing', spacing: 'first', heading: 'Pricing & Contracts', source: 'selected', faqs: [gPrice, gP2, gP3], openFirst: true, limit: 6, allLink: { type: 'custom' } },
+  },
+  {
+    block: 'accordionFAQ',
+    variant: 'group — builds',
+    label: 'p11 group 2: Builds',
+    data: { variant: 'group', anchorId: 'builds', spacing: 'middle', heading: 'Builds', source: 'selected', faqs: [gB1, gB2], limit: 6, allLink: { type: 'custom' } },
+  },
+  {
+    block: 'accordionFAQ',
+    variant: 'group — marketing',
+    label: 'p11 group 3: Marketing',
+    data: { variant: 'group', anchorId: 'marketing', spacing: 'middle', heading: 'Marketing', source: 'selected', faqs: [gM1, gM2], limit: 6, allLink: { type: 'custom' } },
+  },
+  {
+    block: 'accordionFAQ',
+    variant: 'group — process',
+    label: 'p11 group 4: Process & Trust (last spacing)',
+    data: { variant: 'group', anchorId: 'process', spacing: 'last', heading: 'Process & Trust', source: 'selected', faqs: [gT1, gT2], limit: 6, allLink: { type: 'custom' } },
+  },
+  {
+    block: 'categoryTabs',
+    variant: 'zero tabs',
+    label: 'CategoryTabs / zero tabs (renders nothing, console.warn)',
+    data: { ariaLabel: 'FAQ categories', tabs: [] },
+  },
+
+  /* ---- p12 Contact ---- */
+  {
+    block: 'hero',
+    variant: 'typographic compact',
+    label: 'p12 contact hero',
+    data: {
+      ...compactHero,
+      eyebrow: 'Contact',
+      heading: '[STRATEGIC PLACEHOLDER — final copy TBD] Prospect? Book a call. Everything else, here.',
+      accentPhrase: 'Book a call.',
+      body: 'Fit and pricing questions get real answers on a 30-minute call. Partnerships, press, and existing clients: the form below.',
+    },
+  },
+  {
+    block: 'formEmbed',
+    variant: 'standard — stepped phones',
+    label: 'FormEmbed · standard (contact, p12; stepped below md, steps default to one question each) — needs a seeded form (id 2); renders nothing without it',
+    data: { variant: 'standard', form: 2, ground: 'grey', mobileLayout: 'stepped', submitLabel: 'Send' },
+  },
+  {
+    block: 'directContact',
+    variant: 'default',
+    label: 'DirectContact — all rows + map',
+    data: { showEmail: true, showSocials: true, showLocation: true, skipFormLine: 'Skip the form', rowLabels, map: { show: true, caption: mapCaption, zoom: 1 } },
+  },
+  {
+    block: 'directContact',
+    variant: 'no map',
+    label: 'DirectContact — no map (info only)',
+    data: { showEmail: true, showSocials: true, showLocation: true, skipFormLine: 'Skip the form', rowLabels, map: { show: false } },
+  },
+  {
+    block: 'directContact',
+    variant: 'email only',
+    label: 'DirectContact — email only',
+    data: { showEmail: true, showSocials: false, showLocation: false, skipFormLine: 'Skip the form', rowLabels, map: { show: false } },
+  },
+  {
+    block: 'directContact',
+    variant: 'map only',
+    label: 'DirectContact — map only, zoom 1.5',
+    data: { showEmail: false, showSocials: false, showLocation: false, map: { show: true, caption: mapCaption, zoom: 1.5 } },
+  },
+  {
+    block: 'formEmbed',
+    variant: 'standard — empty',
+    label: 'FormEmbed · empty (no form) — renders nothing (server console.error)',
+    // `form` is required in the schema; null is the runtime state after the chosen form is deleted (FK set null).
+    data: { variant: 'standard', form: null as unknown as BlockData<'formEmbed'>['form'], heading: 'Should not show' },
   },
 ]

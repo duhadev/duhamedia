@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react'
 
+import { deriveCategoryTabs } from '@/blocks/CategoryTabs/Component'
 import { blockComponents } from '@/blocks/components'
 import { isProduction } from '@/lib/env'
 
@@ -18,9 +19,36 @@ type AnyBlockComponent = React.ComponentType<Record<string, unknown>>
  *   (picked up by the site_error reporter once it exists);
  * - staging / development: renders a visible scaffolding warning in place.
  */
-export function RenderBlocks({ blocks }: { blocks?: readonly LayoutRow[] | null }) {
+/**
+ * Page-level props injected by block type (integrator, big step 5), on top of
+ * the row itself:
+ * - `categoryTabs` gets `tabs` derived from THIS layout's `accordionFAQ`
+ *   `group` blocks (`deriveCategoryTabs`), so the nav can never drift from the
+ *   sections. A row that already carries `tabs` (showcase fixtures, which
+ *   render one block at a time) keeps its own.
+ * - `accordionFAQ` gets `emitJsonLd={false}` when `pageJsonLd` is set: the page
+ *   (PageView → PageFaqJsonLd) then emits ONE merged FAQPage for all of them.
+ */
+function injectedProps(
+  block: LayoutRow,
+  ctx: { tabs: ReturnType<typeof deriveCategoryTabs>; pageJsonLd: boolean },
+): Record<string, unknown> {
+  if (block.blockType === 'categoryTabs') return 'tabs' in block ? {} : { tabs: ctx.tabs }
+  if (block.blockType === 'accordionFAQ' && ctx.pageJsonLd) return { emitJsonLd: false }
+  return {}
+}
+
+export function RenderBlocks({
+  blocks,
+  pageJsonLd = false,
+}: {
+  blocks?: readonly LayoutRow[] | null
+  /** The caller emits the page's merged FAQPage JSON-LD; blocks must not emit their own. */
+  pageJsonLd?: boolean
+}) {
   if (!blocks || blocks.length === 0) return null
   const production = isProduction()
+  const ctx = { tabs: deriveCategoryTabs([...blocks]), pageJsonLd }
 
   return (
     <>
@@ -34,7 +62,7 @@ export function RenderBlocks({ blocks }: { blocks?: readonly LayoutRow[] | null 
         if (Component) {
           return (
             <Fragment key={key}>
-              <Component {...(block as Record<string, unknown>)} />
+              <Component {...(block as Record<string, unknown>)} {...injectedProps(block, ctx)} />
             </Fragment>
           )
         }

@@ -1,14 +1,19 @@
 import type { Block } from 'payload'
 
 import { AccordionFAQ } from './AccordionFAQ/config'
+import { BookingEmbed } from './BookingEmbed/config'
 import { CaseStudyCards } from './CaseStudyCards/config'
+import { CategoryTabs } from './CategoryTabs/config'
+import { DirectContact } from './DirectContact/config'
 import { FinalCTA } from './FinalCTA/config'
+import { FormEmbed } from './FormEmbed/config'
 import { Hero } from './Hero/config'
 import { MetricEvent } from './MetricEvent/config'
 import { MiniCTAStrip } from './MiniCTAStrip/config'
 import { NewsletterBand } from './NewsletterBand/config'
 import { PhaseTimeline } from './PhaseTimeline/config'
 import { ProofStrip } from './ProofStrip/config'
+import { ReviewWall } from './ReviewWall/config'
 import { RichContent } from './RichContent/config'
 import { SpecLedger } from './SpecLedger/config'
 import { TeamIntro } from './TeamIntro/config'
@@ -41,6 +46,7 @@ export const pageBlocks: Block[] = [
   ProofStrip,
   CaseStudyCards,
   MetricEvent,
+  ReviewWall,
   TestimonialRow,
   TwoTrackPanels,
   PhaseTimeline,
@@ -48,5 +54,9 @@ export const pageBlocks: Block[] = [
   RichContent,
   SpecLedger,
   NewsletterBand,
+  FormEmbed,
+  BookingEmbed,
+  DirectContact,
   AccordionFAQ,
+  CategoryTabs,
 ]

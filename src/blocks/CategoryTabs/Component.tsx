@@ -1,5 +1,7 @@
 import React from 'react'
 
+import type { BlockData } from '@/blocks/types'
+
 import { CategoryTabsNav } from './CategoryTabsNav'
 
 export interface CategoryTab {
@@ -7,11 +9,8 @@ export interface CategoryTab {
   anchorId: string
 }
 
-/** Matches the config exactly (until the block is registered and types are generated). */
-interface CategoryTabsData {
-  blockType?: 'categoryTabs'
-  ariaLabel?: string | null
-}
+/** The generated `categoryTabs` row type (src/payload-types.ts `CategoryTabsBlock`). */
+type CategoryTabsData = BlockData<'categoryTabs'>
 
 /**
  * Derive the tabs from the page layout: every `accordionFAQ` block with

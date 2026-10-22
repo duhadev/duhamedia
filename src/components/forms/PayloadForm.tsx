@@ -39,6 +39,9 @@ import { TurnstileWidget, type TurnstileAppearance } from './TurnstileWidget'
  * enhancement. Server render, no-JS and viewports at/above `steppedBelow` are
  * the stacked form; below it, after hydration, one step shows at a time. All
  * fields stay in the DOM (hidden), so the submission is the same FormData.
+ * Per-step validation is inline (the field's own error slot, cleared on edit); a
+ * step change moves focus to the step heading, a failed field/server error to
+ * that field (jumping to its step). Turnstile mounts on the last step only.
  * No step animation is built in (reduced-motion safe by construction); a block
  * may add one via `classNames.step` with `motion-safe:`.
  */
@@ -185,31 +188,34 @@ export function PayloadForm({
   const [step, setStepState] = useState(0)
   const [reachedLast, setReachedLast] = useState(false)
   /** What to focus after the next step change (`name: null` = the step's first control). */
-  const focusTarget = useRef<{ name: string | null; report: boolean } | null>(null)
+  const focusTarget = useRef<{ name: string | null } | null>(null)
+  /** Per-step validation messages (stepped only; the form is noValidate there), keyed by field name. */
+  const [clientErrors, setClientErrors] = useState<Record<string, string>>({})
   const current = Math.min(step, lastStep)
 
-  const focusIn = (index: number, name: string | null, report: boolean) => {
+  /** `name` = the errored control; null = the new step's heading (or its first control when it has none). */
+  const focusIn = (index: number, name: string | null) => {
     const group = formRef.current?.querySelector<HTMLElement>(`[data-step="${index}"]`)
-    const target =
-      (name && group?.querySelector<HTMLInputElement>(`[name="${CSS.escape(FIELD_PREFIX + name)}"]`)) ||
-      group?.querySelector<HTMLInputElement>(CONTROLS)
+    const target: HTMLElement | null | undefined = name
+      ? group?.querySelector<HTMLElement>(`[name="${CSS.escape(FIELD_PREFIX + name)}"]`)
+      : (document.getElementById(`${idBase}-step-${index}`) ?? group?.querySelector<HTMLElement>(CONTROLS))
     target?.focus()
-    if (report) target?.reportValidity()
   }
 
-  const goTo = (index: number, focusName: string | null = null, report = false) => {
-    if (index === current) return focusIn(index, focusName, report)
-    focusTarget.current = { name: focusName, report }
+  const goTo = (index: number, focusName: string | null = null) => {
+    if (index === current) return focusIn(index, focusName)
+    focusTarget.current = { name: focusName }
     setStepState(index)
     if (index === lastStep) setReachedLast(true)
   }
 
-  // Focus the new step's first control (or the errored field) once it is visible.
+  // Move focus to the new step's heading (or the errored field) once it is visible.
   useEffect(() => {
     if (!stepped || !focusTarget.current) return
-    const { name, report } = focusTarget.current
+    const { name } = focusTarget.current
     focusTarget.current = null
-    focusIn(current, name, report)
+    focusIn(current, name)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- focusIn only reads refs and `idBase`
   }, [current, stepped])
 
   // After a server response: move focus to the outcome, unless `onResult` jumped to an errored step.
@@ -246,13 +252,24 @@ export function PayloadForm({
         ) ?? null)
       : null
 
+  /** Show a stepped-layout validation failure inline on its field and focus it (jumping step if needed). */
+  const showInvalid = (invalid: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement) => {
+    const name = invalid.name.slice(FIELD_PREFIX.length)
+    setClientErrors({ [name]: invalid.validationMessage || 'Please check this field.' })
+    goTo(Number(invalid.closest<HTMLElement>('[data-step]')?.dataset.step ?? current), name)
+  }
+
   const next = () => {
     const invalid = firstInvalid(formRef.current?.querySelector(`[data-step="${current}"]`))
-    if (invalid) {
-      invalid.reportValidity()
-      return
-    }
+    if (invalid) return showInvalid(invalid)
+    setClientErrors({})
     if (current < lastStep) goTo(current + 1)
+  }
+
+  /** Editing a field clears its own inline validation message. */
+  const onChange = (event: React.FormEvent<HTMLFormElement>) => {
+    const name = (event.target as HTMLInputElement).name?.slice(FIELD_PREFIX.length)
+    if (name && clientErrors[name]) setClientErrors(({ [name]: _drop, ...rest }) => rest)
   }
 
   const onKeyDown = (event: React.KeyboardEvent<HTMLFormElement>) => {
@@ -270,12 +287,7 @@ export function PayloadForm({
     if (stepped) {
       // The form is noValidate while stepped (hidden steps can't show a native bubble): validate here.
       const invalid = firstInvalid(formRef.current)
-      if (invalid) {
-        const index = Number(invalid.closest<HTMLElement>('[data-step]')?.dataset.step ?? current)
-        if (index === current) invalid.reportValidity()
-        else goTo(index, invalid.name.slice(FIELD_PREFIX.length), true)
-        return
-      }
+      if (invalid) return showInvalid(invalid)
     }
     if (!siteKey) return setLocalError(NO_SITE_KEY)
     if (!turnstileRef.current?.getResponse()) return setLocalError(NO_TOKEN)
@@ -311,7 +323,8 @@ export function PayloadForm({
     )
   }
 
-  const fieldErrors = state && !state.ok ? (state.fieldErrors ?? {}) : {}
+  const serverErrors = state && !state.ok ? (state.fieldErrors ?? {}) : {}
+  const fieldErrors = stepped ? { ...serverErrors, ...clientErrors } : serverErrors
   const message = localError ?? (state && !state.ok ? state.message : null)
   const fieldsClass = classNames.fields ?? 'flex flex-wrap gap-4'
 
@@ -417,6 +430,8 @@ export function PayloadForm({
       noValidate
       onSubmit={onSubmit}
       onKeyDown={onKeyDown}
+      onChange={onChange}
+      onInput={onChange}
       aria-busy={pending}
       className={cx(classNames.form ?? 'flex flex-col gap-6', className)}
     >
@@ -447,7 +462,7 @@ export function PayloadForm({
             {s.heading || s.hint ? (
               <div className={classNames.stepHeader ?? 'flex flex-col gap-3'}>
                 {s.heading ? (
-                  <h3 id={headingId} className="font-display text-h2-mobile font-normal uppercase">
+                  <h3 id={headingId} tabIndex={-1} className="font-display text-h2-mobile font-normal uppercase outline-none">
                     {s.heading}
                   </h3>
                 ) : null}

@@ -2,22 +2,16 @@ import config from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
 
+import type { BlockData } from '@/blocks/types'
+
 import { Container, Section } from '@/components/ui'
 import { cx } from '@/lib/cx'
 import type { SiteSetting } from '@/payload-types'
 
 import { mapStamp, ServiceAreaMap } from './ServiceAreaMap'
 
-/** Matches `./config.ts` exactly (typed locally until the integrator registers the block and types are generated). */
-export type DirectContactData = {
-  blockType?: 'directContact'
-  showEmail?: boolean | null
-  showSocials?: boolean | null
-  showLocation?: boolean | null
-  skipFormLine?: string | null
-  rowLabels?: { email?: string | null; socials?: string | null; location?: string | null; replyTime?: string | null } | null
-  map?: { show?: boolean | null; caption?: string | null; zoom?: number | null } | null
-}
+/** The generated `directContact` row type (src/payload-types.ts `DirectContactBlock`). */
+export type DirectContactData = BlockData<'directContact'>
 
 // Design fallback centre (Decision log: Lombard, 41.880 / -88.008) when Site settings has no coordinates.
 const LOMBARD = { lat: 41.88, lon: -88.008 }

@@ -2,46 +2,16 @@ import config from '@payload-config'
 import { getPayload, type Where } from 'payload'
 import React from 'react'
 
+import type { BlockData } from '@/blocks/types'
+
 import { AccentHeadline, Container, Eyebrow, Section } from '@/components/ui'
 import type { Testimonial } from '@/payload-types'
 
 import { FEED_LIST, FeedItems, toFeedCard, type FeedCardData, type FeedLabels } from './feed'
 import { FeedLoadMore } from './LoadMore'
 
-/**
- * Props = the block row as configured in ./config.ts. Typed locally until the
- * integrator registers the block and runs generate:types; then this becomes
- * `BlockData<'reviewWall'>` (the shapes match field for field).
- */
-type SourceKind = Testimonial['source']
-export type ReviewWallProps = {
-  blockType?: 'reviewWall'
-  id?: string | null
-  blockName?: string | null
-  variant: 'feed'
-  eyebrow?: string | null
-  eyebrowTick?: boolean | null
-  heading?: string | null
-  accentPhrase?: string | null
-  source: 'all' | 'manual'
-  sourceFilter?: SourceKind[] | null
-  testimonials?: (number | Testimonial)[] | null
-  pageSize?: number | null
-  showStudyLinks?: boolean | null
-  studyLinkLabel?: string | null
-  labels?: {
-    video?: string | null
-    googleReview?: string | null
-    linkedin?: string | null
-    play?: string | null
-  } | null
-  loadMore?: {
-    label?: string | null
-    loadingLabel?: string | null
-    errorLabel?: string | null
-  } | null
-  emptyNote?: string | null
-}
+/** Props = the generated `reviewWall` row type (src/payload-types.ts `ReviewWallBlock`). */
+export type ReviewWallProps = BlockData<'reviewWall'>
 
 const clampPageSize = (n: number | null | undefined): number => Math.min(24, Math.max(1, Math.round(n ?? 6)))
 const SORT = ['sortOrder', '-createdAt']

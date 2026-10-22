@@ -213,6 +213,7 @@ export interface Page {
     | ProofStripBlock
     | CaseStudyCardsBlock
     | MetricEventBlock
+    | ReviewWallBlock
     | TestimonialRowBlock
     | TwoTrackPanelsBlock
     | PhaseTimelineBlock
@@ -220,7 +221,11 @@ export interface Page {
     | RichContentBlock
     | SpecLedgerBlock
     | NewsletterBandBlock
+    | FormEmbedBlock
+    | BookingEmbedBlock
+    | DirectContactBlock
     | AccordionFAQBlock
+    | CategoryTabsBlock
   )[];
   meta?: SeoMeta;
   /**
@@ -2013,6 +2018,86 @@ export interface MetricEventBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ReviewWallBlock".
+ */
+export interface ReviewWallBlock {
+  /**
+   * The layout. More layouts arrive with the pages that need them.
+   */
+  variant: 'feed';
+  /**
+   * Optional small uppercase line above the feed. Leave empty on the Testimonials page (the hero above already says it).
+   */
+  eyebrow?: string | null;
+  /**
+   * The small wine diamond before the eyebrow.
+   */
+  eyebrowTick?: boolean | null;
+  /**
+   * Optional headline above the feed. Leave empty on the Testimonials page.
+   */
+  heading?: string | null;
+  /**
+   * Optional: one word or phrase copied from the headline to show in the accent colour.
+   */
+  accentPhrase?: string | null;
+  /**
+   * Which testimonials appear. Only PUBLISHED testimonials ever show; a draft is skipped even if picked here.
+   */
+  source: 'all' | 'manual';
+  /**
+   * Optional. Leave empty to show every kind. Tick one or more to show only those.
+   */
+  sourceFilter?: ('direct' | 'google-review' | 'linkedin')[] | null;
+  /**
+   * Pick testimonials in the order shown. Drag to reorder. Drafts are skipped on the site until they are published.
+   */
+  testimonials?: (number | Testimonial)[] | null;
+  /**
+   * How many cards show at first, and how many more each "Load more" click adds. The button hides when everything is shown.
+   */
+  pageSize?: number | null;
+  /**
+   * Each card links to the case study set on its testimonial, only once that study is PUBLISHED. Untick to hide every link.
+   */
+  showStudyLinks?: boolean | null;
+  studyLinkLabel?: string | null;
+  /**
+   * The small tags on the cards and the play button text read by screen readers.
+   */
+  labels?: {
+    /**
+     * Tag on video cards, followed by the metric label, e.g. "Video · Revenue, 12 mo".
+     */
+    video?: string | null;
+    /**
+     * Tag on Google reviews.
+     */
+    googleReview?: string | null;
+    /**
+     * Tag on LinkedIn reviews.
+     */
+    linkedin?: string | null;
+    /**
+     * Screen-reader text for the play button; the person's name is added after it.
+     */
+    play?: string | null;
+  };
+  loadMore?: {
+    label?: string | null;
+    loadingLabel?: string | null;
+    errorLabel?: string | null;
+  };
+  /**
+   * Optional. Shown as one quiet line when no published testimonial matches. Leave empty to hide the whole section instead.
+   */
+  emptyNote?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'reviewWall';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "TestimonialRowBlock".
  */
 export interface TestimonialRowBlock {
@@ -2700,6 +2785,248 @@ export interface NewsletterBandBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FormEmbedBlock".
+ */
+export interface FormEmbedBlock {
+  /**
+   * Standard: the Book a Call homework form and the Contact form. Homework reminder: the Thank You page card, which switches to the "done" line when the visitor has already sent the homework.
+   */
+  variant: 'standard' | 'reminder';
+  /**
+   * The form to show (Forms collection). Its fields, their order, the submit label and what happens after sending are edited on the form itself. If the form is deleted, this whole section is hidden.
+   */
+  form: number | Form;
+  /**
+   * Small uppercase line above the heading, e.g. "Pre-call homework". Optional.
+   */
+  eyebrow?: string | null;
+  /**
+   * The small wine diamond before the eyebrow.
+   */
+  eyebrowTick?: boolean | null;
+  /**
+   * Phones only: the bar across the top of the card with a warning icon, e.g. "Required before your call". Leave empty for no bar. (The desktop design has no bar.)
+   */
+  alertLabel?: string | null;
+  /**
+   * The heading above the form. Optional (the Contact page has none, its hero says it all).
+   */
+  heading?: string | null;
+  /**
+   * Optional: one word or phrase copied from the headline to show in the accent colour.
+   */
+  accentPhrase?: string | null;
+  /**
+   * A short line under the heading, e.g. "Five fields, five minutes." Optional.
+   */
+  body?: string | null;
+  /**
+   * Phones only: short reasons listed between the heading and the form, each with an icon. Add, remove or drag to reorder. (The desktop design shows none.)
+   */
+  reasons?:
+    | {
+        icon: 'chart' | 'clock' | 'target' | 'check';
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Text on the send button, e.g. "Submit homework". Leave empty to use the label set on the form.
+   */
+  submitLabel?: string | null;
+  /**
+   * Background and spacing of the section.
+   */
+  ground?: ('light' | 'grey') | null;
+  /**
+   * How the form looks on phones. Stepped is the Contact page design: one question at a time, with a progress bar and Back / Next buttons. Tablets and desktops always show the whole form.
+   */
+  mobileLayout?: ('stacked' | 'stepped') | null;
+  /**
+   * Optional: group the form’s questions into steps and give each step its own heading. Leave empty for one question per step, headed by the question’s label. A form field no step names is added to the last step, so nothing required can be skipped. Add, remove or drag to reorder.
+   */
+  steps?:
+    | {
+        /**
+         * The "Name" of each form field shown in this step (as set on the form, e.g. name, email, reason, message). Type a name and press Enter.
+         */
+        fieldNames: string[];
+        /**
+         * Step heading, e.g. "Who’s reaching out?". Optional: a one-question step uses the field’s label.
+         */
+        heading?: string | null;
+        /**
+         * Optional: one word or phrase copied from the headline to show in the accent colour.
+         */
+        accentPhrase?: string | null;
+        /**
+         * Quiet line under the step heading, e.g. "First name is plenty." Optional.
+         */
+        hint?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  stepped?: {
+    /**
+     * Progress line above each step. {n} = this step, {m} = number of steps.
+     */
+    progressLabel?: string | null;
+    /**
+     * Button on the first step.
+     */
+    startLabel?: string | null;
+    /**
+     * Button on the following steps.
+     */
+    nextLabel?: string | null;
+    /**
+     * Read aloud by screen readers for the Back arrow button (not shown as text).
+     */
+    backLabel?: string | null;
+    /**
+     * Show drop-down questions (e.g. "What’s this about?") as tap-to-pick rows.
+     */
+    selectAsOptions?: boolean | null;
+  };
+  /**
+   * Shown instead of the form when the visitor has already sent the homework (they arrive with ?homework=done, or have just sent it here).
+   */
+  doneHeading?: string | null;
+  /**
+   * Follows the done heading on the same line, e.g. "We'll have read it before the call."
+   */
+  doneBody?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'formEmbed';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "BookingEmbedBlock".
+ */
+export interface BookingEmbedBlock {
+  /**
+   * The headline on the booking panel, e.g. "Pick a time that works." Shown in capitals. Also names the booking calendar for screen readers.
+   */
+  heading: string;
+  /**
+   * Optional: one word or phrase copied from the headline to show in the accent colour.
+   */
+  accentPhrase?: string | null;
+  /**
+   * Optional short paragraph under the headline: what happens when they click.
+   */
+  body?: string | null;
+  /**
+   * Text on the booking button. The button opens the booking calendar (set in Site settings > Booking) in a new tab.
+   */
+  buttonLabel: string;
+  /**
+   * Optional small line under the panel, e.g. "Opens our calendar in a new tab. Times shown in your time zone."
+   */
+  noteUnderButton?: string | null;
+  /**
+   * Only used when the calendar is shown inside the page (Site settings > Booking): the small link under it.
+   */
+  newTabLabel?: string | null;
+  /**
+   * After the visitor clicks the booking button, this tab moves to this page while the calendar opens in a new tab. Leave empty to use the page at /thank-you. If that page is not published, this tab stays put.
+   */
+  thankYouPage?: (number | null) | Page;
+  /**
+   * Headline shown while there is no booking link. Shown in capitals.
+   */
+  fallbackHeading: string;
+  /**
+   * Optional short paragraph under it.
+   */
+  fallbackBody?: string | null;
+  /**
+   * Usually "Contact us", linking to the Contact page.
+   */
+  fallbackLink: {
+    type: 'internal' | 'custom';
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'case-studies';
+          value: number | CaseStudy;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null)
+      | ({
+          relationTo: 'lead-magnets';
+          value: number | LeadMagnet;
+        } | null);
+    /**
+     * https://…, mailto:…, or a site path like /book-a-call.
+     */
+    url?: string | null;
+    label?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'bookingEmbed';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "DirectContactBlock".
+ */
+export interface DirectContactBlock {
+  /**
+   * Email address from Site settings > Brand & contact.
+   */
+  showEmail?: boolean | null;
+  /**
+   * Profiles from Site settings > Brand & contact.
+   */
+  showSocials?: boolean | null;
+  /**
+   * Town from Site settings > Location.
+   */
+  showLocation?: boolean | null;
+  /**
+   * The small label above the email on phones, e.g. "Skip the form". Leave empty to hide it.
+   */
+  skipFormLine?: string | null;
+  /**
+   * The small labels in front of each detail (shown on larger screens, and for location and reply time on phones).
+   */
+  rowLabels?: {
+    email?: string | null;
+    socials?: string | null;
+    location?: string | null;
+    /**
+     * Label for the reply-time note set in Site settings. Shown with the contact details.
+     */
+    replyTime?: string | null;
+  };
+  /**
+   * A simple black-and-white map of the area around the office, drawn by the site (no outside map service). It centres on the coordinates in Site settings > Location and draws the service-radius ring from there.
+   */
+  map?: {
+    show?: boolean | null;
+    /**
+     * The sentence under the map. Also read out to screen-reader users as the map description.
+     */
+    caption?: string | null;
+    /**
+     * 1 shows the whole service ring with room around it. Higher zooms in (fewer towns visible), lower zooms out.
+     */
+    zoom?: number | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'directContact';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "AccordionFAQBlock".
  */
 export interface AccordionFAQBlock {
@@ -2819,6 +3146,19 @@ export interface Faq {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CategoryTabsBlock".
+ */
+export interface CategoryTabsBlock {
+  /**
+   * Name read aloud by screen readers for this navigation (not shown on the page). The visible tabs are built automatically from the FAQ category groups on this page: add or reorder those groups and the tabs follow.
+   */
+  ariaLabel: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'categoryTabs';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -3135,6 +3475,7 @@ export interface PagesSelect<T extends boolean = true> {
         proofStrip?: T | ProofStripBlockSelect<T>;
         caseStudyCards?: T | CaseStudyCardsBlockSelect<T>;
         metricEvent?: T | MetricEventBlockSelect<T>;
+        reviewWall?: T | ReviewWallBlockSelect<T>;
         testimonialRow?: T | TestimonialRowBlockSelect<T>;
         twoTrackPanels?: T | TwoTrackPanelsBlockSelect<T>;
         phaseTimeline?: T | PhaseTimelineBlockSelect<T>;
@@ -3142,7 +3483,11 @@ export interface PagesSelect<T extends boolean = true> {
         richContent?: T | RichContentBlockSelect<T>;
         specLedger?: T | SpecLedgerBlockSelect<T>;
         newsletterBand?: T | NewsletterBandBlockSelect<T>;
+        formEmbed?: T | FormEmbedBlockSelect<T>;
+        bookingEmbed?: T | BookingEmbedBlockSelect<T>;
+        directContact?: T | DirectContactBlockSelect<T>;
         accordionFAQ?: T | AccordionFAQBlockSelect<T>;
+        categoryTabs?: T | CategoryTabsBlockSelect<T>;
       };
   meta?: T | SeoMetaSelect<T>;
   generateSlug?: T;
@@ -3413,6 +3758,41 @@ export interface MetricEventBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ReviewWallBlock_select".
+ */
+export interface ReviewWallBlockSelect<T extends boolean = true> {
+  variant?: T;
+  eyebrow?: T;
+  eyebrowTick?: T;
+  heading?: T;
+  accentPhrase?: T;
+  source?: T;
+  sourceFilter?: T;
+  testimonials?: T;
+  pageSize?: T;
+  showStudyLinks?: T;
+  studyLinkLabel?: T;
+  labels?:
+    | T
+    | {
+        video?: T;
+        googleReview?: T;
+        linkedin?: T;
+        play?: T;
+      };
+  loadMore?:
+    | T
+    | {
+        label?: T;
+        loadingLabel?: T;
+        errorLabel?: T;
+      };
+  emptyNote?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "TestimonialRowBlock_select".
  */
 export interface TestimonialRowBlockSelect<T extends boolean = true> {
@@ -3659,6 +4039,105 @@ export interface NewsletterBandBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FormEmbedBlock_select".
+ */
+export interface FormEmbedBlockSelect<T extends boolean = true> {
+  variant?: T;
+  form?: T;
+  eyebrow?: T;
+  eyebrowTick?: T;
+  alertLabel?: T;
+  heading?: T;
+  accentPhrase?: T;
+  body?: T;
+  reasons?:
+    | T
+    | {
+        icon?: T;
+        text?: T;
+        id?: T;
+      };
+  submitLabel?: T;
+  ground?: T;
+  mobileLayout?: T;
+  steps?:
+    | T
+    | {
+        fieldNames?: T;
+        heading?: T;
+        accentPhrase?: T;
+        hint?: T;
+        id?: T;
+      };
+  stepped?:
+    | T
+    | {
+        progressLabel?: T;
+        startLabel?: T;
+        nextLabel?: T;
+        backLabel?: T;
+        selectAsOptions?: T;
+      };
+  doneHeading?: T;
+  doneBody?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "BookingEmbedBlock_select".
+ */
+export interface BookingEmbedBlockSelect<T extends boolean = true> {
+  heading?: T;
+  accentPhrase?: T;
+  body?: T;
+  buttonLabel?: T;
+  noteUnderButton?: T;
+  newTabLabel?: T;
+  thankYouPage?: T;
+  fallbackHeading?: T;
+  fallbackBody?: T;
+  fallbackLink?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "DirectContactBlock_select".
+ */
+export interface DirectContactBlockSelect<T extends boolean = true> {
+  showEmail?: T;
+  showSocials?: T;
+  showLocation?: T;
+  skipFormLine?: T;
+  rowLabels?:
+    | T
+    | {
+        email?: T;
+        socials?: T;
+        location?: T;
+        replyTime?: T;
+      };
+  map?:
+    | T
+    | {
+        show?: T;
+        caption?: T;
+        zoom?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "AccordionFAQBlock_select".
  */
 export interface AccordionFAQBlockSelect<T extends boolean = true> {
@@ -3682,6 +4161,15 @@ export interface AccordionFAQBlockSelect<T extends boolean = true> {
         url?: T;
         label?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CategoryTabsBlock_select".
+ */
+export interface CategoryTabsBlockSelect<T extends boolean = true> {
+  ariaLabel?: T;
   id?: T;
   blockName?: T;
 }

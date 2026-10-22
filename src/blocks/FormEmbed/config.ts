@@ -8,8 +8,7 @@ import { eyebrowField, headlineFields } from '../../fields'
  *
  * - `standard`: p9 §Homework form (white, roomy) and p12 §Contact form (grey
  *   band). `mobileLayout` = stacked / stepped (p12 phones: one question at a
- *   time). The stepped flow needs a PayloadForm step API that does not exist
- *   yet, so `stepped` currently renders stacked (reported to the PM).
+ *   time; `steps` + `stepped` labels feed PayloadForm's stepped layout).
  * - `reminder`: p10 §Homework reminder. Shows the form in a card unless the
  *   visitor arrives with `?homework=done`, then the done line.
  *
@@ -136,8 +135,77 @@ export const FormEmbed: Block = {
       admin: {
         condition: forVariants('standard'),
         description:
-          'How the form looks on phones. Stepped is the Contact page design; until it is built it shows stacked.',
+          'How the form looks on phones. Stepped is the Contact page design: one question at a time, with a progress bar and Back / Next buttons. Tablets and desktops always show the whole form.',
       },
+    },
+    /*
+     * Stepped phone layout (integrator, big step 5). Shapes map 1:1 onto
+     * PayloadForm's stepped props (src/components/forms/PayloadForm.tsx
+     * `steps`, `selectAsOptions`, `progressLabel`, `startLabel`, `nextLabel`,
+     * `backLabel`; FormStep in src/components/forms/steps.ts). No steps = one
+     * question per step, each headed by the field's own label.
+     */
+    {
+      name: 'steps',
+      type: 'array',
+      maxRows: 10,
+      labels: { singular: 'Step', plural: 'Steps' },
+      admin: {
+        condition: (_data, siblingData) =>
+          ((siblingData?.variant as string | undefined) ?? 'standard') === 'standard' && siblingData?.mobileLayout === 'stepped',
+        description:
+          'Optional: group the form’s questions into steps and give each step its own heading. Leave empty for one question per step, headed by the question’s label. A form field no step names is added to the last step, so nothing required can be skipped. Add, remove or drag to reorder.',
+      },
+      fields: [
+        {
+          name: 'fieldNames',
+          type: 'text',
+          hasMany: true,
+          required: true,
+          label: 'Form fields in this step',
+          admin: {
+            description:
+              'The "Name" of each form field shown in this step (as set on the form, e.g. name, email, reason, message). Type a name and press Enter.',
+          },
+        },
+        ...headlineFields({ required: false, description: 'Step heading, e.g. "Who’s reaching out?". Optional: a one-question step uses the field’s label.' }),
+        {
+          name: 'hint',
+          type: 'text',
+          admin: { description: 'Quiet line under the step heading, e.g. "First name is plenty." Optional.' },
+        },
+      ],
+    },
+    {
+      name: 'stepped',
+      type: 'group',
+      label: 'Stepped layout: buttons and progress',
+      admin: {
+        condition: (_data, siblingData) =>
+          ((siblingData?.variant as string | undefined) ?? 'standard') === 'standard' && siblingData?.mobileLayout === 'stepped',
+      },
+      fields: [
+        {
+          name: 'progressLabel',
+          type: 'text',
+          defaultValue: 'Question {n} of {m}',
+          admin: { description: 'Progress line above each step. {n} = this step, {m} = number of steps.' },
+        },
+        { name: 'startLabel', type: 'text', defaultValue: 'Start', admin: { description: 'Button on the first step.' } },
+        { name: 'nextLabel', type: 'text', defaultValue: 'Next', admin: { description: 'Button on the following steps.' } },
+        {
+          name: 'backLabel',
+          type: 'text',
+          defaultValue: 'Back',
+          admin: { description: 'Read aloud by screen readers for the Back arrow button (not shown as text).' },
+        },
+        {
+          name: 'selectAsOptions',
+          type: 'checkbox',
+          defaultValue: true,
+          admin: { description: 'Show drop-down questions (e.g. "What’s this about?") as tap-to-pick rows.' },
+        },
+      ],
     },
     {
       name: 'doneHeading',

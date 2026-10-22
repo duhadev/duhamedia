@@ -1,14 +1,19 @@
 import type React from 'react'
 
 import { AccordionFAQBlock } from './AccordionFAQ/Component'
+import { BookingEmbedBlock } from './BookingEmbed/Component'
 import { CaseStudyCardsBlock } from './CaseStudyCards/Component'
+import { CategoryTabsBlock } from './CategoryTabs/Component'
+import { DirectContactBlock } from './DirectContact/Component'
 import { FinalCTABlock } from './FinalCTA/Component'
+import { FormEmbedBlock } from './FormEmbed/Component'
 import { HeroBlock } from './Hero/Component'
 import { MetricEventBlock } from './MetricEvent/Component'
 import { MiniCTAStripBlock } from './MiniCTAStrip/Component'
 import { NewsletterBandBlock } from './NewsletterBand/Component'
 import { PhaseTimelineBlock } from './PhaseTimeline/Component'
 import { ProofStripBlock } from './ProofStrip/Component'
+import { ReviewWallBlock } from './ReviewWall/Component'
 import { RichContentBlock } from './RichContent/Component'
 import { SpecLedgerBlock } from './SpecLedger/Component'
 import { TeamIntroBlock } from './TeamIntro/Component'
@@ -38,6 +43,7 @@ export const blockComponents: BlockComponents = {
   proofStrip: ProofStripBlock,
   caseStudyCards: CaseStudyCardsBlock,
   metricEvent: MetricEventBlock,
+  reviewWall: ReviewWallBlock,
   testimonialRow: TestimonialRowBlock,
   twoTrackPanels: TwoTrackPanelsBlock,
   phaseTimeline: PhaseTimelineBlock,
@@ -45,5 +51,9 @@ export const blockComponents: BlockComponents = {
   richContent: RichContentBlock,
   specLedger: SpecLedgerBlock,
   newsletterBand: NewsletterBandBlock,
+  formEmbed: FormEmbedBlock,
+  bookingEmbed: BookingEmbedBlock,
+  directContact: DirectContactBlock,
   accordionFAQ: AccordionFAQBlock,
+  categoryTabs: CategoryTabsBlock,
 }
