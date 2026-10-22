@@ -1,3 +1,4 @@
+import { PageShell } from '@/components/chrome'
 import { RenderBlocks } from '@/components/RenderBlocks'
 import { HOME_SLUG } from '@/lib/pagePath'
 import { getPublishedPage, pageLayout } from '@/lib/pages'
@@ -12,16 +13,20 @@ export default async function HomePage() {
 
   if (!page) {
     return (
-      <main>
-        <h1>Duha Media</h1>
-        <p>Site rebuild in progress.</p>
-      </main>
+      <PageShell>
+        <main>
+          <h1>Duha Media</h1>
+          <p>Site rebuild in progress.</p>
+        </main>
+      </PageShell>
     )
   }
 
   return (
-    <main>
-      <RenderBlocks blocks={pageLayout(page)} />
-    </main>
+    <PageShell header={page.headerVariant} footer={page.footerVariant}>
+      <main>
+        <RenderBlocks blocks={pageLayout(page)} />
+      </main>
+    </PageShell>
   )
 }

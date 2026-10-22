@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 
+import { PageShell } from '@/components/chrome'
 import { RenderBlocks } from '@/components/RenderBlocks'
 import { HOME_SLUG, NOT_FOUND_SLUG } from '@/lib/pagePath'
 import { getPublishedPage, pageLayout } from '@/lib/pages'
@@ -24,8 +25,10 @@ export default async function CmsPage({ params }: Props) {
   if (!page) notFound()
 
   return (
-    <main>
-      <RenderBlocks blocks={pageLayout(page)} />
-    </main>
+    <PageShell header={page.headerVariant} footer={page.footerVariant}>
+      <main>
+        <RenderBlocks blocks={pageLayout(page)} />
+      </main>
+    </PageShell>
   )
 }

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import React from 'react'
 
+import { PageShell } from '@/components/chrome'
 import { RenderBlocks } from '@/components/RenderBlocks'
 import { showcaseEnabled } from '@/showcase/enabled'
 import { showcaseEntries, type ShowcaseEntry } from '@/showcase/registry'
@@ -52,37 +53,39 @@ export default function ShowcasePage() {
   if (!showcaseEnabled()) notFound()
 
   return (
-    <main className="pb-24">
-      <header className="border-b-2 border-dotted border-ink px-container-mobile py-10 font-mono text-small-mobile md:px-container">
-        <p>
-          <strong>/_showcase</strong> — block sandbox. Not a site page; hidden in production, noindex.
-        </p>
-        <p className="mt-1 text-gray-warm">
-          {showcaseEntries.length} {showcaseEntries.length === 1 ? 'entry' : 'entries'}. Each block, variant and state,
-          back to back. Resize the window to check mobile (&lt;768px) and desktop.
-        </p>
-      </header>
-
-      {showcaseEntries.length === 0 ? (
-        <div className="px-container-mobile py-24 font-mono text-small-mobile md:px-container">
+    <PageShell>
+      <main className="pb-24">
+        <header className="border-b-2 border-dotted border-ink px-container-mobile py-10 font-mono text-small-mobile md:px-container">
           <p>
-            <strong>No blocks yet.</strong> Each block is appended to <code>src/showcase/registry.ts</code> as it clears
-            Gate 1.
+            <strong>/_showcase</strong> — block sandbox. Not a site page; hidden in production, noindex.
           </p>
-        </div>
-      ) : (
-        showcaseEntries.map((entry, index) => (
-          <section
-            key={`${entry.block}-${entry.variant}-${index}`}
-            aria-label={`${entry.block} · ${entry.variant}`}
-            data-viewport={entry.viewport}
-            className="mt-16 border-t-2 border-dotted border-ink pb-16"
-          >
-            <EntryLabel entry={entry} index={index} />
-            <RenderBlocks blocks={[{ ...entry.data, blockType: entry.block }]} />
-          </section>
-        ))
-      )}
-    </main>
+          <p className="mt-1 text-gray-warm">
+            {showcaseEntries.length} {showcaseEntries.length === 1 ? 'entry' : 'entries'}. Each block, variant and state,
+            back to back. Resize the window to check mobile (&lt;768px) and desktop.
+          </p>
+        </header>
+
+        {showcaseEntries.length === 0 ? (
+          <div className="px-container-mobile py-24 font-mono text-small-mobile md:px-container">
+            <p>
+              <strong>No blocks yet.</strong> Each block is appended to <code>src/showcase/registry.ts</code> as it clears
+              Gate 1.
+            </p>
+          </div>
+        ) : (
+          showcaseEntries.map((entry, index) => (
+            <section
+              key={`${entry.block}-${entry.variant}-${index}`}
+              aria-label={`${entry.block} · ${entry.variant}`}
+              data-viewport={entry.viewport}
+              className="mt-16 border-t-2 border-dotted border-ink pb-16"
+            >
+              <EntryLabel entry={entry} index={index} />
+              <RenderBlocks blocks={[{ ...entry.data, blockType: entry.block }]} />
+            </section>
+          ))
+        )}
+      </main>
+    </PageShell>
   )
 }

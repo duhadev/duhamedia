@@ -23,9 +23,8 @@ export default function FrontendLayout({ children }: { children: React.ReactNode
   return (
     <html lang="en" className={`${archivoBlack.variable} ${dmSans.variable}`}>
       <body>
-        {/* B1 slot: SiteHeader (variant from the page's `headerVariant`) goes here. */}
+        {/* Header/footer are per-page (variant fields): rendered by <PageShell> in each route, not here. */}
         {children}
-        {/* B1 slot: SiteFooter (variant from the page's `footerVariant`) goes here. */}
       </body>
     </html>
   )

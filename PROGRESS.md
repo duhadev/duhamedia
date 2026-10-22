@@ -35,8 +35,17 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 | delta | S4 homepage generated SEO title brand-led (F29) | 1 | queued | tiny: seo.ts generateTitle special-case `home` |
 | plugin | P3 seo | all | documented | Gate 1 cleared 2026-10-22 under standing approval. Rework done: help text via plugin-seo i18n override (stock lines replaced; PM browser-verified, no 'hero image'); coded: src/plugins/seo.ts; SEO tab (meta title/description/image) on pages, case-studies, posts, lead-magnets; Pages title moved into a 'Content' tab (layout only); generators never throw (title template, doc summary, hero≥og else default OG, SITE_URL+docPath); pipeline may set meta title/desc on own drafts; migration `p3_seo` proven; 52/52 smoke; QA: all checks pass except **custom SEO help text not rendering (stock plugin copy shown; image says 'hero image') → rework**. Cosmetic accepted (stock): stale inline length message until next save; plugin 'Too short'/'Good' badges; error tooltip overlaps help line. TODO(router): generateMetadata, JSON-LD, sitemap/robots, live preview |
 | foundation | B0 tokens/fonts, (frontend) layout, RenderBlocks, /_showcase, pages.layout, S4 | all | documented | integrator 2026-10-22; no gate (machinery); no migration (layout field appears with first block); tsc/lint/types clean |
-| chrome | B1 SiteHeader (+mobile) + SiteFooter standard/reduced/legal-only | all | coding | block-coder |
+| chrome | B1 SiteHeader (+mobile) + SiteFooter standard/reduced/legal-only | all | gate1 | Gate 1 QA done 2026-10-22 (admin add/remove/reorder/save ✓; 768/1440 no discrepancies; 390 nudge heading hidden + menu overlays — both deliberate per design/agent); Gate 2: 4 minor a11y findings (F41). Human review at checkpoint. Dev nav now populated by QA (nudge line ends "(test nudge)" — revert before public) |
 | block | 23 blocks in page build order (SCHEMA.md §8–9) | — | queued; homepage set first (Hero → ProofStrip → CaseStudyCards → MiniCTAStrip → TwoTrackPanels → PhaseTimeline → TeamIntro → TestimonialRow → FinalCTA) | homepage variants only this step; appended to /_showcase on Gate 1 |
+| block | Hero (typographic) | 1 | integrated | migration b3_hero; shared eyebrowField()/headlineFields() added to src/fields; Gate 1/2 pending (QA serialized behind B1) |
+| block | ProofStrip (scarcity) | 1 | coding | block-coder (parallel; headless-chromium self-check) |
+| block | CaseStudyCards (cards + fallback ledger) | 1 | coding | block-coder (parallel; headless-chromium self-check) |
+| block | MiniCTAStrip (band) | 1 | coding | block-coder (parallel; headless-chromium self-check) |
+| block | TwoTrackPanels (equal) | 1 | coding | block-coder (parallel; headless-chromium self-check) |
+| block | PhaseTimeline (accordion) | 1 | coding | block-coder (parallel; headless-chromium self-check) |
+| block | TeamIntro (intro, founder-card) | 1 | coding | block-coder (parallel; headless-chromium self-check) |
+| block | TestimonialRow (row) | 1 | coding | block-coder (parallel; headless-chromium self-check) |
+| block | FinalCTA | 1 | coding | block-coder (parallel; headless-chromium self-check) |
 | integration | contact · newsletter (DOI) · lead_magnet · site_error | — | queued after triggering units clear | Gate A |
 
 ## Page assembly status
@@ -64,6 +73,7 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 | 2026-10-17 | `src/migrations/20261017_195538_c2_media_downloads.ts` | + downloads table; media + caption, sizes browser/og; locked_documents_rels + downloads_id (down hand-fixed: drop FK before table) | scratch proofs (from-zero, down/up); dev via push / no / no |
 | 2026-10-17 | `src/migrations/20261017_193341_c1_users_role.ts` | users: + name, role (enum admin/marketing/pipeline), API-key cols; data step keeps admins; drops users_roles | scratch proofs (up/down/from-zero); dev DB via same SQL / no / no |
 | 2026-10-17 | `src/migrations/20261017_181819_initial.ts` | Boot scaffolding: users (+roles, sessions), media, payload_kv, locked_documents, preferences, migrations | scratch + image-check DBs only (dev uses push) / no / no |
+| 2026-10-22 | `20261022_025136_b3_hero` | adds `pages.layout` + Hero block tables (`pages_blocks_hero*`, versions) + `pages_rels`/`_pages_v_rels` (first Pages relationship). Additive only; up/down/up tested on scratch DB | dev (push) / — / — |
 
 ## Releases
 | Date | Tag | Ordered by human | Notes |
@@ -222,6 +232,17 @@ Decisions deferred to the human; each has a safe default applied so work continu
 | F38 | B0 | Button sizes 15/17px have no token | kept as exact `text-[15px]`/`text-[17px]` |
 | F39 | B0 | `/` with no published `home` doc | shows old placeholder instead of 404 |
 | F40 | PM | Homepage-only variants this step (selects list only built variants) | as stated |
+| F41 | B1 SEO | Gate 2 findings: (1) logo link announced twice (img alt + wordmark) → `alt=""` + link aria-label; (2) footer column titles are spans (nav is labelled) → optional h2; (3) no skip-to-content link → add in PageShell + `id="main"`; (4) two `nav aria-label="Main"` (desktop/mobile, never both visible) → distinct labels | none applied (SEO fixes need human OK); recommend all 4 |
+| F42 | B1 | Footer newsletter nudge is a link to the `newsletter` page (no inline email form until NewsletterBand/FormEmbed exists); hidden while that page is unpublished; no nav field for its target | link-only |
+| F43 | B1 | Legal-only footer shows all `footer.legalLinks` (not only Privacy/Terms); one dark legal bar for Campaign LP, Link-in-Bio, Lead Magnet | as stated |
+| F44 | B1 | Mobile footer: columns follow editor order in a 2-up grid (design puts Services full-width); links 44px tall (design 10px gaps); brand line + nudge heading desktop-only (per mobile design) | as stated |
+| F45 | B1 | Mobile menu panel overlays content (absolute under sticky bar) instead of pushing down; no scroll lock | overlay |
+| F46 | TwoTrackPanels | Extra field `panels[].accentTitle` (wine title, design colours track 2) — schema delta vs SCHEMA §8.3 | added, default off |
+| F47 | ProofStrip | Big-number layout only when filled statistic is purely numeric; otherwise loud display line. Seed needs numeric statements + `label` for the design look | numeric-only rule |
+| F48 | CaseStudyCards | Built `featured`/`latest`/`manual` sources and `ledger`/`note` fallbacks; `track` source + testimonials/metric-strip/logo-strip fallbacks deferred to their pages. `featured` with zero featured (but some published) → fallback, not latest. Extra field `cardLinkLabel` | as stated |
+| F49 | FinalCTA | Design capacity line is body-size; rendered loud stat + quiet reason (rule 2). Second button = dimmer ghost-light (design shows one) | as stated |
+| F50 | TeamIntro | founder-card with no published member renders nothing (+console.error); `member.bio` not rendered (body field carries it); social links 44px at all widths | as stated |
+| F51 | TestimonialRow | Empty (no testimonials, no study, no figure) → section renders nothing; `featured` study = newest published featured by `-publishedAt`; video = poster + link-out to YouTube (shared VideoTile later) | as stated |
 
 ## Session handoff
 - **Last session ended:** 2026-10-22 — big step 2 complete (G1–G4, P1–P3, S1–S3 documented, pushed); checkpoint F1–F35 all decided. Human about to /clear.
