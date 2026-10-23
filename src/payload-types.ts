@@ -272,7 +272,7 @@ export interface HeroBlock {
   /**
    * The hero layout. More layouts arrive with the pages that need them.
    */
-  variant: 'typographic' | 'service' | 'article';
+  variant: 'typographic' | 'service' | 'article' | 'vsl';
   /**
    * Compact is the shorter header used on the testimonials, book-a-call, thank-you, FAQ and contact pages: less padding, a narrow text column and a small logo shape tucked in the corner.
    */
@@ -312,11 +312,15 @@ export interface HeroBlock {
    */
   body?: string | null;
   /**
+   * Article layout: the one- or two-sentence introduction between the headline and the thin byline rule (articles feed it from their "Dek"). Leave empty to skip it.
+   */
+  standfirst?: string | null;
+  /**
    * Small inline note only, e.g. 'Builds start at $5K'. Never put a price in a headline or metric.
    */
   pricingNote?: string | null;
   /**
-   * Up to two. The first is the solid main button, the second is the outlined one.
+   * Up to two. The first is the solid main button, the second is the outlined one. The video layout shows only the first (one button, e.g. Book a Call).
    */
   ctas?:
     | {
@@ -381,6 +385,47 @@ export interface HeroBlock {
    * The large decorative logo silhouette behind the headline.
    */
   geometry?: boolean | null;
+  /**
+   * The video under the headline. It loads only when a visitor presses play (privacy-friendly YouTube player). If the link is missing, the video tile is left out.
+   */
+  video?: {
+    /**
+     * The YouTube link of the video (unlisted videos work), e.g. https://youtu.be/…
+     */
+    url: string;
+    /**
+     * The still frame shown before the video plays (16:9 works best).
+     */
+    poster: number | Media;
+  };
+  /**
+   * Puts a form inside the hero (newsletter page: the signup card beside the headline; download pages: the email row under the paragraph).
+   */
+  showForm?: boolean | null;
+  /**
+   * The form to show (Forms collection). Leave empty to use the newsletter form chosen in Site settings. If the form is deleted, the hero shows without it.
+   */
+  form?: (number | null) | Form;
+  /**
+   * Card is the newsletter-page layout: the box sits in a right-hand column on desktop and the key figures move under the paragraph. Inline keeps the normal hero layout and adds the form under the paragraph.
+   */
+  formStyle?: ('card' | 'inline') | null;
+  /**
+   * Heading inside the card, e.g. "Join the list". Leave empty for no heading.
+   */
+  formHeading?: string | null;
+  /**
+   * Quiet line under the card heading, e.g. "Unsubscribe anytime. We never sell the list."
+   */
+  formBody?: string | null;
+  /**
+   * Text on the form's send button, e.g. "Join" or "Get the download". Leave empty to use the button text set on the form itself.
+   */
+  submitLabel?: string | null;
+  /**
+   * Small grey line under the form, e.g. "Email delivery. One send, plus the monthly newsletter if you opt in."
+   */
+  formNote?: string | null;
   /**
    * The trail above the headline, e.g. Services / Shopify theme development / Phase 01. The LAST crumb is the current page and never links. Leave a middle crumb without a destination to show it as plain text.
    */
@@ -2281,6 +2326,31 @@ export interface TestimonialRowBlock {
     label?: string | null;
   };
   /**
+   * How the link above is shown. Button = the primary call-to-action under the whole row.
+   */
+  ctaStyle?: ('link' | 'button') | null;
+  /**
+   * Optional. A big figure tile (e.g. subscriber count) placed beside the testimonial(s). When set, the "A study in full" card is not shown. Needs both a number and a label. Only enter a real, approved figure.
+   */
+  leadMetric?: {
+    /**
+     * A result or count, never a price. e.g. "+212%".
+     */
+    value?: string | null;
+    /**
+     * What the number measures, e.g. "Revenue, 12 months".
+     */
+    label?: string | null;
+    /**
+     * Optional quiet line under the metric.
+     */
+    sub?: string | null;
+    /**
+     * Show the number in the accent colour.
+     */
+    accent?: boolean | null;
+  };
+  /**
    * On a case-study template this is filled from the study itself. Fill it by hand only for a standalone use.
    */
   clientVoice?: {
@@ -2847,7 +2917,7 @@ export interface SpecLedgerBlock {
   /**
    * Which layout to use.
    */
-  variant: 'cards' | 'expandable' | 'signal-flow';
+  variant: 'cards' | 'expandable' | 'signal-flow' | 'list';
   /**
    * Template cards suit a coded set such as T-01 to T-04. Feature cards suit two big pictures.
    */
@@ -2886,7 +2956,7 @@ export interface SpecLedgerBlock {
          */
         code?: string | null;
         /**
-         * The item name, e.g. "Conversion build". Shown in capitals.
+         * The item name, e.g. "Conversion build". Shown in capitals. In the check list it is the bullet sentence, shown as written.
          */
         title: string;
         /**
@@ -2961,7 +3031,7 @@ export interface NewsletterBandBlock {
   /**
    * How the newsletter section looks.
    */
-  variant: 'band';
+  variant: 'band' | 'cross-sell';
   /**
    * The short heading. Leave empty to use the default from Site settings > Newsletter & closers (and its default line).
    */
@@ -2978,6 +3048,60 @@ export interface NewsletterBandBlock {
    * Text on the dark sign-up button. Defaults to "Join".
    */
   buttonLabel?: string | null;
+  /**
+   * The confirmation shown above the newsletter box. On the lead magnet page this is filled from the lead magnet itself.
+   */
+  delivered?: {
+    /**
+     * Small line above the heading.
+     */
+    eyebrow?: string | null;
+    /**
+     * e.g. "Check your inbox. It's on the way."
+     */
+    heading?: string | null;
+    /**
+     * Optional: one word or phrase from the heading to show in the accent colour.
+     */
+    accentPhrase?: string | null;
+    /**
+     * e.g. "If it's not there in five minutes, check spam, then email us."
+     */
+    body?: string | null;
+    /**
+     * e.g. "While you're here:". Optional.
+     */
+    crossSellLine?: string | null;
+  };
+  /**
+   * Where the dark button goes. Leave empty to use the published Newsletter page.
+   */
+  crossSellLink?: {
+    type: 'internal' | 'custom';
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'case-studies';
+          value: number | CaseStudy;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null)
+      | ({
+          relationTo: 'lead-magnets';
+          value: number | LeadMagnet;
+        } | null);
+    /**
+     * https://…, mailto:…, or a site path like /book-a-call.
+     */
+    url?: string | null;
+    label?: string | null;
+  };
   /**
    * Background of the band. The Work page uses white; the others use grey.
    */
@@ -3736,6 +3860,7 @@ export interface HeroBlockSelect<T extends boolean = true> {
         text?: T;
       };
   body?: T;
+  standfirst?: T;
   pricingNote?: T;
   ctas?:
     | T
@@ -3762,6 +3887,19 @@ export interface HeroBlockSelect<T extends boolean = true> {
   subNote?: T;
   verticalMicrocopy?: T;
   geometry?: T;
+  video?:
+    | T
+    | {
+        url?: T;
+        poster?: T;
+      };
+  showForm?: T;
+  form?: T;
+  formStyle?: T;
+  formHeading?: T;
+  formBody?: T;
+  submitLabel?: T;
+  formNote?: T;
   breadcrumb?:
     | T
     | {
@@ -4072,6 +4210,15 @@ export interface TestimonialRowBlockSelect<T extends boolean = true> {
         url?: T;
         label?: T;
       };
+  ctaStyle?: T;
+  leadMetric?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        sub?: T;
+        accent?: T;
+      };
   clientVoice?:
     | T
     | {
@@ -4317,6 +4464,24 @@ export interface NewsletterBandBlockSelect<T extends boolean = true> {
   accentPhrase?: T;
   line?: T;
   buttonLabel?: T;
+  delivered?:
+    | T
+    | {
+        eyebrow?: T;
+        heading?: T;
+        accentPhrase?: T;
+        body?: T;
+        crossSellLine?: T;
+      };
+  crossSellLink?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
   tone?: T;
   spacing?: T;
   id?: T;

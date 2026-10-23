@@ -32,7 +32,8 @@ function MetaText({ text }: { text: string }) {
  * Hero, `article` variant (Case Study.dc.html "Article header", desktop +
  * mobile builds): 820px column on the dot-matrix ground with the wine logo
  * shape, breadcrumb, h1, a meta rule (left = `body`, right = `metaLine`) and
- * the grey summary box. SCHEMA R2 additions with no design source: the
+ * the grey summary box. `standfirst` (p13/p14 post `dek`) sits between the
+ * h1 and the meta rule. SCHEMA R2 additions with no design source: the
  * oversized `resultMetric` under the headline and the lead image under the
  * header (`browser` frame, `full-bleed`, or plain). In the case-study template
  * every prop is fed from the study document (see the dev docs mapping).
@@ -44,6 +45,7 @@ export function ArticleHero({
   heading,
   accentPhrase,
   body,
+  standfirst,
   breadcrumb,
   geometry,
   resultMetric,
@@ -54,6 +56,7 @@ export function ArticleHero({
   mediaFrame,
 }: BlockData<'hero'>) {
   const scope = body?.trim()
+  const dek = standfirst?.trim()
   const meta = metaLine?.trim()
   const summaryBody = summary?.body?.trim()
   const metricValue = resultMetric?.value?.trim()
@@ -86,6 +89,10 @@ export function ArticleHero({
           accentColor="ground"
           className="mt-3.5 max-md:!text-[2.125rem] max-md:!leading-[.98] md:mt-5"
         />
+        {dek ? (
+          // DEV-SEO / MKT-SEO Article.dc.html "Article header": the dek between the h1 and the meta rule
+          <p className="mt-4 text-[1.0625rem] leading-[1.55] md:mt-5 md:max-w-[62ch] md:text-[1.1875rem]">{dek}</p>
+        ) : null}
         {metricValue ? (
           <div className="mt-6 md:mt-8">
             <p className={cx('font-display text-metric-mobile md:text-metric', resultMetric?.accent ? 'text-ground-accent' : 'text-ink')}>

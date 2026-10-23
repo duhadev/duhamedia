@@ -9,6 +9,7 @@ import { docPath } from '@/lib/docPath'
 import { getRequestPath } from '@/lib/requestPath'
 import type { Form, SiteSetting } from '@/payload-types'
 
+import { NewsletterCrossSell } from './CrossSell'
 import { bandFormClassNames } from './formClassNames'
 
 export type NewsletterBandData = BlockData<'newsletterBand'>
@@ -62,7 +63,12 @@ async function load(): Promise<Loaded> {
  * that page is not published either, the whole band renders nothing (a heading
  * promising a signup with no way to sign up is worse than no band). Logged once.
  */
-export async function NewsletterBandBlock({
+export async function NewsletterBandBlock(props: NewsletterBandData) {
+  if (props.variant === 'cross-sell') return <NewsletterCrossSell {...props} />
+  return <NewsletterBandBand {...props} />
+}
+
+async function NewsletterBandBand({
   heading,
   accentPhrase,
   line,

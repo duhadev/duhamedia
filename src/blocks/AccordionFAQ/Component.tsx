@@ -16,6 +16,8 @@ type AccordionFAQProps = BlockData<'accordionFAQ'> & {
   emitJsonLd?: boolean
 }
 type LexicalData = Faq['answer']
+/** The minimal question shape the view needs (a `Faq` doc, or a post's inline `faq` item). */
+export type FaqItem = { id?: number | string | null; question: string; answer: LexicalData }
 
 const clampLimit = (n: number | null | undefined): number => Math.min(12, Math.max(1, Math.round(n ?? 6)))
 
@@ -81,7 +83,7 @@ function plainText(data: LexicalData | null | undefined): string {
  * router concatenates the result of every FAQ block on a page into one
  * `{ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity }`.
  */
-export const faqJsonLdItems = (faqs: Faq[]) =>
+export const faqJsonLdItems = (faqs: FaqItem[]) =>
   faqs.map((f) => ({
     '@type': 'Question' as const,
     name: f.question,
@@ -89,7 +91,7 @@ export const faqJsonLdItems = (faqs: Faq[]) =>
   }))
 
 /** One question row (shared by `mini` and `group`; markup unchanged from `mini`). */
-function FaqRow({ f, open }: { f: Faq; open: boolean }) {
+function FaqRow({ f, open }: { f: FaqItem; open: boolean }) {
   return (
     <details open={open ? true : undefined} className="group border-t border-divider">
       <summary className="flex min-h-target cursor-pointer list-none items-center justify-between gap-4 py-4.5 text-left text-[1.125rem] font-bold [&::-webkit-details-marker]:hidden">
@@ -165,6 +167,34 @@ export async function AccordionFAQBlock({ variant, eyebrow, eyebrowTick, heading
     return <GroupFaq {...{ heading, items, openFirst, allLink, anchorId, spacing, eyebrow, eyebrowTick }} />
   }
 
+  return <AccordionFAQItemsView {...{ eyebrow, eyebrowTick, heading, items, openFirst, allLink, emitJsonLd }} />
+}
+
+/**
+ * Mini-variant markup over an already-resolved item list (no loading, no
+ * filtering: the caller passes only items that may be shown). Used by
+ * `AccordionFAQBlock` and by templates that carry inline questions
+ * (posts' `faq`). `heading` is optional: with only an `eyebrow` the h2 is
+ * omitted (post templates). Renders nothing for an empty list.
+ */
+export function AccordionFAQItemsView({
+  eyebrow,
+  eyebrowTick,
+  heading,
+  items,
+  openFirst,
+  allLink,
+  emitJsonLd = true,
+}: {
+  eyebrow?: string | null
+  eyebrowTick?: boolean | null
+  heading?: string | null
+  items: FaqItem[]
+  openFirst?: boolean | null
+  allLink?: AccordionFAQProps['allLink']
+  emitJsonLd?: boolean
+}) {
+  if (items.length === 0) return null
   const jsonLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqJsonLdItems(items) }
 
   return (
@@ -175,10 +205,12 @@ export async function AccordionFAQBlock({ variant, eyebrow, eyebrowTick, heading
             {eyebrow}
           </Eyebrow>
         ) : null}
-        <h2 className="font-display text-[1.875rem] font-normal uppercase leading-[1.02] md:text-[2.25rem] md:leading-[1.05]">{heading}</h2>
-        <div className="mt-5 md:mt-6">
+        {heading ? (
+          <h2 className="font-display text-[1.875rem] font-normal uppercase leading-[1.02] md:text-[2.25rem] md:leading-[1.05]">{heading}</h2>
+        ) : null}
+        <div className={heading ? 'mt-5 md:mt-6' : undefined}>
           {items.map((f, i) => (
-            <FaqRow key={f.id} f={f} open={Boolean(openFirst) && i === 0} />
+            <FaqRow key={f.id ?? i} f={f} open={Boolean(openFirst) && i === 0} />
           ))}
         </div>
         <CMSLink link={allLink} className="mt-3 inline-flex min-h-target items-center text-[15px] font-bold no-underline md:mt-4">

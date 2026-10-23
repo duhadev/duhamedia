@@ -27,6 +27,7 @@ export type PostListData = {
     newBadge?: string | null
     previouslyLabel?: string | null
     countSuffix?: string | null
+    countSuffixSingular?: string | null
     readLabel?: string | null
     issueWord?: string | null
   } | null
@@ -49,6 +50,7 @@ const DEFAULT_LABELS = {
   newBadge: 'New',
   previouslyLabel: 'Previously',
   countSuffix: 'issues',
+  countSuffixSingular: 'issue',
   readLabel: 'Read issue',
   issueWord: 'Issue',
 }
@@ -216,7 +218,7 @@ export async function PostListBlock(props: PostListData) {
                   <span className="text-[11px] font-bold uppercase tracking-[0.1em] text-gray-warm">{labels.previouslyLabel}</span>
                   {previousCount > 0 ? (
                     <span className="font-mono text-[11px] font-bold text-gray-warm">
-                      {previousCount} {labels.countSuffix}
+                      {previousCount} {previousCount === 1 ? labels.countSuffixSingular : labels.countSuffix}
                     </span>
                   ) : null}
                 </div>

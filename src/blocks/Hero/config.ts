@@ -1,14 +1,14 @@
-import type { Block, Condition, TextFieldSingleValidation } from 'payload'
+import type { Block, Condition, Field, TextFieldSingleValidation } from 'payload'
 import { text } from 'payload/shared'
 
-import { eyebrowField, headlineFields, LINK_TARGETS, linkField, metricFields, pricingNote } from '../../fields'
+import { eyebrowField, headlineFields, LINK_TARGETS, linkField, metricFields, pricingNote, validateYouTubeUrl } from '../../fields'
 import { rowLabel } from '../../components/admin/rowLabel'
 
 /**
- * Hero block (SCHEMA §8.1 item 1). Variants shipped so far: `typographic`
- * (homepage, p3 + `stats`, p4 + `phaseStrip`), `service` (p5/p6) and `article`
- * (p2 and the article templates). Later units append `vsl` and the form /
- * video / aggregate-rating fields.
+ * Hero block (SCHEMA §8.1 item 1). Variants: `typographic` (homepage, p3 +
+ * `stats`, p4 + `phaseStrip`, p7/p9-p12 compact, p16/p18 + the form slot),
+ * `service` (p5/p6), `article` (p2, p8 and the p13/p14 article templates, +
+ * `standfirst`) and `vsl` (p15 Campaign LP Hero A: headline + video + one CTA).
  */
 
 /** Admin helper: show a field only for the listed variants. */
@@ -45,6 +45,7 @@ export const Hero: Block = {
         { label: 'Typographic (cream, dot matrix, wine logo shape)', value: 'typographic' },
         { label: 'Service (dark band with a breadcrumb bar)', value: 'service' },
         { label: 'Article (case study / article header)', value: 'article' },
+        { label: 'Video (campaign landing page: headline, video, one button)', value: 'vsl' },
       ],
       admin: { description: 'The hero layout. More layouts arrive with the pages that need them.' },
     },
@@ -79,7 +80,12 @@ export const Hero: Block = {
     eyebrowField({
       description: 'Small uppercase line above the headline, e.g. "Integrated ecommerce growth partner — Chicago".',
     }),
-    ...headlineFields({ description: 'The page headline (the only h1 on the page). Shown in capitals.' }),
+    // The video layout shows its headline without an accent (Campaign LP.dc.html "Hero variant A — VSL").
+    ...headlineFields({ description: 'The page headline (the only h1 on the page). Shown in capitals.' }).map((field) =>
+      'name' in field && field.name === 'accentPhrase'
+        ? ({ ...field, admin: { ...field.admin, condition: (_data, siblingData) => siblingData?.variant !== 'vsl' } } as Field)
+        : field,
+    ),
     {
       name: 'badge',
       type: 'group',
@@ -111,6 +117,16 @@ export const Hero: Block = {
       },
     },
     {
+      name: 'standfirst',
+      type: 'textarea',
+      label: 'Standfirst',
+      admin: {
+        description:
+          'Article layout: the one- or two-sentence introduction between the headline and the thin byline rule (articles feed it from their "Dek"). Leave empty to skip it.',
+        condition: forVariants('article'),
+      },
+    },
+    {
       ...pricingNote(),
       admin: { ...pricingNote().admin, condition: forVariants('typographic', 'service') },
     },
@@ -122,9 +138,10 @@ export const Hero: Block = {
       labels: { singular: 'Button', plural: 'Buttons' },
       admin: {
         components: { RowLabel: rowLabel(['link.label'], 'Button') },
-        description: 'Up to two. The first is the solid main button, the second is the outlined one.',
+        description:
+          'Up to two. The first is the solid main button, the second is the outlined one. The video layout shows only the first (one button, e.g. Book a Call).',
         initCollapsed: false,
-        condition: forVariants('typographic', 'service'),
+        condition: forVariants('typographic', 'service', 'vsl'),
       },
       fields: [linkField({ name: 'link', label: 'Button', required: true })],
     },
@@ -183,7 +200,112 @@ export const Hero: Block = {
       defaultValue: true,
       admin: {
         description: 'The large decorative logo silhouette behind the headline.',
-        condition: forVariants('typographic', 'article'),
+        condition: forVariants('typographic', 'article', 'vsl'),
+      },
+    },
+    {
+      name: 'video',
+      type: 'group',
+      label: 'Video',
+      admin: {
+        description:
+          'The video under the headline. It loads only when a visitor presses play (privacy-friendly YouTube player). If the link is missing, the video tile is left out.',
+        condition: forVariants('vsl'),
+      },
+      fields: [
+        {
+          name: 'url',
+          type: 'text',
+          label: 'YouTube link',
+          required: true,
+          validate: validateYouTubeUrl,
+          admin: { description: 'The YouTube link of the video (unlisted videos work), e.g. https://youtu.be/…' },
+        },
+        {
+          name: 'poster',
+          type: 'upload',
+          relationTo: 'media',
+          maxDepth: 1,
+          required: true,
+          label: 'Poster image',
+          admin: { description: 'The still frame shown before the video plays (16:9 works best).' },
+        },
+      ],
+    },
+    {
+      name: 'showForm',
+      type: 'checkbox',
+      label: 'Show a signup form in the hero',
+      defaultValue: false,
+      admin: {
+        description:
+          'Puts a form inside the hero (newsletter page: the signup card beside the headline; download pages: the email row under the paragraph).',
+        condition: forVariants('typographic'),
+      },
+    },
+    {
+      name: 'form',
+      type: 'relationship',
+      relationTo: 'forms',
+      maxDepth: 1,
+      label: 'Form',
+      admin: {
+        description:
+          'The form to show (Forms collection). Leave empty to use the newsletter form chosen in Site settings. If the form is deleted, the hero shows without it.',
+        condition: (_data, siblingData) => (siblingData?.variant ?? 'typographic') === 'typographic' && siblingData?.showForm === true,
+      },
+    },
+    {
+      name: 'formStyle',
+      type: 'select',
+      label: 'Form style',
+      defaultValue: 'card',
+      options: [
+        { label: 'Card (grey box with its own heading, beside the headline on desktop)', value: 'card' },
+        { label: 'Inline (email row straight under the paragraph)', value: 'inline' },
+      ],
+      admin: {
+        description:
+          'Card is the newsletter-page layout: the box sits in a right-hand column on desktop and the key figures move under the paragraph. Inline keeps the normal hero layout and adds the form under the paragraph.',
+        condition: (_data, siblingData) => (siblingData?.variant ?? 'typographic') === 'typographic' && siblingData?.showForm === true,
+      },
+    },
+    {
+      name: 'formHeading',
+      type: 'text',
+      label: 'Card heading',
+      admin: {
+        description: 'Heading inside the card, e.g. "Join the list". Leave empty for no heading.',
+        condition: (_data, siblingData) =>
+          (siblingData?.variant ?? 'typographic') === 'typographic' && siblingData?.showForm === true && siblingData?.formStyle !== 'inline',
+      },
+    },
+    {
+      name: 'formBody',
+      type: 'textarea',
+      label: 'Card text',
+      admin: {
+        description: 'Quiet line under the card heading, e.g. "Unsubscribe anytime. We never sell the list."',
+        condition: (_data, siblingData) =>
+          (siblingData?.variant ?? 'typographic') === 'typographic' && siblingData?.showForm === true && siblingData?.formStyle !== 'inline',
+      },
+    },
+    {
+      name: 'submitLabel',
+      type: 'text',
+      label: 'Button text',
+      admin: {
+        description: 'Text on the form\'s send button, e.g. "Join" or "Get the download". Leave empty to use the button text set on the form itself.',
+        condition: (_data, siblingData) => (siblingData?.variant ?? 'typographic') === 'typographic' && siblingData?.showForm === true,
+      },
+    },
+    {
+      name: 'formNote',
+      type: 'text',
+      label: 'Note under the form',
+      admin: {
+        description: 'Small grey line under the form, e.g. "Email delivery. One send, plus the monthly newsletter if you opt in."',
+        condition: (_data, siblingData) => (siblingData?.variant ?? 'typographic') === 'typographic' && siblingData?.showForm === true,
       },
     },
     {

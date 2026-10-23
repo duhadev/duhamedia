@@ -1,6 +1,6 @@
 import type { Block } from 'payload'
 
-import { headlineFields } from '../../fields'
+import { headlineFields, linkField } from '../../fields'
 
 /**
  * NewsletterBand block (SCHEMA §8.4 item 15), `band` variant only: the grey
@@ -20,7 +20,10 @@ export const NewsletterBand: Block = {
       type: 'select',
       required: true,
       defaultValue: 'band',
-      options: [{ label: 'Band (heading, quiet line, email + Join)', value: 'band' }],
+      options: [
+        { label: 'Band (heading, quiet line, email + Join)', value: 'band' },
+        { label: 'Cross-sell (delivered message + newsletter box, lead magnet page)', value: 'cross-sell' },
+      ],
       admin: { description: 'How the newsletter section looks.' },
     },
     ...headlineFields({
@@ -41,6 +44,33 @@ export const NewsletterBand: Block = {
       type: 'text',
       defaultValue: 'Join',
       admin: { description: 'Text on the dark sign-up button. Defaults to "Join".' },
+    },
+    {
+      name: 'delivered',
+      type: 'group',
+      label: 'Delivered message (cross-sell only)',
+      admin: {
+        condition: (_, siblingData) => siblingData?.variant === 'cross-sell',
+        description: 'The confirmation shown above the newsletter box. On the lead magnet page this is filled from the lead magnet itself.',
+      },
+      fields: [
+        { name: 'eyebrow', type: 'text', defaultValue: 'Sent', admin: { description: 'Small line above the heading.' } },
+        { name: 'heading', type: 'text', admin: { description: 'e.g. "Check your inbox. It\'s on the way."' } },
+        { name: 'accentPhrase', type: 'text', label: 'Accent phrase', admin: { description: 'Optional: one word or phrase from the heading to show in the accent colour.' } },
+        { name: 'body', type: 'textarea', admin: { description: 'e.g. "If it\'s not there in five minutes, check spam, then email us."' } },
+        { name: 'crossSellLine', type: 'text', label: 'Lead-in to the newsletter box', admin: { description: 'e.g. "While you\'re here:". Optional.' } },
+      ],
+    },
+    {
+      ...linkField({
+        name: 'crossSellLink',
+        label: 'Newsletter link (cross-sell only)',
+        description: 'Where the dark button goes. Leave empty to use the published Newsletter page. Button text: the link text here, else the "Button label" above, else "Join the newsletter".',
+      }),
+      admin: {
+        condition: (_, siblingData) => siblingData?.variant === 'cross-sell',
+        description: 'Where the dark button goes. Leave empty to use the published Newsletter page.',
+      },
     },
     {
       name: 'tone',

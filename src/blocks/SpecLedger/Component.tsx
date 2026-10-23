@@ -1,7 +1,7 @@
 import React from 'react'
 
 import type { BlockData } from '@/blocks/types'
-import { AccentHeadline, Container, Media, Section } from '@/components/ui'
+import { AccentHeadline, Container, Eyebrow, Media, Section } from '@/components/ui'
 import { cx } from '@/lib/cx'
 
 export type SpecLedgerData = BlockData<'specLedger'>
@@ -237,6 +237,56 @@ function SignalFlow({ items, hub }: { items: Item[]; hub: SpecLedgerData['hub'] 
   )
 }
 
+/* ------------------------------- list ---------------------------------- */
+
+/** Phosphor "check" (bold), inline; the design uses `ph-bold ph-check`. */
+function CheckIcon() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 256 256" fill="currentColor" className="size-4 shrink-0 translate-y-[0.1em]">
+      <path d="M232.49 80.49l-128 128a12 12 0 0 1-17 0l-56-56a12 12 0 1 1 17-17L96 183 215.51 63.51a12 12 0 0 1 17 17z" />
+    </svg>
+  )
+}
+
+/**
+ * p18 §What's inside (Lead Magnet.dc.html): 820 column on light grey, muted
+ * eyebrow, then check bullets (gap 14, 17px desktop / 16px mobile, leading 1.6).
+ * Zero items renders nothing at all (a caption over an empty list is noise).
+ */
+function ListVariant({ props, items }: { props: SpecLedgerData; items: Item[] }) {
+  const { eyebrow, heading, accentPhrase, pricingNote } = props
+  const grey = !props.tone || props.tone === 'auto' || props.tone === 'grey'
+  const Caption = hasText(heading) ? 'p' : 'h2'
+  return (
+    <Section tone={grey ? 'grey' : 'light'} pad="none" className="py-12 md:py-16">
+      <div className="mx-auto max-w-205 px-container-mobile md:px-container">
+        {hasText(heading) ? <AccentHeadline text={heading} accent={accentPhrase} level="section" className="mb-5 md:mb-6" /> : null}
+        {hasText(eyebrow) ? (
+          <Caption className="m-0">
+            <Eyebrow muted as="span" tick={Boolean(props.eyebrowTick)}>
+              {eyebrow}
+            </Eyebrow>
+          </Caption>
+        ) : null}
+        <ul
+          className={cx(
+            'm-0 flex list-none flex-col gap-3.5 p-0 text-[1rem] leading-[1.6] md:text-[1.0625rem]',
+            hasText(eyebrow) && 'mt-5 md:mt-6',
+          )}
+        >
+          {items.map((item, i) => (
+            <li key={item.id ?? i} className="flex items-baseline gap-3">
+              <CheckIcon />
+              <span>{item.title}</span>
+            </li>
+          ))}
+        </ul>
+        {hasText(pricingNote) ? <p className="m-0 mt-3.5 text-small text-gray-warm">{pricingNote}</p> : null}
+      </div>
+    </Section>
+  )
+}
+
 /* ------------------------------ block ---------------------------------- */
 
 /**
@@ -250,10 +300,11 @@ export function SpecLedgerBlock(props: SpecLedgerData) {
   const layout = props.cardLayout ?? 'anatomy'
   const items = (props.items ?? []).filter((it) => hasText(it?.title))
 
-  if (variant !== 'cards' && variant !== 'expandable' && variant !== 'signal-flow') {
+  if (variant !== 'cards' && variant !== 'expandable' && variant !== 'signal-flow' && variant !== 'list') {
     console.error(`[SpecLedger] unknown variant "${String(variant)}"; rendering nothing.`)
     return null
   }
+  if (variant === 'list') return items.length === 0 ? null : <ListVariant props={props} items={items} />
   if (items.length === 0 && !hasText(heading) && !hasText(eyebrow)) return null
 
   const defaultTone = variant === 'expandable' || (variant === 'cards' && layout === 'feature') ? 'light' : 'grey'

@@ -7,18 +7,31 @@ import { AccentHeadline, ButtonLink, Container, DotMatrix, Eyebrow, Section } fr
 import { cx } from '@/lib/cx'
 
 import { ArticleHero } from './ArticleHero'
+import { FormCardHero } from './FormCardHero'
+import { HeroInlineForm, resolveHeroForm, type HeroFormSlot } from './HeroForm'
 import { LOGO_MASK } from './logoMask'
 import { ServiceHero } from './ServiceHero'
+import { VslHero } from './VslHero'
 
 /**
  * Hero (SCHEMA §8.1 item 1). Picks the layout by `variant`; every variant
- * renders exactly one h1. Server component: no interactivity.
+ * renders exactly one h1. Server component; the only client islands are the
+ * shared VideoFacade (`vsl`) and the shared form (`showForm`).
+ *
+ * `leadMagnetId` is not a block field: the lead-magnet template (p18) passes
+ * it so the capture form's submission is tied to its asset (PayloadForm).
  */
-export async function HeroBlock(props: BlockData<'hero'>) {
+export async function HeroBlock({ leadMagnetId, ...props }: BlockData<'hero'> & { leadMagnetId?: number }) {
   if (props.variant === 'service') return <ServiceHero {...props} />
   if (props.variant === 'article') return <ArticleHero {...props} />
+  if (props.variant === 'vsl') return <VslHero {...props} />
   const rating = props.showAggregateRating ? await loadAggregateRating() : null
-  return <TypographicHero {...props} rating={rating} />
+  const slot = props.showForm ? await resolveHeroForm(props.form, leadMagnetId) : null
+  if (slot && props.formStyle !== 'inline') {
+    const ratingText = rating ? `${rating.average} avg · ${rating.count} ${rating.count === 1 ? 'rating' : 'ratings'}` : ''
+    return <FormCardHero {...props} slot={slot} ratingText={ratingText} />
+  }
+  return <TypographicHero {...props} rating={rating} slot={slot} />
 }
 
 type AggregateRating = { average: string; count: number }
@@ -75,8 +88,13 @@ function TypographicHero({
   callouts,
   rating,
   showAggregateRating,
-}: BlockData<'hero'> & { rating?: AggregateRating | null }) {
+  slot,
+  submitLabel,
+  formNote,
+}: BlockData<'hero'> & { rating?: AggregateRating | null; slot?: HeroFormSlot | null }) {
   const compact = size === 'compact'
+  // Inline form slot (Lead Magnet.dc.html "Capture state"): compact geometry with the capture section's own padding and h1 size.
+  const capture = Boolean(slot)
   const badgeText = badge?.show !== false ? badge?.text?.trim() : ''
   const paragraph = [body?.trim(), pricingNote?.trim()].filter(Boolean).join(' ')
   const buttons = (ctas ?? []).slice(0, 2)
@@ -96,8 +114,10 @@ function TypographicHero({
           as="h1"
           className={
             compact
-              ? // Testimonials/Book/Thank You/FAQ/Contact.dc.html: 2.25rem on mobile, no width cap
-                'mt-4 md:mt-5 max-md:!text-[2.25rem]'
+              ? capture
+                ? 'mt-4 break-words md:mt-5 max-md:!text-[2rem] max-md:!leading-[1.05]'
+                : // Testimonials/Book/Thank You/FAQ/Contact.dc.html: 2.25rem on mobile, no width cap
+                  'mt-4 md:mt-5 max-md:!text-[2.25rem]'
               : 'mt-4.5 md:mt-5.5 md:max-w-[20ch] md:max-lg:!text-h1-mobile'
           }
         />
@@ -128,6 +148,7 @@ function TypographicHero({
             ))}
           </div>
         ) : null}
+        {slot ? <HeroInlineForm slot={slot} submitLabel={submitLabel} formNote={formNote} /> : null}
         {verticalMicrocopy ? (
           <span aria-hidden="true" className="mt-3 block text-[11px] font-bold uppercase tracking-[0.2em] text-gray-warm lg:hidden">
             {verticalMicrocopy}
@@ -195,7 +216,7 @@ function TypographicHero({
         </span>
       ) : null}
       {/* p7 Testimonials.dc.html: hero shares the feed's full container (1200px). It is the only compact hero with the rating flag; p9-p12 stay on the 820px column. */}
-      <Wrap compact={compact} narrow={compact && (width ? width === 'narrow' : !figures.length && !showAggregateRating)}>
+      <Wrap compact={compact} capture={capture} narrow={compact && (width ? width === 'narrow' : !figures.length && !showAggregateRating)}>
         {figures.length ? (
           <div className="lg:grid lg:grid-cols-[1fr_320px] lg:items-end lg:gap-14">
             <div>{copy}</div>
@@ -243,12 +264,15 @@ function TypographicHero({
 }
 
 /** Hero content column. Default = the site Container; compact (80/56 desktop, 48/36 mobile) is the 820px column of the sub-page heroes. */
-function Wrap({ compact, narrow, children }: { compact: boolean; narrow: boolean; children: React.ReactNode }) {
+function Wrap({ compact, capture, narrow, children }: { compact: boolean; capture: boolean; narrow: boolean; children: React.ReactNode }) {
   if (!compact) return <Container className="relative z-10 pt-14 pb-12 md:pt-26 md:pb-24">{children}</Container>
   return (
     <div
       className={cx(
-        'relative z-10 mx-auto w-full px-container-mobile pt-12 pb-9 md:px-container md:pt-20 md:pb-14',
+        capture
+          ? // Lead Magnet.dc.html capture section: 48px / 80px top and bottom
+            'relative z-10 mx-auto w-full px-container-mobile pt-12 pb-12 md:px-container md:pt-20 md:pb-20'
+          : 'relative z-10 mx-auto w-full px-container-mobile pt-12 pb-9 md:px-container md:pt-20 md:pb-14',
         narrow ? 'max-w-205' : 'max-w-site',
       )}
     >

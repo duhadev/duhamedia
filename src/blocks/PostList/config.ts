@@ -65,6 +65,7 @@ export const PostList: Block = {
         { name: 'newBadge', type: 'text', defaultValue: 'New', admin: { description: 'The badge on the featured card.' } },
         { name: 'previouslyLabel', type: 'text', defaultValue: 'Previously' },
         { name: 'countSuffix', type: 'text', defaultValue: 'issues', admin: { description: 'After the count, e.g. "11 issues".' } },
+        { name: 'countSuffixSingular', type: 'text', defaultValue: 'issue', admin: { description: 'After the count when there is exactly one, e.g. "1 issue".' } },
         { name: 'readLabel', type: 'text', defaultValue: 'Read issue', admin: { description: 'Button on the featured card (the issue number is added: "Read issue 012").' } },
         { name: 'issueWord', type: 'text', defaultValue: 'Issue', admin: { description: 'Printed with the number: "Issue 012" / "ISSUE 011".' } },
       ],

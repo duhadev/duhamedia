@@ -16,8 +16,7 @@ const rowOnly = (f: Field): Field => ({ ...f, admin: { ...(f as { admin?: object
 
 /**
  * TestimonialRow block (SCHEMA §8.2 item 9). `row` = homepage §Testimonials;
- * `client-voice` = p2 §Client voice (S4-10). `leadMetric` (p16) is deliberately omitted until
- * the Newsletter page builds it.
+ * `client-voice` = p2 §Client voice (S4-10). `leadMetric` (p16 Social proof) and `ctaStyle` (p15) added in S6-7.
  *
  * `fallbackMetric` reuses the `metricFields()` shape with `required: false`:
  * the whole fallback is optional (R3: with nothing set, the row reflows to
@@ -132,6 +131,27 @@ export const TestimonialRow: Block = {
         description: 'Optional, e.g. "All studies". Leave empty to hide.',
       }),
     ),
+    {
+      name: 'ctaStyle',
+      type: 'select',
+      defaultValue: 'link',
+      options: [
+        { label: 'Underlined text link', value: 'link' },
+        { label: 'Primary button, below the row (campaign pages)', value: 'button' },
+      ],
+      admin: { description: 'How the link above is shown. Button = the primary call-to-action under the whole row.', condition: isRow },
+    },
+    {
+      name: 'leadMetric',
+      type: 'group',
+      label: 'Lead figure beside the quote',
+      admin: {
+        description:
+          'Optional. A big figure tile (e.g. subscriber count) placed beside the testimonial(s). When set, the "A study in full" card is not shown. Needs both a number and a label. Only enter a real, approved figure.',
+        condition: isRow,
+      },
+      fields: metricFields({ required: false }),
+    },
     // ---- client-voice variant (p2 case-study template). `clientVoice` mirrors `case-studies.clientVoice`
     // field-for-field so the template can pass the study's group straight through.
     {

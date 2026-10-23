@@ -1,5 +1,5 @@
-import type { Block } from 'payload'
 
+import type { Block, TextFieldSingleValidation } from 'payload'
 import { text } from 'payload/shared'
 
 import { linkField } from '../../fields'
@@ -29,13 +29,13 @@ export const MiniCTAStrip: Block = {
       name: 'text',
       type: 'text',
       // Required for band and inline only; the button variant's line is optional (so not `required: true`).
-      validate: (value, options) => {
+      validate: ((value, options) => {
         const base = text(value, options)
         if (base !== true) return base
         const variant = (options.siblingData as { variant?: string } | undefined)?.variant
         if (variant === 'button') return true
         return typeof value === 'string' && value.trim() ? true : 'Add the one-line statement.'
-      },
+      }) satisfies TextFieldSingleValidation,
       admin: { description: 'The one-line statement on the strip. Band: e.g. "One team. One dashboard. A handover date." (shown in capitals). Inline: the lead-in before the link, e.g. "Have a quick question first?" (shown as written). Button: optional short line above the button (shown as written); leave empty for the button alone.' },
     },
     linkField({

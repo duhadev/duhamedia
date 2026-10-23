@@ -205,14 +205,18 @@ export function TestimonialRowView({
   testimonials,
   studyCard,
   cta,
+  ctaStyle,
+  leadMetric,
   featuredStudy = null,
 }: TestimonialRowProps & { featuredStudy?: CaseStudy | null }) {
   const cards = (testimonials ?? []).flatMap((t) => {
     if (!t || typeof t !== 'object') return []
     return t._status === undefined || t._status === 'published' ? [t] : []
   })
-  const study = resolveStudy(studyCard, featuredStudy)
-  if (cards.length === 0 && !study) return null
+  const lead = leadMetric?.value?.trim() && leadMetric?.label?.trim() ? leadMetric : null
+  // leadMetric layout (p16 Social proof): metric tile + quote(s); the "A study in full" card is not part of it.
+  const study = lead ? null : resolveStudy(studyCard, featuredStudy)
+  if (cards.length === 0 && !study && !lead) return null
 
   const showCta = Boolean(resolveLinkHref(cta) && cta?.label?.trim())
   const twoCol = cards.length > 0 && study !== null
@@ -225,11 +229,47 @@ export function TestimonialRowView({
     </span>
   ) : null
 
-  const ctaEl = showCta ? (
+  const asButton = showCta && ctaStyle === 'button'
+  const buttonEl = asButton ? (
+    <div className="mt-6 grid md:mt-8 md:flex">
+      <ButtonLink link={cta} variant="primary" size="md" />
+    </div>
+  ) : null
+
+  const ctaEl = showCta && !asButton ? (
     <CMSLink link={cta} className={UNDERLINE_LINK}>
       <UnderlineText>{cta?.label} →</UnderlineText>
     </CMSLink>
   ) : null
+
+  if (lead) {
+    return (
+      <Section tone="light" pad="none" className="py-12 md:pt-20 md:pb-24">
+        <Container>
+          {heading ? <AccentHeadline text={heading} accent={accentPhrase} level={2} className="mb-6 md:mb-10" /> : null}
+          <div className={cx('grid items-stretch gap-6 md:gap-8', cards.length > 0 && 'md:grid-cols-[1fr_2fr]')}>
+            <div className="flex flex-col justify-center gap-1.5 md:bg-gray-light md:p-8">
+              <span className={NUMBER}>{lead.value}</span>
+              <span className="text-[12px] font-bold uppercase tracking-[0.1em]">{lead.label}</span>
+              {lead.sub?.trim() ? <span className="mt-1.5 text-[0.8125rem] leading-normal text-gray-warm">{lead.sub}</span> : null}
+            </div>
+            {cards.length > 0 ? (
+              <div className="flex flex-col gap-3.5 md:gap-5">
+                {eyebrowEl}
+                <div className="grid gap-4 md:gap-5">
+                  {cards.map((t) => (
+                    <TestimonialCard key={t.id} t={t} />
+                  ))}
+                </div>
+                {ctaEl}
+              </div>
+            ) : null}
+          </div>
+          {buttonEl}
+        </Container>
+      </Section>
+    )
+  }
 
   return (
     <Section tone="light" divider="top" className="max-md:pt-11 max-md:pb-12">
@@ -257,6 +297,7 @@ export function TestimonialRowView({
             </div>
           ) : null}
         </div>
+        {buttonEl}
       </Container>
     </Section>
   )

@@ -5,19 +5,22 @@ import { rowLabel } from '../../components/admin/rowLabel'
 
 /**
  * SpecLedger block (SCHEMA §8.3 item 14, new, X7): a coded deliverable ledger.
- * This unit ships three variants (`list`, template p18, is added later):
+ * Four variants:
  * - `cards`       p5 §Template anatomy (T-01…T-04, mockup image per card) and
  *                 p6 §Camera work (two image cards); `cardLayout` picks which.
  * - `expandable`  p5 §Specification (D-01…D-07), p6 §Channel specification
  *                 (E-01…E-06): native <details> rows with a "+" marker.
  * - `signal-flow` p6 §Signal flow: the coded tiles converge on a hub card
  *                 ("Everything reports here" + dashboard image).
+ * - `list`        p18 §What's inside: a narrow column of check bullets
+ *                 (`items[].title` only; the lead-magnet template fills it
+ *                 from the lead magnet's value bullets).
  *
  * Conditions read the parent block's `variant` from `blockData` (verified:
  * payload@3.91.0 fields/config/types.d.ts `Condition`, third argument).
  */
 
-type Variant = 'cards' | 'expandable' | 'signal-flow'
+type Variant = 'cards' | 'expandable' | 'signal-flow' | 'list'
 type BlockDataArg = { blockData?: { variant?: string } }
 
 const variantIs =
@@ -44,6 +47,7 @@ export const SpecLedger: Block = {
         { label: 'Cards (framed cards with a picture each)', value: 'cards' },
         { label: 'Expandable rows (coded rows that open: what we do / how you will know)', value: 'expandable' },
         { label: 'Signal flow (coded tiles feeding into one dashboard card)', value: 'signal-flow' },
+        { label: 'Check list (a short column of ticked bullets, e.g. "What\'s inside")', value: 'list' },
       ],
       admin: { description: 'Which layout to use.' },
     },
@@ -116,7 +120,7 @@ export const SpecLedger: Block = {
               name: 'title',
               type: 'text',
               required: true,
-              admin: { width: '75%', description: 'The item name, e.g. "Conversion build". Shown in capitals.' },
+              admin: { width: '75%', description: 'The item name, e.g. "Conversion build". Shown in capitals. In the check list it is the bullet sentence, shown as written.' },
             },
           ],
         },
