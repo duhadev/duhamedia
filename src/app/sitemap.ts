@@ -21,7 +21,10 @@ import { NOT_FOUND_SLUG, pagePath } from '@/lib/pagePath'
  *   no published doc, is not listed (F65 B3). `/_showcase`
  *   and `/_preview` are not pages and never appear.
  * - PUBLISHED `case-studies` at `/work/<slug>` (S4-12), after the pages, newest
- *   first. posts / lead-magnets join when their template routes land.
+ *   first.
+ * - PUBLISHED `posts` (S6-T1) after the studies, newest first: articles at
+ *   `/insights/<slug>`, newsletter issues at `/newsletter/<slug>` (`docPath`).
+ *   lead-magnets never join: they are always noindex (SEO-hidden), so there is no entry to add.
  * - A DB failure is a 500 (crawlers retry), never a silently empty sitemap.
  */
 export const dynamic = 'force-dynamic'
@@ -56,6 +59,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     sort: '-publishedAt',
     select: { slug: true, updatedAt: true },
   })
+  const { docs: posts } = await payload.find({
+    collection: 'posts',
+    where: { _status: { equals: 'published' } },
+    depth: 0,
+    draft: false,
+    overrideAccess: false,
+    pagination: false,
+    limit: 0,
+    sort: '-publishedAt',
+    select: { slug: true, track: true, updatedAt: true },
+  })
   const pageEntries = docs.flatMap((doc) => {
     if (doc.noindex === true || doc.zeroLeakage === true) return []
     const path = pagePath(doc.slug)
@@ -65,5 +79,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const path = docPath('case-studies', doc)
     return path ? [{ url: absoluteUrl(path), lastModified: doc.updatedAt }] : []
   })
-  return [...pageEntries, ...studyEntries]
+  const postEntries = posts.flatMap((doc) => {
+    const path = docPath('posts', doc)
+    return path ? [{ url: absoluteUrl(path), lastModified: doc.updatedAt }] : []
+  })
+  return [...pageEntries, ...studyEntries, ...postEntries]
 }

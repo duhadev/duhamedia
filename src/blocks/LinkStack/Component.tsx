@@ -2,6 +2,7 @@ import config from '@payload-config'
 import { getPayload } from 'payload'
 import React, { useId } from 'react'
 
+import type { BlockData } from '@/blocks/types'
 import { SiteLogo } from '@/components/chrome/SiteLogo'
 import { CMSLink, resolveLinkHref, type CMSLinkData } from '@/components/ui'
 import { cx } from '@/lib/cx'
@@ -9,30 +10,13 @@ import { docPath } from '@/lib/docPath'
 import { fillScarcityTokens } from '@/lib/scarcity'
 import type { CaseStudy, Scarcity, SiteSetting } from '@/payload-types'
 
-import type { LinkStackIcon } from './config'
 
 /* -------------------------------------------------------------------------- */
 /* Props                                                                       */
 /* -------------------------------------------------------------------------- */
 
-/**
- * Local mirror of the `linkStack` row (config.ts), until the integrator
- * registers the block and `BlockData<'linkStack'>` resolves. Field for field
- * the same shape the generated `LinkStackBlock` will have.
- */
-export type LinkStackData = {
-  blockType?: 'linkStack'
-  id?: string | null
-  blockName?: string | null
-  identity: { showStudyMetric?: boolean | null; fallbackLine: string }
-  primary: { link: CMSLinkData; capacity?: string | null }
-  showSocials?: boolean | null
-  followLabel?: string | null
-  siteLabel?: string | null
-  links?: { id?: string | null; icon: LinkStackIcon; link: CMSLinkData }[] | null
-  latestCaseStudy?: boolean | null
-  latestCaseStudyLabel?: string | null
-  currentPush?: { show?: boolean | null; icon?: LinkStackIcon | null; link?: CMSLinkData | null } | null
+/** The generated `linkStack` row type (src/payload-types.ts `LinkStackBlock`), plus one showcase-only prop. */
+export type LinkStackData = BlockData<'linkStack'> & {
   /**
    * SHOWCASE ONLY (not a field, never stored): a static, PUBLISHED fixture
    * study standing in for "the latest published case study" so /_showcase can

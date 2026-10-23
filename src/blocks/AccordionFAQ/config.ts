@@ -3,6 +3,7 @@ import { text } from 'payload/shared'
 
 import { Faqs } from '../../collections/Faqs'
 import { eyebrowField, linkField } from '../../fields'
+import { isReservedAnchorId, RESERVED_ANCHOR_IDS } from '../../lib/anchors'
 
 /**
  * The four category options come from the `faqs` collection itself, so the
@@ -11,12 +12,8 @@ import { eyebrowField, linkField } from '../../fields'
 const categoryField = Faqs.fields.find((f): f is Extract<Field, { type: 'select' }> => 'name' in f && f.name === 'category')
 const categoryOptions = categoryField?.options ?? []
 
-/**
- * Ids the site itself renders (skip-link target `#main` in PageShell, Next's
- * root container, the map's SVG patterns, `dc-water-*`). An anchor with one of these would
- * produce a duplicate DOM id.
- */
-export const RESERVED_ANCHOR_IDS = ['main', '__next', 'dc-water'] as const
+/** Re-exported from its new home (src/lib/anchors.ts) so existing imports keep working. */
+export { RESERVED_ANCHOR_IDS }
 
 /**
  * Lowercase slug (a-z, 0-9, single hyphens), not reserved, and unique among the
@@ -42,7 +39,7 @@ const checkAnchorId = (value: string | null | undefined, options: Parameters<Tex
   if (base !== true) return base
   if (typeof value !== 'string' || value.trim() === '') return true
   if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(value)) return 'Use lowercase letters, numbers and single hyphens only, e.g. "pricing".'
-  if ((RESERVED_ANCHOR_IDS as readonly string[]).some((r) => value === r || value.startsWith(`${r}-`))) {
+  if (isReservedAnchorId(value)) {
     return `"${value}" is used by the site itself. Pick a different anchor, e.g. "pricing" or "builds".`
   }
   // path is ['layout', 2, 'anchorId'] in the admin and ['layout', '2', 'anchorId'] on the server.

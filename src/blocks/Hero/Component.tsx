@@ -108,14 +108,14 @@ function TypographicHero({
     <>
         {eyebrowText ? <Eyebrow tick={eyebrowTick !== false}>{ratingText ? eyebrowText : eyebrow}</Eyebrow> : null}
         <AccentHeadline
-          text={heading}
-          accent={accentPhrase}
+          text={capture ? slashBreaks(heading) : heading}
+          accent={capture && accentPhrase ? slashBreaks(accentPhrase) : accentPhrase}
           level={1}
           as="h1"
           className={
             compact
               ? capture
-                ? 'mt-4 break-words md:mt-5 max-md:!text-[2rem] max-md:!leading-[1.05]'
+                ? 'mt-4 md:mt-5 max-md:!text-[2rem] max-md:!leading-[1.05]'
                 : // Testimonials/Book/Thank You/FAQ/Contact.dc.html: 2.25rem on mobile, no width cap
                   'mt-4 md:mt-5 max-md:!text-[2.25rem]'
               : 'mt-4.5 md:mt-5.5 md:max-w-[20ch] md:max-lg:!text-h1-mobile'
@@ -198,8 +198,11 @@ function TypographicHero({
           style={LOGO_MASK}
           className={
             compact
-              ? // Testimonials.dc.html: 340px, right -160 top -80 (mobile 220px, -110 / -50)
-                'pointer-events-none absolute -right-27.5 -top-12.5 z-0 size-55 bg-ground-accent md:-right-40 md:-top-20 md:size-85'
+              ? // Testimonials.dc.html: 340px, right -160 top -80 (mobile 220px, -110 / -50).
+                // Capture form (p18): lifted on phones so only the top-right cap shows, never under the heading.
+                capture
+                ? 'pointer-events-none absolute -right-27.5 -top-37.5 z-0 size-55 bg-ground-accent md:-right-40 md:-top-20 md:size-85'
+                : 'pointer-events-none absolute -right-27.5 -top-12.5 z-0 size-55 bg-ground-accent md:-right-40 md:-top-20 md:size-85'
               : figures.length
               ? // stats sit in the right column on desktop: park the shape in the corner (Work.dc.html: 300px, right -140, top -60)
                 'pointer-events-none absolute -right-20 top-22.5 z-0 size-70 bg-ground-accent lg:-right-35 lg:-top-15 lg:size-75'
@@ -261,6 +264,11 @@ function TypographicHero({
       </div>
     </>
   )
+}
+
+/** Lets a long "A/B" token wrap at the slash (zero-width space) without ever splitting a word mid-letter. */
+function slashBreaks(text: string): string {
+  return text.replace(/\//g, '/\u200B')
 }
 
 /** Hero content column. Default = the site Container; compact (80/56 desktop, 48/36 mobile) is the 820px column of the sub-page heroes. */

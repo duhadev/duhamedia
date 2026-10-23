@@ -5,13 +5,17 @@ import { BookingEmbedBlock } from './BookingEmbed/Component'
 import { CaseStudyCardsBlock } from './CaseStudyCards/Component'
 import { CategoryTabsBlock } from './CategoryTabs/Component'
 import { DirectContactBlock } from './DirectContact/Component'
+import { Error404Block } from './Error404/Component'
 import { FinalCTABlock } from './FinalCTA/Component'
 import { FormEmbedBlock } from './FormEmbed/Component'
 import { HeroBlock } from './Hero/Component'
+import { LinkStackBlock } from './LinkStack/Component'
 import { MetricEventBlock } from './MetricEvent/Component'
 import { MiniCTAStripBlock } from './MiniCTAStrip/Component'
 import { NewsletterBandBlock } from './NewsletterBand/Component'
+import { OfferBlockBlock } from './OfferBlock/Component'
 import { PhaseTimelineBlock } from './PhaseTimeline/Component'
+import { PostListBlock } from './PostList/Component'
 import { ProofStripBlock } from './ProofStrip/Component'
 import { ReviewWallBlock } from './ReviewWall/Component'
 import { RichContentBlock } from './RichContent/Component'
@@ -40,6 +44,7 @@ export const blockComponents: BlockComponents = {
   hero: HeroBlock,
   miniCTAStrip: MiniCTAStripBlock,
   finalCTA: FinalCTABlock,
+  offerBlock: OfferBlockBlock,
   proofStrip: ProofStripBlock,
   caseStudyCards: CaseStudyCardsBlock,
   metricEvent: MetricEventBlock,
@@ -56,4 +61,7 @@ export const blockComponents: BlockComponents = {
   directContact: DirectContactBlock,
   accordionFAQ: AccordionFAQBlock,
   categoryTabs: CategoryTabsBlock,
+  linkStack: LinkStackBlock,
+  postList: PostListBlock,
+  error404: Error404Block,
 }

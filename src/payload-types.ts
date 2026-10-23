@@ -210,6 +210,7 @@ export interface Page {
     | HeroBlock
     | MiniCTAStripBlock
     | FinalCTABlock
+    | OfferBlockBlock
     | ProofStripBlock
     | CaseStudyCardsBlock
     | MetricEventBlock
@@ -226,6 +227,9 @@ export interface Page {
     | DirectContactBlock
     | AccordionFAQBlock
     | CategoryTabsBlock
+    | LinkStackBlock
+    | PostListBlock
+    | Error404Block
   )[];
   meta?: SeoMeta;
   /**
@@ -1764,6 +1768,82 @@ export interface FinalCTABlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'finalCTA';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "OfferBlockBlock".
+ */
+export interface OfferBlockBlock {
+  /**
+   * Small uppercase line above the headline, e.g. "The offer".
+   */
+  eyebrow?: string | null;
+  /**
+   * The small wine diamond before the eyebrow.
+   */
+  eyebrowTick?: boolean | null;
+  /**
+   * The promise, stated as scope (what the prospect gets), not hype.
+   */
+  heading: string;
+  /**
+   * Optional: one word or phrase copied from the headline to show in the accent colour.
+   */
+  accentPhrase?: string | null;
+  /**
+   * What the prospect gets, in deliverable terms, with the number first. No countdown timers or fake deadlines. Never put a price here; prices belong in a small inline note elsewhere.
+   */
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * The button text and where it goes, e.g. "Book a Call". The only call to action in this block.
+   */
+  cta: {
+    type: 'internal' | 'custom';
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'case-studies';
+          value: number | CaseStudy;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null)
+      | ({
+          relationTo: 'lead-magnets';
+          value: number | LeadMagnet;
+        } | null);
+    /**
+     * https://…, mailto:…, or a site path like /book-a-call.
+     */
+    url?: string | null;
+    label?: string | null;
+  };
+  /**
+   * The capacity statement beside the button: a big line with its reason quietly beneath. Numbers and wording are edited once, in "Capacity & scarcity". Choose "None" to hide it.
+   */
+  capacity?: ('none' | 'ongoing' | 'capacity' | 'builds-line' | 'engines-line' | 'slots-line' | 'offer-line') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'offerBlock';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -3501,6 +3581,305 @@ export interface CategoryTabsBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LinkStackBlock".
+ */
+export interface LinkStackBlock {
+  /**
+   * The grey strip with the logo. It shows the headline result of the most recently published case study; while none is published, it shows the fallback line instead.
+   */
+  identity: {
+    /**
+     * The big number (e.g. "+212%") is taken from the newest published case study. It is never typed here. Untick to always show the fallback line.
+     */
+    showStudyMetric?: boolean | null;
+    /**
+     * Shown instead of the result while no case study is published (or when the box above is unticked). A short positioning line, never a made-up number.
+     */
+    fallbackLine: string;
+  };
+  /**
+   * The big dark button at the top: the one thing most visitors should do.
+   */
+  primary: {
+    link: {
+      type: 'internal' | 'custom';
+      newTab?: boolean | null;
+      reference?:
+        | ({
+            relationTo: 'pages';
+            value: number | Page;
+          } | null)
+        | ({
+            relationTo: 'case-studies';
+            value: number | CaseStudy;
+          } | null)
+        | ({
+            relationTo: 'posts';
+            value: number | Post;
+          } | null)
+        | ({
+            relationTo: 'lead-magnets';
+            value: number | LeadMagnet;
+          } | null);
+      /**
+       * https://…, mailto:…, or a site path like /book-a-call.
+       */
+      url?: string | null;
+      label?: string | null;
+    };
+    /**
+     * Shown under the button: the statement in large type with its reason quietly beneath. Numbers and wording are edited once, in "Capacity & scarcity". Choose "None" to hide it.
+     */
+    capacity?: ('none' | 'ongoing' | 'capacity' | 'builds-line' | 'engines-line' | 'slots-line' | 'offer-line') | null;
+  };
+  /**
+   * Profiles come from Site settings > Brand & contact > Social profiles, in that order.
+   */
+  showSocials?: boolean | null;
+  /**
+   * Small uppercase label above the social profiles.
+   */
+  followLabel?: string | null;
+  /**
+   * Small uppercase label above the links below.
+   */
+  siteLabel?: string | null;
+  /**
+   * e.g. The work, Clients, Newsletter. Drag to reorder.
+   */
+  links?:
+    | {
+        /**
+         * The small wine icon at the start of the row.
+         */
+        icon: 'chart-line-up' | 'quotes' | 'envelope-simple' | 'file-text' | 'arrow-right';
+        link: {
+          type: 'internal' | 'custom';
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'case-studies';
+                value: number | CaseStudy;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null)
+            | ({
+                relationTo: 'lead-magnets';
+                value: number | LeadMagnet;
+              } | null);
+          /**
+           * https://…, mailto:…, or a site path like /book-a-call.
+           */
+          url?: string | null;
+          label?: string | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Links to the newest published case study, after the links above. Hidden while none is published.
+   */
+  latestCaseStudy?: boolean | null;
+  latestCaseStudyLabel?: string | null;
+  /**
+   * One extra link for whatever you are promoting right now (a guide, a campaign). Shown last.
+   */
+  currentPush?: {
+    show?: boolean | null;
+    /**
+     * The small wine icon at the start of the row.
+     */
+    icon?: ('chart-line-up' | 'quotes' | 'envelope-simple' | 'file-text' | 'arrow-right') | null;
+    link?: {
+      type: 'internal' | 'custom';
+      newTab?: boolean | null;
+      reference?:
+        | ({
+            relationTo: 'pages';
+            value: number | Page;
+          } | null)
+        | ({
+            relationTo: 'case-studies';
+            value: number | CaseStudy;
+          } | null)
+        | ({
+            relationTo: 'posts';
+            value: number | Post;
+          } | null)
+        | ({
+            relationTo: 'lead-magnets';
+            value: number | LeadMagnet;
+          } | null);
+      /**
+       * https://…, mailto:…, or a site path like /book-a-call.
+       */
+      url?: string | null;
+      label?: string | null;
+    };
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'linkStack';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PostListBlock".
+ */
+export interface PostListBlock {
+  /**
+   * Small line above the list, e.g. "Recent issues".
+   */
+  eyebrow?: string | null;
+  /**
+   * The small wine diamond before the eyebrow.
+   */
+  eyebrowTick?: boolean | null;
+  /**
+   * Which kind of post to list. Only published posts ever appear.
+   */
+  track: 'newsletter-issue' | 'dev-seo' | 'mkt-seo';
+  /**
+   * Show the newest post as a large card with the "New" badge; the rest go under "Previously".
+   */
+  featureLatest?: boolean | null;
+  /**
+   * Most posts shown, including the featured one (1 to 12).
+   */
+  limit?: number | null;
+  /**
+   * Optional, e.g. "Full archive →". Leave empty to hide it.
+   */
+  archiveLink: {
+    type: 'internal' | 'custom';
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'case-studies';
+          value: number | CaseStudy;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null)
+      | ({
+          relationTo: 'lead-magnets';
+          value: number | LeadMagnet;
+        } | null);
+    /**
+     * https://…, mailto:…, or a site path like /book-a-call.
+     */
+    url?: string | null;
+    label?: string | null;
+  };
+  /**
+   * The small fixed words in the list. Defaults match the design.
+   */
+  labels?: {
+    /**
+     * Before the issue number on the featured card, e.g. "Latest — Issue 012".
+     */
+    latestLabel?: string | null;
+    /**
+     * The badge on the featured card.
+     */
+    newBadge?: string | null;
+    previouslyLabel?: string | null;
+    /**
+     * After the count, e.g. "11 issues".
+     */
+    countSuffix?: string | null;
+    /**
+     * After the count when there is exactly one, e.g. "1 issue".
+     */
+    countSuffixSingular?: string | null;
+    /**
+     * Button on the featured card (the issue number is added: "Read issue 012").
+     */
+    readLabel?: string | null;
+    /**
+     * Printed with the number: "Issue 012" / "ISSUE 011".
+     */
+    issueWord?: string | null;
+  };
+  /**
+   * Shown while no post of this kind is published. State what readers get, never "coming soon".
+   */
+  emptyHeading: string;
+  /**
+   * The line under the empty-state heading.
+   */
+  emptyBody?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'postList';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Error404Block".
+ */
+export interface Error404Block {
+  /**
+   * The huge number. Decorative only (hidden from screen readers). Leave empty to hide it.
+   */
+  code?: string | null;
+  /**
+   * The first sentence. This is the page title that search engines and screen readers see.
+   */
+  heading: string;
+  /**
+   * The sentence that follows the heading, on the same line.
+   */
+  body?: string | null;
+  /**
+   * One to three buttons. The first is the main (dark) button, the others are outlined. Drag to reorder.
+   */
+  links?:
+    | {
+        link: {
+          type: 'internal' | 'custom';
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'case-studies';
+                value: number | CaseStudy;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null)
+            | ({
+                relationTo: 'lead-magnets';
+                value: number | LeadMagnet;
+              } | null);
+          /**
+           * https://…, mailto:…, or a site path like /book-a-call.
+           */
+          url?: string | null;
+          label?: string | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'error404';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "form-submissions".
  */
 export interface FormSubmission {
@@ -3811,6 +4190,7 @@ export interface PagesSelect<T extends boolean = true> {
         hero?: T | HeroBlockSelect<T>;
         miniCTAStrip?: T | MiniCTAStripBlockSelect<T>;
         finalCTA?: T | FinalCTABlockSelect<T>;
+        offerBlock?: T | OfferBlockBlockSelect<T>;
         proofStrip?: T | ProofStripBlockSelect<T>;
         caseStudyCards?: T | CaseStudyCardsBlockSelect<T>;
         metricEvent?: T | MetricEventBlockSelect<T>;
@@ -3827,6 +4207,9 @@ export interface PagesSelect<T extends boolean = true> {
         directContact?: T | DirectContactBlockSelect<T>;
         accordionFAQ?: T | AccordionFAQBlockSelect<T>;
         categoryTabs?: T | CategoryTabsBlockSelect<T>;
+        linkStack?: T | LinkStackBlockSelect<T>;
+        postList?: T | PostListBlockSelect<T>;
+        error404?: T | Error404BlockSelect<T>;
       };
   meta?: T | SeoMetaSelect<T>;
   generateSlug?: T;
@@ -3984,6 +4367,29 @@ export interface FinalCTABlockSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "OfferBlockBlock_select".
+ */
+export interface OfferBlockBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  eyebrowTick?: T;
+  heading?: T;
+  accentPhrase?: T;
+  body?: T;
+  cta?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
+  capacity?: T;
   id?: T;
   blockName?: T;
 }
@@ -4622,6 +5028,129 @@ export interface AccordionFAQBlockSelect<T extends boolean = true> {
  */
 export interface CategoryTabsBlockSelect<T extends boolean = true> {
   ariaLabel?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LinkStackBlock_select".
+ */
+export interface LinkStackBlockSelect<T extends boolean = true> {
+  identity?:
+    | T
+    | {
+        showStudyMetric?: T;
+        fallbackLine?: T;
+      };
+  primary?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+        capacity?: T;
+      };
+  showSocials?: T;
+  followLabel?: T;
+  siteLabel?: T;
+  links?:
+    | T
+    | {
+        icon?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+        id?: T;
+      };
+  latestCaseStudy?: T;
+  latestCaseStudyLabel?: T;
+  currentPush?:
+    | T
+    | {
+        show?: T;
+        icon?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PostListBlock_select".
+ */
+export interface PostListBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  eyebrowTick?: T;
+  track?: T;
+  featureLatest?: T;
+  limit?: T;
+  archiveLink?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
+  labels?:
+    | T
+    | {
+        latestLabel?: T;
+        newBadge?: T;
+        previouslyLabel?: T;
+        countSuffix?: T;
+        countSuffixSingular?: T;
+        readLabel?: T;
+        issueWord?: T;
+      };
+  emptyHeading?: T;
+  emptyBody?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Error404Block_select".
+ */
+export interface Error404BlockSelect<T extends boolean = true> {
+  code?: T;
+  heading?: T;
+  body?: T;
+  links?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }

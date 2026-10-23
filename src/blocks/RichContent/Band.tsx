@@ -14,14 +14,18 @@ const LINK_CLASS = 'font-bold underline decoration-2 underline-offset-4 hover:te
 /**
  * Band prose: short paragraphs (DEV-SEO "DIY vs done": 1rem / 1.0625rem, lh 1.6).
  * The band's own heading is the section H2, so any heading in the text renders
- * as H3. Images and dividers belong to the article layout: skipped (logged).
+ * as H3 (H2 when the band has no title of its own). Images and dividers belong to the article layout: skipped (logged).
  */
-const bandConverters: JSXConvertersFunction = () => ({
-  heading: ({ node, nodesToJSX }) => (
-    <h3 className="font-display text-[1.125rem] font-normal uppercase leading-[1.2] [&:not(:first-child)]:mt-2">
-      {nodesToJSX({ nodes: node.children })}
-    </h3>
-  ),
+const bandConverters = (hasTitle: boolean): JSXConvertersFunction => () => ({
+  // With no band title the first in-text heading is the section's only heading: h2, else h3 under the band H2.
+  heading: ({ node, nodesToJSX }) => {
+    const Tag = hasTitle ? 'h3' : 'h2'
+    return (
+      <Tag className="font-display text-[1.125rem] font-normal uppercase leading-[1.2] [&:not(:first-child)]:mt-2">
+        {nodesToJSX({ nodes: node.children })}
+      </Tag>
+    )
+  },
   quote: ({ node, nodesToJSX }) => (
     <blockquote className="border-l-4 border-ground-accent py-1 pl-4 font-display text-[1.125rem] font-normal uppercase leading-[1.3] md:pl-5">
       {nodesToJSX({ nodes: node.children })}
@@ -34,11 +38,11 @@ const bandConverters: JSXConvertersFunction = () => ({
   horizontalrule: () => null,
 })
 
-function BandProse({ data, compact }: { data: RichContentProps['body']; compact: boolean }) {
+function BandProse({ data, compact, hasTitle }: { data: RichContentProps['body']; compact: boolean; hasTitle: boolean }) {
   return (
     <RichText
       data={data}
-      converters={bandConverters}
+      converters={bandConverters(hasTitle)}
       linkClassName={LINK_CLASS}
       className={cx(
         'flex flex-col gap-4',
@@ -136,7 +140,7 @@ export function RichContentBand({
       ) : null}
       {hasBody ? (
         <div className={cx(eyebrow?.trim() || title ? (boxed ? 'mt-2.5' : 'mt-4 md:mt-5') : undefined)}>
-          <BandProse data={body} compact={boxed} />
+          <BandProse data={body} compact={boxed} hasTitle={Boolean(title)} />
         </div>
       ) : null}
     </>

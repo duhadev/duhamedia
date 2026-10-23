@@ -13,7 +13,9 @@ import { blockDeleteIfReferenced, leadMagnetSubmissionsSentence } from '../hooks
 import { setPublishedAtOnPublish } from '../hooks/publishedAt'
 import { revalidateTagHooks } from '../hooks/revalidateTag'
 import { uniqueSlugHooks } from '../hooks/uniqueSlug'
+import { docPath } from '../lib/docPath'
 import { assetFileError, assetUrlError } from '../lib/leadMagnetAsset'
+import { PREVIEW_BREAKPOINTS, previewUrl } from '../lib/preview'
 
 /**
  * `lead-magnets` (SCHEMA.md §6.8, §4.3, §5, §10 — Gate S approved 2026-10-17).
@@ -41,9 +43,9 @@ import { assetFileError, assetUrlError } from '../lib/leadMagnetAsset'
  * `publishedAt`: SCHEMA §10 "publishedAt on first publish" (the hook needs the
  * field; it is sidebar-only and never overwrites an entered date).
  *
- * Deferred:
- * - TODO(P3): `meta` plugin-seo tab (plugin-seo `collections: ['lead-magnets']`).
- * - Live preview + draft mode with the `/resources/<slug>` route (integrator).
+ * SEO: the plugin-seo `meta` tab is added by src/plugins/seo.ts (SEO_COLLECTIONS);
+ * the route reads it (src/lib/leadMagnets.ts `leadMagnetMetadata`, always noindex).
+ * Preview: `/_preview?path=/resources/<slug>` (S6-T2).
  *
  * Verified against payload@3.91.0: `slugField({ overrides })`
  * (fields/baseFields/slug/index.d.ts), `defaultPopulate`, `access.readVersions`
@@ -120,6 +122,15 @@ export const LeadMagnets: CollectionConfig = {
     defaultColumns: ['title', 'slug', '_status', 'publishedAt', 'updatedAt'],
     description:
       'Free downloads (/resources/…): the page, what\'s inside, the file or link, and the delivery email. Pages are hidden from search engines.',
+    // S6-T2: draft preview (new tab) + live preview pane, as on pages / case
+    // studies: both open `/_preview?path=/resources/<slug>` (src/lib/preview.ts),
+    // which enables Next draft mode for staff only. No URL until the doc has a
+    // slug. payload@3.91.0 collections/config/types.d.ts `preview` / `livePreview`.
+    preview: (doc) => previewUrl(docPath('lead-magnets', { slug: typeof doc?.slug === 'string' ? doc.slug : null })),
+    livePreview: {
+      url: ({ data }) => previewUrl(docPath('lead-magnets', { slug: typeof data?.slug === 'string' ? data.slug : null })),
+      breakpoints: PREVIEW_BREAKPOINTS,
+    },
   },
   // Published first, newest first, then drafts (no nulls-last in @payloadcms/drizzle@3.91.0; see case-studies).
   defaultSort: ['-_status', '-publishedAt'],

@@ -2,7 +2,7 @@ import config from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
 
-import { ButtonLink, Container, Eyebrow, resolveLinkHref, Section } from '@/components/ui'
+import { ButtonLink, Eyebrow, resolveLinkHref, Section } from '@/components/ui'
 import { splitAccentPhrase } from '@/lib/accentPhrase'
 import { docPath } from '@/lib/docPath'
 import type { BlockData } from '@/blocks/types'
@@ -57,12 +57,13 @@ export async function NewsletterCrossSell({ delivered, heading, line, buttonLabe
   const link = linkOk && crossSellLink ? { ...crossSellLink, label } : href ? { type: 'custom' as const, url: href, label } : null
   const showBox = Boolean(boxTitle && link)
   const parts = splitAccentPhrase(title, delivered?.accentPhrase)
-  const lead = delivered?.crossSellLine?.trim()
+  const lead = showBox ? delivered?.crossSellLine?.trim() : undefined
 
   return (
     <Section tone="light" pad="none" className="py-14 md:py-24" aria-labelledby={DELIVERED_HEADING_ID}>
-      <Container>
-        <div className="mx-auto max-w-205">
+      {/* same 820px column + padding as the Lead Magnet capture hero (Wrap in Hero/Component.tsx), so both left edges line up */}
+      <div className="mx-auto w-full max-w-205 px-container-mobile md:px-container">
+        <div>
         {delivered?.eyebrow?.trim() ? <Eyebrow tick>{delivered.eyebrow}</Eyebrow> : null}
         <h2
           id={DELIVERED_HEADING_ID}
@@ -94,7 +95,7 @@ export async function NewsletterCrossSell({ delivered, heading, line, buttonLabe
           </div>
         ) : null}
         </div>
-      </Container>
+      </div>
     </Section>
   )
 }

@@ -1,4 +1,4 @@
-import { RESERVED_ANCHOR_IDS } from '../AccordionFAQ/config'
+import { isReservedAnchorId } from '@/lib/anchors'
 
 /** Minimal Lexical node shape the walker needs (text runs, links and headings all fit). */
 type LexNode = { type?: string; tag?: string; text?: string; children?: LexNode[] }
@@ -18,9 +18,6 @@ export const anchorSlug = (value: string): string =>
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
-
-const isReserved = (id: string): boolean =>
-  (RESERVED_ANCHOR_IDS as readonly string[]).some((r) => id === r || id.startsWith(`${r}-`))
 
 /**
  * The legal document's section anchors: one per top-level H2 (an H1 in the
@@ -42,7 +39,7 @@ export function legalAnchors(children: readonly unknown[] | undefined): LegalAnc
     const label = plainText(node).replace(/\s+/g, ' ').trim()
     if (!label) continue
     let base = anchorSlug(label) || 'section'
-    if (isReserved(base)) base = `section-${base}`
+    if (isReservedAnchorId(base)) base = `section-${base}`
     let id = base
     for (let n = 2; used.has(id); n++) id = `${base}-${n}`
     used.add(id)

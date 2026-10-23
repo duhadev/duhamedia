@@ -8,7 +8,11 @@ import { cx } from '@/lib/cx'
 import { legalAnchors, type LegalAnchor } from './anchors'
 import type { RichContentProps } from './Component'
 
-/** The wine logo silhouette (CSS mask of /logo-duha.png), as in Legal.dc.html (same idiom as Hero / FinalCTA). */
+/**
+ * The wine logo silhouette (CSS mask of /logo-duha.png), as in Legal.dc.html (same idiom as Hero / FinalCTA).
+ * The design's offsets (top -60 / -80) put it under the title; here it is lifted so only a corner peeks
+ * out above the title row and never sits under the title or body text.
+ */
 const LOGO_MASK: React.CSSProperties = {
   WebkitMaskImage: "url('/logo-duha.png')",
   maskImage: "url('/logo-duha.png')",
@@ -148,7 +152,7 @@ export function RichContentLegal({ eyebrow, heading, lastUpdated, lastUpdatedLab
       <div
         aria-hidden="true"
         style={LOGO_MASK}
-        className="pointer-events-none absolute -top-15 -right-30 z-0 size-60 bg-ground-accent lg:-top-20 lg:-right-40 lg:size-85"
+        className="pointer-events-none absolute -top-42.5 -right-30 z-0 size-60 bg-ground-accent lg:-top-50 lg:-right-40 lg:size-85"
       />
       <div
         className={cx(

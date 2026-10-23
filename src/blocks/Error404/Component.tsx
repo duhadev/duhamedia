@@ -1,7 +1,7 @@
 import React from 'react'
 
+import type { BlockData } from '@/blocks/types'
 import { ButtonLink, DotMatrix, Section } from '@/components/ui'
-import type { CMSLinkData } from '@/components/ui'
 
 import { ERROR404_DEFAULTS } from './config'
 
@@ -14,13 +14,11 @@ const LOGO_MASK: React.CSSProperties = {
   maskRepeat: 'no-repeat',
 }
 
-/** Local type matching the config exactly (swap for `BlockData<'error404'>` once registered). */
-export interface Error404Data {
-  code?: string | null
-  heading?: string | null
-  body?: string | null
-  links?: { id?: string | null; link: CMSLinkData }[] | null
-}
+/**
+ * The generated `error404` row type (src/payload-types.ts `Error404Block`), all keys optional:
+ * Error404View also renders with no document at all (not-found.tsx fallback).
+ */
+export type Error404Data = Partial<BlockData<'error404'>>
 
 const filled = (v: string | null | undefined): v is string => Boolean(v && v.trim())
 

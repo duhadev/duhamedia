@@ -6,12 +6,16 @@ import { CaseStudyCards } from './CaseStudyCards/config'
 import { CategoryTabs } from './CategoryTabs/config'
 import { DirectContact } from './DirectContact/config'
 import { FinalCTA } from './FinalCTA/config'
+import { Error404 } from './Error404/config'
 import { FormEmbed } from './FormEmbed/config'
 import { Hero } from './Hero/config'
+import { LinkStack } from './LinkStack/config'
 import { MetricEvent } from './MetricEvent/config'
 import { MiniCTAStrip } from './MiniCTAStrip/config'
 import { NewsletterBand } from './NewsletterBand/config'
+import { OfferBlock } from './OfferBlock/config'
 import { PhaseTimeline } from './PhaseTimeline/config'
+import { PostList } from './PostList/config'
 import { ProofStrip } from './ProofStrip/config'
 import { ReviewWall } from './ReviewWall/config'
 import { RichContent } from './RichContent/config'
@@ -43,6 +47,7 @@ export const pageBlocks: Block[] = [
   Hero,
   MiniCTAStrip,
   FinalCTA,
+  OfferBlock,
   ProofStrip,
   CaseStudyCards,
   MetricEvent,
@@ -59,4 +64,7 @@ export const pageBlocks: Block[] = [
   DirectContact,
   AccordionFAQ,
   CategoryTabs,
+  LinkStack,
+  PostList,
+  Error404,
 ]

@@ -246,6 +246,11 @@ export function PayloadForm({
   /** Handle a server response (event-handler path, not an effect). */
   const onResult = (result: FormSubmitResponse) => {
     if (!result.ok) turnstileRef.current?.reset() // tokens are single-use
+    // Bubbling success signal for a surrounding island (p18 LeadMagnetStates swaps to its delivered state).
+    // Dispatched while the <form> is still mounted; listeners filter on `detail.formId`.
+    if (result.ok) {
+      formRef.current?.dispatchEvent(new CustomEvent('cmsform:submitted', { bubbles: true, detail: { formId: form.id } }))
+    }
     setPending(false)
     setState(result)
     if (stepped && !result.ok && result.fieldErrors) {

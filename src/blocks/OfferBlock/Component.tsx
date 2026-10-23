@@ -2,25 +2,14 @@ import config from '@payload-config'
 import { getPayload } from 'payload'
 import React, { useId } from 'react'
 
+import type { BlockData } from '@/blocks/types'
 import { AccentHeadline, ButtonLink, Container, Eyebrow, resolveLinkHref, Section } from '@/components/ui'
-import type { CMSLinkData } from '@/components/ui'
-import { RichText, type RichTextData } from '@/components/RichText'
+import { RichText } from '@/components/RichText'
 import { fillScarcityTokens } from '@/lib/scarcity'
 import type { Scarcity } from '@/payload-types'
 
-/**
- * Local row type: matches `OfferBlock` in ./config.ts exactly. `BlockData<'offerBlock'>` only
- * resolves once the integrator registers the block and runs generate:types; swap this for it then.
- */
-export type OfferBlockData = {
-  eyebrow?: string | null
-  eyebrowTick?: boolean | null
-  heading: string
-  accentPhrase?: string | null
-  body?: RichTextData | null
-  cta: CMSLinkData
-  capacity?: string | null
-}
+/** The generated `offerBlock` row type (src/payload-types.ts `OfferBlockBlock`). */
+export type OfferBlockData = BlockData<'offerBlock'>
 
 type Resolved = { statistic: string; reason: string }
 

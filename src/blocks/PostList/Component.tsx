@@ -1,38 +1,16 @@
 import config from '@payload-config'
 import Link from 'next/link'
 import { getPayload } from 'payload'
-import React from 'react'
+import React, { useId } from 'react'
 
-import { CMSLink, Container, Eyebrow, Section, type CMSLinkData } from '@/components/ui'
+import type { BlockData } from '@/blocks/types'
+import { CMSLink, Container, Eyebrow, Section } from '@/components/ui'
 import { cx } from '@/lib/cx'
 import { docPath } from '@/lib/docPath'
 import type { Post } from '@/payload-types'
 
-/**
- * Local mirror of the `postList` row (config.ts), until the integrator
- * registers the block and `BlockData<'postList'>` resolves.
- */
-export type PostListData = {
-  blockType?: 'postList'
-  id?: string | null
-  blockName?: string | null
-  eyebrow?: string | null
-  eyebrowTick?: boolean | null
-  track: 'newsletter-issue' | 'dev-seo' | 'mkt-seo'
-  featureLatest?: boolean | null
-  limit?: number | null
-  archiveLink?: CMSLinkData | null
-  labels?: {
-    latestLabel?: string | null
-    newBadge?: string | null
-    previouslyLabel?: string | null
-    countSuffix?: string | null
-    countSuffixSingular?: string | null
-    readLabel?: string | null
-    issueWord?: string | null
-  } | null
-  emptyHeading: string
-  emptyBody?: string | null
+/** The generated `postList` row type (src/payload-types.ts `PostListBlock`), plus showcase-only props. */
+export type PostListData = BlockData<'postList'> & {
   /**
    * SHOWCASE ONLY (not a field, never stored): static PUBLISHED stand-ins for
    * the query so /_showcase can show populated / one-issue / empty without
@@ -79,12 +57,15 @@ async function loadPosts(track: PostListData['track'], limit: number): Promise<{
 
 const pad3 = (n: number): string => String(n).padStart(3, '0')
 
-const formatDate = (iso: string | null | undefined): string | null => {
+const formatDate = (iso: string | null | undefined): { iso: string; text: string } | null => {
   if (!iso) return null
   const d = new Date(iso)
   return Number.isNaN(d.getTime())
     ? null
-    : d.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
+    : {
+        iso: d.toISOString(),
+        text: d.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }),
+      }
 }
 
 const HOVER_BTN = 'transition-colors duration-180 ease-out hover:bg-ink hover:text-cream'
@@ -122,19 +103,19 @@ function FeaturedCard({ post, labels }: { post: PostItem; labels: typeof DEFAULT
 
 function Row({ post, labels, first, last }: { post: PostItem; labels: typeof DEFAULT_LABELS; first: boolean; last: boolean }) {
   const href = docPath('posts', post)
-  const tag = [
-    typeof post.issueNumber === 'number' ? `${labels.issueWord} ${pad3(post.issueNumber)}` : null,
-    formatDate(post.sentAt ?? post.publishedAt),
-  ]
-    .filter(Boolean)
-    .join(' · ')
+  const issue = typeof post.issueNumber === 'number' ? `${labels.issueWord} ${pad3(post.issueNumber)}` : null
+  const date = formatDate(post.sentAt ?? post.publishedAt)
   const cls = cx(
     'grid min-h-target grid-cols-[1fr_auto] gap-x-3 gap-y-1 py-3.5 text-ink no-underline md:gap-x-4',
     href && 'transition-colors duration-180 ease-out hover:bg-gray-light',
   )
   const body = (
     <>
-      <span className="font-mono text-[11px] font-bold uppercase text-gray-warm">{tag}</span>
+      <span className="font-mono text-[11px] font-bold uppercase text-gray-warm">
+        {issue}
+        {issue && date ? ' · ' : null}
+        {date ? <time dateTime={date.iso}>{date.text}</time> : null}
+      </span>
       {post.issueMetric ? (
         <span className="row-span-2 self-center font-display text-[0.9375rem] text-ground-accent">{post.issueMetric}</span>
       ) : null}
@@ -168,23 +149,39 @@ export async function PostListBlock(props: PostListData) {
     props.previewPosts != null
       ? { docs: props.previewPosts.slice(0, limit), total: props.previewTotal ?? props.previewPosts.length }
       : await loadPosts(props.track, limit)
-  const docs = loaded.docs
+  return <PostListView {...props} labels={undefined} resolvedLabels={labels} docs={loaded.docs} total={loaded.total} />
+}
+
+/** Sync child so `useId` (the h2 / aria-labelledby id) never runs inside the async data-loading component. */
+function PostListView(
+  props: Omit<PostListData, 'labels'> & {
+    labels?: undefined
+    resolvedLabels: typeof DEFAULT_LABELS
+    docs: PostItem[]
+    total: number
+  },
+) {
+  const labels = props.resolvedLabels
+  const docs = props.docs
+  const loaded = { total: props.total }
+  const reactId = useId()
   const feature = props.featureLatest !== false && docs.length > 0
   const latest = feature ? docs[0] : null
   const rest = feature ? docs.slice(1) : docs
   const previousCount = Math.max(0, loaded.total - (feature ? 1 : 0))
   const eyebrow = props.eyebrow?.trim()
-  const headingId = props.id ? `postlist-${props.id}` : undefined
+  const headingText = eyebrow || (props.track === 'newsletter-issue' ? 'Latest newsletter issues' : 'Latest articles')
+  const headingId = `postlist-${props.id ?? reactId.replace(/:/g, '')}`
   const archive = <CMSLink link={props.archiveLink} className={cx('mt-4.5 flex min-h-12 items-center justify-center border-2 border-ink px-4.5 text-[12px] font-bold uppercase tracking-[0.08em] text-ink no-underline md:inline-flex md:min-h-target md:self-start', HOVER_BTN)} />
 
   return (
-    <Section tone="grey" pad="default" aria-labelledby={eyebrow ? headingId : undefined}>
+    <Section tone="grey" pad="default" aria-labelledby={headingId}>
       <Container>
+        <h2 id={headingId} className="sr-only">
+          {headingText}
+        </h2>
         {eyebrow ? (
           <>
-            <h2 id={headingId} className="sr-only">
-              {eyebrow}
-            </h2>
             <span aria-hidden="true">
               <Eyebrow tick={props.eyebrowTick !== false} muted>
                 {eyebrow}

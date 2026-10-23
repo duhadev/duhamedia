@@ -21,7 +21,8 @@ import { blockDeleteIfReferenced } from '../hooks/blockDeleteIfReferenced'
 import { setPublishedAtOnPublish } from '../hooks/publishedAt'
 import { revalidateTagHooks } from '../hooks/revalidateTag'
 import { uniqueSlugHooks } from '../hooks/uniqueSlug'
-import { pagePath, pageSlugError, slugifyPath } from '../lib/pagePath'
+import { withZeroLeakageRules, zeroLeakageLinkErrors } from '../hooks/zeroLeakageLinks'
+import { NOT_FOUND_SLUG, pagePath, pageSlugError, slugifyPath } from '../lib/pagePath'
 import { PREVIEW_BREAKPOINTS, previewUrl } from '../lib/preview'
 
 /**
@@ -64,7 +65,7 @@ import { PREVIEW_BREAKPOINTS, previewUrl } from '../lib/preview'
  * versions staff-only; marketing deletes drafts only, admin deletes any.
  *
  * Preview (B2): `admin.preview` + `admin.livePreview` → `/_preview` (draft
- * mode, staff only). Deferred: `not-found.tsx` reading the `404` doc (Error404).
+ * mode, staff only); the `404` doc previews at `/404` (rendered by not-found.tsx).
  *
  * Verified against payload@3.91.0: `slugField({ slugify, overrides })` and the
  * `Slugify` signature (fields/baseFields/slug/index.d.ts; the custom slugify
@@ -136,7 +137,7 @@ export const pageLayoutField = (layoutBlocks: Block[]): BlocksField => ({
  * 3.91.0): runs inside the operation's transaction, so the throw rolls the
  * publish back. FIRST in `afterChange`, before revalidation.
  */
-const blockLeakyPublish: CollectionAfterChangeHook = ({ collection, doc, req }) => {
+const blockLeakyPublish: CollectionAfterChangeHook = async ({ collection, doc, req }) => {
   if (doc?._status !== 'published' || doc?.zeroLeakage !== true) return doc
   const errors: { message: string; path: string }[] = []
   if (hasNewsletterBand(doc.layout)) errors.push({ path: 'layout', message: ZERO_LEAKAGE_NEWSLETTER_ERROR })
@@ -146,6 +147,7 @@ const blockLeakyPublish: CollectionAfterChangeHook = ({ collection, doc, req }) 
   if (doc.footerVariant !== 'legal-only') {
     errors.push({ path: 'footerVariant', message: 'Zero-leakage pages use the legal-only footer.' })
   }
+  errors.push(...(await zeroLeakageLinkErrors(doc, req)))
   if (errors.length === 0) return doc
   throw new ValidationError({ collection: collection.slug, errors, req }, req.t)
 }
@@ -194,6 +196,12 @@ const revalidate = revalidateTagHooks<PageDoc>('pages', {
   paths: (doc) => [pagePath(doc?.slug)],
 })
 
+/** Preview path of a page: its public path, or `/404` for the reserved not-found doc. */
+const previewPathOf = (slug: unknown): string | null => {
+  if (typeof slug !== 'string') return null
+  return slug === NOT_FOUND_SLUG ? `/${NOT_FOUND_SLUG}` : pagePath(slug)
+}
+
 export const Pages: CollectionConfig = {
   slug: 'pages',
   labels: { singular: 'Page', plural: 'Pages' },
@@ -203,12 +211,14 @@ export const Pages: CollectionConfig = {
     description: 'Site pages built from sections. Case studies, posts and lead magnets have their own collections.',
     // B2 router: draft preview (new tab) + live preview pane. Both open
     // `/_preview?path=…` (src/lib/preview.ts), which enables Next draft mode for
-    // staff only. No URL until the doc has a slug (set at first save) or for
-    // the `404` doc (no path of its own). payload@3.91.0 collections/config/
-    // types.d.ts:430 `livePreview`, :439 `preview`.
-    preview: (doc) => previewUrl(pagePath(typeof doc?.slug === 'string' ? doc.slug : null)),
+    // staff only. No URL until the doc has a slug (set at first save). The
+    // `404` doc has no path of its own: it previews at `/404`, which the
+    // catch-all route answers with notFound() → not-found.tsx renders the doc
+    // (S6-T2). payload@3.91.0 collections/config/types.d.ts:430 `livePreview`,
+    // :439 `preview`.
+    preview: (doc) => previewUrl(previewPathOf(doc?.slug)),
     livePreview: {
-      url: ({ data }) => previewUrl(pagePath(typeof data?.slug === 'string' ? data.slug : null)),
+      url: ({ data }) => previewUrl(previewPathOf(data?.slug)),
       breakpoints: PREVIEW_BREAKPOINTS,
     },
   },
@@ -245,7 +255,7 @@ export const Pages: CollectionConfig = {
             // B0: the `layout` blocks field, built from the one block registry
             // (src/blocks/index.ts). Left out while the registry is empty, because
             // payload@3.91.0's admin crashes on `blocks: []` (see `pageLayoutField`).
-            ...(pageBlocks.length > 0 ? [pageLayoutField(pageBlocks)] : []),
+            ...(pageBlocks.length > 0 ? [pageLayoutField(withZeroLeakageRules(pageBlocks))] : []),
           ],
         },
       ],

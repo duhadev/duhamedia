@@ -49,11 +49,11 @@ export function FormCardHero({
         <div
           aria-hidden="true"
           style={LOGO_MASK}
-          className="pointer-events-none absolute -right-30 -top-12.5 z-0 size-60 bg-ground-accent lg:-right-45 lg:-top-22.5 lg:size-105"
+          className="pointer-events-none absolute -right-30 -top-37.5 z-0 size-60 bg-ground-accent md:-top-12.5 lg:-right-45 lg:-top-22.5 lg:size-105"
         />
       ) : null}
       <Container className="relative z-10 pt-12 pb-11 md:pt-24 md:pb-20">
-        <div className="flex flex-col lg:grid lg:grid-cols-[1.25fr_1fr] lg:grid-rows-[auto_1fr] lg:items-start lg:gap-x-14">
+        <div className="flex flex-col lg:grid lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:grid-rows-[auto_1fr] lg:items-start lg:gap-x-14">
           <div className="lg:col-start-1 lg:row-start-1">
             {eyebrowText ? <Eyebrow tick={eyebrowTick !== false}>{eyebrowText}</Eyebrow> : null}
             <AccentHeadline
@@ -61,7 +61,7 @@ export function FormCardHero({
               accent={accentPhrase}
               level={1}
               as="h1"
-              className="mt-4 max-md:!text-[2.25rem] max-md:!leading-[1.02] md:mt-5"
+              className="mt-4 max-md:!text-[2.25rem] max-md:!leading-[1.02] md:mt-5 lg:max-xl:!text-h2"
             />
             {paragraph ? (
               <p className="mt-4.5 max-w-[52ch] text-[1.0625rem] leading-[1.6] md:mt-6 md:text-body">{paragraph}</p>

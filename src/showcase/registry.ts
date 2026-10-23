@@ -1,5 +1,7 @@
 import type { BookingSettingsOverride } from '@/blocks/BookingEmbed/Component'
 import type { CategoryTab } from '@/blocks/CategoryTabs/Component'
+import type { LinkStackData } from '@/blocks/LinkStack/Component'
+import type { PostItem, PostListData } from '@/blocks/PostList/Component'
 import type { BlockData, PageBlockType } from '@/blocks/types'
 import type { CaseStudy, Client, Faq, Media, TeamMember, Testimonial } from '@/payload-types'
 
@@ -41,10 +43,16 @@ type ShowcaseEntryFor<K extends PageBlockType> = {
  * - `categoryTabs.tabs`: on a real page RenderBlocks derives the tabs from the
  *   page's AccordionFAQ `group` blocks; the showcase renders one block at a
  *   time, so the fixture supplies them (RenderBlocks keeps a row's own `tabs`).
+ * - `linkStack.previewStudy` (big step 6): a static PUBLISHED study standing in
+ *   for "the latest published case study" (LinkStack/Component.tsx).
+ * - `postList.previewPosts` / `previewTotal` (big step 6): static published
+ *   stand-ins for the posts query; `[]` forces the empty state.
  */
 type ShowcaseExtras = {
   bookingEmbed: { settingsOverride?: BookingSettingsOverride }
   categoryTabs: { tabs?: CategoryTab[] }
+  linkStack: Pick<LinkStackData, 'previewStudy'>
+  postList: Pick<PostListData, 'previewPosts' | 'previewTotal'>
 }
 
 export type ShowcaseEntry = { [K in PageBlockType]: ShowcaseEntryFor<K> }[PageBlockType]
@@ -517,6 +525,109 @@ const rowLabels = { email: 'Email', socials: 'Socials', location: 'Location', re
 /* Deliberate editor override (the 'map only' entry); other entries leave caption empty → auto caption from site settings (F109). */
 const mapCaption =
   'Based in Lombard, IL — serving the greater Chicagoland area within a ~30-mile radius. Outside the ring? We work remote-first, so reach out anyway.'
+
+/* ---- Big step 6 fixtures (pages 13–21, static; .claude/handoff/s6/*.md) ---- */
+
+const S6_P = '[STRATEGIC PLACEHOLDER — final copy TBD]'
+
+/** A custom link with an explicit `newTab: false` (LP / LinkStack / Error404 fixtures). */
+const L = (label: string, url = '/book-a-call') => ({ type: 'custom' as const, url, label, newTab: false })
+
+/** RichContent legal: counsel-only placeholder paragraphs (never invented policy text). */
+const counsel = (extra = '') => p(`[Placeholder — counsel-provided content.${extra}]`)
+
+/* ProofStrip metrics / OfferBlock (p15). Capacity keys read the LIVE scarcity global. */
+const lpLogos = { show: true, eyebrow: "Stores we've run numbers for", source: 'flagged' } satisfies BlockData<'proofStrip'>['logos']
+const offerBase = {
+  eyebrow: 'The offer',
+  eyebrowTick: false,
+  heading: '[Campaign-specific promise, stated as scope.]',
+  accentPhrase: 'stated as scope',
+  body: root(
+    p(
+      '[Placeholder: what the prospect gets, in deliverable terms, with the number first. No countdown timers; capacity is the only true urgency and it carries its reason.]',
+    ),
+  ),
+  cta: L('Book a Call'),
+  capacity: 'offer-line',
+} satisfies Omit<BlockData<'offerBlock'>, 'blockType'>
+
+/* TestimonialRow reader quote (p15/p16). */
+const readerQuote = tm(990, {
+  quote: '[Reader quote slot — demonstrative placeholder, non-final.]',
+  authorName: '[Reader name]',
+  authorRole: '[Store type]',
+})
+const subscribersMetric = { value: '[N]', label: 'Subscribers', sub: '[Placeholder — real count at launch, marked non-final]' }
+
+/* PostList (p16): showcase-only `previewPosts` stand in for published issues. */
+const issue = (n: number, title: string): PostItem => ({
+  id: n,
+  slug: `sample-issue-${n}`,
+  track: 'newsletter-issue',
+  title,
+  issueNumber: n,
+  issueMetric: '[metric]',
+  dek: '[One-line summary placeholder. The setup, the number it moved, and what we would do differently.]',
+  sentAt: `2026-09-1${n % 10}T12:00:00Z`,
+})
+const sampleIssues = [
+  issue(12, '[The email flow that pays the ad bill]'),
+  issue(11, '[What broke when the pixel lied]'),
+  issue(10, '[The handover checklist, published]'),
+]
+const postListBase = {
+  track: 'newsletter-issue',
+  eyebrow: 'Recent issues',
+  eyebrowTick: true,
+  featureLatest: true,
+  limit: 3,
+  archiveLink: { type: 'custom', url: '/newsletter', label: 'Full archive →' },
+  labels: { latestLabel: 'Latest —', newBadge: 'New', previouslyLabel: 'Previously', countSuffix: 'issues', readLabel: 'Read issue', issueWord: 'Issue' },
+  emptyHeading: 'The first issue is on its way.',
+  emptyBody:
+    'Each issue is one store problem, the number it moved and what we would do differently. Join above and the first one lands in your inbox.',
+} satisfies Omit<BlockData<'postList'>, 'blockType'>
+
+/* LinkStack (p17): socials + capacity read the LIVE globals; the study comes from `previewStudy` (showcase-only). */
+const lsBase = {
+  identity: { showStudyMetric: true, fallbackLine: '[STRATEGIC PLACEHOLDER] Integrated ecommerce growth partner — Chicago' },
+  primary: { link: L('Book a call'), capacity: 'slots-line' },
+  showSocials: true,
+  followLabel: 'Follow',
+  siteLabel: 'On the site',
+  links: [
+    { id: 'ls-work', icon: 'chart-line-up', link: L('The work', '/work') },
+    { id: 'ls-clients', icon: 'quotes', link: L('Clients', '/testimonials') },
+    { id: 'ls-news', icon: 'envelope-simple', link: L('Newsletter', '/newsletter') },
+  ],
+  latestCaseStudy: true,
+  latestCaseStudyLabel: 'Case study',
+  currentPush: { show: false, icon: 'file-text', link: L('', '') },
+} satisfies Omit<BlockData<'linkStack'>, 'blockType'>
+
+/* SpecLedger list (p18). */
+const listBullets = [
+  '[Value bullet placeholder — concrete deliverable inside the asset]',
+  '[Value bullet placeholder — the number/benchmark it gives them]',
+  '[Value bullet placeholder — the mistake it prevents]',
+  '[Value bullet placeholder — time to apply it]',
+].map((title, i) => ({ id: `fx-list-${i + 1}`, title }))
+
+/* NewsletterBand cross-sell (p18). */
+const deliveredState = {
+  eyebrow: 'Sent',
+  heading: "Check your inbox. It's on the way.",
+  accentPhrase: "It's on the way.",
+  body: "If it's not there in five minutes, check spam, then email us.",
+  crossSellLine: "While you're here:",
+}
+
+/* ReviewWall wall (p19): the p7 feed testimonials (video ones render as written cards on the wall). */
+const draftClient: Client = { ...fixtureClients[2], _status: 'draft' }
+
+/* Error404 (p21). */
+const error404Copy = { code: '404', heading: 'This page leaked.', body: "Unlike your store's demand, it's not coming back." }
 
 /*
  * Entries are grouped by block in p1 Homepage order (SCHEMA §9): Hero → ProofStrip →
@@ -1921,5 +2032,604 @@ export const showcaseEntries: ShowcaseEntry[] = [
     label: 'FormEmbed · empty (no form) — renders nothing (server console.error)',
     // `form` is required in the schema; null is the runtime state after the chosen form is deleted (FK set null).
     data: { variant: 'standard', form: null as unknown as BlockData<'formEmbed'>['form'], heading: 'Should not show' },
+  },
+
+  /* ==== Big step 6 (pages 13–21), in page order ==== */
+
+  /* ---- p13 DEV-SEO / p14 MKT-SEO (posts templates: Hero article, RichContent article/band) ---- */
+  {
+    block: 'hero',
+    variant: 'article — standfirst',
+    label: 'p13/p14 article header: standfirst (post dek) between the h1 and the byline rule',
+    data: {
+      variant: 'article',
+      eyebrow: 'Shopify Theme Development — Chicago',
+      heading: `${S6_P} Shopify development in Chicago, scoped in writing.`,
+      standfirst:
+        "[Placeholder] Most stores we see don't need a rebuild — they need the leak found first. Two-week audit, fixed scope after it, three dated checkpoints.",
+      body: 'By [Author], Duha Media',
+      metaLine: 'Updated Jul 2026 · [N] min read',
+      geometry: false,
+    },
+  },
+  {
+    block: 'richContent',
+    variant: 'article + callout',
+    label: 'p13 article body with the closing "How we do it" box (eyebrow, text, ghost button) — no prices in the box',
+    data: {
+      variant: 'article',
+      numberSections: true,
+      body: root(
+        h('h2', "Why you're searching this"),
+        p('[Placeholder] The pattern behind this page, in two sentences. You want the store to convert and one name accountable when it does not.'),
+        h('h2', 'Revision before rebuild'),
+        p('[Placeholder] Our default is the Revision, not the scratch build. We keep what converts and replace what leaks.'),
+      ),
+      callout: {
+        eyebrow: 'How we do it',
+        body: '[Placeholder] Fixed after the audit, by the team that also runs the growth engine afterwards — so the store is built for the marketing that follows. The build ends with training, not a support retainer.',
+        link: link('Full build scope', '/shopify-theme-development'),
+      },
+    },
+  },
+  {
+    block: 'richContent',
+    variant: 'article + callout — text only',
+    label: 'fallback: callout link unresolved (internal, no target) → box with eyebrow + text, no button',
+    data: {
+      variant: 'article',
+      numberSections: false,
+      body: root(p('[Placeholder] One paragraph of article text.')),
+      callout: {
+        eyebrow: 'How we do it',
+        body: '[Placeholder] A closing note without a button.',
+        link: { type: 'internal' as const, reference: null, label: 'Unresolved' },
+      },
+    },
+  },
+  {
+    block: 'richContent',
+    variant: 'article + callout — empty',
+    label: 'fallback: empty callout group → no box (markup identical to the plain article)',
+    data: {
+      variant: 'article',
+      numberSections: false,
+      body: root(p('[Placeholder] One paragraph of article text; the closing box is empty.')),
+      callout: { eyebrow: '', body: '', link: { type: 'internal' as const, reference: null, label: '' } },
+    },
+  },
+  {
+    block: 'richContent',
+    variant: 'band',
+    label: 'p13 DIY vs done: grey band, eyebrow + H2 + text, 3 facts (accent on one), pricing note under the strip — placeholder copy, no prices in prose or facts',
+    data: {
+      variant: 'band',
+      tone: 'grey',
+      framed: false,
+      eyebrow: 'Hiring a freelancer vs. hiring a team',
+      heading: 'Some stores should just hire a freelancer.',
+      body: root(
+        p(
+          '[Placeholder] If the work is a handful of template edits and you already have someone who owns the numbers, a good freelancer is the right call — no fear-mongering here. The integrated case starts when the store has to carry acquisition spend, because then the build decisions and the marketing decisions are the same decisions. That is a math question, not a courage question.',
+        ),
+      ),
+      facts: [
+        { id: 'fx-rcb-1', value: '[N–N]', label: 'Weeks', sub: '[Placeholder] Signed scope to launch.', accent: true },
+        { id: 'fx-rcb-2', value: '3', label: 'Checkpoints', sub: '[Placeholder] Audit, tracking live, launch + training.' },
+        { id: 'fx-rcb-3', value: '1', label: 'Team, one dashboard', sub: '[Placeholder] One owner of the revenue number.' },
+      ],
+      pricingNote: 'Builds start at $5K',
+    },
+  },
+  {
+    block: 'richContent',
+    variant: 'band — educational',
+    label: 'p13 Educational block (R, DERIVED grey band): accent phrase, two paragraphs (in-text link), ghost button',
+    data: {
+      variant: 'band',
+      tone: 'grey',
+      eyebrow: '[Placeholder] Before you brief anyone',
+      heading: '[Placeholder] Three questions to ask any developer.',
+      accentPhrase: 'any developer.',
+      body: root(
+        p('[Placeholder] A short teaching note in brand voice. What to ask, and what a straight answer sounds like.'),
+        p('[Placeholder] Second paragraph with an ', customLink('in-text link', '/services'), '.'),
+      ),
+      link: link('[Placeholder] Read the build scope', '/services'),
+    },
+  },
+  {
+    block: 'richContent',
+    variant: 'band — no facts',
+    label: 'p14 DIY vs done-for-you bridge: grey band, text only (fallback: empty facts → no strip, no note, no button)',
+    data: {
+      variant: 'band',
+      tone: 'grey',
+      eyebrow: 'Doing this yourself vs. having it done',
+      heading: 'Some businesses should run this in-house.',
+      body: root(
+        p(
+          '[Placeholder] If you have a marketing hire with channel experience and the patience to build systems, the worksheet above is enough to start — no fear-mongering here. The integrated-team case is for owners whose time is worth more running the business than running the marketing.',
+        ),
+      ),
+      facts: [],
+    },
+  },
+  {
+    block: 'richContent',
+    variant: 'band — framed',
+    label: 'p14 How Duha does it (R, DERIVED): white ground, 2px ink box, eyebrow + text + ghost button (full width on phones)',
+    data: {
+      variant: 'band',
+      tone: 'light',
+      framed: true,
+      eyebrow: 'How Duha does it',
+      body: root(
+        p(
+          '[Placeholder] Email, ads, content, SEO, GBP and CRM run as one engine — same briefs, same data, one owner of the revenue number. And because the endgame is your team running it, the engagement ends with a handover, not a renewal pitch.',
+        ),
+      ),
+      pricingNote: 'Engines start at $1K/mo',
+      link: link('See the engine', '/marketing'),
+    },
+  },
+  {
+    block: 'richContent',
+    variant: 'band — 2 facts + link',
+    label: 'layout check: two facts (2-column strip), pricing note, button centred under the strip; light ground',
+    data: {
+      variant: 'band',
+      tone: 'light',
+      heading: '[Placeholder] Two facts only.',
+      body: root(p('[Placeholder] The strip divides into as many columns as there are facts (1–3).')),
+      facts: [
+        { id: 'fx-rcb-4', value: '[N]', label: '[Placeholder] Vendors replaced' },
+        { id: 'fx-rcb-5', value: '1', label: '[Placeholder] Owner of the number', accent: true },
+      ],
+      pricingNote: 'Builds start at $5K',
+      link: link('[Placeholder] Book a call', '/book-a-call'),
+    },
+  },
+
+  /* ---- p15 Campaign LP ---- */
+  {
+    block: 'hero',
+    variant: 'vsl',
+    label: 'p15 Campaign LP Hero A: headline (no accent), click-to-load video, one CTA',
+    data: {
+      variant: 'vsl',
+      eyebrow: '[Campaign eyebrow]',
+      heading: `${S6_P} [Single campaign message, matched to the ad creative]`,
+      video: { url: VIDEO_URL, poster: placeholderImage },
+      ctas: [{ id: 'fx-vsl-cta', link: { type: 'custom', url: '/book-a-call', label: 'Book a Call' } }],
+    },
+  },
+  {
+    block: 'hero',
+    variant: 'vsl — no video',
+    label: 'p15 Hero A fallback: no video link -> no tile (logged), headline + CTA only',
+    data: {
+      variant: 'vsl',
+      eyebrow: '[Campaign eyebrow]',
+      heading: `${S6_P} [Single campaign message, matched to the ad creative]`,
+      video: { url: '', poster: null } as unknown as BlockData<'hero'>['video'],
+      ctas: [{ id: 'fx-vsl-cta2', link: { type: 'custom', url: '/book-a-call', label: 'Book a Call' } }],
+    },
+  },
+  {
+    block: 'proofStrip',
+    variant: 'metrics',
+    label: 'p15 metrics: 2 metrics + capacity (live scarcity `capacity`) + pricing note + logos',
+    data: {
+      variant: 'metrics',
+      metrics: [
+        { id: 'fx-pm-1', value: '[N]', label: '[Result]', accent: true },
+        { id: 'fx-pm-2', value: '[N]', label: '[Count]', sub: '[sub]' },
+      ],
+      capacityStatement: 'capacity',
+      pricingNote: 'Builds start at $5K · Engines start at $1K/mo',
+      logos: lpLogos,
+    },
+  },
+  {
+    block: 'proofStrip',
+    variant: 'metrics — pricing note only',
+    label: 'metrics: pricing note only',
+    data: { variant: 'metrics', metrics: [], capacityStatement: 'none', pricingNote: 'Builds start at $5K', logos: { show: false } },
+  },
+  {
+    block: 'proofStrip',
+    variant: 'metrics — empty',
+    label: 'metrics: nothing set (renders nothing)',
+    data: { variant: 'metrics', metrics: [], capacityStatement: 'none', logos: { show: false } },
+  },
+  {
+    block: 'proofStrip',
+    variant: 'metrics — capacity key missing',
+    label: 'metrics: capacity key missing in the global (`offer-line` until seeded): tile skipped, logged',
+    data: { variant: 'metrics', metrics: [{ id: 'fx-pm-3', value: '[N]', label: '[Result]' }], capacityStatement: 'offer-line', logos: { show: false } },
+  },
+  {
+    block: 'miniCTAStrip',
+    variant: 'button',
+    label: 'p15 CTA repeat: button with lead-in line',
+    data: { variant: 'button', text: 'Ready when you are.', link: L('Book a Call') },
+  },
+  {
+    block: 'miniCTAStrip',
+    variant: 'button — alone',
+    label: 'p15 CTA repeat: button alone',
+    data: { variant: 'button', link: L('Book a Call') },
+  },
+  {
+    block: 'miniCTAStrip',
+    variant: 'button — unresolved link',
+    label: 'button unresolved link (renders nothing)',
+    data: { variant: 'button', text: 'x', link: { type: 'custom', url: '', label: 'Book', newTab: false } },
+  },
+  {
+    block: 'offerBlock',
+    variant: 'default',
+    label: 'p15 offer: populated (capacity line needs `offer-line` with a reason in the scarcity global)',
+    data: offerBase,
+  },
+  {
+    block: 'offerBlock',
+    variant: 'capacity none',
+    label: 'offer: capacity none (button only)',
+    data: { ...offerBase, capacity: 'none' },
+  },
+  {
+    block: 'offerBlock',
+    variant: 'capacity missing',
+    label: 'offer: `offer-line` missing / no reason → no capacity line, logged (same data as populated; DB-dependent)',
+    data: offerBase,
+  },
+  {
+    block: 'offerBlock',
+    variant: 'minimal',
+    label: 'offer: minimal (heading + button)',
+    data: { heading: '[Promise]', cta: L('Book a Call'), capacity: 'none' },
+  },
+  {
+    block: 'testimonialRow',
+    variant: 'row — ctaStyle button',
+    label: 'p15: heading + testimonial + study card (fallback figure), CTA as primary button below the row (full width on mobile)',
+    data: {
+      variant: 'row',
+      heading: 'What owners said after.',
+      testimonials: [readerQuote],
+      studyCard: {
+        show: true,
+        source: 'featured',
+        label: 'A study in full',
+        readLabel: 'Read the study',
+        fallbackMetric: { value: '[N]%', label: '[Metric label]', sub: '[Client A · placeholder]' },
+      },
+      cta: { type: 'custom', url: '/book-a-call', label: 'Book a Call' },
+      ctaStyle: 'button',
+    },
+  },
+
+  /* ---- p16 Newsletter ---- */
+  {
+    block: 'hero',
+    variant: 'typographic — form card',
+    label: 'p16 Newsletter hero: signup card above the fold (form empty -> site-settings newsletter form), Cadence/Length/Filler stats',
+    data: {
+      variant: 'typographic',
+      eyebrow: 'The newsletter',
+      heading: `${S6_P} One useful email a month. Numbers included.`,
+      accentPhrase: 'Numbers included.',
+      body: "[Placeholder] What we're seeing across client stores — what worked, what didn't, with the data attached. Case studies land here before they land anywhere else.",
+      stats: [
+        { id: 'fx-nl-1', label: 'Cadence', value: 'Monthly' },
+        { id: 'fx-nl-2', label: 'Length', value: '[N] min read' },
+        { id: 'fx-nl-3', label: 'Filler', value: 'None' },
+      ],
+      showForm: true,
+      form: null,
+      formStyle: 'card',
+      formHeading: 'Join the list',
+      formBody: 'Unsubscribe anytime. We never sell the list.',
+      submitLabel: 'Join',
+    },
+  },
+  {
+    block: 'postList',
+    variant: 'default',
+    label: 'p16 PostList populated (latest + 2 previously, 12 total; static previewPosts)',
+    data: { ...postListBase, previewPosts: sampleIssues, previewTotal: 12 },
+  },
+  {
+    block: 'postList',
+    variant: 'one issue',
+    label: 'PostList one issue (featured card only)',
+    data: { ...postListBase, previewPosts: sampleIssues.slice(0, 1), previewTotal: 1 },
+  },
+  {
+    block: 'postList',
+    variant: 'empty',
+    label: 'PostList empty state (no published issue — launch state)',
+    data: { ...postListBase, previewPosts: [] },
+  },
+  {
+    block: 'postList',
+    variant: 'no featured',
+    label: 'PostList no featured (rows only)',
+    data: { ...postListBase, featureLatest: false, previewPosts: sampleIssues, previewTotal: 12 },
+  },
+  {
+    block: 'testimonialRow',
+    variant: 'row — leadMetric + quote',
+    label: 'p16 Social proof: [N] Subscribers tile (1fr) + reader quote (2fr); stacked on mobile',
+    data: { variant: 'row', testimonials: [readerQuote], leadMetric: subscribersMetric },
+  },
+  {
+    block: 'testimonialRow',
+    variant: 'row — leadMetric alone',
+    label: 'fallback: no published testimonial → metric tile alone',
+    data: { variant: 'row', testimonials: [], leadMetric: subscribersMetric },
+  },
+  {
+    block: 'testimonialRow',
+    variant: 'row — leadMetric incomplete',
+    label: 'fallback: metric missing label and no testimonials → renders nothing (empty space by design)',
+    data: { variant: 'row', testimonials: [], leadMetric: { value: '[N]' } },
+  },
+
+  /* ---- p17 Link-in-Bio (one 480px column at every width; not single-viewport) ---- */
+  {
+    block: 'linkStack',
+    variant: 'default',
+    label: 'populated: latest published study metric + case-study link, socials, slots line, current push',
+    data: {
+      ...lsBase,
+      previewStudy: fixtureStudies[0],
+      currentPush: { show: true, icon: 'file-text', link: { type: 'custom', url: 'https://example.com/guide', label: '[Current push: the guide]', newTab: true } },
+    },
+  },
+  {
+    block: 'linkStack',
+    variant: 'no study',
+    label: 'fallback: no published case study (fallback line, no case-study link) — launch state',
+    data: { ...lsBase },
+  },
+  {
+    block: 'linkStack',
+    variant: 'no socials',
+    label: 'no socials: Follow hidden',
+    data: { ...lsBase, showSocials: false, previewStudy: fixtureStudies[0] },
+  },
+  {
+    block: 'linkStack',
+    variant: 'capacity none',
+    label: 'slots line off: no capacity line (a missing `slots-line` row in the global gives the same result and logs)',
+    data: { ...lsBase, primary: { ...lsBase.primary, capacity: 'none' }, previewStudy: fixtureStudies[0] },
+  },
+  {
+    block: 'linkStack',
+    variant: 'minimal',
+    label: 'minimal: identity + Book a call only',
+    data: { ...lsBase, showSocials: false, links: [], latestCaseStudy: false, primary: { ...lsBase.primary, capacity: 'none' } },
+  },
+
+  /* ---- p18 Lead Magnet (lead-magnets template) ---- */
+  {
+    block: 'hero',
+    variant: 'typographic — inline form',
+    label: 'p18 Lead Magnet capture state: compact narrow hero + inline email row + note',
+    data: {
+      variant: 'typographic',
+      size: 'compact',
+      width: 'narrow',
+      eyebrow: 'Free download',
+      heading: `${S6_P} [Asset name placeholder — the checklist/worksheet pitch.]`,
+      accentPhrase: 'the checklist/worksheet pitch.',
+      body: "[Placeholder — one paragraph: what the asset is, who it's for, the specific problem it solves. Number first.]",
+      badge: { show: false },
+      showForm: true,
+      form: 15, // TODO(seed): form id — hardcoded dev id; the seed must create this form on staging
+      formStyle: 'inline',
+      submitLabel: 'Get the download',
+      formNote: 'Email delivery. No drip sequence ambush — one send, plus the monthly newsletter if you opt in.',
+    },
+  },
+  {
+    block: 'hero',
+    variant: 'typographic — form missing',
+    label: 'Form slot on but the form is deleted: hero renders without the form or its note (logged)',
+    data: {
+      variant: 'typographic',
+      size: 'compact',
+      eyebrow: 'Free download',
+      heading: `${S6_P} Form missing: hero renders without it`,
+      body: '[Placeholder paragraph.]',
+      badge: { show: false },
+      showForm: true,
+      form: 999999,
+      formStyle: 'inline',
+      submitLabel: 'Get the download',
+      formNote: 'This note is not shown when the form is missing.',
+    },
+  },
+  {
+    block: 'specLedger',
+    variant: 'list',
+    label: "p18 What's inside: check-bullet list",
+    data: { variant: 'list', tone: 'auto', eyebrow: "What's inside", eyebrowTick: false, items: listBullets },
+  },
+  {
+    block: 'specLedger',
+    variant: 'list — headline',
+    label: 'SpecLedger list + headline (2 items)',
+    data: { variant: 'list', heading: 'Everything in the worksheet', accentPhrase: 'worksheet', eyebrow: "What's inside", items: listBullets.slice(0, 2) },
+  },
+  {
+    block: 'specLedger',
+    variant: 'list — empty',
+    label: 'SpecLedger list EMPTY (renders nothing)',
+    data: { variant: 'list', eyebrow: "What's inside", items: [] },
+  },
+  {
+    block: 'newsletterBand',
+    variant: 'cross-sell',
+    label: 'p18 delivered state: message + newsletter box',
+    data: {
+      variant: 'cross-sell',
+      delivered: deliveredState,
+      line: 'More like the asset you just grabbed. Numbers included.',
+      buttonLabel: 'Join the newsletter',
+      crossSellLink: { type: 'custom', url: '/newsletter', label: 'Join the newsletter' },
+    },
+  },
+  {
+    block: 'newsletterBand',
+    variant: 'cross-sell — no link',
+    label: 'fallback: no cross-sell link (box uses site-settings defaults + the published /newsletter page, else omitted)',
+    data: {
+      variant: 'cross-sell',
+      delivered: { heading: 'Delivered only', body: 'No link.' },
+      crossSellLink: null as unknown as BlockData<'newsletterBand'>['crossSellLink'],
+    },
+  },
+  {
+    block: 'newsletterBand',
+    variant: 'cross-sell — empty link',
+    label: 'fallback: empty link group',
+    data: { variant: 'cross-sell', delivered: deliveredState, crossSellLink: { type: 'custom' } },
+  },
+
+  /* ---- p19 Review Hub ---- */
+  {
+    block: 'reviewWall',
+    variant: 'wall',
+    label: 'p19 wall: populated (7 testimonials) with metric, scarcity (live `capacity`) and client inserts',
+    data: {
+      variant: 'wall',
+      source: 'manual',
+      testimonials: feedTestimonials,
+      wallNote: '[Demonstrative wall: reviews import verbatim at launch]',
+      inserts: [
+        { id: 'fx-wi-1', kind: 'metric', position: 2, metric: { value: '[N]', label: '[What it measures]', sub: '[Quiet sub-line]', accent: true } },
+        { id: 'fx-wi-2', kind: 'scarcity', position: 4, statement: 'capacity' },
+        { id: 'fx-wi-3', kind: 'client', position: 5, client: fixtureClients[1] },
+      ],
+    },
+  },
+  {
+    block: 'reviewWall',
+    variant: 'wall — empty with note',
+    label: 'Wall: empty with note',
+    data: { variant: 'wall', source: 'manual', testimonials: [], emptyNote: '[Empty note: reviews appear here as they are published.]' },
+  },
+  {
+    block: 'reviewWall',
+    variant: 'wall — empty',
+    label: 'Wall: empty, no note (renders nothing)',
+    data: { variant: 'wall', source: 'manual', testimonials: [] },
+  },
+  {
+    block: 'reviewWall',
+    variant: 'wall — inserts skipped',
+    label: 'Wall: draft client insert + scarcity "none" insert → both tiles skipped',
+    data: {
+      variant: 'wall',
+      source: 'manual',
+      testimonials: textTestimonials,
+      inserts: [
+        { id: 'fx-wi-4', kind: 'client', position: 1, client: draftClient },
+        { id: 'fx-wi-5', kind: 'scarcity', position: 1, statement: 'none' },
+      ],
+    },
+  },
+
+  /* ---- p20 Legal ---- */
+  {
+    block: 'richContent',
+    variant: 'legal',
+    label: 'p20 legal document: eyebrow, H1 title, last-updated date, 6 H2 sections → desktop sticky sidebar / mobile sticky rail — counsel placeholders only',
+    data: {
+      variant: 'legal',
+      eyebrow: 'Legal — [Privacy Policy]',
+      heading: '[Document title]',
+      lastUpdated: '2026-10-01T12:00:00.000Z',
+      lastUpdatedLabel: 'Last updated',
+      navLabel: 'On this page',
+      body: root(
+        h('h2', '1. Scope'),
+        counsel(' This template defines structure and typography only.'),
+        h('h2', '2. Data we collect'),
+        counsel(),
+        h('h2', "3. How it's used"),
+        counsel(),
+        h('h2', '4. Sharing & processors'),
+        counsel(),
+        h('h2', '5. Your rights'),
+        counsel(),
+        h('h2', '6. Contact'),
+        p('[Placeholder — counsel-provided content. Routes to ', customLink('Contact', '/contact'), '.]'),
+      ),
+    },
+  },
+  {
+    block: 'richContent',
+    variant: 'legal — anchor guard',
+    label: 'anchors: H2 "Main" (reserved id → section-main), two H2 "Contact" (→ contact, contact-2), empty date (line hidden)',
+    data: {
+      variant: 'legal',
+      eyebrow: 'Legal — [Terms]',
+      heading: '[Document title]',
+      lastUpdated: null,
+      lastUpdatedLabel: 'Last updated',
+      navLabel: 'On this page',
+      body: root(h('h2', 'Main'), counsel(), h('h2', 'Contact'), counsel(), h('h2', 'Contact'), counsel()),
+    },
+  },
+  {
+    block: 'richContent',
+    variant: 'legal — no sections',
+    label: 'fallback: no H2s → no sidebar / rail, single column; no date line',
+    data: {
+      variant: 'legal',
+      heading: '[Document title]',
+      navLabel: 'On this page',
+      body: root(counsel(' A document without section headings.')),
+    },
+  },
+
+  /* ---- p21 404 ---- */
+  {
+    block: 'error404',
+    variant: 'default',
+    label: 'Error404 default: Book a Call (primary) + Home + Work',
+    data: {
+      ...error404Copy,
+      links: [
+        { id: 'fx-404-1', link: L('Book a Call') },
+        { id: 'fx-404-2', link: L('Home', '/') },
+        { id: 'fx-404-3', link: L('Work', '/work') },
+      ],
+    },
+  },
+  {
+    block: 'error404',
+    variant: 'one link',
+    label: 'Error404 one link',
+    data: { ...error404Copy, links: [{ id: 'fx-404-4', link: L('Back to Home', '/') }] },
+  },
+  {
+    block: 'error404',
+    variant: 'custom wording',
+    label: 'Error404 custom wording (410)',
+    data: {
+      code: '410',
+      heading: 'That page is gone.',
+      body: 'We retired it. The useful part moved.',
+      links: [
+        { id: 'fx-404-5', link: L('See the work', '/work') },
+        { id: 'fx-404-6', link: L('Contact', '/contact') },
+      ],
+    },
   },
 ]

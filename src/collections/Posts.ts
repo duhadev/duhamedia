@@ -28,7 +28,9 @@ import { blockDeleteIfReferenced } from '../hooks/blockDeleteIfReferenced'
 import { setPublishedAtOnPublish } from '../hooks/publishedAt'
 import { revalidateTagHooks } from '../hooks/revalidateTag'
 import { uniqueSlugHooks } from '../hooks/uniqueSlug'
+import { docPath } from '../lib/docPath'
 import { lexicalWordCount, readTimeMinutes } from '../lib/lexicalText'
+import { PREVIEW_BREAKPOINTS, previewUrl } from '../lib/preview'
 import { rowLabel } from '../components/admin/rowLabel'
 
 /**
@@ -65,10 +67,11 @@ import { rowLabel } from '../components/admin/rowLabel'
  * R10: reading progress is a template behaviour, not a field.
  * R13: prices only via `pricingNote` (and `diyBridge` facts are never prices).
  *
- * Deferred: `meta` plugin-seo tab (TODO(plugins): plugin-seo
- * `collections: ['posts']`, editable by staff and pipeline); live preview +
- * draft mode with the `/insights/<slug>` and `/newsletter/<slug>` routes
- * (integrator). richText internal links: `richTextLinkFeature` (C10).
+ * `meta` SEO tab: plugin-seo (SEO_COLLECTIONS). Preview (S6-T1, with the
+ * `/insights/<slug>` and `/newsletter/<slug>` routes): `admin.preview` +
+ * `admin.livePreview` → `/_preview?path=<docPath>` (src/lib/preview.ts), the
+ * same staff-only draft mode as pages / case studies; the path follows the
+ * track. richText internal links: `richTextLinkFeature` (C10).
  *
  * Verified against payload@3.91.0: `slugField({ overrides })`
  * (fields/baseFields/slug/index.d.ts), tab `admin.condition` (TabBase has
@@ -137,6 +140,12 @@ const revalidate = revalidateTagHooks<PostDoc>('posts', {
 
 const slug = uniqueSlugHooks('posts')
 
+/** The routable part of a (possibly unsaved) post: no track yet → no preview URL. */
+const previewDoc = (doc: Record<string, unknown> | undefined) => {
+  const track = trackOf(doc)
+  return track && typeof doc?.slug === 'string' ? { slug: doc.slug, track } : null
+}
+
 /** Article body (p13/p14 §Article body): H2/H3, lists, pull quote, links, captioned figures. */
 const bodyEditor = lexicalEditor({
   features: [
@@ -189,6 +198,15 @@ export const Posts: CollectionConfig = {
     defaultColumns: ['title', 'track', '_status', 'publishedAt', 'updatedAt'],
     description:
       'Articles (DEV-SEO and MKT-SEO, /insights) and newsletter issues (/newsletter). The content pipeline drafts here; publishing is always a person.',
+    // Draft preview (new tab) + live preview pane, as on case studies: both open
+    // `/_preview?path=<docPath>`, which enables Next draft mode for staff only.
+    // No URL until the doc has a slug and a track. payload@3.91.0
+    // collections/config/types.d.ts `preview` / `livePreview`.
+    preview: (doc) => previewUrl(docPath('posts', previewDoc(doc))),
+    livePreview: {
+      url: ({ data }) => previewUrl(docPath('posts', previewDoc(data))),
+      breakpoints: PREVIEW_BREAKPOINTS,
+    },
   },
   // Published first, newest first, then drafts (same reasoning as case-studies:
   // no nulls-last in @payloadcms/drizzle@3.91.0).

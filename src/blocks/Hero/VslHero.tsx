@@ -34,7 +34,7 @@ export function VslHero({ eyebrow, eyebrowTick, heading, video, ctas, geometry }
         <div
           aria-hidden="true"
           style={LOGO_MASK}
-          className="pointer-events-none absolute -right-30 -top-12.5 z-0 size-60 bg-ground-accent md:-right-35 md:-top-15 md:size-75"
+          className="pointer-events-none absolute -right-30 -top-37.5 z-0 size-60 bg-ground-accent md:-right-35 md:-top-15 md:size-75"
         />
       ) : null}
       <div className="relative z-10 mx-auto w-full max-w-205 px-container-mobile pt-11 pb-12 md:px-container md:py-16">

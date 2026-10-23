@@ -5,12 +5,13 @@ import type { Metadata } from 'next'
 import { getPayload } from 'payload'
 import { cache } from 'react'
 
+import { type FaqItem, faqJsonLdItems } from '@/blocks/AccordionFAQ/Component'
 import { DEFAULT_DESCRIPTION_MAX, DEFAULT_TITLE_TEMPLATE, TITLE_PLACEHOLDER } from '@/globals/SeoDefaults'
 import { absoluteUrl, getSiteUrl, isProduction } from '@/lib/env'
 import { docPath } from '@/lib/docPath'
 import { HOME_SLUG, pagePath } from '@/lib/pagePath'
-import type { CaseStudy, Media, Page, SeoDefault } from '@/payload-types'
-import { HOME_SEO_TITLE, truncate } from '@/plugins/seo'
+import type { CaseStudy, Media, Page, Post, SeoDefault } from '@/payload-types'
+import { HOME_SEO_TITLE, META_TITLE_TARGET, truncate } from '@/plugins/seo'
 
 /**
  * Per-page `<head>` metadata (router unit B2; next@16 `generateMetadata`,
@@ -76,7 +77,7 @@ const ogImage = (media: number | Media | null | undefined): ShareImage | null =>
 
 const NOINDEX = { index: false, follow: false } as const
 
-type MetaInput = {
+export type MetaInput = {
   /** Final `<title>` (already templated). */
   title: string
   description?: string | null
@@ -89,7 +90,7 @@ type MetaInput = {
 }
 
 /** The shared metadata shape for a routable document (canonical, OG, Twitter, robots). */
-const buildMetadata = async (input: MetaInput): Promise<Metadata> => {
+export const buildMetadata = async (input: MetaInput): Promise<Metadata> => {
   const defaults = await getSeoDefaults()
   const title = input.title
   const description = clean(input.description) || clean(defaults.defaultDescription) || undefined
@@ -285,4 +286,135 @@ export const caseStudyJsonLd = async (study: CaseStudy, crumbs: readonly Crumb[]
     publisher: organization,
   }
   return { '@context': 'https://schema.org', '@graph': breadcrumb ? [article, breadcrumb] : [article] }
+}
+
+/** A post's own description: `meta.description`, else its `dek` cut to 155; '' when none. */
+const postDescription = (post: Post): string => {
+  const own = clean(post.meta?.description)
+  if (own) return own
+  const dek = clean(post.dek)
+  return dek ? truncate(dek, DEFAULT_DESCRIPTION_MAX) : ''
+}
+
+/**
+ * The search title of a post: `meta.title`, else exactly what plugin-seo's
+ * `generateTitle` builds (src/plugins/seo.ts): the seo-defaults template with
+ * `%s` = the title, or `%s` = the capitalised `targetKeyword` when the
+ * templated title runs past ~60 characters and a keyword is set.
+ */
+const postTitle = (post: Post, defaults: SeoDefaultsData): string => {
+  const own = clean(post.meta?.title)
+  if (own) return own
+  const template = titleTemplate(defaults)
+  const full = template.replace(TITLE_PLACEHOLDER, clean(post.title))
+  const keyword = clean(post.targetKeyword)
+  if (keyword && full.length > META_TITLE_TARGET) {
+    return template.replace(TITLE_PLACEHOLDER, keyword.charAt(0).toUpperCase() + keyword.slice(1))
+  }
+  return full
+}
+
+/** The date a post shows as published: issues show their send date first. */
+const postPublished = (post: Post): string | null | undefined =>
+  post.track === 'newsletter-issue' ? (post.sentAt ?? post.publishedAt) : post.publishedAt
+
+/**
+ * The modified date: the shown "Updated" date (`updatedAtDisplay`) when it is
+ * not before the published date, else the document's `updatedAt`, so
+ * dateModified never precedes datePublished.
+ */
+const postModified = (post: Post): string | null | undefined => {
+  const published = Date.parse(postPublished(post) ?? '')
+  const shown = post.updatedAtDisplay ? Date.parse(post.updatedAtDisplay) : Number.NaN
+  if (!Number.isNaN(shown) && (Number.isNaN(published) || shown >= published)) return post.updatedAtDisplay
+  return post.updatedAt
+}
+
+/** The share image: `meta.image` → `heroImage` (each only with an `og` size) → seo-defaults (in buildMetadata). */
+const postShareImage = (post: Post): number | Media | null | undefined =>
+  ogImage(post.meta?.image) ? post.meta?.image : ogImage(post.heroImage) ? post.heroImage : null
+
+/**
+ * `/insights/<slug>` and `/newsletter/<slug>` (S6-T1). Same precedence as
+ * case studies, with the post's own fallbacks (the ones plugin-seo's generate
+ * buttons use):
+ * - title: `meta.title` → plugin `generateTitle` logic (template, or the
+ *   target keyword when the templated title is over ~60) → template.
+ * - description: `meta.description` → `dek` (cut to 155) → seo-defaults.
+ * - share image: `meta.image` → `heroImage` (its `og` size) → seo-defaults.
+ * - canonical `docPath('posts', post)`; noindex in draft preview (production
+ *   only indexes; the proxy noindexes every other environment).
+ * - Open Graph `article`: published (issues: sent) / modified times.
+ */
+export const postMetadata = async (post: Post, { preview = false }: { preview?: boolean } = {}): Promise<Metadata> => {
+  const defaults = await getSeoDefaults()
+  return buildMetadata({
+    title: postTitle(post, defaults),
+    description: postDescription(post) || null,
+    image: postShareImage(post),
+    path: docPath('posts', post),
+    noindex: preview,
+    article: { publishedTime: postPublished(post), modifiedTime: postModified(post) },
+  })
+}
+
+/**
+ * schema.org JSON-LD for a post, as one `@graph` (S6-T1). Facts only:
+ * - `BlogPosting` for articles (dev-seo / mkt-seo), `Article` for newsletter
+ *   issues; headline = the title cut to 110; description = the meta
+ *   description; datePublished (issues: send date) / dateModified
+ *   (`postModified`: the shown Updated date, else `updatedAt`); image = share crop then the hero's
+ *   original upload; url + mainEntityOfPage = canonical; inLanguage `en`
+ *   (matches `<html lang="en">` and the case-study Article).
+ * - author: the post's team member as a `Person` (name, jobTitle, worksFor),
+ *   else the Organization; publisher = the Organization with its ORIGINAL
+ *   logo (`absoluteMediaUrl(…, 'original')`).
+ * - ONE `FAQPage` with exactly the rendered questions (`faqItems`, the same
+ *   list the FAQ section renders); none for issues or an empty FAQ.
+ * - No BreadcrumbList: there is no /insights hub and no visible trail (plan
+ *   open question 6).
+ */
+export const postJsonLd = async (post: Post, faqItems: FaqItem[]): Promise<Record<string, unknown>> => {
+  const defaults = await getSeoDefaults()
+  const path = docPath('posts', post)
+  const url = path ? absoluteUrl(path) : undefined
+  const logo = absoluteMediaUrl(defaults.organization?.logo, 'original')
+  const organization = {
+    '@type': 'Organization',
+    name: siteName(defaults),
+    url: getSiteUrl(),
+    ...(logo ? { logo: { '@type': 'ImageObject', url: logo } } : {}),
+  }
+  const authorDoc = typeof post.author === 'object' && post.author !== null ? post.author : null
+  const author = authorDoc && clean(authorDoc.name)
+    ? {
+        '@type': 'Person',
+        name: clean(authorDoc.name),
+        ...(clean(authorDoc.role) ? { jobTitle: clean(authorDoc.role) } : {}),
+        worksFor: { '@type': 'Organization', name: siteName(defaults) },
+      }
+    : organization
+  const images = [absoluteMediaUrl(postShareImage(post)), absoluteMediaUrl(post.heroImage, 'original')].filter(
+    (u, i, all): u is string => Boolean(u) && all.indexOf(u) === i,
+  )
+  const description = postDescription(post)
+  const published = postPublished(post)
+  const modified = postModified(post)
+  const article = {
+    '@type': post.track === 'newsletter-issue' ? 'Article' : 'BlogPosting',
+    headline: truncate(clean(post.title), HEADLINE_MAX),
+    ...(description ? { description } : {}),
+    inLanguage: 'en',
+    ...(published ? { datePublished: published } : {}),
+    ...(modified ? { dateModified: modified } : {}),
+    ...(images.length ? { image: images } : {}),
+    ...(url ? { url, mainEntityOfPage: { '@type': 'WebPage', '@id': url } } : {}),
+    author,
+    publisher: organization,
+  }
+  const faq =
+    post.track !== 'newsletter-issue' && faqItems.length > 0
+      ? { '@type': 'FAQPage', ...(url ? { url } : {}), mainEntity: faqJsonLdItems(faqItems) }
+      : null
+  return { '@context': 'https://schema.org', '@graph': faq ? [article, faq] : [article] }
 }
