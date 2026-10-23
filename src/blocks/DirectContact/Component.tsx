@@ -13,9 +13,6 @@ import { mapStamp, ServiceAreaMap } from './ServiceAreaMap'
 /** The generated `directContact` row type (src/payload-types.ts `DirectContactBlock`). */
 export type DirectContactData = BlockData<'directContact'>
 
-// Design fallback centre (Decision log: Lombard, 41.880 / -88.008) when Site settings has no coordinates.
-const LOMBARD = { lat: 41.88, lon: -88.008 }
-
 async function loadSettings(): Promise<Partial<SiteSetting>> {
   try {
     const payload = await getPayload({ config })
@@ -117,28 +114,39 @@ export async function DirectContactBlock({ showEmail, showSocials, showLocation,
   const locationText =
     showLocation !== false ? loc?.displayLine?.trim() || [loc?.locality, loc?.region].filter(Boolean).join(', ') || null : null
 
-  const showMap = map?.show !== false
+  // The map needs a centre and a service radius from Site settings; nothing is invented when they are missing.
+  const lat = typeof loc?.latitude === 'number' ? loc.latitude : null
+  const lon = typeof loc?.longitude === 'number' ? loc.longitude : null
+  const radius = loc?.serviceRadiusMiles && loc.serviceRadiusMiles > 0 ? loc.serviceRadiusMiles : null
+  const mapReady = lat !== null && lon !== null && radius !== null
+  const showMap = map?.show !== false && mapReady
+  if (map?.show !== false && !mapReady) {
+    console.warn('[DirectContact] map hidden: Site settings → Location needs latitude, longitude and service radius')
+  }
   const hasInfo = Boolean(email || socials.length || locationText)
   if (!hasInfo && !showMap) {
     console.warn('[DirectContact] every row is off (or has no value in Site settings) and the map is hidden; rendering nothing')
     return null
   }
 
-  const lat = typeof loc?.latitude === 'number' ? loc.latitude : LOMBARD.lat
-  const lon = typeof loc?.longitude === 'number' ? loc.longitude : LOMBARD.lon
-  const radius = loc?.serviceRadiusMiles && loc.serviceRadiusMiles > 0 ? loc.serviceRadiusMiles : 30
   const zoom = Math.min(2, Math.max(0.5, map?.zoom ?? 1))
-  const placeName = loc?.locality?.trim() || 'Lombard'
+  const placeName = loc?.locality?.trim() || ''
   const caption = map?.caption?.trim() || autoCaption(loc?.locality, loc?.region, loc?.serviceRadiusMiles)
-  const mapProps = {
-    lat,
-    lon,
-    radiusMiles: radius,
-    zoom,
-    placeName,
-    description: `Schematic map: ${placeName} marked at the centre of a ${Math.round(radius)}-mile service-area ring, with Chicago, O'Hare, Schaumburg, Naperville, Aurora and Joliet for reference, and Lake Michigan to the east.${caption ? ` ${caption}` : ''}`,
-  }
-  const stamp = mapStamp(placeName, lat, lon)
+  const mapProps = mapReady
+    ? {
+        lat,
+        lon,
+        radiusMiles: radius,
+        zoom,
+        placeName,
+        description: `Schematic map: ${placeName ? `${placeName} marked` : 'Location marked'} at the centre of a ${Math.round(radius)}-mile service-area ring, with Chicago, O'Hare, Schaumburg, Naperville, Aurora and Joliet for reference, and Lake Michigan to the east.${caption ? ` ${caption}` : ''}`,
+      }
+    : null
+  const stamp = mapReady
+    ? placeName
+      ? mapStamp(placeName, lat, lon)
+      : `${Math.abs(lat).toFixed(2)}°${lat >= 0 ? 'N' : 'S'} ${Math.abs(lon).toFixed(2)}°${lon >= 0 ? 'E' : 'W'}`
+    : ''
   const skip = skipFormLine?.trim()
 
   return (
@@ -196,7 +204,7 @@ export async function DirectContactBlock({ showEmail, showSocials, showLocation,
           </div>
         )}
 
-        {showMap && (
+        {showMap && mapProps && (
           <figure className="m-0">
             <div className="relative h-[360px] overflow-hidden border-2 border-ink bg-gray-light md:h-[340px]">
               <div className="size-full sm:hidden">

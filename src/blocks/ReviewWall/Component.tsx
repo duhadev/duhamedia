@@ -1,5 +1,5 @@
 import config from '@payload-config'
-import { getPayload, type Where } from 'payload'
+import { getPayload } from 'payload'
 import React from 'react'
 
 import type { BlockData } from '@/blocks/types'
@@ -7,69 +7,15 @@ import type { BlockData } from '@/blocks/types'
 import { AccentHeadline, Container, Eyebrow, Section } from '@/components/ui'
 import type { Testimonial } from '@/payload-types'
 
+import { SORT, resolvePicks, sourceWhere, toQuery } from './data'
 import { FEED_LIST, FeedItems, toFeedCard, type FeedCardData, type FeedLabels } from './feed'
 import { FeedLoadMore } from './LoadMore'
+import { ReviewWallMasonry } from './wall'
 
 /** Props = the generated `reviewWall` row type (src/payload-types.ts `ReviewWallBlock`). */
 export type ReviewWallProps = BlockData<'reviewWall'>
 
 const clampPageSize = (n: number | null | undefined): number => Math.min(24, Math.max(1, Math.round(n ?? 6)))
-const SORT = ['sortOrder', '-createdAt']
-
-/** Same serialiser as CaseStudyCards (qs bracket syntax Payload's REST parser reads). */
-function toQuery(value: unknown, prefix: string, out: URLSearchParams): URLSearchParams {
-  if (Array.isArray(value)) value.forEach((v, i) => toQuery(v, `${prefix}[${i}]`, out))
-  else if (value && typeof value === 'object')
-    for (const [k, v] of Object.entries(value)) toQuery(v, prefix ? `${prefix}[${k}]` : k, out)
-  else if (value !== undefined && value !== null) out.append(prefix, String(value))
-  return out
-}
-
-function sourceWhere(filter: ReviewWallProps['sourceFilter']): Where {
-  const kinds = (filter ?? []).filter(Boolean)
-  const and: Where[] = [{ _status: { equals: 'published' } }]
-  if (kinds.length) and.push({ source: { in: kinds } })
-  return { and }
-}
-
-/** True when a populated pick still carries an unpopulated nested relation the card needs. */
-function needsHydration(t: Testimonial, showStudyLinks: boolean): boolean {
-  if (showStudyLinks && typeof t.caseStudy === 'number') return true
-  if (t.format === 'video' && t.client && typeof t.client === 'object' && typeof t.client.logo === 'number') return true
-  return false
-}
-
-/**
- * Manual picks, in pick order, published only. Picks arriving as bare ids
- * (drafts are not populated for the public) are dropped. A page is read at
- * depth 2, which leaves each pick's `caseStudy` (maxDepth 1) and its client's
- * logo unpopulated; those picks are re-read here in ONE public query
- * (`overrideAccess: false`, `draft: false`) so the deep link and logo can
- * render. Fully populated picks (showcase fixtures, live preview) need no query.
- */
-async function resolvePicks(picks: ReviewWallProps['testimonials'], showStudyLinks: boolean): Promise<Testimonial[]> {
-  const docs = (picks ?? []).filter((t): t is Testimonial => Boolean(t) && typeof t === 'object')
-  const stale = docs.filter((t) => needsHydration(t, showStudyLinks)).map((t) => t.id)
-  if (stale.length === 0) return docs
-  try {
-    const payload = await getPayload({ config })
-    const res = await payload.find({
-      collection: 'testimonials',
-      draft: false,
-      overrideAccess: false,
-      depth: 2,
-      limit: stale.length,
-      pagination: false,
-      where: { and: [{ id: { in: stale } }, { _status: { equals: 'published' } }] },
-    })
-    const fresh = new Map(res.docs.map((d) => [d.id, d]))
-    return docs.map((t) => fresh.get(t.id) ?? t)
-  } catch (error) {
-    console.error('[ReviewWall] could not re-read picked testimonials; rendering them without study links/logos', error)
-    return docs
-  }
-}
-
 /**
  * ReviewWall, `feed` variant (Testimonials.dc.html §Testimonial feed,
  * desktop + mobile builds). Server component; the only client code is the
@@ -80,6 +26,8 @@ async function resolvePicks(picks: ReviewWallProps['testimonials'], showStudyLin
  * editor set `emptyNote`, which renders as one quiet line. Never "coming soon".
  */
 export async function ReviewWallBlock(props: ReviewWallProps) {
+  if (props.variant === 'wall') return <ReviewWallMasonry {...props} />
+
   const pageSize = clampPageSize(props.pageSize)
   const showStudyLinks = props.showStudyLinks !== false
   let docs: Testimonial[] = []

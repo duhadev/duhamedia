@@ -243,11 +243,16 @@ function VideoCard({ card, labels, mirrored }: { card: FeedCardData; labels: Fee
 }
 
 /** Text card: written quote, Google or LinkedIn review. */
-function TextCard({ card, labels }: { card: FeedCardData; labels: FeedLabels }) {
+export function TextCard({ card, labels, compact = false }: { card: FeedCardData; labels: FeedLabels; compact?: boolean }) {
   return (
-    <figure className="m-0 h-full border border-divider p-5.5 md:px-9 md:py-8">
+    <figure className={cx('m-0 h-full border border-divider', compact ? 'p-5.5 md:p-6' : 'p-5.5 md:px-9 md:py-8')}>
       <TopRow card={card} labels={labels} isVideo={false} />
-      <blockquote className="m-0 mt-3.5 text-[1.0625rem] leading-normal font-medium text-pretty md:mt-5 md:text-[1.25rem] md:leading-[1.45]">
+      <blockquote
+        className={cx(
+          'm-0 mt-3.5 text-[1.0625rem] leading-normal font-medium text-pretty',
+          compact ? 'md:mt-4 md:text-[1.0625rem] md:leading-[1.5]' : 'md:mt-5 md:text-[1.25rem] md:leading-[1.45]',
+        )}
+      >
         {card.quote}
       </blockquote>
       <TextMetric card={card} />

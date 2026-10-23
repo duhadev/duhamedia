@@ -49,6 +49,7 @@ export function ArticleHero({
   resultMetric,
   metaLine,
   summary,
+  stats,
   media,
   mediaFrame,
 }: BlockData<'hero'>) {
@@ -58,6 +59,7 @@ export function ArticleHero({
   const metricValue = resultMetric?.value?.trim()
   const hasMedia = typeof media === 'object' && media !== null && Boolean(media.url)
   const frame = mediaFrame ?? 'none'
+  const figures = stats ?? []
 
   return (
     <Section tone="light" pad="none" className="relative overflow-hidden pt-9 md:pt-18">
@@ -106,6 +108,16 @@ export function ArticleHero({
             ) : null}
             <p className={cx('text-[0.9375rem] leading-[1.6]', summary?.label && 'mt-2')}>{summaryBody}</p>
           </div>
+        ) : null}
+        {figures.length > 0 ? (
+          <dl className="mt-7 flex flex-wrap gap-x-6 gap-y-4 border-y border-t-2 border-divider border-t-ink py-4 md:mt-10 md:gap-x-10 md:gap-y-5 md:py-[18px]">
+            {figures.map((f, i) => (
+              <div key={f.id ?? i} className="min-w-[130px] flex-[1_1_130px]">
+                <dt className="text-[10px] font-bold uppercase tracking-[0.1em] text-gray-warm">{f.label}</dt>
+                <dd className="mt-1 font-display text-base uppercase md:mt-1.5 md:text-lg">{f.value}</dd>
+              </div>
+            ))}
+          </dl>
         ) : null}
       </div>
       {hasMedia && frame === 'full-bleed' ? (

@@ -3,8 +3,11 @@ import React from 'react'
 
 import type { BlockData } from '@/blocks/types'
 import { RichText, type RichTextData } from '@/components/RichText'
-import { AccentHeadline, Eyebrow, Media, Section } from '@/components/ui'
+import { AccentHeadline, ButtonLink, Eyebrow, Media, resolveLinkHref, Section } from '@/components/ui'
 import type { Media as MediaDoc } from '@/payload-types'
+
+import { RichContentBand } from './Band'
+import { RichContentLegal } from './Legal'
 
 /** Any Lexical editor state saved by a `richText` field (same shape in every collection). */
 export type ArticleBodyData = RichTextData
@@ -112,11 +115,49 @@ export function ArticleBody({ data, numbered = true }: { data: ArticleBodyData; 
 }
 
 /**
- * RichContent, `article` variant (Case Study.dc.html "Article body", desktop +
- * mobile builds; same prose for About and the SEO article templates). Server
- * component: pure rendering. Nothing renders when the body is empty.
+ * The article's optional closing box (DEV-SEO / MKT-SEO Article.dc.html "Article
+ * body" > "How we do it"): 2px ink frame, muted eyebrow, short text, ghost
+ * button (full width in the mobile build). Renders nothing when every part is
+ * empty or the link does not resolve and there is no text.
  */
-export function RichContentBlock({ eyebrow, eyebrowTick, heading, accentPhrase, numberSections, body }: RichContentProps) {
+function ArticleCallout({ callout }: { callout: RichContentProps['callout'] }) {
+  const eyebrow = callout?.eyebrow?.trim()
+  const text = callout?.body?.trim()
+  const hasLink = Boolean(resolveLinkHref(callout?.link) && callout?.link?.label?.trim())
+  if (!eyebrow && !text && !hasLink) return null
+  return (
+    <div className="mt-7 border-2 border-ink p-5 text-[1.0625rem] md:mt-8 md:max-w-[66ch] md:px-6 md:py-5.5">
+      {eyebrow ? <Eyebrow muted>{eyebrow}</Eyebrow> : null}
+      {text ? (
+        <p className={eyebrow ? 'mt-2.5 text-[0.9375rem] leading-[1.6]' : 'text-[0.9375rem] leading-[1.6]'}>{text}</p>
+      ) : null}
+      {hasLink ? (
+        <div className={eyebrow || text ? 'mt-4' : undefined}>
+          <ButtonLink link={callout?.link} variant="ghost" size="md" className="w-full md:w-auto" />
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
+/**
+ * RichContent (SCHEMA §8.3 item 13): picks the layout by `variant`. `band` and
+ * `legal` live in ./Band.tsx and ./Legal.tsx; `article` is below. Server
+ * components throughout: pure rendering.
+ */
+export function RichContentBlock(props: RichContentProps) {
+  if (props.variant === 'band') return <RichContentBand {...props} />
+  if (props.variant === 'legal') return <RichContentLegal {...props} />
+  return <RichContentArticle {...props} />
+}
+
+/**
+ * RichContent, `article` variant (Case Study.dc.html "Article body", desktop +
+ * mobile builds; same prose for About and the SEO article templates). Nothing
+ * renders when the body is empty. The optional closing box (`callout`, p13)
+ * follows the prose; without one the markup is exactly the pre-S6 article.
+ */
+function RichContentArticle({ eyebrow, eyebrowTick, heading, accentPhrase, numberSections, body, callout }: RichContentProps) {
   const hasBody = Array.isArray(body?.root?.children) && body.root.children.length > 0
   if (!hasBody && !heading) {
     console.warn('[RichContent] block has no text; rendering nothing')
@@ -138,6 +179,7 @@ export function RichContentBlock({ eyebrow, eyebrowTick, heading, accentPhrase, 
           </div>
         ) : null}
         {hasBody ? <ArticleBody data={body} numbered={numberSections !== false} /> : null}
+        <ArticleCallout callout={callout} />
       </div>
     </Section>
   )

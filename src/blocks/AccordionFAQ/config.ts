@@ -152,7 +152,11 @@ export const AccordionFAQ: Block = {
       min: 1,
       max: 12,
       defaultValue: 6,
-      admin: { step: 1, description: 'Most questions to show (1–12).' },
+      admin: {
+        step: 1,
+        description: 'Mini list only: most questions to show (1–12). A group always shows every published question in its category.',
+        condition: (_data, siblingData) => siblingData?.variant !== 'group',
+      },
     },
     {
       name: 'openFirst',

@@ -1,7 +1,7 @@
 import React from 'react'
 
 import type { BlockData } from '@/blocks/types'
-import { CMSLink, resolveLinkHref, Section } from '@/components/ui'
+import { ButtonLink, CMSLink, Container, resolveLinkHref, Section } from '@/components/ui'
 
 const STRIP =
   'mx-auto flex w-full max-w-site items-center justify-between gap-4 px-container-mobile py-4.5 md:gap-8 md:px-container md:py-6'
@@ -14,6 +14,7 @@ const TEXT = 'font-display text-[1rem] font-normal uppercase leading-[1.15] md:t
  */
 export function MiniCTAStripBlock(props: BlockData<'miniCTAStrip'>) {
   if (props.variant === 'inline') return <MiniCTAInline {...props} />
+  if (props.variant === 'button') return <MiniCTAButton {...props} />
   const { text, link } = props
   const label = link?.label?.trim()
   const linked = Boolean(resolveLinkHref(link) && label)
@@ -68,6 +69,26 @@ function MiniCTAInline({ text, link }: BlockData<'miniCTAStrip'>) {
           ) : null}
         </p>
       </div>
+    </Section>
+  )
+}
+
+/**
+ * `button` variant (Campaign LP.dc.html in-block CTA: DS Button primary md, "Book a Call"; mobile
+ * build is a full-width grid button). No design section of its own: derived from the LP's offer CTA
+ * row (820 column, 20/24px gutters). One centred primary button, optional quiet lead-in line above.
+ * An unresolved link renders nothing at all (a lone sentence with no action would be a dead end).
+ */
+function MiniCTAButton({ text, link }: BlockData<'miniCTAStrip'>) {
+  if (!resolveLinkHref(link) || !link?.label?.trim()) return null
+  const line = text?.trim()
+
+  return (
+    <Section tone="light" pad="none">
+      <Container className="flex flex-col items-center gap-3 py-8 text-center md:max-w-205 md:py-10">
+        {line ? <p className="m-0 text-balance text-small-mobile text-gray-warm md:text-small">{line}</p> : null}
+        <ButtonLink link={link} variant="primary" size="md" className="w-full md:w-auto md:min-w-55" />
+      </Container>
     </Section>
   )
 }

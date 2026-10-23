@@ -20,7 +20,9 @@ type Resolved = { loud: string; label?: string; reason: string; big: boolean }
  * Loud/quiet contract (CLAUDE.md rule 2): a statement is rendered ONLY when it has a filled
  * statistic AND a non-blank reason. There is no render path for a reason-less number.
  */
-export async function ProofStripBlock({ statements, pricingNote, logos }: BlockData<'proofStrip'>) {
+export async function ProofStripBlock(props: BlockData<'proofStrip'>) {
+  if (props.variant === 'metrics') return <ProofMetrics {...props} />
+  const { statements, pricingNote, logos } = props
   const picked = (statements ?? []).map((s) => s.key).filter((k): k is ScarcityKey => !!k && k !== 'none').slice(0, 2)
   const resolved = picked.length ? await resolveStatements(picked) : []
   const clients = logos?.show !== false ? await resolveClients(logos) : []
@@ -75,6 +77,89 @@ export async function ProofStripBlock({ statements, pricingNote, logos }: BlockD
         </div>
       ) : null}
     </Section>
+  )
+}
+
+/**
+ * ProofStrip, `metrics` variant (Campaign LP.dc.html "Proof strip", desktop + mobile builds): cream
+ * ground, hairline below, left-aligned in the 820 column. Up to three typographic metrics (DS Metric
+ * size sm), the optional capacity statement (loud line, quiet reason; from the scarcity global, never
+ * typed), then the logo names at 55% opacity. The pricing note is a small line beneath (rule 5: the
+ * design's "$5K" / "$1K/MO" tiles are never metrics). Renders nothing when nothing is set.
+ */
+async function ProofMetrics({ metrics, capacityStatement, pricingNote, logos }: BlockData<'proofStrip'>) {
+  const shown = (metrics ?? [])
+    .filter((m) => m.value?.trim() && m.label?.trim())
+    .slice(0, 3)
+  const capKey = capacityStatement && capacityStatement !== 'none' ? capacityStatement : null
+  const [capacity] = capKey ? await resolveStatements([capKey]) : []
+  const clients = logos?.show !== false ? await resolveClients(logos) : []
+  const note = pricingNote?.trim()
+
+  if (!shown.length && !capacity && !clients.length && !note) return null
+
+  return (
+    <Section tone="light" pad="none" divider="bottom">
+      <Container className="flex flex-col gap-5 py-6 md:max-w-205 md:gap-4 md:py-8">
+        {shown.length || capacity || clients.length ? (
+          <div className="flex flex-col gap-5 md:flex-row md:flex-wrap md:items-center md:gap-x-14 md:gap-y-6">
+            {shown.length || capacity ? (
+              <div className="flex flex-wrap gap-x-7 gap-y-5 md:gap-x-14 md:gap-y-6">
+                {shown.map((m, i) => (
+                  <div key={m.id ?? i}>
+                    <span className={cx('block font-display text-[2rem] leading-none font-normal', m.accent ? 'text-accent-primary' : 'text-ink')}>
+                      {m.value}
+                    </span>
+                    <span className="mt-2 block text-[0.8125rem] font-bold uppercase tracking-eyebrow">{m.label}</span>
+                    {m.sub?.trim() ? <span className="mt-1 block text-[0.8125rem] font-medium text-gray-warm">{m.sub}</span> : null}
+                  </div>
+                ))}
+                {capacity ? <CapacityTile s={capacity} /> : null}
+              </div>
+            ) : null}
+            {clients.length ? (
+              <ul
+                aria-label={logos?.eyebrow?.trim() || 'Clients'}
+                className="m-0 flex list-none flex-wrap gap-x-6 gap-y-3 p-0 opacity-55 md:gap-x-8"
+              >
+                {clients.map((c) => (
+                  <li key={c.id} className="flex min-h-7 items-center">
+                    {c.logo && typeof c.logo === 'object' ? (
+                      <Media resource={c.logo} alt={c.name} className="h-7 w-auto max-w-36 object-contain grayscale" />
+                    ) : (
+                      <span className="whitespace-nowrap font-display text-[0.9375rem] uppercase md:text-[1rem]">{c.name}</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
+        ) : null}
+        {note ? <p className="m-0 text-small-mobile text-gray-warm md:text-small">{note}</p> : null}
+      </Container>
+    </Section>
+  )
+}
+
+/** The capacity tile: loud line (+ label for a bare count), quiet reason always beneath (rule 2). */
+function CapacityTile({ s }: { s: Resolved }) {
+  const uid = useId()
+  return (
+    <div role="group" aria-labelledby={`${uid}-n${s.big && s.label ? ` ${uid}-l` : ''}`} aria-describedby={`${uid}-r`} className="max-w-64">
+      {s.big ? (
+        <>
+          <span id={`${uid}-n`} className="block font-display text-[2rem] leading-none font-normal text-ink">{s.loud}</span>
+          {s.label ? (
+            <span id={`${uid}-l`} className="mt-2 block text-[0.8125rem] font-bold uppercase tracking-eyebrow">{s.label}</span>
+          ) : null}
+        </>
+      ) : (
+        <span id={`${uid}-n`} className="block text-balance font-display text-h3-mobile font-normal uppercase tracking-[0.02em] md:text-h3">
+          {s.loud.replace(/ (\S+)$/, '\u00A0$1')}
+        </span>
+      )}
+      <span id={`${uid}-r`} className="mt-1 block text-[0.8125rem] leading-[1.4] text-gray-warm">{s.reason}</span>
+    </div>
   )
 }
 

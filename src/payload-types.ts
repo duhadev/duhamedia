@@ -418,7 +418,7 @@ export interface HeroBlock {
       }[]
     | null;
   /**
-   * Short facts shown beside the headline on desktop and as a strip under it on mobile, e.g. "$3.1M" / "Client revenue added". Results or counts only, never a price.
+   * Short facts shown beside the headline on desktop and as a strip under it on mobile (article: a facts strip under the intro, e.g. Based / Scope / Capacity / Read), e.g. "$3.1M" / "Client revenue added". Results or counts only, never a price.
    */
   stats?:
     | {
@@ -1621,15 +1621,15 @@ export interface TeamMember {
  */
 export interface MiniCTAStripBlock {
   /**
-   * The strip layout. Band is the dark call-to-action strip; Inline is a quiet one-liner such as "Have a quick question first? Contact us".
+   * The strip layout. Band is the dark call-to-action strip; Inline is a quiet one-liner such as "Have a quick question first? Contact us"; Button is a single centred button (the Campaign LP repeats it after each major section).
    */
-  variant: 'band' | 'inline';
+  variant: 'band' | 'inline' | 'button';
   /**
-   * The one-line statement on the strip. Band: e.g. "One team. One dashboard. A handover date." (shown in capitals). Inline: the lead-in before the link, e.g. "Have a quick question first?" (shown as written).
+   * The one-line statement on the strip. Band: e.g. "One team. One dashboard. A handover date." (shown in capitals). Inline: the lead-in before the link, e.g. "Have a quick question first?" (shown as written). Button: optional short line above the button (shown as written); leave empty for the button alone.
    */
-  text: string;
+  text?: string | null;
   /**
-   * The link text and where it goes. Band: the whole strip is clickable and this is the button text. Inline: this is the underlined link after the sentence, e.g. "Contact us".
+   * The link text and where it goes. Band: the whole strip is clickable and this is the button text. Inline: this is the underlined link after the sentence, e.g. "Contact us". Button: this is the button.
    */
   link: {
     type: 'internal' | 'custom';
@@ -1726,9 +1726,9 @@ export interface FinalCTABlock {
  */
 export interface ProofStripBlock {
   /**
-   * The strip layout. More layouts arrive with the pages that need them.
+   * The strip layout. Scarcity is the homepage strip; Metrics is the compact Campaign LP strip.
    */
-  variant: 'scarcity';
+  variant: 'scarcity' | 'metrics';
   /**
    * Up to two capacity statements, shown side by side. Each shows a big line with its reason quietly underneath; both come from "Capacity & scarcity".
    */
@@ -1741,6 +1741,35 @@ export interface ProofStripBlock {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Up to three proof numbers (results or counts, never prices). Prices go in the "Pricing note" below. Leave empty to show none.
+   */
+  metrics?:
+    | {
+        /**
+         * A result or count, never a price. e.g. "+212%".
+         */
+        value: string;
+        /**
+         * What the number measures, e.g. "Revenue, 12 months".
+         */
+        label: string;
+        /**
+         * Optional quiet line under the metric.
+         */
+        sub?: string | null;
+        /**
+         * Show the number in the accent colour.
+         */
+        accent?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional capacity tile beside the metrics: a big line with its reason quietly beneath, both from "Capacity & scarcity". Edit the numbers and wording there. Choose "None" to hide it.
+   */
+  capacityStatement?:
+    ('none' | 'ongoing' | 'capacity' | 'builds-line' | 'engines-line' | 'slots-line' | 'offer-line') | null;
   /**
    * Small inline note only, e.g. 'Builds start at $5K'. Never put a price in a headline or metric.
    */
@@ -2029,9 +2058,9 @@ export interface MetricEventBlock {
  */
 export interface ReviewWallBlock {
   /**
-   * The layout. More layouts arrive with the pages that need them.
+   * The layout. Feed is the Testimonials page; Wall is the Review Hub.
    */
-  variant: 'feed';
+  variant: 'feed' | 'wall';
   /**
    * Optional small uppercase line above the feed. Leave empty on the Testimonials page (the hero above already says it).
    */
@@ -2095,6 +2124,53 @@ export interface ReviewWallBlock {
     loadingLabel?: string | null;
     errorLabel?: string | null;
   };
+  /**
+   * Optional extra tiles dropped between the review cards: a headline number, a client name, or the capacity statement. Add, remove and drag to reorder.
+   */
+  inserts?:
+    | {
+        kind: 'metric' | 'client' | 'scarcity';
+        /**
+         * A result or count, never a price.
+         */
+        metric?: {
+          /**
+           * A result or count, never a price. e.g. "+212%".
+           */
+          value?: string | null;
+          /**
+           * What the number measures, e.g. "Revenue, 12 months".
+           */
+          label?: string | null;
+          /**
+           * Optional quiet line under the metric.
+           */
+          sub?: string | null;
+          /**
+           * Show the number in the accent colour.
+           */
+          accent?: boolean | null;
+        };
+        /**
+         * Shows the client logo (or its name when there is no logo). Skipped while the client is a draft.
+         */
+        client?: (number | null) | Client;
+        /**
+         * Which statement from "Capacity & scarcity" to show. The number and its reason are always shown together; edit them there, not here.
+         */
+        statement?:
+          ('none' | 'ongoing' | 'capacity' | 'builds-line' | 'engines-line' | 'slots-line' | 'offer-line') | null;
+        /**
+         * 0 puts the tile first, 2 puts it after the second review card. A number past the last card puts it at the end.
+         */
+        position?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional quiet line under the wall, e.g. where the reviews come from. Leave empty to hide.
+   */
+  wallNote?: string | null;
   /**
    * Optional. Shown as one quiet line when no published testimonial matches. Leave empty to hide the whole section instead.
    */
@@ -2602,9 +2678,9 @@ export interface TeamIntroBlock {
  */
 export interface RichContentBlock {
   /**
-   * The text layout. Legal-document and grey-band layouts arrive with their pages.
+   * The text layout. Legal document is for Privacy / Terms / Cookies / GDPR pages and shows the page title itself (no Hero above it).
    */
-  variant: 'article';
+  variant: 'article' | 'band' | 'legal';
   /**
    * Optional small uppercase line above the heading.
    */
@@ -2614,7 +2690,7 @@ export interface RichContentBlock {
    */
   eyebrowTick?: boolean | null;
   /**
-   * Optional heading above the text. Leave empty when the text starts with its own section headings.
+   * Article and grey band: optional heading above the text. Legal document: the document title (required; it is the page title, e.g. "Privacy Policy").
    */
   heading?: string | null;
   /**
@@ -2626,7 +2702,19 @@ export interface RichContentBlock {
    */
   numberSections?: boolean | null;
   /**
-   * Use "Heading 2" for each section title (they are numbered). Type "/" or use the toolbar to add an image with a caption, a quote or a divider.
+   * Shown under the title. Leave empty to hide the line.
+   */
+  lastUpdated?: string | null;
+  /**
+   * Words before the date, e.g. "Last updated".
+   */
+  lastUpdatedLabel?: string | null;
+  /**
+   * Title of the list of section links beside / above the document.
+   */
+  navLabel?: string | null;
+  /**
+   * Use "Heading 2" for each section title: in Article they are numbered, in Legal document each one becomes a link under "On this page" (keep them short). Type "/" or use the toolbar to add an image with a caption, a quote or a divider (Article only).
    */
   body: {
     root: {
@@ -2642,6 +2730,110 @@ export interface RichContentBlock {
       version: number;
     };
     [k: string]: unknown;
+  };
+  /**
+   * Optional: up to three big numbers in a strip under the text (counts, timelines, results). Never a price — prices go in the price note. Leave empty for no strip.
+   */
+  facts?:
+    | {
+        /**
+         * A result or count, never a price. e.g. "+212%".
+         */
+        value: string;
+        /**
+         * What the number measures, e.g. "Revenue, 12 months".
+         */
+        label: string;
+        /**
+         * Optional quiet line under the metric.
+         */
+        sub?: string | null;
+        /**
+         * Show the number in the accent colour.
+         */
+        accent?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional small quiet line under the facts (or the text), e.g. 'Builds start at $5K'. The only place a price may appear in this band.
+   */
+  pricingNote?: string | null;
+  /**
+   * Optional button under the text. Leave empty for none.
+   */
+  link?: {
+    type: 'internal' | 'custom';
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'case-studies';
+          value: number | CaseStudy;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null)
+      | ({
+          relationTo: 'lead-magnets';
+          value: number | LeadMagnet;
+        } | null);
+    /**
+     * https://…, mailto:…, or a site path like /book-a-call.
+     */
+    url?: string | null;
+    label?: string | null;
+  };
+  tone?: ('grey' | 'light') | null;
+  /**
+   * The black-outlined "How we do it" box. Usually with the White background.
+   */
+  framed?: boolean | null;
+  /**
+   * Optional black-outlined box at the end of the text (e.g. "How we do it" with a link). Leave everything empty for no box.
+   */
+  callout?: {
+    /**
+     * Small grey uppercase line at the top of the box.
+     */
+    eyebrow?: string | null;
+    /**
+     * A few sentences. No prices here — keep pricing to the pricing notes.
+     */
+    body?: string | null;
+    /**
+     * Optional button inside the box.
+     */
+    link: {
+      type: 'internal' | 'custom';
+      newTab?: boolean | null;
+      reference?:
+        | ({
+            relationTo: 'pages';
+            value: number | Page;
+          } | null)
+        | ({
+            relationTo: 'case-studies';
+            value: number | CaseStudy;
+          } | null)
+        | ({
+            relationTo: 'posts';
+            value: number | Post;
+          } | null)
+        | ({
+            relationTo: 'lead-magnets';
+            value: number | LeadMagnet;
+          } | null);
+      /**
+       * https://…, mailto:…, or a site path like /book-a-call.
+       */
+      url?: string | null;
+      label?: string | null;
+    };
   };
   id?: string | null;
   blockName?: string | null;
@@ -3090,7 +3282,7 @@ export interface AccordionFAQBlock {
    */
   faqs?: (number | Faq)[] | null;
   /**
-   * Most questions to show (1–12).
+   * Mini list only: most questions to show (1–12). A group always shows every published question in its category.
    */
   limit?: number | null;
   openFirst?: boolean | null;
@@ -3669,6 +3861,16 @@ export interface ProofStripBlockSelect<T extends boolean = true> {
         key?: T;
         id?: T;
       };
+  metrics?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        sub?: T;
+        accent?: T;
+        id?: T;
+      };
+  capacityStatement?: T;
   pricingNote?: T;
   logos?:
     | T
@@ -3811,6 +4013,24 @@ export interface ReviewWallBlockSelect<T extends boolean = true> {
         loadingLabel?: T;
         errorLabel?: T;
       };
+  inserts?:
+    | T
+    | {
+        kind?: T;
+        metric?:
+          | T
+          | {
+              value?: T;
+              label?: T;
+              sub?: T;
+              accent?: T;
+            };
+        client?: T;
+        statement?: T;
+        position?: T;
+        id?: T;
+      };
+  wallNote?: T;
   emptyNote?: T;
   id?: T;
   blockName?: T;
@@ -4004,7 +4224,46 @@ export interface RichContentBlockSelect<T extends boolean = true> {
   heading?: T;
   accentPhrase?: T;
   numberSections?: T;
+  lastUpdated?: T;
+  lastUpdatedLabel?: T;
+  navLabel?: T;
   body?: T;
+  facts?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        sub?: T;
+        accent?: T;
+        id?: T;
+      };
+  pricingNote?: T;
+  link?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
+  tone?: T;
+  framed?: T;
+  callout?:
+    | T
+    | {
+        eyebrow?: T;
+        body?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+      };
   id?: T;
   blockName?: T;
 }
@@ -5095,6 +5354,40 @@ export interface SiteSetting {
      */
     nextStudyRead?: string | null;
   };
+  postLabels?: {
+    /**
+     * e.g. "By" in "By Sam, Duha Media".
+     */
+    bylinePrefix?: string | null;
+    /**
+     * e.g. "Duha Media" in "By Sam, Duha Media".
+     */
+    bylineOrganisation?: string | null;
+    /**
+     * e.g. "Published" in "Published Jun 12, 2026".
+     */
+    publishedPrefix?: string | null;
+    /**
+     * e.g. "Updated" in "Updated Jul 24, 2026".
+     */
+    updatedPrefix?: string | null;
+    /**
+     * e.g. "min read" in "7 min read".
+     */
+    readTimeSuffix?: string | null;
+    /**
+     * Used when an article has no questions heading of its own, e.g. "Shopify development Chicago — common questions".
+     */
+    faqEyebrowSuffix?: string | null;
+    /**
+     * Used when an article leaves that box's small label empty.
+     */
+    howWeDoItEyebrow?: string | null;
+    /**
+     * Shown before the number on an issue page, e.g. "Issue 011".
+     */
+    issueWord?: string | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -5402,7 +5695,7 @@ export interface SeoDefault {
    */
   localBusiness?: {
     /**
-     * The kind of business Google is told this is. "Professional service" is the right type for Duha Media and the only option for now.
+     * Leave empty (recommended): the site then tells Google it is a plain Organization. A local-business type needs a public street address, which Duha Media does not publish.
      */
     type?: 'ProfessionalService' | null;
     /**
@@ -5499,6 +5792,18 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         clientVoicePhases?: T;
         nextStudy?: T;
         nextStudyRead?: T;
+      };
+  postLabels?:
+    | T
+    | {
+        bylinePrefix?: T;
+        bylineOrganisation?: T;
+        publishedPrefix?: T;
+        updatedPrefix?: T;
+        readTimeSuffix?: T;
+        faqEyebrowSuffix?: T;
+        howWeDoItEyebrow?: T;
+        issueWord?: T;
       };
   updatedAt?: T;
   createdAt?: T;

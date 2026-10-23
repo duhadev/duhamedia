@@ -232,9 +232,9 @@ export const Hero: Block = {
       admin: {
         components: { RowLabel: rowLabel(['value', 'label'], 'Figure') },
         description:
-          'Short facts shown beside the headline on desktop and as a strip under it on mobile, e.g. "$3.1M" / "Client revenue added". Results or counts only, never a price.',
+          'Short facts shown beside the headline on desktop and as a strip under it on mobile (article: a facts strip under the intro, e.g. Based / Scope / Capacity / Read), e.g. "$3.1M" / "Client revenue added". Results or counts only, never a price.',
         initCollapsed: true,
-        condition: forVariants('typographic', 'service'),
+        condition: forVariants('typographic', 'service', 'article'),
       },
       fields: [
         {

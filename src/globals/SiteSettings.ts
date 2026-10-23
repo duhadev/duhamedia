@@ -13,6 +13,7 @@ import { staffOnly, staffOnlyField } from '../access'
 import { linkField, validateHttpsUrl } from '../fields'
 import { revalidateGlobalHook } from '../hooks/revalidateTag'
 import { CASE_STUDY_LABEL_DEFAULTS } from '../lib/caseStudyLabels'
+import { POST_LABEL_DEFAULTS } from '../lib/postLabels'
 
 /**
  * `site-settings` global (SCHEMA.md §7.1, §4.3, §10 — Gate S approved 2026-10-17).
@@ -113,14 +114,20 @@ const validateRatingSource: TextFieldSingleValidation = (value, options) => {
 }
 
 /** F76: one template label; default and site fallback from CASE_STUDY_LABEL_DEFAULTS. */
-const labelField = (name: keyof typeof CASE_STUDY_LABEL_DEFAULTS, label: string, description: string, width: string): Field => ({
-  name,
-  type: 'text',
-  label,
-  maxLength: 60,
-  defaultValue: CASE_STUDY_LABEL_DEFAULTS[name],
-  admin: { width, description, placeholder: CASE_STUDY_LABEL_DEFAULTS[name] },
-})
+/** One template-label text box: design copy as default + grey placeholder, max 60. */
+const makeLabelField =
+  <D extends Record<string, string>>(defaults: D) =>
+  (name: keyof D & string, label: string, description: string, width: string): Field => ({
+    name,
+    type: 'text',
+    label,
+    maxLength: 60,
+    defaultValue: defaults[name],
+    admin: { width, description, placeholder: defaults[name] },
+  })
+
+const labelField = makeLabelField(CASE_STUDY_LABEL_DEFAULTS)
+const postLabelField = makeLabelField(POST_LABEL_DEFAULTS)
 
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
@@ -521,7 +528,7 @@ export const SiteSettings: GlobalConfig = {
           label: 'Template labels',
           admin: {
             description:
-              'The small fixed words on every case study page (breadcrumb, date line, boxes and section labels). Leave a box empty to use the standard wording shown in grey.',
+              'The small fixed words on every case study, article and newsletter issue page (breadcrumb, byline, date line, boxes and section labels). Leave a box empty to use the standard wording shown in grey.',
           },
           fields: [
             {
@@ -558,6 +565,36 @@ export const SiteSettings: GlobalConfig = {
                   fields: [
                     labelField('nextStudy', 'Next study: label', 'Small label on the link to the next case study.', '50%'),
                     labelField('nextStudyRead', 'Next study: link words', 'The words at the end of that link.', '50%'),
+                  ],
+                },
+              ],
+            },
+            {
+              name: 'postLabels',
+              type: 'group',
+              label: 'Article and newsletter pages',
+              fields: [
+                {
+                  type: 'row',
+                  fields: [
+                    postLabelField('bylinePrefix', 'Byline: before the name', 'e.g. "By" in "By Sam, Duha Media".', '50%'),
+                    postLabelField('bylineOrganisation', 'Byline: after the name', 'e.g. "Duha Media" in "By Sam, Duha Media".', '50%'),
+                  ],
+                },
+                {
+                  type: 'row',
+                  fields: [
+                    postLabelField('publishedPrefix', 'Date line: first published', 'e.g. "Published" in "Published Jun 12, 2026".', '33%'),
+                    postLabelField('updatedPrefix', 'Date line: last updated', 'e.g. "Updated" in "Updated Jul 24, 2026".', '33%'),
+                    postLabelField('readTimeSuffix', 'Date line: after the minutes', 'e.g. "min read" in "7 min read".', '34%'),
+                  ],
+                },
+                {
+                  type: 'row',
+                  fields: [
+                    postLabelField('faqEyebrowSuffix', 'Questions label: after the keyword', 'Used when an article has no questions heading of its own, e.g. "Shopify development Chicago — common questions".', '40%'),
+                    postLabelField('howWeDoItEyebrow', '"How we do it" box label', 'Used when an article leaves that box\'s small label empty.', '35%'),
+                    postLabelField('issueWord', 'Newsletter: issue word', 'Shown before the number on an issue page, e.g. "Issue 011".', '25%'),
                   ],
                 },
               ],

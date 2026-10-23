@@ -29,8 +29,8 @@ import { revalidateGlobalHook } from '../hooks/revalidateTag'
  *
  * Facts only (CLAUDE.md content rule 3): the only defaults are the brand name
  * "Duha Media" (`organization.name`), the SCHEMA title template, and SCHEMA's
- * `areaServed` "Chicago metropolitan area", and `localBusiness.type` "ProfessionalService"
- * (F12/F13, mini Gate S 2026-10-21). `foundingDate` and `openingHours` start empty.
+ * `areaServed` "Chicago metropolitan area". `localBusiness.type`, `foundingDate` and
+ * `openingHours` start empty (plain Organization is emitted until a type is chosen).
  *
  * `localBusiness.type` stays a select with one option so another VALID schema.org
  * LocalBusiness subtype can be added later (mini Gate S + enum migration). `MarketingAgency`
@@ -67,7 +67,6 @@ export const DEFAULT_TITLE_TEMPLATE = '%s — Duha Media'
 export const DEFAULT_DESCRIPTION_MAX = 155
 /** schema.org LocalBusiness subtypes offered (must be real schema.org types). */
 export const LOCAL_BUSINESS_TYPES = ['ProfessionalService'] as const
-export const DEFAULT_LOCAL_BUSINESS_TYPE: (typeof LOCAL_BUSINESS_TYPES)[number] = 'ProfessionalService'
 const BUSINESS_TYPE_LABELS: Record<(typeof LOCAL_BUSINESS_TYPES)[number], string> = {
   ProfessionalService: 'Professional service',
 }
@@ -273,7 +272,7 @@ export const SeoDefaults: GlobalConfig = {
               admin: {
                 width: '50%',
                 description:
-                  'The kind of business Google is told this is. "Professional service" is the right type for Duha Media and the only option for now.',
+                  'Leave empty (recommended): the site then tells Google it is a plain Organization. A local-business type needs a public street address, which Duha Media does not publish.',
               },
             },
             {

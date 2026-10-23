@@ -1,6 +1,6 @@
 import type { Block, Condition, RelationshipFieldManyValidation } from 'payload'
 
-import { eyebrowField, headlineFields } from '../../fields'
+import { eyebrowField, headlineFields, metricFields, scarcityRef } from '../../fields'
 
 /**
  * ReviewWall block (SCHEMA §8.2 item 8, §2.2, §6.4). Variant shipped so far:
@@ -12,8 +12,11 @@ import { eyebrowField, headlineFields } from '../../fields'
  * per card only when the testimonial's case study is PUBLISHED (R3) and the
  * toggle below is on. Load More, no page numbers.
  *
- * `wall` (p19) arrives with the Review Hub page: it will add its own variant
- * option plus `inserts` / `wallNote` (SCHEMA §8.2).
+ * `wall` (p19 §Review wall, Review Hub.dc.html): the same testimonials as a
+ * staggered masonry (CSS columns 3 / 2 / 1), written cards only (stars and the
+ * source tag are data), with optional `inserts` between cards: a typographic
+ * metric tile, a client-name tile, or a scarcity tile (the loud number + its
+ * quiet reason, read from "Capacity & scarcity", never typed here). No Load More.
  */
 
 const isAll: Condition = (_d, s) => (s?.source ?? 'all') === 'all'
@@ -28,7 +31,13 @@ const validatePicked: RelationshipFieldManyValidation = (value, { siblingData })
     return true
   }
 }
-const linksOn: Condition = (_d, s) => s?.showStudyLinks !== false
+const isFeed: Condition = (_d, s) => s?.variant !== 'wall'
+const isWall: Condition = (_d, s) => s?.variant === 'wall'
+const linksOn: Condition = (_d, s) => s?.variant !== 'wall' && s?.showStudyLinks !== false
+const kindIs =
+  (kind: string): Condition =>
+  (_d, s) =>
+    s?.kind === kind
 
 export const ReviewWall: Block = {
   slug: 'reviewWall',
@@ -40,8 +49,11 @@ export const ReviewWall: Block = {
       type: 'select',
       required: true,
       defaultValue: 'feed',
-      options: [{ label: 'Feed (video tiles, quotes and reviews, with "Load more")', value: 'feed' }],
-      admin: { description: 'The layout. More layouts arrive with the pages that need them.' },
+      options: [
+        { label: 'Feed (video tiles, quotes and reviews, with "Load more")', value: 'feed' },
+        { label: 'Wall (staggered columns of review cards, with optional metric / client / capacity tiles)', value: 'wall' },
+      ],
+      admin: { description: 'The layout. Feed is the Testimonials page; Wall is the Review Hub.' },
     },
     eyebrowField({
       defaultTick: true,
@@ -102,6 +114,7 @@ export const ReviewWall: Block = {
       defaultValue: 6,
       admin: {
         step: 1,
+        condition: isFeed,
         description: 'How many cards show at first, and how many more each "Load more" click adds. The button hides when everything is shown.',
       },
     },
@@ -115,6 +128,7 @@ export const ReviewWall: Block = {
           defaultValue: true,
           admin: {
             width: '50%',
+            condition: isFeed,
             description:
               'Each card links to the case study set on its testimonial, only once that study is PUBLISHED. Untick to hide every link.',
           },
@@ -171,6 +185,7 @@ export const ReviewWall: Block = {
       name: 'loadMore',
       type: 'group',
       label: '"Load more" button',
+      admin: { condition: isFeed },
       fields: [
         {
           type: 'row',
@@ -187,6 +202,76 @@ export const ReviewWall: Block = {
           ],
         },
       ],
+    },
+    {
+      name: 'inserts',
+      type: 'array',
+      label: 'Tiles between the cards',
+      maxRows: 6,
+      admin: {
+        condition: isWall,
+        description:
+          'Optional extra tiles dropped between the review cards: a headline number, a client name, or the capacity statement. Add, remove and drag to reorder.',
+      },
+      labels: { singular: 'Tile', plural: 'Tiles' },
+      fields: [
+        {
+          name: 'kind',
+          label: 'Tile type',
+          type: 'select',
+          required: true,
+          defaultValue: 'metric',
+          options: [
+            { label: 'Headline number (metric)', value: 'metric' },
+            { label: 'Client name / logo', value: 'client' },
+            { label: 'Capacity statement (from Capacity & scarcity)', value: 'scarcity' },
+          ],
+        },
+        {
+          name: 'metric',
+          type: 'group',
+          label: 'Number',
+          admin: { condition: kindIs('metric'), description: 'A result or count, never a price.' },
+          fields: metricFields({ required: false }),
+        },
+        {
+          name: 'client',
+          type: 'relationship',
+          relationTo: 'clients',
+          maxDepth: 1,
+          admin: {
+            condition: kindIs('client'),
+            description: 'Shows the client logo (or its name when there is no logo). Skipped while the client is a draft.',
+          },
+        },
+        scarcityRef({
+          name: 'statement',
+          label: 'Statement',
+          defaultValue: 'capacity',
+          description:
+            'Which statement from "Capacity & scarcity" to show. The number and its reason are always shown together; edit them there, not here.',
+        }),
+        {
+          name: 'position',
+          type: 'number',
+          label: 'Place after card number',
+          min: 0,
+          defaultValue: 2,
+          admin: {
+            step: 1,
+            description: '0 puts the tile first, 2 puts it after the second review card. A number past the last card puts it at the end.',
+          },
+        },
+      ],
+    },
+    {
+      name: 'wallNote',
+      type: 'text',
+      label: 'Small note under the wall',
+      admin: {
+        condition: isWall,
+        description: 'Optional quiet line under the wall, e.g. where the reviews come from. Leave empty to hide.',
+      },
     },
     {
       name: 'emptyNote',

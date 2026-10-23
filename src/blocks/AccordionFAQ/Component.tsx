@@ -26,9 +26,10 @@ const clampLimit = (n: number | null | undefined): number => Math.min(12, Math.m
  * `draft: false`, `overrideAccess: false` and an explicit `_status` filter.
  * A failed read is logged and renders nothing.
  */
-async function loadFaqs(source: AccordionFAQProps['source'], picks: AccordionFAQProps['faqs'], category: AccordionFAQProps['category'], limit: number): Promise<Faq[]> {
+async function loadFaqs(source: AccordionFAQProps['source'], picks: AccordionFAQProps['faqs'], category: AccordionFAQProps['category'], limit: number | null): Promise<Faq[]> {
   if (source !== 'category') {
-    return (picks ?? []).filter((f): f is Faq => typeof f === 'object' && f !== null && f._status === 'published').slice(0, limit)
+    const published = (picks ?? []).filter((f): f is Faq => typeof f === 'object' && f !== null && f._status === 'published')
+    return limit === null ? published : published.slice(0, limit)
   }
   if (!category) return []
   try {
@@ -38,7 +39,7 @@ async function loadFaqs(source: AccordionFAQProps['source'], picks: AccordionFAQ
       draft: false,
       overrideAccess: false,
       depth: 1,
-      limit,
+      ...(limit === null ? { pagination: false } : { limit }),
       sort: 'sortOrder',
       where: { and: [{ _status: { equals: 'published' } }, { category: { equals: category } }] },
     })
@@ -53,8 +54,8 @@ async function loadFaqs(source: AccordionFAQProps['source'], picks: AccordionFAQ
  * Public loader for the page router: the published questions this block would
  * render. Same rules as the render path (published only, limit clamped).
  */
-export const loadAccordionFaqs = (block: Pick<AccordionFAQProps, 'source' | 'faqs' | 'category' | 'limit'>): Promise<Faq[]> =>
-  loadFaqs(block.source, block.faqs, block.category, clampLimit(block.limit))
+export const loadAccordionFaqs = (block: Pick<AccordionFAQProps, 'source' | 'faqs' | 'category' | 'limit'> & { variant?: AccordionFAQProps['variant'] }): Promise<Faq[]> =>
+  loadFaqs(block.source, block.faqs, block.category, block.variant === 'group' ? null : clampLimit(block.limit))
 
 type Node = { type?: unknown; text?: unknown; children?: unknown }
 
@@ -153,7 +154,7 @@ function GroupFaq({ heading, items, openFirst, allLink, anchorId, spacing, eyebr
  * rendered items.
  */
 export async function AccordionFAQBlock({ variant, eyebrow, eyebrowTick, heading, source, category, faqs, limit, openFirst, allLink, anchorId, spacing, emitJsonLd = true }: AccordionFAQProps) {
-  const items = await loadFaqs(source, faqs, category, clampLimit(limit))
+  const items = await loadFaqs(source, faqs, category, variant === 'group' ? null : clampLimit(limit))
 
   if (items.length === 0) {
     console.warn(`[AccordionFAQ] "${heading}" has no published questions; rendering nothing`)

@@ -1,11 +1,12 @@
 import type { Block } from 'payload'
 
-import { pricingNote, scarcityRef } from '../../fields'
+import { metricFields, pricingNote, scarcityRef } from '../../fields'
 import { rowLabel } from '../../components/admin/rowLabel'
 
 /**
- * ProofStrip block (SCHEMA §8.2 item 5). This unit ships ONLY the `scarcity` variant (homepage);
- * the `metrics` variant (p15) is appended later with its own fields.
+ * ProofStrip block (SCHEMA §8.2 item 5). `scarcity` (homepage) and `metrics` (p15 Campaign LP,
+ * S6-4): up to three metrics + an optional capacity statement + the logo row, left-aligned in the
+ * 820 column.
  */
 export const ProofStrip: Block = {
   slug: 'proofStrip',
@@ -17,8 +18,11 @@ export const ProofStrip: Block = {
       type: 'select',
       required: true,
       defaultValue: 'scarcity',
-      options: [{ label: 'Scarcity (capacity statements + client logos)', value: 'scarcity' }],
-      admin: { description: 'The strip layout. More layouts arrive with the pages that need them.' },
+      options: [
+        { label: 'Scarcity (capacity statements + client logos)', value: 'scarcity' },
+        { label: 'Metrics (up to three metrics + capacity + client logos, Campaign LP)', value: 'metrics' },
+      ],
+      admin: { description: 'The strip layout. Scarcity is the homepage strip; Metrics is the compact Campaign LP strip.' },
     },
     {
       name: 'statements',
@@ -26,6 +30,7 @@ export const ProofStrip: Block = {
       maxRows: 2,
       labels: { singular: 'Statement', plural: 'Statements' },
       admin: {
+        condition: (_data, siblingData) => siblingData?.variant !== 'metrics',
         components: { RowLabel: rowLabel(['key'], 'Statement', { scarcityKeys: true }) },
         description:
           'Up to two capacity statements, shown side by side. Each shows a big line with its reason quietly underneath; both come from "Capacity & scarcity".',
@@ -33,6 +38,29 @@ export const ProofStrip: Block = {
       },
       fields: [scarcityRef()],
     },
+    {
+      name: 'metrics',
+      type: 'array',
+      maxRows: 3,
+      labels: { singular: 'Metric', plural: 'Metrics' },
+      admin: {
+        condition: (_data, siblingData) => siblingData?.variant === 'metrics',
+        components: { RowLabel: rowLabel(['value', 'label'], 'Metric') },
+        description:
+          'Up to three proof numbers (results or counts, never prices). Prices go in the "Pricing note" below. Leave empty to show none.',
+        initCollapsed: false,
+      },
+      fields: metricFields(),
+    },
+    (() => {
+      const f = scarcityRef({
+        name: 'capacityStatement',
+        label: 'Capacity statement',
+        description:
+          'Optional capacity tile beside the metrics: a big line with its reason quietly beneath, both from "Capacity & scarcity". Edit the numbers and wording there. Choose "None" to hide it.',
+      })
+      return { ...f, admin: { ...f.admin, condition: (_data, siblingData) => siblingData?.variant === 'metrics' } } satisfies typeof f
+    })(),
     pricingNote(),
     {
       name: 'logos',
