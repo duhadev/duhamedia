@@ -11,7 +11,15 @@ Entry format for every unit: **Files** / **Fields & schema** / **Wiring** (regis
 - [Frontend foundation (B0)](#frontend-foundation-unit-b0)
 - [Site chrome (B1)](#site-chrome-unit-b1)
 - [Page router (B2)](#page-router-unit-b2)
-- [Shared components and form foundation (big steps 4 and 5)](#shared-components-and-form-foundation-big-step-4)
+- [Shared components and form foundation (big steps 4 to 6)](#shared-components-and-form-foundation-big-step-4)
+   - [Request path header and proxy (F75, F78 B1)](#request-path-header-and-proxy-f75-f78-b1)
+   - [SITE_URL and APP_ENV handling (F65 B1)](#site_url-and-app_env-handling-f65-b1)
+   - [PayloadForm `cmsform:submitted` event](#payloadform-cmsformsubmitted-event)
+   - [Live preview refresh and preview banner (F57, F58)](#live-preview-refresh-and-preview-banner-f57-f58)
+   - [Admin array row labels (F62)](#admin-array-row-labels-fieldrowlabel-rowlabel-f62)
+   - [Template labels: caseStudyLabels (F76)](#template-labels-casestudylabels-f76)
+   - [S5 close-out schema deltas (`20261023_170339_b5b_s5_deltas`)](#s5-close-out-schema-deltas-20261023_170339_b5b_s5_deltas)
+   - [BreadcrumbJsonLd](#breadcrumbjsonld)
 1. [Homepage](#1-homepage)
    - [Hero (B3)](#hero-unit-b3)
    - [ProofStrip (B3)](#proofstrip-unit-b3)
@@ -71,14 +79,38 @@ Entry format for every unit: **Files** / **Fields & schema** / **Wiring** (regis
     - [DirectContact (S5-10)](#directcontact-unit-s5-10)
     - [Organization / LocalBusiness JSON-LD (OrganizationJsonLd)](#organization--localbusiness-json-ld-organizationjsonld)
 13. [DEV-SEO template](#13-dev-seo-template)
+    - [Template route and view (S6-T1)](#template-route-and-view-unit-s6-t1)
+    - [Hero, article variant: standfirst (S6-1)](#hero-article-variant-standfirst-unit-s6-1)
+    - [RichContent, article callout (S6-2)](#richcontent-article-callout-unit-s6-2)
+    - [RichContent, band variant (S6-2)](#richcontent-band-variant-unit-s6-2)
+    - [AccordionFAQItemsView (S6-3)](#accordionfaqitemsview-unit-s6-3)
+    - [Template labels: postLabels (S6-S)](#template-labels-postlabels-unit-s6-s)
 14. [MKT-SEO template](#14-mkt-seo-template)
 15. [Campaign LP template](#15-campaign-lp-template)
+    - [Hero, vsl variant (S6-1)](#hero-vsl-variant-unit-s6-1)
+    - [ProofStrip, metrics variant (S6-4)](#proofstrip-metrics-variant-unit-s6-4)
+    - [MiniCTAStrip, button variant (S6-6)](#minictastrip-button-variant-unit-s6-6)
+    - [OfferBlock (S6-5)](#offerblock-unit-s6-5)
+    - [TestimonialRow, ctaStyle (S6-7)](#testimonialrow-ctastyle-unit-s6-7)
+    - [Zero-leakage link rules (F137)](#zero-leakage-link-rules-unit-f137)
 16. [Newsletter](#16-newsletter)
+    - [Hero, form slot: card (S6-1)](#hero-form-slot-card-unit-s6-1)
+    - [PostList (S6-8)](#postlist-unit-s6-8)
+    - [TestimonialRow, leadMetric (S6-7)](#testimonialrow-leadmetric-unit-s6-7)
+    - [Newsletter issue template (S6-T1)](#newsletter-issue-template-unit-s6-t1)
 17. [Link-in-Bio](#17-link-in-bio)
+    - [LinkStack (S6-9)](#linkstack-unit-s6-9)
 18. [Lead Magnet template](#18-lead-magnet-template)
+    - [Template route and view (S6-T2)](#template-route-and-view-unit-s6-t2)
+    - [Hero, form slot: inline style and slashBreaks (S6-1)](#hero-form-slot-inline-style-and-slashbreaks-unit-s6-1)
+    - [SpecLedger, list variant (S6-10)](#specledger-list-variant-unit-s6-10)
+    - [NewsletterBand, cross-sell variant (S6-11)](#newsletterband-cross-sell-variant-unit-s6-11)
 19. [Review Hub](#19-review-hub)
+    - [ReviewWall, wall variant (S6-12)](#reviewwall-wall-variant-unit-s6-12)
 20. [Legal template](#20-legal-template)
+    - [RichContent, legal variant (S6-2)](#richcontent-legal-variant-unit-s6-2)
 21. [404](#21-404)
+    - [Error404 block and not-found wiring (S6-13, S6-T2)](#error404-block-and-not-found-wiring-unit-s6-13-s6-t2)
 - [Site-wide units (collections, globals, header, footers)](#site-wide-units)
   - [Collections](#collections)
     - [Access helpers + `users` (C1)](#access-helpers--users-unit-c1)
@@ -123,8 +155,8 @@ Sitewide frontend machinery, not tied to a page. Every block unit depends on it.
   - `Media` renders a media doc with `next/image` (alt from the doc; `alt=""` only for decorative images). It keeps the upload path and query and drops the origin; with `fill`, the focal point sets `object-position`. Renders nothing for an empty or id-only upload.
 - `src/lib/cx.ts`: class-name joiner.
 - `src/lib/accentPhrase.ts`: `splitAccentPhrase(heading, accent)` returns `[before, accent, after]` (case-insensitive match, heading's own spelling) or `null`. Shares its matching rule with `accentPhraseError` / `validateAccentPhrase`.
-- `src/blocks/index.ts`: `pageBlocks` (block configs only; 19 blocks registered after big step 5, in this order: `Hero`, `MiniCTAStrip`, `FinalCTA`, `ProofStrip`, `CaseStudyCards`, `MetricEvent`, `ReviewWall`, `TestimonialRow`, `TwoTrackPanels`, `PhaseTimeline`, `TeamIntro`, `RichContent`, `SpecLedger`, `NewsletterBand`, `FormEmbed`, `BookingEmbed`, `DirectContact`, `AccordionFAQ`, `CategoryTabs`; the order is the admin "Add section" picker order. B3 registered the first 9, without `MetricEvent`; big step 5 added `ReviewWall`, `FormEmbed`, `BookingEmbed`, `DirectContact`, `CategoryTabs`). Must not import React or CSS because `payload.config.ts` loads it.
-- `src/blocks/components.ts`: `blockComponents` (`blockType` to component), typed `{ [K in PageBlockType]: ComponentType<BlockData<K>> }`; a missing entry is a type error. Keys: `hero`, `miniCTAStrip`, `finalCTA`, `proofStrip`, `caseStudyCards`, `metricEvent`, `reviewWall`, `testimonialRow`, `twoTrackPanels`, `phaseTimeline`, `teamIntro`, `richContent`, `specLedger`, `newsletterBand`, `formEmbed`, `bookingEmbed`, `directContact`, `accordionFAQ`, `categoryTabs`.
+- `src/blocks/index.ts`: `pageBlocks` (block configs only; 19 blocks registered after big step 5, in this order: `Hero`, `MiniCTAStrip`, `FinalCTA`, `ProofStrip`, `CaseStudyCards`, `MetricEvent`, `ReviewWall`, `TestimonialRow`, `TwoTrackPanels`, `PhaseTimeline`, `TeamIntro`, `RichContent`, `SpecLedger`, `NewsletterBand`, `FormEmbed`, `BookingEmbed`, `DirectContact`, `AccordionFAQ`, `CategoryTabs`; the order is the admin "Add section" picker order. B3 registered the first 9, without `MetricEvent`; big step 5 added `ReviewWall`, `FormEmbed`, `BookingEmbed`, `DirectContact`, `CategoryTabs`). Big step 6 registered four more, 23 in total: `OfferBlock` (inserted after `FinalCTA`), and `LinkStack`, `PostList`, `Error404` (appended in that order after `CategoryTabs`); the current order is the array in `src/blocks/index.ts`. Must not import React or CSS because `payload.config.ts` loads it.
+- `src/blocks/components.ts`: `blockComponents` (`blockType` to component), typed `{ [K in PageBlockType]: ComponentType<BlockData<K>> }`; a missing entry is a type error. Keys: `hero`, `miniCTAStrip`, `finalCTA`, `proofStrip`, `caseStudyCards`, `metricEvent`, `reviewWall`, `testimonialRow`, `twoTrackPanels`, `phaseTimeline`, `teamIntro`, `richContent`, `specLedger`, `newsletterBand`, `formEmbed`, `bookingEmbed`, `directContact`, `accordionFAQ`, `categoryTabs`, and from big step 6 `offerBlock`, `linkStack`, `postList`, `error404`.
 - `src/blocks/types.ts`: `PageLayoutBlock`, `PageBlockType`, `BlockData<K>`, all derived from the generated `Page` type (resolve to `never` while no block exists).
 - `src/fields/index.ts`: shared field factories. B3 added `eyebrowField()`, `headlineFields()`, `scarcityRef()` and the `required` option of `metricFields()` (below); `linkField`, `metricFields`, `pricingNote`, `validateAccentPhrase` / `accentPhraseAdminField` and `contentVersions` predate B3.
   - `eyebrowField({ defaultTick = true, description })`: a `row` (no data nesting) holding `eyebrow` (text, 70% width) and `eyebrowTick` (checkbox "Show the diamond marker", 30%, default from `defaultTick`). Both optional; an empty eyebrow renders nothing.
@@ -220,7 +252,8 @@ Resolves `pages` documents to URLs and produces their head metadata, draft previ
 - `src/lib/metadata.ts` (`server-only`): `getSeoDefaults()` (cached `findGlobal` on `seo-defaults`, `depth: 1`, `overrideAccess: false`; returns `{}` on a failed read), `titleTemplate()`, `siteName()`, `pageMetadata(page, { preview })`, `homeFallbackMetadata()`.
 - `src/lib/redirects.ts` (`server-only`): `findRedirect(path)` returning `{ location, permanent } | null`.
 - `src/lib/preview.ts`: `PREVIEW_ROUTE` (`/_preview`), `EXIT_PREVIEW_ROUTE` (`/_preview/exit`), `PREVIEW_BREAKPOINTS` (mobile 390x844, tablet 768x1024, desktop 1440x900), `previewUrl(path)`. No `server-only` and no `next/*` imports, because `Pages.ts` imports it and the Payload CLI loads that file.
-- `src/lib/env.ts` (`server-only`): `getAppEnv()` (`APP_ENV` = `production` or `staging`, anything else is `development`), `isProduction()`, `getSiteUrl()` (`SITE_URL` without trailing slashes; falls back to `http://localhost:3000` when unset).
+- `src/lib/env.ts` (`server-only`): `getAppEnv()` (`APP_ENV` = `production` or `staging`, anything else is `development`), `isProduction()`, `getSiteUrl()`, `absoluteUrl()`, re-exported from `src/lib/siteUrl.ts`. `getSiteUrl()` throws on staging and production when `SITE_URL` is unset or invalid and falls back to `http://localhost:3000` only in development; see [SITE_URL and APP_ENV handling](#site_url-and-app_env-handling-f65-b1).
+- `src/proxy.ts`: `x-request-path` request header and the non-production `X-Robots-Tag` response header; see [Request path header and proxy](#request-path-header-and-proxy-f75-f78-b1).
 - `src/app/sitemap.ts`, `src/app/robots.ts`: Next metadata routes (`/sitemap.xml`, `/robots.txt`), both `force-dynamic`.
 - `src/app/(frontend)/layout.tsx`: `force-dynamic`; `generateMetadata` (site-wide defaults); html/body shell with both font variables. No header or footer.
 - `src/app/(frontend)/page.tsx` (`/`), `src/app/(frontend)/[...slug]/page.tsx` (every other page), `src/app/(frontend)/not-found.tsx`.
@@ -236,7 +269,7 @@ Resolves `pages` documents to URLs and produces their head metadata, draft previ
 - Routing:
   - `/` renders the `home` doc (`HOME_SLUG`). With no home doc visible it renders a placeholder (`Duha Media` / `Site rebuild in progress.`) inside `PageShell` with default variants, never a 404.
   - `/<slug>`: the catch-all joins segments with `/` (slug keeps `/` between segments, see `src/lib/pagePath.ts`). `/home` calls `permanentRedirect('/')` (308). `/404` (`NOT_FOUND_SLUG`) calls `notFound()`. No page: `findRedirect('/<slug>')`; a hit calls `permanentRedirect` (308) or `redirect` (307); otherwise `notFound()`.
-  - `not-found.tsx` is a placeholder (`Page not found` + link to `/`) in `PageShell` with standard variants. It does not read the `404` doc yet (Error404 block pending). Its metadata is `title: 'Page not found'` with `robots: null`, because Next adds its own `noindex` to not-found responses and the layout's non-production robots would otherwise duplicate it.
+  - `not-found.tsx` renders the reserved `404` doc (or the `Error404View` defaults) and sets its own title and description; see [Error404 block and not-found wiring](#error404-block-and-not-found-wiring-unit-s6-13-s6-t2). It sets no robots tag, because Next adds its own `noindex` to not-found responses.
 - Page query (`getPage`):
   - Public: `find` on `pages` with `where` slug equals and `_status` equals `published`, `draft: false`, `overrideAccess: false`, `depth: PAGE_QUERY_DEPTH`, `limit: 1`, `pagination: false`.
   - Draft preview: only when Next draft mode is on AND `getPreviewUser()` returns a user; then `draft: true`, `user`, `overrideAccess: false` (collection access still applies).
@@ -247,8 +280,8 @@ Resolves `pages` documents to URLs and produces their head metadata, draft previ
   - Share image (Open Graph and Twitter): `page.meta.image` → `seo-defaults.defaultOgImage`; each is used only through its `sizes.og` (1200x630) rendition (url, width, height, alt). A media doc with no `og` size, or an unpopulated id, counts as none. Twitter card is `summary_large_image` with an image, `summary` without.
   - Canonical and `og:url`: `getSiteUrl()` + `pagePath(slug)` (absolute; `/` for `home`). Not emitted for a doc with no path.
   - `og:siteName`: `seo-defaults.organization.name`, else `Duha Media`.
-  - Robots: `{ index: false, follow: false }` when `APP_ENV` is not `production`, or the render is a draft preview, or `page.noindex === true`, or `page.zeroLeakage === true`; otherwise `{ index: true, follow: true }`. `robots` is a nested metadata field, so the page's value replaces the layout's: exactly one robots tag.
-  - Layout defaults (`layout.tsx` `generateMetadata`), for routes that set none (not-found, `/_showcase`, `/home` and `/404` in the catch-all): `metadataBase` = `getSiteUrl()`, `title.default` = site name, `title.template` = the seo-defaults template, description = `defaultDescription`, robots noindex/nofollow when not production.
+  - Robots (`buildMetadata`): `{ index: false, follow: false }` when the render is a draft preview, or `page.noindex === true`, or `page.zeroLeakage === true`; otherwise `{ index: true, follow: true }` in production and no robots tag outside production. Outside production the `X-Robots-Tag: noindex, nofollow` response header from `src/proxy.ts` keeps pages out of search (F78 B1; before it, a robots meta from `APP_ENV` was also emitted).
+  - Layout defaults (`layout.tsx` `generateMetadata`), for routes that set none (not-found, `/_showcase`, `/home` and `/404` in the catch-all): `metadataBase` = `getSiteUrl()`, `title.default` = site name, `title.template` = the seo-defaults template, description = `defaultDescription`. No robots tag.
   - `homeFallbackMetadata()` (no home doc visible): `HOME_SEO_TITLE`, path `/`, indexable in production.
 - Draft preview:
   - Admin: `Pages.admin.preview` and `Pages.admin.livePreview.url` both return `previewUrl(pagePath(slug))` = `<SITE_ORIGIN>/_preview?path=<path>`, where the origin comes from `siteOrigin()` in `src/plugins/seo.ts` (server-side `SITE_URL`; empty, so a relative URL, when unset). `null` (no preview) while the doc has no slug and for the `404` doc. Live preview breakpoints are `PREVIEW_BREAKPOINTS`.
@@ -264,17 +297,17 @@ Resolves `pages` documents to URLs and produces their head metadata, draft previ
   - `to.type = custom`: the stored `to.url`. `to.type = reference`: the target's public path via `docPath(relationTo, doc)`, and only while the target is **published** (queried with `_status: published`, `draft: false`, `overrideAccess: false`); otherwise no redirect (404). A resolved location equal to the request path is ignored.
   - Status: stored type `301` → `permanentRedirect` (HTTP 308); `302` → `redirect` (HTTP 307). In the App Router a page can only emit 308/307; search engines treat 308 as 301 and 307 as 302.
   - A lookup error is logged and treated as not found.
-- Sitemap (`/sitemap.xml`): `find` on `pages` with `_status: published`, slug not `404`, `depth: 0`, `draft: false`, `overrideAccess: false`, `limit: 0`, sorted by `slug`. Documents with `noindex === true` or `zeroLeakage === true` are dropped in code (an SQL `<> true` would also drop NULL rows). `home` appears once, as `<SITE_URL>/`. `lastModified` is `updatedAt`. `/_showcase` and `/_preview` never appear. A DB failure is a 500, not an empty sitemap. Published `case-studies` are appended after the pages as `<SITE_URL>/work/<slug>` (newest `publishedAt` first, `select: { slug, updatedAt }`; see [Template route and view (S4-12)](#template-route-and-view-unit-s4-12)). Posts and lead-magnets are added when their routes land. Same sitemap in every environment (not filtered by `APP_ENV`).
+- Sitemap (`/sitemap.xml`): `find` on `pages` with `_status: published`, slug not `404`, `depth: 0`, `draft: false`, `overrideAccess: false`, `limit: 0`, sorted by `slug`. Documents with `noindex === true` or `zeroLeakage === true` are dropped in code (an SQL `<> true` would also drop NULL rows). `home` appears once, as `<SITE_URL>/`. `lastModified` is `updatedAt`. `/_showcase` and `/_preview` never appear. A DB failure is a 500, not an empty sitemap. Published `case-studies` are appended after the pages as `<SITE_URL>/work/<slug>` (newest `publishedAt` first, `select: { slug, updatedAt }`; see [Template route and view (S4-12)](#template-route-and-view-unit-s4-12)). Published `posts` follow at `/insights/<slug>` or `/newsletter/<slug>` (newest `publishedAt` first; see [S6-T1](#template-route-and-view-unit-s6-t1)); lead magnets are never listed (always noindex). Same sitemap in every environment (not filtered by `APP_ENV`).
 - Robots (`/robots.txt`): `Sitemap: <SITE_URL>/sitemap.xml` always. Not production: `User-agent: *`, `Disallow: /`. Production: `Allow: /` and `/api/media/file/`; `Disallow: /admin`, `/api/`, `/_showcase`, `/_preview`.
 - `readingProgress`: `PageView` renders `<ReadingProgress />` before `<main>` when `page.readingProgress` is true (flag set per page; About and FAQ per `Pages.ts`). The component is a `'use client'` island because it reads scroll position: a fixed 4px bar (`--reading-progress-width`) on the left edge in `accent-primary`, `aria-hidden`, `pointer-events-none`, height driven by `transform: scaleY(0..1)`, rAF-throttled scroll and resize listeners, no transition.
 - Revalidation: unchanged. Everything is `force-dynamic` and read per request; the `pages` hooks (tag `pages` plus the page path) still run on publish.
 
 **Notes**
-- Live preview: autosave is off (S3/F21), so the live pane shows the last **saved** draft and does not auto-refresh on Save draft. Open decision, tracked as F57.
+- Live preview: autosave is off (S3/F21), so the live pane shows the last **saved** draft; it refreshes after every Save draft or Publish through `RefreshRouteOnSave` and shows a "Previewing draft · Exit" banner (F57, F58; see [Live preview refresh and preview banner](#live-preview-refresh-and-preview-banner-f57-f58)).
 - Structured data in page output (big step 5): one merged FAQPage ([PageFaqJsonLd](#page-level-faqpage-json-ld-pagefaqjsonld)) and, on `home` and `contact`, Organization / LocalBusiness ([OrganizationJsonLd](#organization--localbusiness-json-ld-organizationjsonld)). `PageView` now renders both after `RenderBlocks`.
-- Open SEO findings, F65 (Gate 2, none applied): `getSiteUrl()` falls back to `http://localhost:3000` when `SITE_URL` is unset, so a production container without it would emit localhost canonicals and sitemap URLs silently (and `getSiteUrl` and `siteOrigin` are two separate helpers); home canonical vs sitemap trailing-slash consistency; the `/` placeholder (no home doc) is indexable in production and absent from the sitemap; the seo-defaults placeholder description and OG alt are live until seeded; seed must set `noindex` on Thank You and gated templates; Organization/LocalBusiness JSON-LD (page scope); `not-found` has no description.
+- SEO findings F65 (Gate 2) and their state in code: B1 (silent localhost fallback) is fixed by `src/lib/siteUrl.ts` (see [SITE_URL and APP_ENV handling](#site_url-and-app_env-handling-f65-b1)); B2 (home canonical vs sitemap) uses `absoluteUrl('/')` = the bare origin for both; B3 (the `/` placeholder) is `noindex` (`homeFallbackMetadata`) and not in the sitemap. Still open: the seo-defaults placeholder description and OG alt are live until seeded; the seed must set `noindex` on Thank You and gated templates; the `404` document's description comes from its own `meta.description` only.
 - QA of the authenticated preview and the redirect create/verify/delete test were pending when this entry was written.
-- Case-study cards link to `/work/<slug>`; that route now exists ([S4-12](#template-route-and-view-unit-s4-12)). Posts and lead-magnets still have no frontend route.
+- Case-study cards link to `/work/<slug>`; that route now exists ([S4-12](#template-route-and-view-unit-s4-12)). Posts have `/insights/<slug>` and `/newsletter/<slug>` ([S6-T1](#template-route-and-view-unit-s6-t1)); lead magnets have `/resources/<slug>` ([S6-T2](#template-route-and-view-unit-s6-t2)).
 
 ---
 
@@ -338,7 +371,7 @@ Sitewide helpers added while building pages 2 to 6. Several blocks depend on the
 
 **Notes**
 - Event sending is not in this path. The `form-submissions` `afterChange` enqueue and the delivery job remain `TODO(integration)` in `src/plugins/formBuilder.ts`.
-- First consumer: [NewsletterBand](#newsletterband-unit-s4-11). Big step 5 added the footer nudge form ([B1](#site-chrome-unit-b1)) and `FormEmbed` ([standard](#formembed-standard-variant-unit-s5-6), [reminder](#formembed-reminder-variant-unit-s5-6), [stepped](#formembed-stepped-phone-layout-unit-s5-6)). The lead-magnet capture is not built yet.
+- First consumer: [NewsletterBand](#newsletterband-unit-s4-11). Big step 5 added the footer nudge form ([B1](#site-chrome-unit-b1)) and `FormEmbed` ([standard](#formembed-standard-variant-unit-s5-6), [reminder](#formembed-reminder-variant-unit-s5-6), [stepped](#formembed-stepped-phone-layout-unit-s5-6)). Big step 6 added the Hero form slot ([card](#hero-form-slot-card-unit-s6-1), [inline](#hero-form-slot-inline-style-and-slashbreaks-unit-s6-1)) and the lead-magnet capture ([template](#template-route-and-view-unit-s6-t2)); `PayloadForm` now dispatches the [`cmsform:submitted` event](#payloadform-cmsformsubmitted-event) on success.
 - PROGRESS flag F71 (rate-limit path, hostname check, custom validation, misconfiguration returns 400).
 
 ### Showcase Lexical builders (`src/showcase/lexical.ts`)
@@ -399,6 +432,97 @@ Sitewide helpers added while building pages 2 to 6. Several blocks depend on the
 
 - `absoluteMediaUrl(media, size = 'og')` returns an absolute URL for a populated media doc: `sizes.og.url` for `'og'` (falling back to `url`), `url` for `'original'`; relative URLs are prefixed with `getSiteUrl()`. Unpopulated ids return `undefined`.
 - Logos in JSON-LD use `'original'`: the Article JSON-LD publisher logo (`caseStudyJsonLd`) and [OrganizationJsonLd](#organization--localbusiness-json-ld-organizationjsonld). Share images keep `'og'`.
+
+### Request path header and proxy (F75, F78 B1)
+
+**Files**: `src/proxy.ts` (Next 16 `proxy` convention, the renamed `middleware`; Node runtime), `src/lib/requestPathHeader.ts` (`REQUEST_PATH_HEADER` = `x-request-path`), `src/lib/requestPath.ts` (`server`: `getRequestPath()`).
+
+**Fields & schema**: none.
+
+**Wiring**
+- `proxy` runs on every request except `/api/*` and `/admin`, `/admin/*` (`matcher: ['/((?!api/|admin/|admin$).*)']`). It does two things:
+  1. Sets the request header `x-request-path` to the pathname, always overwritten (`set`), so a visitor cannot spoof it on any request the proxy sees. `getRequestPath()` reads it (must start with `/`, not `//`) and returns `undefined` outside a request or when the proxy did not run.
+  2. When `APP_ENV` is not `production` (unset or unknown counts as non-production, read per request), sets the response header `X-Robots-Tag: noindex, nofollow`. In production the response is untouched; indexing is per page.
+- Consumers of `getRequestPath()` (stored as `sourcePath` on the submission): the footer newsletter form (`SiteFooter`), `NewsletterBand` (band variant) and the Hero form slot (`resolveHeroForm`).
+- The matcher skips `/api` and `/admin` because a running proxy makes Next buffer the request body (default 10 MB, truncating above it), which must not touch media uploads, form posts or the admin's server functions. Unmatched paths (bare `/api`, `/_next/*` misses) fall to the frontend 404, whose footer form reads the header, so they are matched to keep the header from being client-supplied (a `sourcePath` spoof closed 2026-10-23).
+- The per-environment `robots` meta no longer exists in the layout or in `buildMetadata` (`robots` is set only for `noindex` documents, and `{ index: true, follow: true }` only in production). This removed the doubled robots tags on non-production 404s (F78 B1).
+- Migration: none.
+
+**Notes**
+- OPS_REQUESTS #11: no Cloudflare rule may strip or override `X-Robots-Tag` on staging or production.
+
+### SITE_URL and APP_ENV handling (F65 B1)
+
+**Files**: `src/lib/siteUrl.ts` (not `server-only`, no `next/*`; importable by the Payload config and CLI): `getAppEnv()`, `siteOrigin()`, `getSiteUrl()`, `absoluteUrl(path)`. `src/lib/env.ts` (`server-only`) re-exports `absoluteUrl`, `getAppEnv`, `getSiteUrl`, `AppEnv` and adds `isProduction()`.
+
+**Wiring**
+- `getSiteUrl()` returns the origin of `SITE_URL` (no path, no trailing slash). With `SITE_URL` unset or not an http(s) URL it falls back to `http://localhost:3000` ONLY when `APP_ENV` resolves to `development`; on `staging` and `production` it throws. All reads are lazy (request time, never module load), so `next build` in CI with no `SITE_URL` and no database still passes.
+- `GET /api/health` calls `getSiteUrl()` first: a throw is logged server-side and the endpoint returns 503 (`{"status":"unavailable"}`), so the deploy script's health poll rolls back a container with a missing or invalid `SITE_URL`.
+- `absoluteUrl('/')` and `absoluteUrl('')` return the bare origin (the form Next prints for the home canonical). `siteOrigin()` (empty string when unset) is used by `src/plugins/seo.ts` for admin preview URLs.
+- This supersedes the earlier B2 behaviour (silent localhost fallback in `env.ts`, flag F65 B1). OPS_REQUESTS #12.
+
+### PayloadForm `cmsform:submitted` event
+
+**Files**: `src/components/forms/PayloadForm.tsx`; listener in `src/components/LeadMagnetStates.tsx` (`CMSFORM_SUBMITTED_EVENT = 'cmsform:submitted'`).
+
+**Wiring**
+- On a successful JS submit (`result.ok`), `PayloadForm` dispatches `new CustomEvent('cmsform:submitted', { bubbles: true, detail: { formId: form.id } })` on its `<form>` element while it is still mounted, before it sets the success state. Listeners on an ancestor filter on `detail.formId`. The only listener is [`LeadMagnetStates`](#template-route-and-view-unit-s6-t2). No event fires for the no-JS post path or a failed submission.
+
+### Live preview refresh and preview banner (F57, F58)
+
+**Files**: `src/components/preview/PreviewMode.tsx` (server), `PreviewBar.tsx` (`'use client'`); mounted once in `src/app/(frontend)/layout.tsx`. Dependency `@payloadcms/live-preview-react@3.91.0` (lockstep with core).
+
+**Wiring**
+- `PreviewMode` renders `PreviewBar` only when `getPreviewUser()` returns a staff user (draft mode on and a valid admin session); public visitors receive nothing.
+- `PreviewBar`: `RefreshRouteOnSave` (props: `refresh={router.refresh}`, `serverURL` = server-side `getSiteUrl()` passed as a prop, no `NEXT_PUBLIC_*`) posts the `ready` message to the admin Live Preview pane and refreshes the route on every document event the admin sends after Save draft or Publish. The blocks are server components, so the refresh re-renders the latest saved draft; unsaved keystrokes are not shown (autosave off).
+- The banner (`role="region"`, `aria-label="Draft preview"`): fixed bottom-right, ink with a cream hairline, text "Previewing draft · Exit"; Exit links to `/_preview/exit?path=<current pathname>` (44px target). It is placed after the page in the DOM so the skip link stays the first focusable element.
+- Migration: none.
+
+### Admin array row labels (`FieldRowLabel`, `rowLabel()`) (F62)
+
+**Files**: `src/components/admin/FieldRowLabel.tsx` (`'use client'`, uses `useRowLabel`), `src/components/admin/rowLabel.ts` (`rowLabel(fields, fallback, opts?)`).
+
+**Wiring**
+- `rowLabel(['value', 'label'], 'Figure')` returns the `admin.components.RowLabel` descriptor (`path: '/components/admin/FieldRowLabel'`, `exportName`, `clientProps`). `FieldRowLabel` reads the listed field names (dot paths allowed, e.g. `link.label`) from the live row data and joins the non-empty values with " — "; with none filled it falls back to `<fallback> NN` (the stock style). `scarcityKeys: true` maps stored scarcity keys to their labels and hides `none`.
+- Applied to the main arrays in the block configs (Hero, RichContent facts, ProofStrip, PhaseTimeline, SpecLedger, FormEmbed, LinkStack, Error404 and others) and `Posts`. Other arrays keep their own `RowLabel` components (`src/components/admin/*RowLabel*.tsx`).
+- Migration: none (admin only).
+
+### Template labels: caseStudyLabels (F76)
+
+**Files**: `src/globals/SiteSettings.ts` (group `caseStudyLabels`, "Case study pages", in the "Template labels" tab), `src/lib/caseStudyLabels.ts` (`CASE_STUDY_LABEL_DEFAULTS`, `CaseStudyLabels`, `resolveCaseStudyLabels`), `src/components/CaseStudyView.tsx` (`getCaseStudyLabels()`).
+
+**Fields & schema**
+- Eleven text fields, each defaulting to the previous hardcoded copy: `breadcrumbWork` (`Work`), `studyWord` (`Study`), `publishedPrefix` (`Published`), `figuresApproved` (`Client-approved figures`), `readTimeSuffix` (`min read`), `inShort` (`In short`), `nextStudy` (`Next study`), `nextStudyRead` (`Read it →`), `clientVoiceNumber` (`04`), `clientVoiceDifferently` (`What we'd do differently`), `clientVoicePhases` (`How this maps to our phases`).
+
+**Wiring**
+- `CaseStudyView` and the `/work` route resolve the labels per field (empty value = default) through the request-cached `getChrome()` read; `site-settings` saves purge the whole frontend layout. This replaces the "hardcoded labels" note in the [S4-12 entry](#template-route-and-view-unit-s4-12).
+- The case-study closing FinalCTA capacity line follows the study `track`: `growth` → `engines-line`, anything else → `builds-line` (`capacityForTrack`).
+- Migration: `20261023_170339_b5b_s5_deltas` (eleven `site_settings.case_study_labels_*` varchar columns with defaults).
+
+### S5 close-out schema deltas (`20261023_170339_b5b_s5_deltas`)
+
+Additive migration; no drops, type changes or renames. Contents:
+- `pages_blocks_hero.width` (+ enum `narrow` / `wide`; `_pages_v_` equivalent): Hero field `width` ("Text column width", compact `typographic` only). Empty keeps the automatic rule (wide when the hero shows figures or the rating, else narrow); an explicit value overrides it (F107, closes the flag noted under [page 7](#hero-compact-size-and-aggregate-rating-unit-s5-1)).
+- `pages_blocks_phase_timeline.outcomes_label` (default `You leave with`) and `swipe_hint` (default `Swipe →`): PhaseTimeline fields `outcomesLabel` and `swipeHint` (F73).
+- `pages_blocks_form_embed.stepped_confirmation_heading` (default `Got it, {firstName}.`): FormEmbed `stepped.confirmationHeading` (F84).
+- `site_settings.case_study_labels_*` (above).
+- Default-only changes: `pages_blocks_direct_contact.map_caption` default dropped (the caption is filled from site-settings when empty, F109; existing rows with a stored caption keep it, so the seed must leave the caption empty); `pages_blocks_case_study_cards.fallback_eyebrow` default is now `The numbers we can show`; `seo_defaults.local_business_type` default dropped. Existing data untouched.
+
+**F88 (migration reset)**: payload@3.91.0 `migrate:reset` runs the `down` of every migration oldest-first. The initial migration's `down` therefore now sweeps every table and enum type in the `public` schema (`IF EXISTS`, so it also removes objects of later migrations, and assumes the database holds only Payload's schema), and every later `down` returns early when `to_regclass('public.users')` is null. No `up` changed. Newest-first `migrate:down` still reaches the initial `down` last. This applies to `20261023_170339_b5b_s5_deltas` and `20261023_195241_b6_pages_13_21_blocks` and to the earlier files. Proofs recorded in PROGRESS: from zero up, per-migration down/up, `migrate:reset` to zero tables, then up again, full `migrate:down`.
+
+### BreadcrumbJsonLd
+
+**Files**: `src/components/BreadcrumbJsonLd.tsx` (`BreadcrumbJsonLd`, `heroCrumbs`), `src/lib/metadata.ts` (`breadcrumbJsonLd(crumbs, currentUrl)`, type `Crumb`), `src/components/PageView.tsx`.
+
+**Wiring**
+- `heroCrumbs(layout)` takes the trail of the FIRST `hero` block that has a `breadcrumb` and variant `service` or `article`; each crumb's destination follows the visible trail rule (`page` reference, else `url`).
+- `breadcrumbJsonLd`: mirrors the visible trail (same labels and order); earlier crumbs without a resolvable absolute destination are dropped and positions renumber; the last crumb is the current page (`item` = canonical URL); returns `null` with fewer than two items.
+- `PageView` renders one `BreadcrumbList` script after the blocks and the FAQPage (`<` escaped) when the Hero shows a trail. The case-study template folds its trail into the `Article` `@graph` instead. Posts emit none (no visible trail).
+- Migration: none.
+
+### Organization / LocalBusiness JSON-LD
+
+Documented under [page 12](#organization--localbusiness-json-ld-organizationjsonld) (rendered on `home` and `contact`).
 
 ---
 
@@ -724,7 +848,7 @@ Data source: the [`case-studies` collection (C7)](#case-studies-unit-c7) (site-w
 
 **Notes**
 - Each section keeps its block's own empty state: no client voice renders nothing; no other published study renders no next line; no newsletter form and no `/newsletter` page renders no band.
-- PROGRESS flag F76: template labels (`Work`, `Study NN`, `Published`, `Client-approved figures`, `min read`, `In short`, `Next study`, `Read it →`, client-voice labels) are hardcoded in `CaseStudyView`; the capacity line is `builds-line` for every study; the breadcrumb `Work` link 404s until the `work` page doc is published.
+- PROGRESS flag F76 (resolved 2026-10-23): the template labels are now editable in Site settings > Template labels, and the closing capacity line follows the study `track` (growth → `engines-line`, else `builds-line`); see [Template labels: caseStudyLabels](#template-labels-casestudylabels-f76). The table above shows the default copy and `builds-line`. The breadcrumb `Work` link 404s until the `work` page doc is published.
 - Case studies are drafts at launch, so `/work/<slug>` is 404 to the public until a study is published.
 
 ### Hero, article variant (unit S4-1)
@@ -1224,7 +1348,7 @@ Section: Testimonials hero. Extends [Hero (B3)](#hero-unit-b3). The `compact` si
 
 **Notes**
 - Compact styling: no width cap on the h1, mobile h1 2.25rem; paragraph max 52ch; the logo shape is 340px (220px on mobile) at the top-right; content padding 80/56px desktop and 48/36px mobile.
-- Content column (`Wrap`): `narrow = compact && no stats && !showAggregateRating`. Narrow = the 820px column (`max-w-205`); otherwise the full site container (`max-w-site`, 1200px). The page 7 hero therefore uses the wide column only because its rating flag is ticked; unticking the flag shrinks it to 820px (F107, flagged; an explicit width field would be a schema delta).
+- Content column (`Wrap`): `narrow = compact && no stats && !showAggregateRating`. Narrow = the 820px column (`max-w-205`); otherwise the full site container (`max-w-site`, 1200px). The page 7 hero therefore uses the wide column only because its rating flag is ticked; unticking the flag shrinks it to 820px, unless the explicit `width` field (`narrow` | `wide`, compact `typographic` only; F107, migration `20261023_170339_b5b_s5_deltas`) is set, which overrides the rule. The page 7 fixture sets `wide`.
 - No `Review` / `AggregateRating` JSON-LD is emitted anywhere (self-serving ratings, F64/F78).
 - The hero is still the only block that renders the page `h1`.
 
@@ -1579,39 +1703,575 @@ Rendered on page 1 (Homepage) and page 12 (Contact). Documented once, here; the 
 
 ## 13. DEV-SEO template
 
-Data source: the [`posts` collection (C8)](#posts-unit-c8), `track = dev-seo`, route `/insights/<slug>` (site-wide section). No blocks documented yet.
+Data source: the [`posts` collection (C8)](#posts-unit-c8), `track = dev-seo`, route `/insights/<slug>`. Locked section order (CLAUDE.md p13): Hero → Problem framing → How Duha solves it → Proof (fallback) → Educational block → FAQ block → Newsletter CTA → Final CTA → Footer (standard). As on page 2, the template is not a `pages` doc: one `posts` document is fed into existing block components (no layout builder). Page 14 and the newsletter issue (page 16) use the same view and route component; they are documented here once.
+
+### Template route and view (unit S6-T1)
+
+**Files**
+- `src/app/(frontend)/insights/[slug]/page.tsx`: `/insights/<slug>` (`generateMetadata` calls `postRouteMetadata('insights', slug)`; the page renders `<PostRoute route="insights" slug>`).
+- `src/app/(frontend)/newsletter/[slug]/page.tsx`: `/newsletter/<slug>`, same with `route="newsletter"`.
+- `src/components/PostView.tsx`: `PostView({ post, labels })`, `PostRoute`, `postRouteMetadata`, `getPostLabels()`, `postFaqItems(post)`, `issueLabel(post, labels)`.
+- `src/lib/posts.ts` (`server-only`): `getPost(slug)` (React `cache`), `POST_QUERY_DEPTH = 2`, `POST_ROUTE_TRACKS` (`insights`: `dev-seo`, `mkt-seo`; `newsletter`: `newsletter-issue`), `servesTrack(post, tracks)`.
+- `src/lib/metadata.ts`: `postMetadata(post, { preview })`, `postJsonLd(post, faqItems)`.
+- `src/lib/postLabels.ts` (see [postLabels](#template-labels-postlabels-unit-s6-s)).
+- `src/app/sitemap.ts` (post entries), `src/collections/Posts.ts` (`admin.preview` / `admin.livePreview`, revalidation paths).
+
+**Fields & schema**
+- None added by the template. It reads existing `posts` fields (see [C8](#posts-unit-c8)): `eyebrow`, `title`, `dek`, `body`, `heroImage`, `author`, `publishedAt`, `updatedAtDisplay`, `readTime`, `sentAt`, `issueNumber`, `targetKeyword`, `diyBridge` (`eyebrow`, `heading`, `accentPhrase`, `body`, `facts`), `howWeDoIt` (`eyebrow`, `body`, `link`), `educational` (`eyebrow`, `heading`, `body`), `proof` (`source`, `caseStudies`, `fallbackMode`, `fallbackTestimonials`, `fallbackMetrics`, `fallbackNote`), `faqHeading`, `faq[]`, `pricingNote`, `closing` (`newsletterHeading`, `finalCtaHeading`).
+- Mapping in page order (`ArticleTemplate`; `track` decides the column):
+
+| # | Section | `dev-seo` (p13) | `mkt-seo` (p14) |
+|---|---|---|---|
+| 1 | Hero | `hero` · `article`: `eyebrow`, `heading` ← `title`, `standfirst` ← `dek`, `body` ← byline, `metaLine` ← published / updated / read time, `geometry: false`, `media` ← `heroImage`, `mediaFrame: 'none'` | same |
+| 2 | Article body | `richContent` · `article`, `numberSections: true`, `body` ← `body`; plus `callout` (`eyebrow` ← `howWeDoIt.eyebrow` or label default, `body` ← `howWeDoIt.body`, `link` ← `howWeDoIt.link`) when `howWeDoIt.body` has text | `richContent` · `article`, no callout |
+| 3 | DIY vs done | `richContent` · `band`, `tone: 'grey'` ← `diyBridge` (`eyebrow`, `heading`, `accentPhrase`, `body`, `facts`), `pricingNote` ← `post.pricingNote`; omitted when heading, body and facts are all empty | same band, `pricingNote: null` |
+| 4 | How Duha does it | (the callout in 2) | `richContent` · `band`, `tone: 'light'`, `framed: true`, `eyebrow` ← `howWeDoIt.eyebrow` or label default, `body` ← `howWeDoIt.body` as paragraphs, `pricingNote` ← `post.pricingNote`, `link` ← `howWeDoIt.link`; only when `howWeDoIt.body` has text |
+| 5 | Proof | `caseStudyCards` · `cards`: `source` ← `proof.source` (default `track`), `track` = `build`, `build-and-growth`, `limit: 2`, fallback `proof.fallbackMode` (default `testimonials`) | same, `track` = `growth`, `build-and-growth`, `handover`; default fallback `metricStrip` (block value `metric-strip`) |
+| 6 | Educational | `richContent` · `band`, `tone: 'grey'` ← `educational` (`eyebrow`, `heading`, `body`); only when heading or body | none |
+| 7 | FAQ | `AccordionFAQItemsView`: `eyebrow` ← `faqHeading`, else `<targetKeyword> <postLabels.faqEyebrowSuffix>`; items = `postFaqItems(post)`; `emitJsonLd={false}` | same |
+| 8 | Newsletter CTA | `newsletterBand` · `band`, `heading` ← `closing.newsletterHeading` | same |
+| 9 | Final CTA | `finalCTA`, `heading` ← `closing.finalCtaHeading`, `capacity: 'builds-line'`, `buttons: []` | `capacity: 'engines-line'` |
+
+**Wiring**
+- Route behaviour (`PostRoute`):
+  - `getPost(slug)`: public = `find` on `posts`, slug equals and `_status` published, `draft: false`, `overrideAccess: false`, `depth: 2`. Draft preview: only when Next draft mode is on AND `getPreviewUser()` returns a staff user; then `draft: true`, `user`, `overrideAccess: false`. Post slugs are unique across the three tracks (`src/hooks/uniqueSlug.ts`), so lookup is by slug only.
+  - A post whose `track` is not served by the route (an issue at `/insights/<slug>`, an article at `/newsletter/<slug>`) is sent to `docPath('posts', post)` with `permanentRedirect` (308).
+  - No post: `findRedirect('/<route>/<slug>')` (hit calls `permanentRedirect` or `redirect`), else `notFound()`.
+  - `force-dynamic` through the `(frontend)` layout; no `generateStaticParams`. `/insights` and `/newsletter` themselves are not template routes: `/newsletter` is the page 16 `newsletter` pages doc, and there is no `/insights` hub. `pageSlugError` forbids pages under `insights/` and `newsletter/` (`TEMPLATE_PREFIXES` in `src/lib/pagePath.ts` = `work`, `insights`, `newsletter`, `resources`).
+- `PostView` renders `PageShell` (standard header and footer), `<ReadingProgress />` for every track, then `<main>` with the sections above. It has no markup of its own. Optional sections (DIY, How Duha does it, Educational, FAQ, callout) render nothing when empty; the blocks keep their own empty states.
+- `postFaqItems`: the questions are inline `faq[]` rows of the post (not `faqs` documents), so there is no per-question published check; it keeps rows with a non-blank question and an answer with text and returns `[]` for `newsletter-issue`. The same list feeds the rendered FAQ and the JSON-LD.
+- Metadata (`postMetadata`, through `buildMetadata`):
+  - Title: `meta.title`, else the seo-defaults template with `%s` = the post title, or `%s` = the capitalised `targetKeyword` when the templated title exceeds `META_TITLE_TARGET` and a keyword exists (the same rule as plugin-seo `generateTitle`, `src/plugins/seo.ts`).
+  - Description: `meta.description`, else `dek` cut to 155, else seo-defaults. Share image: `meta.image`, else `heroImage` (each only through its `og` size), else seo-defaults.
+  - Canonical `docPath('posts', post)`; Open Graph `article` with published time (issues: `sentAt`, else `publishedAt`) and modified time (`updatedAtDisplay` when not before the published date, else `updatedAt`); `noindex` in draft preview (production indexes; the proxy noindexes every other environment, see [Request path header and proxy](#request-path-header-and-proxy-f75-f78-b1)).
+- JSON-LD (`postJsonLd`, one `<script type="application/ld+json">` rendered by `PostRoute`, `<` escaped): `@graph` with `BlogPosting` (articles) or `Article` (issues): `headline` (≤110), `description`, `inLanguage: 'en'`, `datePublished`, `dateModified`, `image[]`, `url` / `mainEntityOfPage`, `author` (the post's team member as `Person` with `jobTitle` and `worksFor`, else the Organization), `publisher` (Organization with the original logo via `absoluteMediaUrl(…, 'original')`); plus ONE `FAQPage` for the rendered questions (not for issues or an empty FAQ). No `BreadcrumbList` (no `/insights` hub, no visible trail).
+- Sitemap: published posts are appended after case studies, newest `publishedAt` first, at `docPath('posts', doc)` (`/insights/<slug>` or `/newsletter/<slug>`). Lead magnets never join (always noindex).
+- Preview: `Posts.admin.preview` and `admin.livePreview.url` = `previewUrl(docPath('posts', { slug, track }))`; `null` until the doc has both slug and track.
+- Revalidation: `posts` hooks (`revalidateTagHooks('posts', …)`): tag `posts` plus `/insights/<slug>` (articles) or `/newsletter` and `/newsletter/<slug>` (issues), for both the new and the previous doc.
+- Migration: none for the template.
+
+**Notes**
+- Fixed wording comes from `site-settings.postLabels`, not from code.
+- Open flags (PROGRESS): F145 `inLanguage` is `en` (matches `<html lang>`); F146 the p14 pricing note sits inside the How Duha does it box; F147 the FAQ eyebrow fallback uses `targetKeyword` as typed (no casing change); F148 the p14 metric-strip fallback sits in the wide container, not the 820px column (QA item).
+
+### Hero, article variant: standfirst (unit S6-1)
+
+Section: Hero (p13 / p14 article header and newsletter issue header). Extends [Hero, article variant](#hero-article-variant-unit-s4-1).
+
+**Files**
+- `src/blocks/Hero/config.ts` (field `standfirst`), `src/blocks/Hero/ArticleHero.tsx`.
+
+**Fields & schema**
+- `standfirst`: textarea, shown for `article` only. The one- or two-sentence introduction between the headline and the byline rule. Empty = skipped.
+
+**Wiring**
+- `ArticleHero` renders `standfirst` between the h1 and the meta rule. The posts template passes `post.dek` (articles and issues).
+- Showcase: `hero` / `article — standfirst`.
+- Migration: `20261023_195241_b6_pages_13_21_blocks` (`standfirst` column on `pages_blocks_hero` and `_pages_v_blocks_hero`).
+
+**Notes**
+- Existing article entries were byte-identical before and after (normalised outerHTML at 390/753/1009/1440, per the unit report).
+- The p13 / p14 article h1 renders at h1 scale where the design uses h2 scale (F132; the human accepted the h1 scale, F130–F134).
+
+### RichContent, article callout (unit S6-2)
+
+Section: Problem framing (p13 closing "How we do it" box). Extends [RichContent, article variant](#richcontent-article-variant-unit-s4-8).
+
+**Files**
+- `src/blocks/RichContent/config.ts` (field `callout`), `src/blocks/RichContent/Component.tsx` (`ArticleCallout`).
+
+**Fields & schema**
+- `callout`: group, shown for `article` only: `eyebrow` (text), `body` (textarea, no prices), `link` (`linkField`, optional button).
+
+**Wiring**
+- `RichContentArticle` renders the callout after the prose: 2px ink box, muted eyebrow, text, ghost button (full width below `md`). Nothing renders when the eyebrow and body are empty and the link has no resolvable destination or label. With an empty callout the article markup is identical to the pre-S6 article (proven by static render diff, per the unit report).
+- Used by the posts template for `dev-seo` ([mapping row 2](#template-route-and-view-unit-s6-t1)).
+- Showcase: `richContent` / `article + callout`, `article + callout — text only`, `article + callout — empty`.
+- Migration: `20261023_195241_b6_pages_13_21_blocks` (`callout_eyebrow`, `callout_body`, `callout_link_*` columns and enum `enum_pages_blocks_rich_content_callout_link_type`, plus `_pages_v` equivalents).
+
+**Notes**
+- `variant` options on `richContent` are now `article`, `band`, `legal`. `eyebrowTick` and `numberSections` are shown for `article` only (admin condition; no schema change).
+
+### RichContent, band variant (unit S6-2)
+
+Section: DIY vs done (p13, p14), Educational block (p13), How Duha does it (p14).
+
+**Files**
+- `src/blocks/RichContent/config.ts`, `Component.tsx` (dispatch), `Band.tsx` (`RichContentBand`).
+
+**Fields & schema** (shown for `variant = band`)
+- `eyebrow` / `heading` / `accentPhrase`: shared fields (the diamond tick is not offered for `band`).
+- `body`: shared rich text.
+- `facts`: array, max 3, `metricFields()` rows (`value`, `label` required; `sub`, `accent`). Never a price.
+- `pricingNote`: the shared `pricingNote()` text, the only place a price may appear in the band.
+- `link`: `linkField`, optional ghost button.
+- `tone`: select `grey` (default) | `light`.
+- `framed`: checkbox, default false: draws the 2px ink "How we do it" box.
+
+**Wiring**
+- `RichContentBand`: eyebrow (muted), section h2 (`AccentHeadline`; `level 3` when framed), prose, then:
+  - With facts: a strip (grid of 1–3 columns, rows kept only when `value` and `label` are non-blank) in a 984px container, the note centred under it, the button centred.
+  - Without facts: the note and button sit under the text, left-aligned in the 820px column.
+  - `framed`: everything inside the 2px ink box in the 820px column.
+- Band prose converters: headings render `h3` under a titled band and `h2` when the band has no heading of its own (so the section always has an h2); images and horizontal rules are skipped (logged).
+- Renders nothing (`console.warn`) when there is no body, heading, eyebrow or valid fact.
+- Used by the posts template (DIY, How Duha does it, Educational; see the [mapping](#template-route-and-view-unit-s6-t1)).
+- Showcase: `richContent` / `band`, `band — no facts`, `band — educational`, `band — framed`, `band — 2 facts + link`.
+- Migration: `20261023_195241_b6_pages_13_21_blocks` (enum values `band` and `legal` on `variant`; columns `pricing_note`, `link_*`, `tone` + enum `enum_pages_blocks_rich_content_tone`, `framed`; table `pages_blocks_rich_content_facts` and `_pages_v_blocks_rich_content_facts`).
+
+**Notes**
+- Flags: F114 the p14 framed band and p13 Educational band are derived designs; F115 the design's facts were prices, so prices live only in `pricingNote`; F117 one `sub` line serves both sizes; F119 the band link is a derived ghost button.
+
+### AccordionFAQItemsView (unit S6-3)
+
+Section: FAQ block (p13, p14).
+
+**Files**
+- `src/blocks/AccordionFAQ/Component.tsx`: exports `AccordionFAQItemsView` and `FaqItem` (`{ id?, question, answer }`).
+
+**Fields & schema**: none. Not a registered block.
+
+**Wiring**
+- `AccordionFAQItemsView({ eyebrow, eyebrowTick, heading, items, openFirst, allLink, emitJsonLd })` is the `mini` variant markup over an already-resolved list (no loading, no filtering). `AccordionFAQBlock` (`mini`) now renders through it. `heading` is optional: with only an `eyebrow` no h2 is rendered. An empty list renders nothing. `emitJsonLd` defaults to true; the posts template passes false and emits its own FAQPage in the post `@graph`.
+- Migration: none.
+
+**Notes**
+- The `mini` and `group` block fixtures are unchanged (showcase HTML diff 0 lines, per the unit report).
+
+### Template labels: `postLabels` (unit S6-S)
+
+**Files**
+- `src/globals/SiteSettings.ts` (group `postLabels`, label "Article and newsletter pages", in the "Template labels" tab), `src/lib/postLabels.ts` (`POST_LABEL_DEFAULTS`, `PostLabels`, `resolvePostLabels`).
+
+**Fields & schema**
+- Eight text fields (`site-settings.postLabels.*`), each defaulting to the design copy: `bylinePrefix` (`By`), `bylineOrganisation` (`Duha Media`), `publishedPrefix` (`Published`), `updatedPrefix` (`Updated`), `readTimeSuffix` (`min read`), `faqEyebrowSuffix` (`— common questions`), `howWeDoItEyebrow` (`How we do it`), `issueWord` (`Issue`).
+
+**Wiring**
+- `getPostLabels()` reads `getChrome().settings.postLabels` and `resolvePostLabels` falls back per field to the default when a value is empty. Composition (`PostView`): byline `<bylinePrefix> <author name>, <bylineOrganisation>` (`<bylinePrefix> <bylineOrganisation>` without an author); date line `Published <date> · Updated <date> · <n> <readTimeSuffix>`; FAQ eyebrow fallback and the How-we-do-it eyebrow fallback apply only when the post's own fields are empty; issue eyebrow `Issue 011`.
+- Revalidation: the `site-settings` global's `revalidateGlobalHook` (whole `(frontend)` layout).
+- Migration: `20261023_195241_b6_pages_13_21_blocks` (eight `site_settings.post_labels_*` varchar columns, each with the default).
+
+**Notes**
+- The sibling group `caseStudyLabels` is documented under [Template labels: caseStudyLabels](#template-labels-casestudylabels-f76).
 
 ## 14. MKT-SEO template
 
-Data source: the [`posts` collection (C8)](#posts-unit-c8), `track = mkt-seo`, route `/insights/<slug>` (site-wide section). No blocks documented yet.
+Data source: the [`posts` collection (C8)](#posts-unit-c8), `track = mkt-seo`, route `/insights/<slug>`. Locked section order (CLAUDE.md p14): Hero → The teach → DIY vs done-for-you bridge → How Duha does it → Proof (fallback) → FAQ block → Newsletter CTA → Final CTA → Footer (standard).
+
+No units of its own: the template route, mapping and metadata are in [Template route and view (S6-T1)](#template-route-and-view-unit-s6-t1) (the `mkt-seo` column of the mapping table). Blocks and views used, all documented under page 13: [Hero article standfirst](#hero-article-variant-standfirst-unit-s6-1), [RichContent band](#richcontent-band-variant-unit-s6-2) (DIY bridge, and `framed` + `tone: light` for How Duha does it, with `pricingNote` and `link`), [AccordionFAQItemsView](#accordionfaqitemsview-unit-s6-3). Proof is `caseStudyCards` with the `metric-strip` fallback ([page 6](#casestudycards-metric-strip-fallback-unit-s4-2)); Final CTA uses the `engines-line` capacity.
 
 ## 15. Campaign LP template
 
-*No units documented yet.*
+A `pages` doc under `lp/<campaign>` with `zeroLeakage` and `noindex` set (see [`pages` (C10)](#pages-unit-c10)). `zeroLeakage` forces the `logo-only` header and `legal-only` footer (`beforeValidate`), forbids the NewsletterBand ([NewsletterBand](#newsletterband-unit-s4-11)) and adds the link rules below. Locked section order: Hero (VSL variant + static typographic variant) → Proof strip → Offer / promise → Case study pull (fallback) → Testimonial → Single CTA repeated after each major block → Legal-only footer.
+
+### Hero, vsl variant (unit S6-1)
+
+Section: Hero (variant A, headline + video + one button). The static typographic variant (B) is the existing `typographic` variant.
+
+**Files**
+- `src/blocks/Hero/config.ts`, `Component.tsx` (dispatch), `VslHero.tsx`, `src/components/VideoFacade.tsx` ([VideoFacade](#videofacade-srccomponentsvideofacadetsx)).
+
+**Fields & schema**
+- `variant`: option `vsl` added.
+- `video` (`vsl`): group `url` (text, required, `validateYouTubeUrl`; unlisted videos work) and `poster` (upload to `media`, `maxDepth: 1`, required).
+- Used by `vsl` from existing fields: `eyebrow` / `eyebrowTick`, `heading` (the accent phrase is hidden for `vsl`), `ctas` (only the first button renders), `geometry`.
+
+**Wiring**
+- `VslHero`: 820px column on the dot-matrix ground, wine logo shape top-right, h1 at h2 scale with no accent, a 16:9 tile (2px ink frame, square ink play button) built on `VideoFacade` (click-to-load, `youtube-nocookie`), one primary button (full width below `md`).
+- Showcase: `hero` / `vsl`, `vsl — no video`.
+- Migration: `20261023_195241_b6_pages_13_21_blocks` (`video_url`, `video_poster_id` on `pages_blocks_hero` and `_pages_v_blocks_hero`; `vsl` added to the variant enum).
+
+**Notes**
+- No valid YouTube id: the tile is left out and the error is logged. Valid id, no poster: the tile shows its ink ground (logged). No `VideoObject` JSON-LD (decision F142).
+- Flags: F131 `vsl` reuses `ctas` and shows the first only; F134 the play button turns wine on hover (the design has no hover).
+
+### ProofStrip, metrics variant (unit S6-4)
+
+Section: Proof strip. Extends [ProofStrip (B3)](#proofstrip-unit-b3).
+
+**Files**
+- `src/blocks/ProofStrip/config.ts`, `Component.tsx` (`ProofMetrics`, `CapacityTile`).
+
+**Fields & schema**
+- `variant`: option `metrics` added. `statements` is hidden for `metrics`.
+- `metrics` (`metrics`): array, max 3, `metricFields()` rows (`value`, `label`, `sub`, `accent`). Results or counts only, never prices.
+- `capacityStatement` (`metrics`): `scarcityRef` select (default `none`): one statement from the `scarcity` global.
+- `pricingNote` and `logos` are the existing fields.
+
+**Wiring**
+- `ProofMetrics`: cream ground, hairline below, left-aligned in the 820px column: up to three metrics (rows with a blank `value` or `label` dropped), the capacity tile, then the logo row at 55% opacity, then the pricing note. Renders nothing when none of them has content.
+- The capacity tile follows the loud/quiet rule: statement from the `scarcity` global, rendered only with a non-blank reason; a missing row, unfillable token or blank reason skips the tile (logged).
+- Showcase: `proofStrip` / `metrics` (four entries incl. nothing-set and missing-capacity-key states).
+- Migration: `20261023_195241_b6_pages_13_21_blocks` (table `pages_blocks_proof_strip_metrics` and `_pages_v_`, column `capacity_statement` + enum, `metrics` added to the variant enum).
+
+**Notes**
+- The design's "$5K" / "$1K/mo" tiles are not metrics: prices go in `pricingNote` (rule 5).
+- Seed must create the `scarcity` rows the page uses (the dev global has only `capacity`).
+
+### MiniCTAStrip, button variant (unit S6-6)
+
+Section: Single CTA repeated after each major block. Extends [MiniCTAStrip (B3)](#minictastrip-unit-b3) and [inline](#minictastrip-inline-variant-unit-s5-7).
+
+**Files**
+- `src/blocks/MiniCTAStrip/config.ts`, `Component.tsx` (`MiniCTAButton`).
+
+**Fields & schema**
+- `variant`: option `button` added. `text` is no longer `required: true`: a `validate` requires it for `band` and `inline` only (message "Add the one-line statement."); for `button` it is an optional line above the button.
+- `link`: unchanged (required).
+
+**Wiring**
+- `MiniCTAButton`: light ground, 820px column, optional quiet line, one centred primary button (full width below `md`, `md:min-w-55`). A link that does not resolve or has no label renders nothing (a lone sentence would be a dead end).
+- Showcase: `miniCTAStrip` / `button` (three entries).
+- Migration: `20261023_195241_b6_pages_13_21_blocks` (`button` added to the variant enum; no column change).
+
+**Notes**
+- Derived design (F128): no design section of its own; built from the LP offer CTA row.
+
+### OfferBlock (unit S6-5)
+
+Section: Offer / promise. New block.
+
+**Files**
+- `src/blocks/OfferBlock/config.ts`, `Component.tsx` (`OfferBlockBlock`, `OfferView`, type `OfferBlockData`).
+
+**Fields & schema** (slug `offerBlock`, `interfaceName: 'OfferBlockBlock'`; no variant)
+- `eyebrow` / `eyebrowTick`: `eyebrowField({ defaultTick: false })`.
+- `heading` / `accentPhrase`: `headlineFields()` (heading required).
+- `body`: rich text (paragraph, bold, italic, lists, links, inline toolbar; no headings or images).
+- `cta`: `linkField`, required: the single button.
+- `capacity`: `scarcityRef` select, default `offer-line`: the capacity line beside the button.
+
+**Wiring**
+- Registered in `pageBlocks` (after `FinalCTA`); component key `offerBlock`. Showcase: `offerBlock` entries (populated, capacity none, offer-line missing, minimal).
+- `OfferBlockBlock` (async) reads the `scarcity` global through the Local API (public access) and passes the resolved statement to `OfferView` (pure). The line renders as loud statistic plus quiet reason (a `role="group"`); a missing row, unfilled token or blank reason drops it (logged). No countdown timers.
+- Migration: `20261023_195241_b6_pages_13_21_blocks` (`pages_blocks_offer_block`, `_pages_v_blocks_offer_block`, enums for `capacity` and the link type).
+
+**Notes**
+- Renders nothing without a heading and body. F127: the capacity line is loud plus quiet (rule 2) where the design draws one small grey line.
+- Zero-leakage: the button must match the page's single destination and body links may not leave the page ([rules](#zero-leakage-link-rules-unit-f137)).
+- Seed must create `scarcity` row `offer-line` with a reason.
+
+### TestimonialRow, ctaStyle (unit S6-7)
+
+Section: Testimonial. Extends the [homepage TestimonialRow](#testimonialrow-unit-b3).
+
+**Files**
+- `src/blocks/TestimonialRow/config.ts`, `Component.tsx`.
+
+**Fields & schema**
+- `ctaStyle`: select, `row` variant only: `link` (default, underlined text link) | `button` (primary button under the whole row). Applies to the existing `cta` link.
+
+**Wiring**
+- `button` renders `ButtonLink` (primary, `md`) under the row, full width below `md`; it renders only when `cta` resolves and is labelled. Default `link` leaves the existing markup unchanged.
+- Showcase: `testimonialRow` / `row — ctaStyle button (p15)`.
+- Migration: `20261023_195241_b6_pages_13_21_blocks` (`cta_style` column + enum `enum_pages_blocks_testimonial_row_cta_style`, default `link`).
+
+**Notes**
+- Plan open question 9 (kept): the LP row's study card links to a published study, which leaves the page; see the zero-leakage rules.
+
+### Zero-leakage link rules (unit F137)
+
+**Files**
+- `src/hooks/zeroLeakageLinks.ts`: `zeroLeakageLinkErrors(data, req)`, `withZeroLeakageRules(blocks)`, error strings `ZERO_LEAKAGE_STUDY_CARD_ERROR`, `ZERO_LEAKAGE_OFFER_BODY_ERROR`.
+- `src/collections/Pages.ts`: `pageLayoutField(withZeroLeakageRules(pageBlocks))`; `blockLeakyPublish` (afterChange backstop).
+
+**Fields & schema**: none; validation only.
+
+**Wiring**
+- Applies when the page has `zeroLeakage: true`, at publish (field validators are skipped on draft saves, `drafts.validate: false`):
+  1. A `testimonialRow` `row` with `studyCard.show` on and no complete `leadMetric` (a lead figure replaces the card) is an error on `layout.<i>.studyCard.show`.
+  2. Single destination: every button must resolve to the same place as the first one found, top to bottom: Hero `ctas[].link` (variants `typographic`, `service`, `vsl`; `vsl` counts the first only), `miniCTAStrip.link`, `offerBlock.cta`, `testimonialRow` row `cta`. The error is on the other link's `reference` or `url`.
+  3. A link in `offerBlock.body` that is not `#…` and not that destination is an error on `body`.
+- Destinations compare as resolved paths: internal references are looked up (slug, track) through `docPath`, memoised per request, so "Page: Book a Call" equals a custom `/book-a-call`.
+- `withZeroLeakageRules` clones the `pages` copy of each block and wraps the validators at the paths in `RULE_PATHS` (the field's own validator, or the type default for `checkbox` and `richText`, runs first); block configs are untouched. A validator never throws (admin form state); `blockLeakyPublish` re-checks in `afterChange` and rolls the publish back with a `ValidationError`.
+- Migration: none.
+
+**Notes**
+- F153 (open): the locked "Case study pull" (`caseStudyCards`) and other `linkField` blocks (FinalCTA) on a zero-leakage page can still link away; decision pending (suppress card links, or accept).
 
 ## 16. Newsletter
 
-Issue rows and issue pages come from the [`posts` collection (C8)](#posts-unit-c8), `track = newsletter-issue`, route `/newsletter/<slug>`. No blocks documented yet.
+Locked section order (CLAUDE.md p16): Hero → Signup form (above the fold) → Sample content cards → Social proof slot → Footer (standard). The signup form sits inside the Hero. Issue pages come from the [`posts` collection (C8)](#posts-unit-c8), `track = newsletter-issue`, route `/newsletter/<slug>`.
+
+### Hero, form slot: card (unit S6-1)
+
+Section: Hero + Signup form. Extends [Hero, typographic](#hero-unit-b3) and [stats](#hero-typographic-stats-unit-s4-1). The inline style is documented on [page 18](#hero-form-slot-inline-style-and-slashbreaks-unit-s6-1).
+
+**Files**
+- `src/blocks/Hero/config.ts`, `Component.tsx` (`HeroBlock`), `FormCardHero.tsx`, `HeroForm.tsx` (`resolveHeroForm`, `HeroFormCard`, `HeroInlineForm`, `HeroFormSlot`).
+
+**Fields & schema** (`typographic` only; fields after `showForm` show when it is ticked)
+- `showForm`: checkbox, default false. Beyond the spec (F130): the trigger for the slot.
+- `form`: relationship to `forms`, `maxDepth: 1`. Empty = `site-settings.newsletterForm`.
+- `formStyle`: select `card` (default) | `inline`.
+- `formHeading` (text), `formBody` (textarea): card only.
+- `submitLabel` (text): empty = the button text on the form itself.
+- `formNote` (text): small grey line under the form.
+
+**Wiring**
+- `HeroBlock` resolves the slot with `resolveHeroForm(form, leadMagnetId)`: uses `form`, else `site-settings.newsletterForm`; checks the form still exists with a trusted `count` (`overrideAccess: true`; forms are staff-read, so a public read carries a bare id). No form chosen, deleted or unreadable: the hero renders without the form (logged). `sourcePath` comes from `getRequestPath()`.
+- `formStyle: 'card'` renders `FormCardHero`: from `lg`, two columns (`1.25fr` / `1fr`): copy (eyebrow, h1, paragraph, buttons, the `stats` as a ruled `dl` strip) and the grey signup card (2px ink frame, card shadow, own h2 and quiet line) pushed down beside the paragraph; below `lg` one column in the order copy, card, figures. The card form is `CMSForm` (`tone="light"`, `turnstileAppearance="interaction-only"`, class map `cardForm`). The badge, callouts, phase strip, side microcopy and `size` are not shown in this layout.
+- The wine shape is lifted on phones so it never sits under text (F156).
+- `HeroBlock` accepts a non-field prop `leadMagnetId?: number`, passed to the form (used by the lead-magnet template).
+- Showcase: `hero` / `typographic — form card`, `typographic — form missing`.
+- Migration: `20261023_195241_b6_pages_13_21_blocks` (`show_form`, `form_id`, `form_style` + enum, `form_heading`, `form_body`, `submit_label`, `form_note` on `pages_blocks_hero` and `_pages_v_blocks_hero`).
+
+**Notes**
+- A label is visually hidden only when its control has a placeholder; the seed must give the form's text fields placeholders (F133).
+- The wine shape on this hero is quieter than the design's mobile position (F156).
+
+### PostList (unit S6-8)
+
+Section: Sample content cards. New block.
+
+**Files**
+- `src/blocks/PostList/config.ts`, `Component.tsx` (`PostListBlock`, `PostListData`, `PostItem`).
+
+**Fields & schema** (slug `postList`, `interfaceName: 'PostListBlock'`; one layout)
+- `eyebrow` / `eyebrowTick`: `eyebrowField()`.
+- `track`: select, required, default `newsletter-issue` (`dev-seo`, `mkt-seo`).
+- `featureLatest`: checkbox, default true (newest post as a large card with the badge). `limit`: number 1–12, default 3, includes the featured post.
+- `archiveLink`: `linkField`, optional.
+- `labels`: group (text, defaults match the design): `latestLabel`, `newBadge`, `previouslyLabel`, `countSuffix` (`issues`), `countSuffixSingular` (`issue`), `readLabel`, `issueWord`. Empty = default (F126: defaults use issue wording on article tracks).
+- `emptyHeading` (text, required, default `The first issue is on its way.`), `emptyBody` (textarea, default text).
+
+**Wiring**
+- Registered in `pageBlocks`; component key `postList`. Showcase: `postList` (populated, one issue, empty, no featured).
+- `loadPosts`: public `find` on `posts`, `draft: false`, `overrideAccess: false`, `depth: 0`, sort `-publishedAt`, `_status` published AND the chosen `track`, `limit` clamped 1–12, `select` limited to the card fields. A failed read is logged and renders the empty state.
+- `PostListView` (sync, so `useId` stays out of the async loader): a `grey` section with an always-present sr-only h2 (`postlist-<id>`; the eyebrow is `aria-hidden`), the featured card (`Latest — Issue NNN`, badge, title, `dek`, read link), "Previously" rows (`<time>` dates, `issueMetric`, two-line `dek`) with the remaining count, the archive link, or the empty state. Links use `docPath('posts', post)`.
+- `previewPosts` / `previewTotal` are showcase-only props (static stand-ins; `[]` forces the empty state), not fields.
+- Revalidation: the `posts` hooks purge `/newsletter` (issues) and tag `posts`.
+- Migration: `20261023_195241_b6_pages_13_21_blocks` (`pages_blocks_post_list`, `_pages_v_blocks_post_list`, enum for `track`).
+
+**Notes**
+- `postlist` is a reserved anchor id prefix ([anchors](#richcontent-legal-variant-unit-s6-2)).
+
+### TestimonialRow, leadMetric (unit S6-7)
+
+Section: Social proof slot. Extends the [homepage TestimonialRow](#testimonialrow-unit-b3); `ctaStyle` is on [page 15](#testimonialrow-ctastyle-unit-s6-7).
+
+**Files**
+- `src/blocks/TestimonialRow/config.ts`, `Component.tsx`.
+
+**Fields & schema**
+- `leadMetric`: group, `row` variant only, `metricFields({ required: false })` (`value`, `label`, `sub`, `accent`). Needs both `value` and `label`; only a real, approved figure.
+
+**Wiring**
+- With a complete `leadMetric` the row renders a metric tile (`1fr`) beside the testimonial column (`2fr`; stacked below `md`). With no published testimonial the tile renders alone. A figure with a missing label and no testimonials renders nothing.
+- The "A study in full" card is not shown when `leadMetric` is set (silently, F129). Showcase: `testimonialRow` / `row — leadMetric + quote (p16)`, `row — leadMetric alone`, `row — leadMetric incomplete`.
+- Migration: `20261023_195241_b6_pages_13_21_blocks` (`lead_metric_value`, `lead_metric_label`, `lead_metric_sub`, `lead_metric_accent`).
+
+**Notes**
+- The figure is typed by hand (a subscriber count); the seed carries a marked placeholder.
+
+### Newsletter issue template (unit S6-T1)
+
+Route `/newsletter/<slug>`, `track = newsletter-issue`. Route, loader, metadata, JSON-LD, sitemap, preview and revalidation are in [Template route and view](#template-route-and-view-unit-s6-t1). No design exists for it (derived, plan open question 7).
+
+**Wiring**
+- `IssueTemplate` order: `hero` · `article` (`eyebrow` ← `Issue NNN` from `postLabels.issueWord` and `issueNumber`, else `post.eyebrow`; `heading` ← `title`; `standfirst` ← `dek`; `metaLine` ← `sentAt` (else `publishedAt`) and read time; no byline; `geometry: false`; `media` ← `heroImage`) → `richContent` · `article` (`numberSections: false`, `body` ← `body`) → `newsletterBand` · `band` (`heading` ← `closing.newsletterHeading`).
+- `ReadingProgress` is on for issues too (plan open question 19). `PageShell` standard header and footer.
 
 ## 17. Link-in-Bio
 
-*No units documented yet.*
+A `pages` doc (`links`) whose single section is the LinkStack. The doc's header variant is `none` and footer `legal-only` and it is `noindex`; these are page fields set per document (the code forces them only for `zeroLeakage` pages).
+
+### LinkStack (unit S6-9)
+
+Section: Identity strip → Socials stack → Links (Book a Call dominant, latest case study, newsletter, current push). New block.
+
+**Files**
+- `src/blocks/LinkStack/config.ts` (`LINK_STACK_ICONS`), `Component.tsx` (`LinkStackBlock`, `LinkStackView`, `LinkStackData`).
+
+**Fields & schema** (slug `linkStack`, `interfaceName: 'LinkStackBlock'`; one layout)
+- `identity`: group `showStudyMetric` (checkbox, default true), `fallbackLine` (text, required, max 90).
+- `primary`: group `link` (`linkField`, required: Book a Call) and `capacity` (`scarcityRef`, default `slots-line`).
+- `showSocials` (checkbox, default true), `followLabel` (default `Follow`, max 30).
+- `siteLabel` (default `On the site`, max 30).
+- `links`: array, max 8: `icon` (select: `chart-line-up`, `quotes`, `envelope-simple`, `file-text`, `arrow-right`; required) and `link` (`linkField`, required).
+- `latestCaseStudy` (checkbox, default true), `latestCaseStudyLabel` (default `Case study`, max 40).
+- `currentPush`: group `show` (checkbox, default false), `icon`, `link` (both shown when `show`).
+
+**Wiring**
+- Registered in `pageBlocks`; component key `linkStack`. Showcase: `linkStack` (populated, no study, no socials, no capacity line, minimal), using the showcase-only `previewStudy` prop (not a field, ignored unless `_status === 'published'`).
+- `LinkStackBlock` (async) reads, through the Local API with public access: the newest published case study (`select` slug, title, `headlineMetric`; skipped when neither `showStudyMetric` nor `latestCaseStudy` needs it), `site-settings.socials` (rows with a handle and an `https://` URL), and the chosen `scarcity` statement. `LinkStackView` is the pure render.
+- Identity metric: only from the latest published study's `headlineMetric` (value and label both set); otherwise `fallbackLine`. The case-study link row is absent while no study is published. The capacity line renders as loud statement plus quiet reason and is skipped (logged) with a missing row, unfilled token or blank reason.
+- One 480px column at every width; rows are 44px or taller. Icons are inlined Phosphor paths (no icon dependency). The h1 is the `SiteLogo` wordmark (F123).
+- Migration: `20261023_195241_b6_pages_13_21_blocks` (`pages_blocks_link_stack`, `pages_blocks_link_stack_links` and `_pages_v_` equivalents, enums for `icon` and link types).
+
+**Notes**
+- Flags: F120 the SCHEMA seed "Slots open {active}/{capacity}" reads wrong (seed a different statement); F121 social icon set is duplicated with `DirectContact` (consolidate later); F122 `SiteLogo` is resized locally (no `bio` size); F124 the identity metric is always wine; F125 social URLs are https-only here (`DirectContact` accepts http).
+- Seed must create `scarcity` row `slots-line` and socials in site-settings.
 
 ## 18. Lead Magnet template
 
-Data source: the [`lead-magnets` collection (C9)](#lead-magnets-unit-c9), route `/resources/<slug>` (site-wide section). No blocks documented yet.
+Data source: the [`lead-magnets` collection (C9)](#lead-magnets-unit-c9), route `/resources/<slug>`. Locked section order: Hero + capture form → What's inside → Delivery state (replaces the first two after submit) with newsletter cross-sell → Legal-only footer. Lead magnets stay drafts until the `lead_magnet` delivery unit (Gate A) exists (F149).
+
+### Template route and view (unit S6-T2)
+
+**Files**
+- `src/app/(frontend)/resources/[slug]/page.tsx`: `/resources/<slug>`.
+- `src/components/LeadMagnetView.tsx`: `LeadMagnetView({ doc })`. `src/components/LeadMagnetStates.tsx`: `'use client'` island, exports `LeadMagnetStates`, `CMSFORM_SUBMITTED_EVENT`.
+- `src/lib/leadMagnets.ts` (`server-only`): `getLeadMagnet(slug)`, `leadMagnetMetadata(doc)`, type `PublicLeadMagnet`.
+- `src/collections/LeadMagnets.ts` (`admin.preview` / `admin.livePreview`).
+
+**Fields & schema**: none added. Mapping (from [C9](#lead-magnets-unit-c9) fields):
+
+| # | Section | Block · variant | Fields → props |
+|---|---|---|---|
+| 1 | Capture hero | `hero` · `typographic`, `size: compact`, `width: narrow`, `badge.show: false` | `eyebrow`, `title` → `heading`, `accentPhrase`, `pitch` → `body`, `form` → `form` (`showForm` only when a form is set), `formStyle: 'inline'`, `formNote`; `leadMagnetId` ← doc id |
+| 2 | What's inside | `specLedger` · `list` | `whatsInsideHeading` → `eyebrow` (`eyebrowTick: false`), `valueBullets[].text` → `items[].title` |
+| 3 | Delivered state | `newsletterBand` · `cross-sell` | `deliveredState` → `delivered`; rendered only when `deliveredState.heading` has text |
+
+**Wiring**
+- `getLeadMagnet`: public = `find` with slug and `_status` published, `draft: false`, `overrideAccess: false`, `depth: 1`; staff draft preview as for pages. The `select` EXCLUDES `asset` and `deliveryEmail` (`{ asset: false, deliveryEmail: false }`) so neither can reach the template even in a staff preview; `PublicLeadMagnet = Omit<LeadMagnet, 'asset' | 'deliveryEmail'>`. The template never renders an asset or download link; the asset is only emailed by the (not yet built) delivery unit.
+- No doc: `findRedirect('/resources/<slug>')`, else `notFound()`.
+- `LeadMagnetView` renders `PageShell` `logo-only` header and `legal-only` footer, then `<main>` with `LeadMagnetStates`: server-rendered `capture` (sections 1–2) and `delivered` (section 3) nodes passed as props.
+- `LeadMagnetStates` (client): listens on its root for the bubbling `cmsform:submitted` event and, when `detail.formId` equals the capture form id, swaps `capture` for `delivered` and focuses the delivered heading (`DELIVERED_HEADING_ID` = `lead-magnet-delivered`, `tabIndex -1`). No JS or before hydration: the form posts normally. No `deliveredState` heading: no swap; the form's own confirmation shows. See [PayloadForm event](#payloadform-cmsformsubmitted-event).
+- Metadata (`leadMagnetMetadata`): always `noindex, nofollow` in every environment; title `meta.title` → seo-defaults template with `%s` = title; description `meta.description` → `pitch` cut to 155 → seo-defaults; image `meta.image`; canonical own path. Never in the sitemap.
+- Preview: `previewUrl(docPath('lead-magnets', { slug }))` for both admin options.
+- Revalidation: `lead-magnets` hooks: tag `lead-magnets` and `/resources/<slug>`.
+- Migration: none for the template.
+
+**Notes**
+- F150: the dev 404 HTML body is empty before JS (Next error shell, pre-existing); verify on staging. F151: no h1 after the delivered swap (design Q13). F152: cross-sell column x offset differs from the hero at 1440 plus whitespace on short pages.
+
+### Hero, form slot: inline style and `slashBreaks` (unit S6-1)
+
+Section: Hero + capture form. The fields and the form-slot resolution are in [Hero, form slot: card](#hero-form-slot-card-unit-s6-1).
+
+**Files**: `src/blocks/Hero/Component.tsx` (`TypographicHero`, `slashBreaks`), `HeroForm.tsx` (`HeroInlineForm`, `inlineForm` class map).
+
+**Fields & schema**: none beyond the card entry (`formStyle: 'inline'`, `submitLabel`, `formNote`).
+
+**Wiring**
+- `formStyle: 'inline'` keeps the normal compact hero and adds `HeroInlineForm` under the paragraph: from `md` a 280px transparent input beside the button (gap 8), stacked full width below; the form note sits under it. A resolved slot gives the capture section its own padding and a smaller h1.
+- `slashBreaks(text)`: when a form slot is present, a zero-width space is inserted after every `/` in `heading` and `accentPhrase`, so a long "A/B" token wraps at the slash and never mid-word.
+- The lead-magnet template renders `HeroBlock` with `showForm`, the lead magnet's capture form, `formStyle="inline"` and `leadMagnetId`.
+- Showcase: `hero` / `typographic — inline form`.
+- Migration: see the card entry.
+
+**Notes**
+- The wine shape is lifted on phones (F156).
+
+### SpecLedger, list variant (unit S6-10)
+
+Section: What's inside. Extends [SpecLedger](#specledger-cards-anatomy-and-expandable-variants-unit-s4-5).
+
+**Files**: `src/blocks/SpecLedger/config.ts`, `Component.tsx` (`ListVariant`).
+
+**Fields & schema**
+- `variant`: option `list` ("Check list") added. Uses `eyebrow` / `eyebrowTick`, `heading` / `accentPhrase`, `tone`, `pricingNote` and `items[].title` (the bullet sentence, shown as written).
+
+**Wiring**
+- `ListVariant`: 820px column, grey ground (`tone` `auto` or `grey`; otherwise white), muted eyebrow, check bullets (inline SVG check). With no `heading` the eyebrow is the section's h2, otherwise a `p`. Zero items renders nothing.
+- Showcase: `specLedger` / `list` (three entries incl. empty).
+- Migration: `20261023_195241_b6_pages_13_21_blocks` (`list` added to the variant enum; the existing items table is reused).
+
+**Notes**
+- Existing variants render identically (per the unit report).
+
+### NewsletterBand, cross-sell variant (unit S6-11)
+
+Section: Delivered state + newsletter cross-sell. Extends [NewsletterBand (S4-11)](#newsletterband-unit-s4-11).
+
+**Files**: `src/blocks/NewsletterBand/config.ts`, `Component.tsx` (dispatch), `CrossSell.tsx` (`NewsletterCrossSell`, `DELIVERED_HEADING_ID`).
+
+**Fields & schema**
+- `variant`: option `cross-sell` added.
+- `delivered` (`cross-sell`): group `eyebrow` (default `Sent`), `heading`, `accentPhrase`, `body` (textarea), `crossSellLine` (lead-in to the box).
+- `crossSellLink` (`cross-sell`): `linkField`, where the dark button goes; empty = the published `newsletter` page. Button text: the link text, else `buttonLabel` (unless it is the default `Join`), else `Join the newsletter`.
+- `heading`, `line`, `buttonLabel` supply the box text (empty heading and line fall back to `site-settings.templateDefaults`).
+
+**Wiring**
+- `NewsletterCrossSell` (async): an h2 at h1 scale (`DELIVERED_HEADING_ID`, `tabIndex -1`, so the template can move focus to it; the page keeps its one h1 while the capture hero is shown), optional accent phrase, body plus the lead-in line, then a grey box with a dark link button. The box is a link, not an inline form, and never links to the asset. No usable link and no published `newsletter` page: the delivered message alone. No delivered heading: renders nothing (logged).
+- Showcase: `newsletterBand` / `cross-sell` (full, no link, empty link group).
+- Migration: `20261023_195241_b6_pages_13_21_blocks` (`delivered_*` columns, `cross_sell_link_*` columns and enum, `cross-sell` added to the variant enum).
+
+**Notes**
+- Zero-leakage pages still cannot hold a NewsletterBand (any variant).
 
 ## 19. Review Hub
 
-*No units documented yet.*
+Locked section order: Hero strip (compact, rating) → Review wall (staggered) → Case study cross-links (fallback) → Final CTA → Footer (standard). The Hero is the existing [compact Hero with rating](#hero-compact-size-and-aggregate-rating-unit-s5-1).
+
+### ReviewWall, wall variant (unit S6-12)
+
+Section: Review wall. Extends [ReviewWall, feed variant](#reviewwall-feed-variant-unit-s5-2).
+
+**Files**
+- `src/blocks/ReviewWall/config.ts`, `Component.tsx` (dispatch), `wall.tsx` (`ReviewWallMasonry`), `data.ts` (`loadWallTestimonials`, `WALL_LIMIT = 36`; shared helpers moved here), `feed.tsx` (`TextCard`).
+
+**Fields & schema**
+- `variant`: option `wall` added. `source`, `sourceFilter`, `testimonials`, `emptyNote` are shared with `feed`; `pageSize`, `showStudyLinks` and `loadMore` are shown for `feed` only.
+- `inserts` (`wall`): array, max 6, "Tiles between the cards": `kind` (select, required: `metric`, `client`, `scarcity`), `metric` (group, `metricFields({ required: false })`, for `metric`), `client` (relationship to `clients`, `maxDepth: 1`, for `client`), `statement` (`scarcityRef`, default `capacity`; for `scarcity`), `position` (number, min 0, default 2: the tile follows that many cards; 0 = first; past the end = last).
+- `wallNote`: text, wall only: quiet line under the wall.
+- `testimonials` has a validator in hand-pick mode (at least one).
+
+**Wiring**
+- `ReviewWallMasonry`: server component; CSS columns (1 / 2 from `md` / 3 from `lg`), every tile `break-inside-avoid`; cards are the feed's compact `TextCard` (video testimonials show as written cards here, without a study link). No Load More; `WALL_LIMIT` caps the cards at 36.
+- Inserts (`insertTile`, `compose`): `metric` needs a `value` (else skipped, logged); `client` shows only a published client (bare ids re-read in one public query; drafts dropped); `scarcity` reads the `scarcity` global and renders only with a filled statement AND a non-blank reason (otherwise skipped, logged: rule 2). Tiles with the same `position` keep array order.
+- Empty: with `emptyNote` one quiet line, without it the block renders nothing.
+- Showcase: `reviewWall` / `wall` (populated with all three tile kinds, empty with note, empty without note, missing client).
+- Migration: `20261023_195241_b6_pages_13_21_blocks` (`pages_blocks_review_wall_inserts`, `_pages_v_` equivalent, column `wall_note`, `wall` added to the variant enum).
+
+**Notes**
+- F111: the wall's mobile build is derived (the design is desktop only). F112: the wall has no Load More and caps at 36 testimonials. Feed byte-identity was argued, not measured, in the unit (QA diffed the feed entries).
+- Case study cross-links and Final CTA use the existing [CaseStudyCards](#casestudycards-metric-strip-fallback-unit-s4-2) and [FinalCTA](#finalcta-unit-b3).
 
 ## 20. Legal template
 
-*No units documented yet.*
+`pages` docs (planned slugs `privacy`, `terms`, `cookies`, `gdpr`), each built from a `richContent` · `legal` section. The block renders the page's only h1 (a documented exception: the page has no Hero), a desktop sidebar of section links and the document body. Content is placeholder structure only; counsel supplies the text (plan open question 16: legal blocks stay a Gate 3 item until counsel copy exists).
+
+### RichContent, legal variant (unit S6-2)
+
+Section: Legal document. Extends [RichContent, article variant](#richcontent-article-variant-unit-s4-8).
+
+**Files**
+- `src/blocks/RichContent/config.ts`, `Component.tsx` (dispatch), `Legal.tsx` (`RichContentLegal`), `anchors.ts` (`legalAnchors`, `anchorSlug`), `src/lib/anchors.ts` (`RESERVED_ANCHOR_IDS`, `isReservedAnchorId`).
+
+**Fields & schema** (shown for `variant = legal`)
+- `eyebrow`: shared (no diamond tick). `heading`: the document title; a `validate` makes it required for `legal` (message "A legal document needs its title…"); `accentPhrase` is shared and unused.
+- `lastUpdated`: date (`dayOnly`, display `d MMM yyyy`); empty hides the line. `lastUpdatedLabel` (default `Last updated`), `navLabel` (default `On this page`).
+- `body`: the shared article editor (H2–H4, lists, quote, links). Each H2 becomes a section link.
+
+**Wiring**
+- `RichContentLegal`: header (muted eyebrow, `h1`, `<time dateTime>` date line), body in a 680px column. H2 headings get `id`s from `legalAnchors(children)` (top-level H1 or H2 nodes with text): id = slug of the heading text (lowercase a-z and 0-9, single hyphens; empty → `section`); a reserved id gets the `section-` prefix; duplicates get `-2`, `-3`…; the converter looks the id up by node identity, so list and headings cannot drift.
+- Navigation: `SectionSidebar` from `lg` (sticky `top-26`, "On this page", `nav aria-label` = `navLabel`), `SectionRail` below `lg` (sticky horizontal rail under the header). H2s carry scroll margins that clear the sticky chrome. No H2 → no sidebar or rail, single column. Images are skipped (logged).
+- `src/lib/anchors.ts`: `RESERVED_ANCHOR_IDS` = `main`, `__next`, `dc-water`, `lead-magnet-delivered`, `postlist`; `isReservedAnchorId(id)` is true for an id equal to one of them or starting with `<id>-`. Config-safe (no React, no `@/` imports): `AccordionFAQ/config.ts` imports it for the group `anchorId` check, and `legalAnchors` uses it.
+- Showcase: `richContent` / `legal`, `legal — anchor guard`, `legal — no sections`.
+- Migration: `20261023_195241_b6_pages_13_21_blocks` (`last_updated`, `last_updated_label`, `nav_label` columns; `legal` added to the variant enum).
+
+**Notes**
+- Flags: F116 the mobile rail shows the full H2 text (no short-label field); F118 the desktop sidebar layout starts at 1024px (the design has no tablet build); F155 the wine shape is lifted to a corner peek (differs from the design offsets).
+- Anchors verified by a curl check of all 14 hrefs on the showcase (F144).
 
 ## 21. 404
 
-*No units documented yet.*
+Locked section: Branded error state with links to Home, Work and Book a Call, Footer (standard). Rendered from the reserved `404` pages doc, or from shipped defaults.
+
+### Error404 block and not-found wiring (unit S6-13, S6-T2)
+
+**Files**
+- `src/blocks/Error404/config.ts` (`ERROR404_DEFAULTS`), `Component.tsx` (`Error404View`, `Error404Block`, type `Error404Data`).
+- `src/app/(frontend)/not-found.tsx`; `src/collections/Pages.ts` (`previewPathOf`).
+
+**Fields & schema** (slug `error404`, `interfaceName: 'Error404Block'`; no variant)
+- `code`: text, default `404`; decorative (hidden from screen readers); empty hides it.
+- `heading`: text, required, default `This page leaked.`: the page's h1.
+- `body`: text, default `Unlike your store's demand, it's not coming back.`, shown on the same line as the heading.
+- `links`: array, 1–3, default Book a Call (`/book-a-call`), Home (`/`), Work (`/work`); each `linkField` `link` required.
+
+**Wiring**
+- Registered in `pageBlocks` (last, so it appears in every section picker; accepted, plan question 22); component key `error404`. Showcase: `error404` (default, one link, custom wording).
+- `Error404View` is the pure render (all keys optional): numeral (`aria-hidden`), h1 plus body, the first link as the primary button and the rest as ghost buttons (stacked below `md`, the extra buttons in one row). Every part falls back to `ERROR404_DEFAULTS`; an empty link list falls back to the three default links.
+- `not-found.tsx` (`getPage('404')`, staff draft preview via `/_preview?path=/404`): a doc with at least one layout section renders through `PageView` (its own header and footer variants); no doc or an empty layout renders `Error404View` with defaults inside `PageShell` (standard chrome). `generateMetadata`: title = the doc's `meta.title` (absolute), else `Page not found` (templated by the layout); description from `meta.description`; no robots tag (Next adds its own `noindex`), no canonical.
+- `[...slug]` still calls `notFound()` for slug `404` and for unknown paths (see [B2](#page-router-unit-b2)).
+- Migration: `20261023_195241_b6_pages_13_21_blocks` (`pages_blocks_error404`, `pages_blocks_error404_links` and `_pages_v_` equivalents).
+
+**Notes**
+- F154 (end of step 6, default keep): the wine shape sits behind the buttons at 390px as in the design; option to lift it above the buttons for contrast.
+- F150: in dev the 404 HTML body is empty before JS (Next error shell); check on staging.
 
 ---
 
@@ -2880,7 +3540,7 @@ Implemented in [B0](#frontend-foundation-unit-b0).
 - Route: `src/app/(frontend)/%5Fshowcase/page.tsx`. The folder is `%5Fshowcase` because a `_folder` is a private folder excluded from routing; `%5F` (URL-encoded `_`) creates a segment starting with an underscore.
 - `notFound()` when `APP_ENV=production` (`showcaseEnabled()`); always `robots: { index: false, follow: false }`.
 - Entries come from `showcaseEntries` in `src/showcase/registry.ts`, each rendered through `RenderBlocks`. Scaffolding: system-mono labels (block, variant, `mobile-only`/`desktop-only` tag), dotted dividers between entries, and an empty-state message ("No blocks yet.") while the registry is empty.
-- Entries: 78 in `showcaseEntries` (75 + 3 `newsletterBand`).
+- Entries: 167 in `showcaseEntries` after big step 6 (113 after big step 5; the S6 integration added 54: Hero `vsl`, form-slot and standfirst entries, `richContent` band / legal / callout, `proofStrip` metrics, `miniCTAStrip` button, `offerBlock`, `testimonialRow` leadMetric / ctaStyle, `postList`, `linkStack`, `specLedger` list, `newsletterBand` cross-sell, `reviewWall` wall, `error404`). Entries for the S6 blocks are listed under pages 13 to 21.
   - Homepage group (B3, 27 entries, in order): `hero` x2, `proofStrip` x4, `caseStudyCards` x4, `miniCTAStrip` x2, `twoTrackPanels` x2, `phaseTimeline` x2, `teamIntro` (intro) x2, `testimonialRow` x4, `teamIntro` (founder-card) x2, `finalCTA` x3.
   - Big step 4 group (51 entries, appended after the homepage group). Ordering rule: grouped by block in SCHEMA §9 page order of first use, and variants within a group in page order: `hero` article x3 (p2), stats x2 (p3), phaseStrip x1 (p4), service x3 (p5, p6) → `richContent` x2 (p2) → `metricEvent` x4 (p2) → `testimonialRow` client-voice x3 (p2) → `newsletterBand` x3 (p2, p3) → `caseStudyCards` next-link, ledger x2 (p3), track build (p5), track growth (p6) → `twoTrackPanels` doors x2, contrast x2 (p4), primary-secondary x1 (p5) → `phaseTimeline` arc x2, steps x3 (p4), build-run x2 (p5), engine-rollout x2 (p6) → `accordionFAQ` x3 (p4) → `specLedger` x8 (p5, p6).
   - The grouping rule is stated in the comment above the first big-step-4 entry in `src/showcase/registry.ts`.
@@ -2895,7 +3555,7 @@ Source: `DECISIONS.md` §D, §E, §F and `OPS_REQUESTS.md` #3. Items marked **TB
 ### Push → staging
 1. A unit clears its gates and is committed and pushed to `main`.
 2. GitHub Actions builds one Docker image per commit **with no database access** (the `(frontend)` layout is `force-dynamic`; no DB-querying `generateStaticParams`; no `NEXT_PUBLIC_*` variables). It runs typecheck and lint, then pushes to the private GHCR repository `ghcr.io/duhadev/duhamedia`, tagged `sha-<commit>` and `main`.
-3. The server's staging timer (owned by the server agent) pulls `:main` every few minutes and deploys it to `staging.duhamedia.com` (behind Cloudflare Access, always noindexed).
+3. The server's staging timer (owned by the server agent) pulls `:main` every few minutes and deploys it to `staging.duhamedia.com` (behind Cloudflare Access, always noindexed). Noindex is behaviour from env, not a build flag: with `APP_ENV` not `production`, `src/proxy.ts` adds `X-Robots-Tag: noindex, nofollow` to every proxied response and `robots.txt` serves `Disallow: /` (see [Request path header and proxy](#request-path-header-and-proxy-f75-f78-b1)). No Cloudflare rule may strip that header (OPS_REQUESTS #11).
 4. On container start, Payload's `prodMigrations` runs any pending committed migrations before the server serves. The deploy script then polls `GET /api/health` (200 = DB reachable, 503 otherwise); on failure it rolls back to the previous image and alerts the human through the secretary.
 
 ### Release → production
@@ -2920,8 +3580,8 @@ Source: `DECISIONS.md` §D, §E, §F and `OPS_REQUESTS.md` #3. Items marked **TB
 |---|---|
 | `DATABASE_URI` | Postgres connection string (`duha_site_staging` on staging) |
 | `PAYLOAD_SECRET` | Payload signing secret |
-| `APP_ENV` | `production` \| `staging` \| `development`; drives event `env`, staging noindex, `/_showcase` visibility |
-| `SITE_URL` | Canonical origin, read at runtime (replaces the old `NEXT_PUBLIC_SITE_URL`) |
+| `APP_ENV` | `production` \| `staging` \| `development`; drives event `env`, the non-production `X-Robots-Tag: noindex, nofollow` header (`src/proxy.ts`), `robots.txt`, `/_showcase` visibility and whether `SITE_URL` is mandatory. Unset or any other value counts as `development` |
+| `SITE_URL` | Canonical origin, read at runtime (replaces the old `NEXT_PUBLIC_SITE_URL`). **Mandatory when `APP_ENV` is `staging` or `production`**: unset or not an http(s) URL makes `getSiteUrl()` throw and `GET /api/health` return 503 (the deploy poll rolls back); only `APP_ENV=development` falls back to `http://localhost:3000`. It must equal the public origin: canonicals, sitemap, Open Graph, live preview, the form route's same-origin check and the Turnstile hostname check all use it (OPS_REQUESTS #12; see [SITE_URL and APP_ENV handling](#site_url-and-app_env-handling-f65-b1)) |
 | `MEDIA_DIR` | Absolute path of the media directory in the container (bind-mounted; separate for staging/production) |
 | `SITE_EVENT_URL` | Internal address of the OpenClaw secretary's site-event endpoint |
 | `SITE_EVENT_SECRET` | HMAC key for signing site events |
@@ -2955,6 +3615,8 @@ The submit-side data model (forms, submissions, delivery fields) is documented i
   - `migrate:create` is interactive on enum/column renames (drizzle create-vs-rename prompts). Run it under a pty and answer each prompt explicitly.
   - Hand-edited data steps (e.g. the C1 admin-preserving `UPDATE`) must be applied to the dev DB by running the migration's SQL before the next push, because push cannot run them.
   - Whenever a migration adds a collection, Payload's generated `down()` emits `DROP TABLE … CASCADE` before the `DROP CONSTRAINT` for the new `payload_locked_documents_rels_*_fk`, so `down` fails (the CASCADE already removed the FK). Hand-reorder `down()` to drop those FKs first (done in C2 and C3–C6).
+  - `payload migrate:reset` (payload@3.91.0) runs every `down` oldest-first (F88). The initial migration's `down` therefore drops every table and enum type in the `public` schema, and later `down`s return early once `users` is gone; run reset only against a scratch database that holds only Payload's schema. Newest-first `migrate:down` is unaffected.
+  - Migrations from the latest steps: `20261022_141454_b5_pages_7_12_blocks`, `20261023_170339_b5b_s5_deltas` (see [S5 close-out schema deltas](#s5-close-out-schema-deltas-20261023_170339_b5b_s5_deltas)), `20261023_195241_b6_pages_13_21_blocks` (big step 6: new tables `pages_blocks_offer_block`, `pages_blocks_proof_strip_metrics`, `pages_blocks_review_wall_inserts`, `pages_blocks_rich_content_facts`, `pages_blocks_link_stack` (+ `_links`), `pages_blocks_post_list`, `pages_blocks_error404` (+ `_links`), each with a `_pages_v_` equivalent; new columns on `pages_blocks_hero`, `proof_strip`, `review_wall`, `testimonial_row`, `rich_content`, `newsletter_band`; 16 enum `ADD VALUE` statements; eight `site_settings.post_labels_*` columns; additive only). Generate against a scratch DB migrated to HEAD; the dev DB uses push and its Drizzle prompt may stall on a "DATA LOSS" question when a schema change lands while the config is mid-edit (dev only).
 - Browser-based proofs (anything needing the human's admin session) are run by the PM or `qa-reviewer`, not by the integrator or schema agents.
 - Script safety: throwaway users created by scripts or tests must use a unique `test+gate-<purpose>@duhamedia.com` address and be deleted by the returned id only.
 - Local image test: `docker build .` then `docker run --network host --env-file .env …`.
