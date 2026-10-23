@@ -16,9 +16,9 @@ Sections are added here as each part of the site is finished and approved.
 |---|---|
 | Edit scarcity numbers | **Admin → Globals → Capacity & scarcity** → change the four counts and/or the **Statements** → **Save**. Live straight away (no Publish). See [Capacity & scarcity](#capacity--scarcity). |
 | Add a redirect | **Admin → Redirects → Create New** → **Old address** (starts with `/`) → **Send visitors to** a page or another address → **Redirect type** (normally 301) → **Save**. Applies immediately; the public site starts carrying out redirects when its pages go live. See [Redirects](#redirects-site-wide). |
-| Edit page copy or images | [fill in once built] |
-| Find form submissions and failed deliveries | **Admin → Form submissions** → apply the **Failed deliveries** saved filter (the shared saved view at the top of the list). See [Forms and form submissions](#forms-and-form-submissions). Public forms and the re-send button are not live yet. |
-| Change the booking link | **Admin → Globals → Site settings → Booking tab → Booking page address** → paste the full `https://` address → **Save**. Live straight away. See [Site settings](#site-settings). |
+| Edit page copy or images | **Admin → Collections → Pages → (page) → Content tab → Sections** → open the section (block) → edit its text fields or pick an image → **Publish changes**. Add, remove or reorder sections with **Add Section** and the drag handle. Pages 7 to 12 are documented so far; see [Pages](#pages-site-pages) and the page's own entry. Images: [Media library](#media-library-images). |
+| Find form submissions and failed deliveries | **Admin → Form submissions** → filter **Delivery status** equals **Failed** (or use the **Failed deliveries** saved view if it exists). To retry: open the submission → right-hand sidebar → **Re-send to secretary**. See [Contact form: what happens to a submission](#contact-form-what-happens-to-a-submission) and [Forms and form submissions](#forms-and-form-submissions). |
+| Change the booking link | **Admin → Globals → Site settings → Booking tab → Booking page address** → paste the full `https://` address → **Save**. Keep **How the booking page opens** on the new-tab button. Live straight away; the Book a Call page follows. See [Booking widget](#booking-widget-bookingembed). |
 | Send a newsletter broadcast (Resend dashboard steps) | [fill in once built] |
 | Change the social-share (OG) image | **Admin → Globals → SEO defaults → Default social share image** → choose or upload an image (at least 1200 × 630 pixels) → **Save**. Live straight away. This is the fallback for every page; a page, case study, article or free download can override it in its own SEO tab. See [SEO defaults](#seo-defaults). |
 | Change a page's Google title, description or share image | Open the item (**Admin → Collections → Pages / Case studies / Posts / Lead magnets → (item)**) → **SEO tab** (the last tab) → edit **Search title**, **Search description** or **Share image** (or click **Auto-generate**) → **Save draft** or **Publish changes**. Leave a box empty to use the site-wide defaults. See [SEO tab](#seo-tab-pages-case-studies-articles-free-downloads). |
@@ -57,11 +57,27 @@ Sections are added here as each part of the site is finished and approved.
 5. [Shopify Theme Development](#5-shopify-theme-development)
 6. [Marketing](#6-marketing)
 7. [Testimonials](#7-testimonials)
+   - [Hero (compact heading banner, average rating)](#hero-compact-heading-banner-average-rating)
+   - [Testimonial feed (ReviewWall)](#testimonial-feed-reviewwall)
 8. [About](#8-about)
+   - [Hero, article style (key figures strip)](#hero-article-style-key-figures-strip)
+   - [Company facts](#company-facts-metrics-company-facts-layout)
+   - [Client logo strip](#client-logo-strip-case-study-cards-logo-strip-fallback)
 9. [Book a Call](#9-book-a-call)
+   - [Hero callouts](#hero-callouts)
+   - [Booking widget (BookingEmbed)](#booking-widget-bookingembed)
+   - [Pre-call homework form](#pre-call-homework-form-form)
+   - [Quick-question line](#quick-question-line-mini-cta-strip-inline)
 10. [Thank You](#10-thank-you)
+    - [Homework reminder](#homework-reminder-form-homework-reminder)
 11. [FAQ](#11-faq)
+    - [Category tabs](#category-tabs-categorytabs)
+    - [Question groups](#question-groups-faq-accordion-group)
 12. [Contact](#12-contact)
+    - [Contact form](#contact-form-form-standard-stepped-on-phones)
+    - [Direct details and map](#direct-details-and-map-directcontact)
+    - [Contact form: what happens to a submission](#contact-form-what-happens-to-a-submission)
+    - [Template labels (case study pages, article pages)](#template-labels-case-study-pages-article-pages)
 13. [DEV-SEO template](#13-dev-seo-template)
     - [Posts (articles and newsletter issues)](#posts-articles-and-newsletter-issues)
 14. [MKT-SEO template](#14-mkt-seo-template)
@@ -293,7 +309,7 @@ Every client quote, video testimonial and public review (Google, LinkedIn) lives
 
 Every ordinary page of the site is a **Page**: Homepage, About, Services pages, FAQ, Contact, Book a Call, Thank You, the legal pages, the 404 ("page not found") page, campaign landing pages, Link-in-Bio and so on. Case studies, articles and newsletter issues, and lead magnets are **not** Pages; they have their own collections ([case studies](#case-studies-the-collection), [posts](#posts-articles-and-newsletter-issues), [lead magnets](#lead-magnets-the-collection)).
 
-**Sections are not available yet.** A page's content is made of **blocks** (sections such as a hero or a testimonial row). Those arrive as each block is built, and each is described under its page. For now a Page is just a title plus the settings below.
+**Sections:** a page's content is made of **blocks** (sections such as a hero or a testimonial row), shown in the admin as **Sections** on the **Content** tab. Each block is described under its page. Pages 7 to 12 are documented so far; the rest follow as they are built.
 
 **SEO**
 - A page's **Title** now sits in a **Content** tab (the first tab); the **SEO tab** is the last tab. Search-engine title, description and share image are set in the SEO tab; see [SEO tab](#seo-tab-pages-case-studies-articles-free-downloads). Leave them empty and the site uses the [SEO defaults](#seo-defaults).
@@ -310,7 +326,7 @@ Every ordinary page of the site is a **Page**: Homepage, About, Services pages, 
 - **Zero leakage** (sidebar tick, for campaign landing pages): forces the Logo-only header and Legal-only footer (you cannot choose otherwise while it is on). Once sections exist it also blocks the newsletter band, so visitors can only take the page's offer.
 - **Reading progress bar** (sidebar tick): a thin progress bar for long pages (About, FAQ).
 - **Published** (date): set automatically the first time you publish.
-- Adding, removing and reordering sections: described here once blocks exist (they will be drag-to-reorder).
+- **Add a section:** **Admin → Collections → Pages → (page) → Content tab → Sections → Add Section**, pick the block type, fill its fields. **Reorder:** drag the section by its handle. **Remove:** the section's menu (**⋯**). Nothing reaches visitors until **Publish changes**. Changing the order changes the page, so keep the order described under each page heading below.
 
 *Saving and publishing*
 - Clicking **Create New** does not save anything; the page exists only after you click **Save Draft** or **Publish changes**. The page preview refreshes when you click **Save Draft**.
@@ -330,7 +346,7 @@ Every ordinary page of the site is a **Page**: Homepage, About, Services pages, 
 
 Every form on the website (Contact, the pre-call homework, newsletter sign-ups, lead-magnet downloads) is set up and stored in two places in the admin, described below. A **lead** is a person who has filled in one of these forms.
 
-**Not live yet:** the public forms on the website are not switched on. They arrive with the form sections (blocks) and spam protection, which are built later. Until then nothing on the public site creates a submission, and nothing is sent to anyone. This entry explains the admin screens so you know where to look once they are live.
+**Live status:** the Contact form (and the Book a Call and Thank You homework forms) are built, with spam protection. The Contact form announces each lead; newsletter and lead-magnet sign-up announcements are still being built, so those forms save submissions but do not yet show a delivery status.
 
 ### Forms and form submissions
 
@@ -360,7 +376,7 @@ Every form on the website (Contact, the pre-call homework, newsletter sign-ups, 
 - The delivery fields (**Event ID**, **Delivery status**, **Delivery note**, **Delivery attempts**, **Last attempt**) are filled in automatically and are read-only. **Delivery note** holds the last response or error. A newsletter form also shows a **Newsletter sync** group tracking the email-list sign-up separately from the announcement.
 - **Find failed deliveries:** **Admin → Form submissions** → apply the **Failed deliveries** saved filter. A saved filter (called a **preset**) is a shared saved view of a list. The Failed deliveries preset is created by an Admin or the setup process; if you do not see it, ask an Admin.
 - **Make your own saved filter:** open **Admin → Form submissions**, set the filter you want (for example Form is `contact`), then save it as a preset using the saved-views control at the top of the list and choose who can use it (just you, or shared with everyone). Saved filters are personal conveniences and never change any data.
-- **Re-send button: coming with the lead-notification release (not built yet).** Today there is no way to re-send an announcement from the admin. When it arrives, it will resend a failed lead without creating a duplicate announcement. This entry will be updated then.
+- **Re-send button:** open a submission → right-hand sidebar → **Re-send to secretary**. It resends the announcement with the same message ID, so the same lead is never announced twice. Full steps: [Contact form: what happens to a submission](#contact-form-what-happens-to-a-submission).
 
 **Forms & leads:** see above. What gets announced to the human, and what "failed" means in practice, will be confirmed here when the lead-notification release is live (nothing is announced today).
 
@@ -476,27 +492,287 @@ The edit screen has five **tabs** (the headings across the top of the form: Summ
 
 ## 7. Testimonials
 
-*Not built yet.*
+Page order: heading banner (with the average rating) → the testimonial feed → closing "book a call" section → footer. Each is a **Section** (also called a block) in **Admin → Collections → Pages → Testimonials → Content tab → Sections**. See [Pages](#pages-site-pages) for how to add, remove and reorder sections. The words in the testimonials themselves are written in [Testimonials and reviews](#testimonials-and-reviews).
+
+### Hero (compact heading banner, average rating)
+
+**SEO:** the banner's headline is the page's one and only main heading (the "h1" that search engines treat as the page's topic); write it as a plain statement of what the page is. The browser-tab title, Google description and share image are in the page's **SEO tab**; see [SEO tab](#seo-tab-pages-case-studies-articles-free-downloads).
+
+**Editable by marketing**
+- Open **Admin → Collections → Pages → Testimonials → Content tab → Sections → Hero**.
+- **Size**: choose **Compact** (shorter banner with a small corner logo shape; used on Testimonials, Book a Call, Thank You, FAQ and Contact) or **Default** (the large homepage version). Only shows for the typographic (text-led) Hero.
+- **Text column width**: **Narrow** (a tight reading column) or **Wide** (full page width). Leave it empty and the banner decides for itself: wide when it shows figures or the average rating, narrow otherwise. Only shows for a Compact Hero.
+- **Show the average rating** (tick box): adds the average stars and number of ratings to the small line above the headline, for example "Testimonials · 5.0 avg · 12 ratings". It is **worked out automatically** from published testimonials that have a star **Rating**; if none do, nothing is shown. You cannot type the figure by hand, which keeps it honest. To add stars to a review, open it in **Admin → Collections → Testimonials** and set **Rating**.
+- Headline, small line above it, accent word, paragraph and buttons work as on every Hero.
+
+**Forms & leads:** n/a.
+
+**Social share:** n/a (set per page in the SEO tab).
+
+**Other**
+- Unticking the rating while the width is left empty makes the banner narrower, because the automatic rule treats "has rating" as a reason to go wide. Set **Text column width** to **Wide** to stop that.
+
+### Testimonial feed (ReviewWall)
+
+**SEO:** n/a here. Video testimonials use the poster image's **Alt** text from the [Media library](#media-library-images). The site does not publish star ratings to Google, on purpose (Google ignores ratings a business publishes about itself).
+
+**Editable by marketing**
+- Open **Admin → Collections → Pages → Testimonials → Content tab → Sections → Review wall** and keep **Layout** on **Feed**.
+- **Which testimonials appear**:
+  - **All published testimonials (in their "Order" number)**: the feed fills itself from [Testimonials and reviews](#testimonials-and-reviews), ordered by each one's **Sort Order**. **Only these kinds** then lets you tick Direct client quotes, Google reviews and/or LinkedIn; leave all unticked for everything.
+  - **Pick testimonials by hand**: choose them one by one under **Testimonials**; drag to reorder, use the row's menu to remove. A testimonial that is still a draft is skipped on the site until it is published.
+- **Cards per load**: how many cards show at first (1 to 24, starts at 6). The same number is added each time a visitor clicks **Load more**. The button disappears once everything is shown.
+- **Show "Read the full case study" links** (tick box) and **Case study link text**: when ticked, a card whose testimonial is linked to a case study shows a link to it. The link only appears once that case study is **published**; while it is a draft, no link shows. At launch no case study is published, so no links appear.
+- **Card labels**: the small tags on cards, **Video**, **Google review**, **LinkedIn**, plus the hidden text read to screen-reader users for the play button (the person's name is added after it).
+- **"Load more" button**: **Button text**, **Button text while loading** and **Message if loading fails**.
+- **Note when there is nothing to show**: a quiet line shown if no testimonial matches (for example the filter excludes everything). With the note empty and nothing to show, the section is hidden.
+- **Eyebrow** and **Heading**: optional; leave them empty on the Testimonials page because the banner above already says it.
+- To change a testimonial's quote, stars, video or source, edit it in [Testimonials and reviews](#testimonials-and-reviews), not here.
+
+**Forms & leads:** n/a.
+
+**Social share:** n/a.
+
+**Other**
+- A video testimonial only plays when its **YouTube URL** is valid; otherwise it shows as a text card.
+- Changes to testimonials appear on the site straight after you publish them; the page itself does not need re-publishing.
+- The extra option **Layout → Wall** and **Tiles between the cards** belong to the Review Hub page ([19](#19-review-hub)).
 
 ## 8. About
 
-*Not built yet.*
+Page order: heading banner → article text → company facts → founder → client logos → closing section → footer. Edit at **Admin → Collections → Pages → About → Content tab → Sections**. The page has a thin **reading progress bar** (tick box in the page's right-hand sidebar).
+
+### Hero, article style (key figures strip)
+
+**SEO:** the headline is the page's main heading; keep it one clear statement. The lead image takes its **Alt** text from the [Media library](#media-library-images). Title, description and share image: the page's [SEO tab](#seo-tab-pages-case-studies-articles-free-downloads).
+
+**Editable by marketing**
+- Open **Sections → Hero**, with **Layout** set to the article style.
+- **Key figures** (up to 5 rows, labelled "Figure"): short facts such as a place, a scope or a capacity, each a **Value** and a **Label**. **Add:** click **Add Figure**; **reorder:** drag by the handle; **remove:** the row's menu. Results or counts only, **never a price**.
+- **Lead image** and **Image frame** (None, Browser window frame, or Full width edge to edge): the picture under the header.
+
+**Forms & leads:** n/a. **Social share:** n/a.
+
+**Other:** never put invented founder facts or numbers in the figures. Placeholders must stay clearly non-final.
+
+### Company facts (Metrics, "Company facts" layout)
+
+**SEO:** n/a.
+
+**Editable by marketing**
+- **Sections → Metrics**, **Layout** = **Company facts (label and value rows)**.
+- **Eyebrow**: the caption above the list, for example "The company, in numbers". **Heading**: optional.
+- **Rows**: one fact per row (**Value** and **Label**, optional **Sub** line, and an **Accent** tick to colour the number). **Add:** **Add Row**; **reorder:** drag; **remove:** the row's menu. A row missing its label or value is skipped.
+- **Note / method**: a quiet line under the list.
+- The columns before/after/change belong to the case-study table layout and are not used here.
+
+**Forms & leads:** n/a. **Social share:** n/a.
+
+**Other:** only true figures. Leave a row out rather than guess a founding year, headcount or count.
+
+### Client logo strip (Case study cards, "Logo strip" fallback)
+
+**SEO:** logos use the **Alt** text from the [Media library](#media-library-images).
+
+**Editable by marketing**
+- **Sections → Case study cards → When no study is published → Logo strip**. This is what shows **while no case study is published**. As soon as one is published, the block shows the study cards instead (the launch rule).
+- Texts: **Fallback eyebrow**, **Fallback headline**, **Fallback accent phrase**, **Fallback text** and the small price note if used. The logos are a row beneath.
+- **Fallback logos (optional)**: leave empty to show every client ticked **Show In Logo Strip** (in their **Sort Order**, up to 12). Or pick clients here to choose and order them by hand (drag to reorder). Draft clients are skipped. A client with no logo shows its name as text. Manage the clients themselves in [Clients](#clients-logo-strips).
+- With no usable client, only the text block is shown, never an empty strip.
+
+**Forms & leads:** n/a. **Social share:** n/a.
 
 ## 9. Book a Call
 
-*Not built yet.*
+Page order: compact banner → booking section → pre-call homework form → "what happens next" steps → social proof → quick-question line → footer (the reduced footer: fewer links, so visitors stay focused). Edit at **Admin → Collections → Pages → Book a Call → Content tab → Sections**.
+
+### Hero callouts
+
+**SEO:** the headline is the page's main heading. Title/description/share image: page's [SEO tab](#seo-tab-pages-case-studies-articles-free-downloads).
+
+**Editable by marketing**
+- **Sections → Hero → Two-up callouts** (maximum 2): short statements with a bold lead-in under the paragraph, side by side on desktop, for example "What it is:" / "What it isn't:". Each row has **Label** (bold lead-in) and **Text**. **Add:** **Add Callout**; **reorder:** drag; **remove:** the row's menu. Rows missing either part are not shown.
+- **Small note under the buttons** holds the audience line. Other Hero options are as on [page 7](#7-testimonials).
+
+**Forms & leads:** n/a. **Social share:** n/a.
+
+### Booking widget (BookingEmbed)
+
+**SEO:** n/a.
+
+**Editable by marketing**
+- **Where the booking link lives:** not in this section. **Admin → Globals → Site settings → Booking tab → Booking page address** (the full `https://` address of the booking calendar). Change it once and every booking button follows. Live as soon as you **Save**; no Publish.
+- **How the booking page opens** (same tab): **Button that opens the booking page in a new tab** (**link-out**, the launch setting) or **Booking calendar shown inside the page** (**embed**). **Keep link-out**: the calendar is not set up to be shown inside our page yet, so embed will not work.
+- **The three things a visitor can see:**
+  1. **Link-out** (normal): a bordered panel with a big button. Clicking opens the calendar in a **new tab**, and the original tab moves to the Thank You page.
+  2. **Embed** (only if the calendar allows it): on tablet and desktop the calendar sits inside the page with a small "open in a new tab" link; on phones it is the link-out panel.
+  3. **Fallback**: if **Booking page address** is empty (or not an `https://` address), the panel shows the **fallback** wording and a link to Contact, so nothing looks broken.
+- Block fields (**Sections → Booking widget**): **Heading** and **Accent phrase**, **Body** (optional paragraph), **Button label** (starts "Book your call"), **Note under the button**, **"Open in a new tab" link text** (embed only), **Thank You page** (leave empty to use the page at `/thank-you`; if that page is not published, the tab simply stays put).
+- **When no booking link is set** (open the collapsible): **Fallback heading** (starts "Booking is offline. Write to us instead."), **Fallback body** and **Contact link** (usually to the Contact page).
+
+**Forms & leads:** bookings are made in the booking calendar, not on this site; this site stores no bookings. The calendar sends its own confirmation emails.
+
+**Social share:** n/a.
+
+**Other:** a link that is not `https://` is treated as not set.
+
+### Pre-call homework form (Form)
+
+**SEO:** n/a.
+
+**Editable by marketing**
+- **Sections → Form**, **Layout** = **Standard (heading and the form on the page)**.
+- **Form**: pick the form to show (the homework form). Its **questions, order, send-button label and "after sending" message are edited on the form itself**, and only an Admin can change a form (see [Forms and form submissions](#forms-and-form-submissions)). If the chosen form is deleted, the whole section is hidden.
+- **Eyebrow** (optional), **Heading** and **Accent phrase**, **Body** (a line such as "Five fields, five minutes."), **Send button text** (empty = the form's own label).
+- **Background**: **White, roomy (Book a Call)** or **Grey band, tighter (Contact)**.
+- **Layout on phones**: **Stacked** or **Stepped**; see [Contact](#12-contact).
+- Two fields sit side by side on tablets and desktops when each has a width under 100: an Admin sets this on the form's field (**Width**, e.g. 50).
+
+**Forms & leads**
+- Submissions land in **Admin → Form submissions** (the form is the homework form). The homework form starts with **Send event** off, so a submission is saved and the notification email can go out, but **nothing is announced to the secretary**; its **Delivery status** stays empty on purpose. See [Forms and form submissions](#forms-and-form-submissions).
+- Every public form is protected by Cloudflare Turnstile (an invisible check that stops spam robots).
+
+**Social share:** n/a.
+
+**Other:** if the homework form has not been created yet, this section does not show. Ask an Admin.
+
+### Quick-question line (Mini CTA strip, "Inline")
+
+**SEO:** the link is a normal link search engines can follow.
+
+**Editable by marketing**
+- **Sections → Mini CTA strip**, **Layout** = **Inline (quiet one-line question with an underlined link)**.
+- **Text**: the sentence before the link, shown exactly as written, for example "Have a quick question first?".
+- **Button** (the link): **Link text** and where it goes (**Page on this site** or **Custom address**), for example "Contact us". If the link cannot be resolved (page unpublished), only the sentence shows.
+
+**Forms & leads:** n/a. **Social share:** n/a.
 
 ## 10. Thank You
 
-*Not built yet.*
+Page order: confirmation banner (no buttons) → homework reminder (only if needed) → while-you-wait newsletter box → footer (reduced). The page should be hidden from search engines: it needs the **Hide from search engines** tick in the page's right-hand sidebar (see [Pages](#pages-site-pages)); check it is ticked before publishing. Edit at **Admin → Collections → Pages → Thank You → Content tab → Sections**.
+
+### Homework reminder (Form, "Homework reminder")
+
+**SEO:** n/a (the page is kept out of Google).
+
+**Editable by marketing**
+- **Sections → Form**, **Layout** = **Homework reminder (form in a card, hidden once the homework is sent)**.
+- **Form**: pick the homework form (edited only by an Admin).
+- **Heading**, **Accent phrase**, **Body**, **Send button text**.
+- **Done heading** (starts "Homework received.") and **Done body**: shown **instead of the form** when the visitor has already sent the homework (their address ends `?homework=done`, or they just sent it here). The two are joined on one line.
+- **Phones only**: **Alert label** (a warning bar across the top of the card, for example "Required before your call"; empty = no bar) and **Reasons** (up to 5 short lines with an icon: Rising chart, Clock, Target or Tick). **Add:** **Add Reason**; **reorder:** drag; **remove:** the row's menu. Tablets and desktops show neither.
+- **Two columns on desktop:** the form follows each field's width. To put two questions side by side, an Admin sets those form fields' **Width** to **50** (on **Admin → Forms → (homework form)**). A field left at 100 takes the full row.
+
+**Forms & leads:** same as the Book a Call homework form: saved in **Admin → Form submissions**, nothing announced until an Admin switches **Send event** on.
+
+**Social share:** n/a.
+
+**Other:** the confirmation banner's wording should say the homework is the next step; it must not claim a call is already booked, because visitors can reach this page the moment they click Book. (Open item for the PM: confirm the final hero wording.)
 
 ## 11. FAQ
 
-*Not built yet.*
+Page order: compact banner (small line and headline only) → category tabs → four question groups (Pricing & Contracts, Builds, Marketing, Process & Trust) → "Still have questions?" closing section with two buttons → footer. The page shows a reading progress bar. Edit at **Admin → Collections → Pages → FAQ → Content tab → Sections**.
+
+### Category tabs (CategoryTabs)
+
+**SEO:** the tabs are in-page jump links.
+
+**Editable by marketing**
+- **The tabs build themselves.** Each tab is made from one of the FAQ groups below it on the same page: the tab's text is that group's **Heading** and it jumps to that group's **Anchor ID**. **To add, rename or reorder tabs, add, rename or reorder the groups**; do not look for tab fields.
+- A tab for a group with **no published question** is left out automatically, so no tab leads nowhere.
+- The only field is **Aria label** (default "FAQ categories"): a name read aloud to screen-reader users, not shown.
+- On phones and desktop the tab bar stays stuck under the header as the visitor scrolls, and highlights the section being read.
+
+**Forms & leads:** n/a. **Social share:** n/a.
+
+### Question groups (FAQ accordion, "Group")
+
+An **accordion** is a list of questions where clicking one opens its answer.
+
+**SEO:** every published question on the page is also given to Google as FAQ data (called **FAQPage structured data**, hidden code that can let Google show the questions in results). It is built once for the whole page automatically; there is nothing to set.
+
+**Editable by marketing**
+- **Sections → FAQ accordion**, **Layout** = **Group (one category section of the FAQ page)**. Use **one group block per category**.
+- **Anchor ID**: the jump-link name the tab points to. Rules, which the admin checks when you **Publish**: **lowercase letters, numbers and single hyphens** only (for example `pricing`, `builds`, `marketing`, `process`); **it cannot be `main`** (or begin with `main-`), and a few other names the site uses itself (`__next`, `dc-water`); and it must be **unique on the page**: two groups cannot share one.
+- **Spacing**: **Middle**, **First group (extra space above)**, **Last group (extra space below)** or **Only group**. Set the first group to **First** and the last to **Last** so the page ends have the right gap.
+- **Heading** (required), **Eyebrow** (optional).
+- **Which questions:** **Source** lets you take **all questions of one Category** or **pick questions by hand**. **A group always shows every published question** in the chosen category, however many there are (the **Limit** setting only applies to the small FAQ lists on other pages and is hidden for groups); drafts never show. The questions themselves are edited in [FAQs](#faqs); **Sort Order** there sets the order and **List on the FAQ page** ticks them in or out.
+- **Open the first question by default** (tick box): used on the Pricing & Contracts group, which opens with the direct pricing answer.
+- A group with no published question is hidden entirely.
+
+**Forms & leads:** n/a. **Social share:** n/a.
+
+**Other:** a clash in Anchor IDs, or a reserved name, is only caught at **Publish**; a saved draft can still show a duplicate, which is harmless because drafts are never public.
 
 ## 12. Contact
 
-*Not built yet.*
+Page order: compact banner (routing line) → contact form → direct details and map → footer. Edit at **Admin → Collections → Pages → Contact → Content tab → Sections**. The page also gives Google your business details automatically (company name, email, town, social profiles) from [Site settings](#site-settings) and [SEO defaults](#seo-defaults).
+
+### Contact form (Form, "Standard", stepped on phones)
+
+**SEO:** the banner headline is the page's main heading. Google details come from Site settings; see above.
+
+**Editable by marketing**
+- **Sections → Form**, **Layout** = **Standard**, **Background** = **Grey band, tighter (Contact)**.
+- **Form**: pick the contact form. Its questions (name, email, reason, message) are edited by an Admin on the form.
+- **Layout on phones** = **Stepped (one question at a time)** gives phone visitors the card with a progress bar and Back / Next buttons. Tablets and desktops always see the whole form.
+- **Steps** (appears when Stepped is chosen; up to 10 rows): group the questions into steps and give each its own heading. Each row has **Form fields in this step** (type the form fields' exact **Name**, such as `name` or `email`, and press Enter), **Heading**, **Accent phrase** and **Hint** (quiet line). **Add:** **Add Step**; **reorder:** drag; **remove:** the row's menu. Leave **Steps** empty for one question per step, headed by the question's label. A form question no step lists is added to the last step, so a required question can never be skipped.
+- **Stepped layout: buttons and progress:**
+  - **Progress label** (starts "Question {n} of {m}": `{n}` becomes the step number and `{m}` the total).
+  - **Confirmation heading** (starts "Got it, {firstName}."): the thank-you heading on phones. `{firstName}` becomes the first word of the name the visitor typed. With no name, or the field emptied, the form's own thank-you message is shown as written.
+  - **Start**, **Next**, **Back** (read aloud only) and **Send another** button texts, and **Show drop-down questions as tap-to-pick rows**.
+- **Heading**, **Body** and **Send button text** work as on [Book a Call](#pre-call-homework-form-form).
+
+**Forms & leads**
+- See [Contact form: what happens to a submission](#contact-form-what-happens-to-a-submission) below.
+
+**Social share:** n/a.
+
+### Direct details and map (DirectContact)
+
+**SEO:** the email, socials and location come from Site settings and help Google recognise the business.
+
+**Editable by marketing**
+- **Where the details come from:** you do not type them here. Email and reply-time note: **Admin → Globals → Site settings → Brand & contact tab**. Social profiles: same tab. Town, state, map position and radius: **Site settings → Location tab**. Change them there and this section follows.
+- **Sections → Direct contact (info + map)**:
+  - **Show email**, **Show social profiles**, **Show location** (tick boxes) choose which rows appear.
+  - **Small line above the details** (starts "Skip the form", phones only; empty hides it).
+  - **Row labels**: the small words in front of each row (**Email**, **Socials**, **Location**, **Reply time**).
+  - **Service-area map**: **Show the map** (tick), **Caption** and **Zoom** (0.5 zoomed out to 2 zoomed in; 1 shows the whole ring).
+- **Map caption builds itself when left empty.** From Site settings it reads like "Based in Lombard, IL, serving clients within about 30 miles." (town and state, then the **Service radius (miles)**). Type your own caption to replace it. The caption is also read aloud to screen-reader users.
+- The map is a simple black-and-white drawing made by the site (no outside map service): it centres on **Latitude / Longitude** and draws the service ring. Move the pin or resize the ring in **Site settings → Location**.
+- A row with no value in Site settings (for example no social profiles yet) is left out rather than shown empty.
+
+**Forms & leads:** n/a. **Social share:** n/a.
+
+**Other:** to promise a reply time, fill **Reply-time note** in Site settings and only promise what you keep.
+
+### Contact form: what happens to a submission
+
+This is the full path of a message from the Contact form (the homework form is the same except the announcement is switched off).
+1. The visitor sends the form. A Cloudflare **Turnstile** check (a robot check) runs first; a failed check shows a friendly error and **nothing is stored**.
+2. The message is **saved first**, in **Admin → Form submissions**. This list is the permanent record; a message is never lost even if everything after this fails.
+3. A **signed message** (a notification carrying a secret signature so it cannot be forged) is then sent to the business's AI secretary, which passes a short note to the human on Matrix. On staging, the note is marked `[staging]`. Visitors never wait for this step.
+4. The notification **email** (to the address on the form's **Email to** setting) goes out separately and does not depend on step 3.
+5. **Delivery status** on the submission shows how step 3 went:
+   - **Pending**: queued or retrying. If the secretary does not answer, the site retries automatically about 1 minute, 5 minutes, 30 minutes, 2 hours and 12 hours later.
+   - **Delivered**: the secretary accepted it.
+   - **Failed**: the announcement could not be completed (retries used up, or the secretary rejected it outright). **The message itself is safe in Form submissions;** only the heads-up failed. **Delivery note** says why.
+6. **To find failures:** **Admin → Form submissions**, then filter **Delivery status** equals **Failed** (or use the shared **Failed deliveries** saved view, if an Admin has created it).
+7. **To re-send:** open the failed submission and, in the **right-hand sidebar**, click **Re-send to secretary**. The button is active only when the status is **Failed** (or **Delivered**) and greyed out while **Pending**. A message confirms it is queued and the status goes back to Pending; the next attempt starts within about a minute. Re-sending uses the same message ID, so if the secretary already had it, it is **not announced twice**. If it fails again, tell an Admin (the secretary or its address setting may be down).
+8. Marketing can read submissions and use Re-send, but cannot edit or delete them.
+
+Footer newsletter box: the sign-up box in the standard footer sends through the **Newsletter form** chosen at **Admin → Globals → Site settings → Newsletter & closers tab → Newsletter form**; its words are in **Navigation → Footers tab → Standard footer → Newsletter sign-up**. Its sign-ups are saved in **Form submissions** like any other. The announcement and email-list sync for newsletter sign-ups are not live yet (still being built), so a newsletter sign-up currently shows no delivery status.
+
+### Template labels (case study pages, article pages)
+
+**Where:** **Admin → Globals → Site settings → Template labels tab**. Two groups: **Case study pages** and **Article and newsletter pages**. They hold the small fixed words that appear on every case study, article and newsletter issue (the trail above the headline, "By …" line, date line, section labels). They are not tied to one page of the site; they live here with the Contact page notes only for convenience.
+
+**Editable by marketing**
+- **Case study pages**: **Breadcrumb: Work link**, **Study word**, **Summary box label**, **Date line: before the date**, **Date line: approved figures**, **Date line: after the minutes**, **Lessons section number**, **Lessons section heading**, **Phases box label**, **Next study: label**, **Next study: link words**.
+- **Article and newsletter pages**: **Byline: before the name**, **Byline: after the name**, **Date line: first published**, **Date line: last updated**, **Date line: after the minutes**, **Questions label: after the keyword**, **"How we do it" box label**, **Newsletter: issue word**.
+- **Leave a box empty** to use the standard wording (shown in grey as the placeholder). **Save** applies it to every study and article straight away; no Publish.
+- These are labels only, not a place for copy: keep each short.
 
 ## 13. DEV-SEO template
 
