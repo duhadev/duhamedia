@@ -90,3 +90,8 @@ Requests from the duhamedia.com build to the server agent, relayed by the human.
 - **Need:** each server `.env` sets `SITE_URL` to the exact public origin: staging `https://staging.duhamedia.com`, production `https://duhamedia.com` (no trailing slash needed). `APP_ENV` must be `staging` / `production` respectively.
 - **Why:** canonicals, sitemap, Open Graph URLs, live preview and the form route's Turnstile hostname check all use it. With `APP_ENV` ≠ development and `SITE_URL` unset or invalid, pages error and `/api/health` returns **503**, so the deploy script's health poll rolls the release back instead of serving localhost URLs.
 - **Done when:** after a staging deploy, `curl -s https://staging.duhamedia.com/api/health` returns 200 and the homepage canonical is `https://staging.duhamedia.com`.
+
+## #13 — Staging Gate A for site events · 2026-10-23 · Open (server agent + human)
+- **Need:** staging `.env` has the real `SITE_EVENT_URL` and `SITE_EVENT_SECRET` (shared with the secretary plugin); `SITE_EVENT_RETRY_DELAYS_S` must NOT be set on any server (dev-only override). For the failure-path proof, the server agent briefly blocks the site container → secretary route (real retry schedule is ~15 h), then unblocks.
+- **Why:** A1 (contact event) passed every Gate A proof locally against a stub; CLAUDE.md requires the same proofs on staging against the real secretary, with the human confirming the `[staging]` Matrix message and no second message after a re-send.
+- **Done when:** one staging contact submission with a fake identity shows `delivered`, one `[staging]` Matrix message arrives, an admin re-send yields `{"duplicate": true}` and no second message, and a blocked-then-unblocked run ends `failed` → re-send `delivered`.

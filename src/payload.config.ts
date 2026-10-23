@@ -22,7 +22,8 @@ import { Scarcity } from './globals/Scarcity'
 import { SeoDefaults } from './globals/SeoDefaults'
 import { SiteSettings } from './globals/SiteSettings'
 import { migrations } from './migrations'
-import { staffOnly } from './access'
+import { isAdmin, staffOnly } from './access'
+import { EVENTS_QUEUE, deliverSiteEventTask } from './integrations/events/deliveryTask'
 import { formBuilder } from './plugins/formBuilder'
 import { redirects } from './plugins/redirects'
 import { seo } from './plugins/seo'
@@ -70,6 +71,21 @@ export default buildConfig({
     access: { read: staffOnly, create: staffOnly, update: staffOnly, delete: staffOnly },
     // Built-in constraints only (Only me / Everyone / Specific users).
     constraints: {},
+  },
+  // Jobs queue, in-process (DECISIONS §J; payload@3.91.0 queues/config/types/index.d.ts).
+  // The cron starts on the first getPayload({ cron: true }) (any /api/* or admin
+  // request, and /api/health, which the deploy script polls on start).
+  // Never during `next build` (payload index.js `_initializeCrons`: !isNextBuild()).
+  jobs: {
+    tasks: [deliverSiteEventTask],
+    autoRun: [{ cron: '* * * * *', queue: EVENTS_QUEUE, limit: 10 }],
+    // Payload's default is "any logged-in user" (incl. the pipeline) for
+    // GET /api/payload-jobs/run etc. Our own code uses the Local API (overrideAccess).
+    access: {
+      queue: ({ req }) => isAdmin(req.user),
+      run: ({ req }) => isAdmin(req.user),
+      cancel: ({ req }) => isAdmin(req.user),
+    },
   },
   sharp,
   telemetry: false,

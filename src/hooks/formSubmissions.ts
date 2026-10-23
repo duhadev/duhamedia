@@ -1,6 +1,10 @@
 import { randomUUID } from 'node:crypto'
 
-import type { CollectionBeforeChangeHook } from 'payload'
+import type { CollectionAfterChangeHook, CollectionBeforeChangeHook } from 'payload'
+
+import { DELIVERABLE_EVENT_TYPES } from '../integrations/events/contract'
+import { DELIVERY_WRITE, queueDelivery } from '../integrations/events/deliveryTask'
+import type { FormSubmission } from '../payload-types'
 
 /**
  * `form-submissions` beforeChange, create only (SCHEMA.md §6.13, §10, X13).
@@ -63,4 +67,44 @@ export const stampSubmissionDelivery: CollectionBeforeChangeHook = async ({ data
     eventId: randomUUID(),
     deliveryStatus: sendsEvent ? 'pending' : null,
   }
+}
+
+/**
+ * `form-submissions` afterChange, create only (lead flow step 3).
+ *
+ * Enqueues the delivery job, never sends inline: the visitor's request only
+ * pays for one row insert. `payload.jobs.queue` is passed `req`, so the job row
+ * is written in the SAME transaction as the submission (payload@3.91.0
+ * queues/localAPI.js → db.create with req): no job without its lead, no lead
+ * without its job. `deliveryStatus: pending` was already stamped in
+ * beforeChange (above); only event types the job can build are queued here.
+ * Newsletter events are sent after double opt-in confirmation, not at create.
+ *
+ * Runs after the plugin's own `sendEmail` (plugin-form-builder@3.91.0
+ * FormSubmissions/index.js:105-110), which is not gated on the event.
+ * Our own status writes are updates (never `create`) and carry
+ * `context[DELIVERY_WRITE]`, so they never re-enter here.
+ */
+export const enqueueSubmissionDelivery: CollectionAfterChangeHook<FormSubmission> = async ({
+  doc,
+  operation,
+  req,
+  context,
+}) => {
+  if (operation !== 'create' || context?.[DELIVERY_WRITE] || doc.deliveryStatus !== 'pending') return doc
+
+  const formId = typeof doc.form === 'object' ? doc.form.id : doc.form
+  const form = await req.payload.findByID({
+    collection: 'forms',
+    id: formId,
+    depth: 0,
+    select: { eventType: true },
+    disableErrors: true,
+    overrideAccess: true,
+    req,
+  })
+  if (!form?.eventType || !DELIVERABLE_EVENT_TYPES.includes(form.eventType)) return doc
+
+  await queueDelivery(req.payload, { submissionId: doc.id, req })
+  return doc
 }

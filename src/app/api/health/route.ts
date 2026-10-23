@@ -33,7 +33,9 @@ export async function GET(): Promise<Response> {
     return Response.json({ status: 'unavailable' }, { status: 503, headers })
   }
   try {
-    const payload = await getPayload({ config })
+    // cron: true starts the in-process jobs cron (event delivery) on the deploy
+    // script's first health poll, before any visitor or admin request.
+    const payload = await getPayload({ config, cron: true })
     await withTimeout(payload.db.drizzle.execute(sql`select 1`))
     return Response.json({ status: 'ok' }, { status: 200, headers })
   } catch {

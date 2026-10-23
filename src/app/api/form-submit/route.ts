@@ -112,7 +112,7 @@ export async function POST(request: Request): Promise<Response> {
 
   const remoteIp =
     request.headers.get('cf-connecting-ip') ?? request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? null
-  const payload = await getPayload({ config })
+  const payload = await getPayload({ config, cron: true })
   const outcome = await handleFormSubmission(payload, parseSubmissionFormData(formData, remoteIp))
 
   if (wantsJson) {

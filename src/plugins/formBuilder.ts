@@ -14,7 +14,8 @@ import { select, text } from 'payload/shared'
 import { adminOnly, adminOnlyField, staffOnly, turnstileVerifiedOrAdmin } from '../access'
 import { richTextLinkFeature } from '../fields'
 import { blockDeleteIfReferenced, formSubmissionsSentence } from '../hooks/blockDeleteIfReferenced'
-import { stampSubmissionDelivery } from '../hooks/formSubmissions'
+import { enqueueSubmissionDelivery, stampSubmissionDelivery } from '../hooks/formSubmissions'
+import { resendDeliveryEndpoint } from '../integrations/events/resendEndpoint'
 import { revalidateLiveCollectionHooks } from '../hooks/revalidateTag'
 
 /**
@@ -319,9 +320,18 @@ const submissionSystemFields: Field[] = [
       { name: 'confirmedAt', type: 'date', admin: { date: { pickerAppearance: 'dayAndTime' } } },
     ],
   },
-  // TODO(integration): `resend` ui field (admin "Re-send" button → staff-only
-  // endpoint that re-enqueues the job with the SAME eventId). A `ui` field has
-  // no column, so adding it later needs no migration.
+  // A1: admin "Re-send" button → POST /api/form-submissions/:id/resend
+  // (src/integrations/events/resendEndpoint.ts), same eventId. `ui` = no column.
+  {
+    name: 'resendDelivery',
+    type: 'ui',
+    label: 'Re-send',
+    admin: {
+      position: 'sidebar',
+      disableListColumn: true,
+      components: { Field: '/components/admin/ResendDeliveryButton#ResendDeliveryButton' },
+    },
+  },
 ]
 
 /** Plugin `form` relationship: declare maxDepth (field convention); the job reads the form itself. */
@@ -378,17 +388,18 @@ export const formBuilder: Plugin = formBuilderPlugin({
     },
     // "Failed deliveries" is a SHARED preset (a document in payload-query-presets),
     // not config: it is created by the seed script / an admin (P1 report).
+    // TODO(seed): create it (where deliveryStatus equals 'failed', shared with staff).
     enableQueryPresets: true,
     admin: {
       defaultColumns: ['form', 'deliveryStatus', 'deliveryAttempts', 'createdAt'],
     },
     hooks: {
       beforeChange: [stampSubmissionDelivery],
-      // TODO(integration): afterChange on create → enqueue the delivery job
-      // (never send inline), plus the newsletter sync job for forms with
-      // `newsletterSync`. automation-engineer units; the plugin's sendEmail
-      // already runs first in this list.
+      // A1: enqueue the delivery job on create (never inline). The plugin's
+      // sendEmail runs first. TODO(newsletter unit): the newsletter sync job.
+      afterChange: [enqueueSubmissionDelivery],
     },
+    endpoints: [resendDeliveryEndpoint],
     fields: ({ defaultFields }) => [...withFormMaxDepth(adaptPluginFields(defaultFields)), ...submissionSystemFields],
   },
 })

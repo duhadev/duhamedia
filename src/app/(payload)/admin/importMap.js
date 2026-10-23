@@ -27,6 +27,7 @@ import { FaqRowLabel as FaqRowLabel_c7da98d435c621318b089da57fb11fb9 } from '../
 import { ValueBulletRowLabel as ValueBulletRowLabel_51164b16e5c3488951a3ed8785d562ad } from '../../../components/admin/ValueBulletRowLabel'
 import { LeadMagnetAssetFileField as LeadMagnetAssetFileField_dc6e9e7f6a87095250af2140b6169c99 } from '../../../components/admin/LeadMagnetAssetFields'
 import { LeadMagnetAssetUrlField as LeadMagnetAssetUrlField_dc6e9e7f6a87095250af2140b6169c99 } from '../../../components/admin/LeadMagnetAssetFields'
+import { ResendDeliveryButton as ResendDeliveryButton_b36f25de0dae00d3918bb2d86ac50745 } from '../../../components/admin/ResendDeliveryButton'
 import { QueryPresetsAccessCell as QueryPresetsAccessCell_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
 import { QueryPresetsWhereCell as QueryPresetsWhereCell_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
 import { QueryPresetsWhereField as QueryPresetsWhereField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
@@ -70,6 +71,7 @@ export const importMap = {
   "/components/admin/ValueBulletRowLabel#ValueBulletRowLabel": ValueBulletRowLabel_51164b16e5c3488951a3ed8785d562ad,
   "/components/admin/LeadMagnetAssetFields#LeadMagnetAssetFileField": LeadMagnetAssetFileField_dc6e9e7f6a87095250af2140b6169c99,
   "/components/admin/LeadMagnetAssetFields#LeadMagnetAssetUrlField": LeadMagnetAssetUrlField_dc6e9e7f6a87095250af2140b6169c99,
+  "/components/admin/ResendDeliveryButton#ResendDeliveryButton": ResendDeliveryButton_b36f25de0dae00d3918bb2d86ac50745,
   "@payloadcms/next/client#QueryPresetsAccessCell": QueryPresetsAccessCell_2b8867833a34864a02ddf429b0728a40,
   "@payloadcms/next/client#QueryPresetsWhereCell": QueryPresetsWhereCell_2b8867833a34864a02ddf429b0728a40,
   "@payloadcms/next/client#QueryPresetsWhereField": QueryPresetsWhereField_2b8867833a34864a02ddf429b0728a40,
