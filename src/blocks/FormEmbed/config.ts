@@ -1,6 +1,7 @@
 import type { Block, Condition } from 'payload'
 
 import { eyebrowField, headlineFields } from '../../fields'
+import { rowLabel } from '../../components/admin/rowLabel'
 
 /**
  * FormEmbed block (SCHEMA §8.4 item 16): one form-builder form rendered on a
@@ -81,6 +82,7 @@ export const FormEmbed: Block = {
       maxRows: 5,
       labels: { singular: 'Reason', plural: 'Reasons' },
       admin: {
+        components: { RowLabel: rowLabel(['text'], 'Reason') },
         condition: forVariants('reminder'),
         description:
           'Phones only: short reasons listed between the heading and the form, each with an icon. Add, remove or drag to reorder. (The desktop design shows none.)',
@@ -151,6 +153,7 @@ export const FormEmbed: Block = {
       maxRows: 10,
       labels: { singular: 'Step', plural: 'Steps' },
       admin: {
+        components: { RowLabel: rowLabel(['heading', 'fieldNames'], 'Step') },
         condition: (_data, siblingData) =>
           ((siblingData?.variant as string | undefined) ?? 'standard') === 'standard' && siblingData?.mobileLayout === 'stepped',
         description:
@@ -190,6 +193,15 @@ export const FormEmbed: Block = {
           type: 'text',
           defaultValue: 'Question {n} of {m}',
           admin: { description: 'Progress line above each step. {n} = this step, {m} = number of steps.' },
+        },
+        {
+          name: 'confirmationHeading',
+          type: 'text',
+          defaultValue: 'Got it, {firstName}.',
+          admin: {
+            description:
+              'Phones only: the heading of the thank-you panel. {firstName} becomes the first word of the name the visitor typed. If they gave no name, or you leave this empty, the thank-you message from the form itself is shown as written.',
+          },
         },
         { name: 'startLabel', type: 'text', defaultValue: 'Start', admin: { description: 'Button on the first step.' } },
         { name: 'nextLabel', type: 'text', defaultValue: 'Next', admin: { description: 'Button on the following steps.' } },

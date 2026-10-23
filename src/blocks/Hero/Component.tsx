@@ -71,6 +71,7 @@ function TypographicHero({
   stats,
   phaseStrip,
   size,
+  width,
   callouts,
   rating,
   showAggregateRating,
@@ -194,7 +195,7 @@ function TypographicHero({
         </span>
       ) : null}
       {/* p7 Testimonials.dc.html: hero shares the feed's full container (1200px). It is the only compact hero with the rating flag; p9-p12 stay on the 820px column. */}
-      <Wrap compact={compact} narrow={compact && !figures.length && !showAggregateRating}>
+      <Wrap compact={compact} narrow={compact && (width ? width === 'narrow' : !figures.length && !showAggregateRating)}>
         {figures.length ? (
           <div className="lg:grid lg:grid-cols-[1fr_320px] lg:items-end lg:gap-14">
             <div>{copy}</div>

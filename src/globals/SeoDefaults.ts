@@ -270,7 +270,6 @@ export const SeoDefaults: GlobalConfig = {
               type: 'select',
               label: 'Business type',
               options: LOCAL_BUSINESS_TYPES.map((value) => ({ label: BUSINESS_TYPE_LABELS[value], value })),
-              defaultValue: DEFAULT_LOCAL_BUSINESS_TYPE,
               admin: {
                 width: '50%',
                 description:

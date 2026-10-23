@@ -17,6 +17,7 @@ import {
 import { cx } from '@/lib/cx'
 
 import { ERROR_TEXT, FieldControl } from './FieldControl'
+import { SubmittedFirstName } from './submitted'
 import { resolveSteps, type FormStep } from './steps'
 import { TurnstileWidget, type TurnstileAppearance } from './TurnstileWidget'
 
@@ -51,7 +52,9 @@ import { TurnstileWidget, type TurnstileAppearance } from './TurnstileWidget'
  * (`flex flex-col gap-6`), `fields` (`flex flex-wrap gap-4`, also each step's
  * field area), `footer` (`flex flex-col gap-3`), `submit` (`self-start`),
  * `turnstile` (`min-h-[65px] w-full`; `w-full` with interaction-only),
- * `progress`, `stepHeader`, `stepNav`, `step` (stepped-only, defaults below).
+ * `progress`, `progressLabel` (the "Question n of m" line), `stepHeader`, `stepNav`, `step` (stepped-only, defaults below).
+ * `fieldWide` is appended to a textarea / full-width field's wrapper (and to message blocks), so a grid layout can
+ * span it across columns; unset by default.
  * The others (`field`, `label`, `control`, `error`, `option`, `status`,
  * `success`) are appended.
  */
@@ -70,6 +73,8 @@ export type PayloadFormClassNames = Partial<
     | 'status'
     | 'success'
     | 'progress'
+    | 'progressLabel'
+    | 'fieldWide'
     | 'step'
     | 'stepHeader'
     | 'stepNav',
@@ -114,6 +119,11 @@ export type PayloadFormProps = {
   startLabel?: string
   /** Accessible name of the Back button (it shows an arrow). Default "Back". */
   backLabel?: string
+  /**
+   * Stepped layout only: icons in place of the text glyphs (✓ ← →). Omitted entries keep the glyph;
+   * `send` is appended inside the submit button. Server-rendered nodes are fine.
+   */
+  icons?: Partial<Record<'check' | 'back' | 'next' | 'send', React.ReactNode>>
   tone?: 'light' | 'dark'
   submitVariant?: ButtonVariant
   submitSize?: ButtonSize
@@ -169,6 +179,7 @@ export function PayloadForm({
   nextLabel = 'Next',
   startLabel,
   backLabel = 'Back',
+  icons,
   tone = 'light',
   submitVariant = 'primary',
   submitSize = 'md',
@@ -180,6 +191,8 @@ export function PayloadForm({
   const [state, setState] = useState<FormSubmitResponse | null>(null)
   const [pending, setPending] = useState(false)
   const [localError, setLocalError] = useState<string | null>(null)
+  /** First word of the submitted `name` field (null when the form has none): lets a confirmation address the visitor. */
+  const [firstName, setFirstName] = useState<string | null>(null)
   const turnstileRef = useRef<TurnstileInstance | undefined>(undefined)
   const statusRef = useRef<HTMLDivElement>(null)
   const formRef = useRef<HTMLFormElement>(null)
@@ -297,6 +310,8 @@ export function PayloadForm({
     if (!turnstileRef.current?.getResponse()) return setLocalError(NO_TOKEN)
     setLocalError(null)
     const data = new FormData(event.currentTarget)
+    const submittedName = data.get(`${FIELD_PREFIX}name`)
+    setFirstName(typeof submittedName === 'string' ? (submittedName.trim().split(/\s+/)[0] ?? null) || null : null)
     setPending(true)
     fetch(FORM_SUBMIT_PATH, { method: 'POST', body: data, headers: { Accept: 'application/json' }, cache: 'no-store' })
       .then(async (res): Promise<FormSubmitResponse> => {
@@ -322,7 +337,7 @@ export function PayloadForm({
         role="status"
         className={cx('font-body outline-none', tone === 'dark' ? 'text-cream' : 'text-ink', classNames.success, className)}
       >
-        {confirmation ?? <p>{DEFAULT_SUCCESS}</p>}
+        <SubmittedFirstName value={firstName}>{confirmation ?? <p>{DEFAULT_SUCCESS}</p>}</SubmittedFirstName>
       </div>
     )
   }
@@ -335,7 +350,7 @@ export function PayloadForm({
   const renderFields = (list: PublicForm['fields'], hideSingleLabel: boolean) =>
     list.map((field) =>
       field.blockType === 'message' ? (
-        <div key={field.key} className={cx('w-full font-body', classNames.field)}>
+        <div key={field.key} className={cx('w-full font-body', classNames.field, classNames.fieldWide)}>
           {messages?.[field.key]}
         </div>
       ) : (
@@ -348,6 +363,7 @@ export function PayloadForm({
           slots={classNames}
           hideLabel={hideSingleLabel}
           selectAsOptions={stepped && selectAsOptions}
+          optionCheck={stepped ? icons?.check : undefined}
         />
       ),
     )
@@ -391,6 +407,7 @@ export function PayloadForm({
       className={cx(classNames.submit ?? (stepped ? 'flex-1' : 'self-start'), 'disabled:cursor-wait disabled:opacity-70')}
     >
       {pending ? 'Sending…' : submitLabel || form.submitButtonLabel}
+      {stepped && !pending ? icons?.send : null}
     </Button>
   )
 
@@ -448,7 +465,10 @@ export function PayloadForm({
             <span key={i} className={cx('h-[5px] flex-1', i <= current ? ink : 'bg-divider')} />
           ))}
         </div>
-        <p aria-live="polite" className="font-mono text-label uppercase tracking-eyebrow text-gray-warm">
+        <p
+          aria-live="polite"
+          className={classNames.progressLabel ?? 'font-mono text-label uppercase tracking-eyebrow text-gray-warm'}
+        >
           {progressText}
         </p>
       </div>
@@ -492,7 +512,7 @@ export function PayloadForm({
             tone === 'dark' ? 'border-cream text-cream' : 'border-ink text-ink',
           )}
         >
-          <span aria-hidden="true">←</span>
+          {icons?.back ?? <span aria-hidden="true">←</span>}
           <span className="sr-only">{backLabel}</span>
         </button>
         {current === lastStep ? (
@@ -501,7 +521,13 @@ export function PayloadForm({
           React.cloneElement(submitButton, { key: 'send' })
         ) : (
           <Button key="next" variant={submitVariant} size={submitSize} onClick={next} className="flex-1">
-            {current === 0 ? (startLabel ?? nextLabel) : nextLabel} <span aria-hidden="true">→</span>
+            {current === 0 ? (startLabel ?? nextLabel) : nextLabel}
+            {icons?.next ?? (
+              <>
+                {' '}
+                <span aria-hidden="true">→</span>
+              </>
+            )}
           </Button>
         )}
       </div>

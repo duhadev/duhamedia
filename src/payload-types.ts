@@ -278,6 +278,10 @@ export interface HeroBlock {
    */
   size?: ('default' | 'compact') | null;
   /**
+   * Compact heroes only. Narrow keeps the text in a tight column; wide lets it span the full page width. Left empty, the hero picks automatically (wide when it shows figures or the average rating, otherwise narrow).
+   */
+  width?: ('narrow' | 'wide') | null;
+  /**
    * Small uppercase line above the headline, e.g. "Integrated ecommerce growth partner — Chicago".
    */
   eyebrow?: string | null;
@@ -2482,6 +2486,14 @@ export interface PhaseTimelineBlock {
    */
   closingLine?: string | null;
   /**
+   * Small uppercase label above the bullets at the foot of each card. Leave empty to use "You leave with".
+   */
+  outcomesLabel?: string | null;
+  /**
+   * Small hint above the swipe row on phones. Leave empty to use "Swipe →".
+   */
+  swipeHint?: string | null;
+  /**
    * Optional button under the cards, e.g. "Book a Call". Leave the text empty for no button.
    */
   cta?: {
@@ -2875,6 +2887,10 @@ export interface FormEmbedBlock {
      */
     progressLabel?: string | null;
     /**
+     * Phones only: the heading of the thank-you panel. {firstName} becomes the first word of the name the visitor typed. If they gave no name, or you leave this empty, the thank-you message from the form itself is shown as written.
+     */
+    confirmationHeading?: string | null;
+    /**
      * Button on the first step.
      */
     startLabel?: string | null;
@@ -3020,7 +3036,7 @@ export interface DirectContactBlock {
   map?: {
     show?: boolean | null;
     /**
-     * The sentence under the map. Also read out to screen-reader users as the map description.
+     * The sentence under the map (also read out to screen-reader users). Leave empty to use the automatic line built from Site settings > Location, e.g. "Based in Lombard, IL, serving clients within about 30 miles." Type here to override it.
      */
     caption?: string | null;
     /**
@@ -3516,6 +3532,7 @@ export interface PagesSelect<T extends boolean = true> {
 export interface HeroBlockSelect<T extends boolean = true> {
   variant?: T;
   size?: T;
+  width?: T;
   eyebrow?: T;
   eyebrowTick?: T;
   heading?: T;
@@ -3937,6 +3954,8 @@ export interface PhaseTimelineBlockSelect<T extends boolean = true> {
         id?: T;
       };
   closingLine?: T;
+  outcomesLabel?: T;
+  swipeHint?: T;
   cta?:
     | T
     | {
@@ -4080,6 +4099,7 @@ export interface FormEmbedBlockSelect<T extends boolean = true> {
     | T
     | {
         progressLabel?: T;
+        confirmationHeading?: T;
         startLabel?: T;
         nextLabel?: T;
         backLabel?: T;
@@ -5029,6 +5049,52 @@ export interface SiteSetting {
     postalCode?: string | null;
     country?: string | null;
   };
+  caseStudyLabels?: {
+    /**
+     * First link in the trail above the headline. It goes to the Work page.
+     */
+    breadcrumbWork?: string | null;
+    /**
+     * Shown before the study number in the trail, e.g. "Study 01 — Client".
+     */
+    studyWord?: string | null;
+    /**
+     * Small label on the grey summary box under the headline.
+     */
+    inShort?: string | null;
+    /**
+     * e.g. "Published" in "Published Feb 2026".
+     */
+    publishedPrefix?: string | null;
+    /**
+     * Shown on studies whose figures the client approved.
+     */
+    figuresApproved?: string | null;
+    /**
+     * e.g. "min read" in "8 min read".
+     */
+    readTimeSuffix?: string | null;
+    /**
+     * Small number above the "what we would do differently" heading.
+     */
+    clientVoiceNumber?: string | null;
+    /**
+     * Heading above the study's "do differently" text.
+     */
+    clientVoiceDifferently?: string | null;
+    /**
+     * Small label on the box that maps the study to our phases.
+     */
+    clientVoicePhases?: string | null;
+    /**
+     * Small label on the link to the next case study.
+     */
+    nextStudy?: string | null;
+    /**
+     * The words at the end of that link.
+     */
+    nextStudyRead?: string | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -5418,6 +5484,21 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         region?: T;
         postalCode?: T;
         country?: T;
+      };
+  caseStudyLabels?:
+    | T
+    | {
+        breadcrumbWork?: T;
+        studyWord?: T;
+        inShort?: T;
+        publishedPrefix?: T;
+        figuresApproved?: T;
+        readTimeSuffix?: T;
+        clientVoiceNumber?: T;
+        clientVoiceDifferently?: T;
+        clientVoicePhases?: T;
+        nextStudy?: T;
+        nextStudyRead?: T;
       };
   updatedAt?: T;
   createdAt?: T;

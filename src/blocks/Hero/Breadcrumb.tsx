@@ -49,7 +49,7 @@ export function Breadcrumb({ items, tone }: { items: Crumb[]; tone: keyof typeof
                 <CMSLink
                   link={link}
                   className={cx(
-                    "relative no-underline after:absolute after:inset-x-0 after:-inset-y-3.5 after:content-[''] hover:underline",
+                    "relative no-underline after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2 after:content-[''] hover:underline",
                     t.link,
                   )}
                 >

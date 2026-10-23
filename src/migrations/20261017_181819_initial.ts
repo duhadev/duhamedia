@@ -152,17 +152,35 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "payload_migrations_created_at_idx" ON "payload_migrations" USING btree ("created_at");`)
 }
 
+/**
+ * F88: Teardown. payload@3.91.0 `migrate:reset` runs downs OLDEST-first
+ * (drizzle/dist/migrateReset.js reverses getMigrations' newest-first list), so
+ * this down can run while every later migration's objects still exist. It
+ * therefore sweeps every table and enum type in `public` (this database holds
+ * only Payload's schema); the later downs then see `users` gone and return
+ * early. Newest-first `migrate:down` reaches here last and drops the same
+ * objects it created. Idempotent: IF EXISTS throughout.
+ */
 export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
   await db.execute(sql`
-   DROP TABLE "users_roles" CASCADE;
-  DROP TABLE "users_sessions" CASCADE;
-  DROP TABLE "users" CASCADE;
-  DROP TABLE "media" CASCADE;
-  DROP TABLE "payload_kv" CASCADE;
-  DROP TABLE "payload_locked_documents" CASCADE;
-  DROP TABLE "payload_locked_documents_rels" CASCADE;
-  DROP TABLE "payload_preferences" CASCADE;
-  DROP TABLE "payload_preferences_rels" CASCADE;
-  DROP TABLE "payload_migrations" CASCADE;
-  DROP TYPE "public"."enum_users_roles";`)
+   DROP TABLE IF EXISTS "users_roles" CASCADE;
+  DROP TABLE IF EXISTS "users_sessions" CASCADE;
+  DROP TABLE IF EXISTS "users" CASCADE;
+  DROP TABLE IF EXISTS "media" CASCADE;
+  DROP TABLE IF EXISTS "payload_kv" CASCADE;
+  DROP TABLE IF EXISTS "payload_locked_documents" CASCADE;
+  DROP TABLE IF EXISTS "payload_locked_documents_rels" CASCADE;
+  DROP TABLE IF EXISTS "payload_preferences" CASCADE;
+  DROP TABLE IF EXISTS "payload_preferences_rels" CASCADE;
+  DROP TABLE IF EXISTS "payload_migrations" CASCADE;
+  DROP TYPE IF EXISTS "public"."enum_users_roles";
+  DO $$ DECLARE r record; BEGIN
+    FOR r IN SELECT tablename FROM pg_tables WHERE schemaname = 'public' LOOP
+      EXECUTE format('DROP TABLE IF EXISTS public.%I CASCADE', r.tablename);
+    END LOOP;
+    FOR r IN SELECT t.typname FROM pg_type t JOIN pg_namespace n ON n.oid = t.typnamespace
+             WHERE n.nspname = 'public' AND t.typtype = 'e' LOOP
+      EXECUTE format('DROP TYPE IF EXISTS public.%I CASCADE', r.typname);
+    END LOOP;
+  END $$;`)
 }

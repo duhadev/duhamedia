@@ -95,8 +95,11 @@ export const DirectContact: Block = {
         {
           name: 'caption',
           type: 'textarea',
-          defaultValue: '[Where we are based and the area we serve — final copy TBD]',
-          admin: { condition: mapOn, description: 'The sentence under the map. Also read out to screen-reader users as the map description.' },
+          admin: {
+            condition: mapOn,
+            description:
+              'The sentence under the map (also read out to screen-reader users). Leave empty to use the automatic line built from Site settings > Location, e.g. "Based in Lombard, IL, serving clients within about 30 miles." Type here to override it.',
+          },
         },
         {
           name: 'zoom',

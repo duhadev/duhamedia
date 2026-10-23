@@ -34,7 +34,7 @@ function ArrowRight() {
  * Every card renders at the same full weight, the last included (the
  * independence handover is never reduced); no field changes that.
  */
-export function StepCards({ heading, accentPhrase, steps, closingLine, cta }: PhaseTimelineProps) {
+export function StepCards({ heading, accentPhrase, steps, closingLine, cta, outcomesLabel }: PhaseTimelineProps) {
   const rows = titledSteps(steps, 'steps')
   const hasCta = Boolean(resolveLinkHref(cta) && cta?.label?.trim())
 
@@ -90,7 +90,7 @@ export function StepCards({ heading, accentPhrase, steps, closingLine, cta }: Ph
                   </div>
                   {outcomes.length ? (
                     <div className="flex flex-col gap-1 border-t border-divider bg-gray-light px-4.5 pt-3 pb-4 md:px-6 md:pt-3.5 md:pb-4.5">
-                      <span className="text-[10px] font-bold tracking-[0.1em] text-gray-warm uppercase">You leave with</span>
+                      <span className="text-[10px] font-bold tracking-[0.1em] text-gray-warm uppercase">{outcomesLabel?.trim() || 'You leave with'}</span>
                       <ul className="flex flex-col gap-1">
                         {outcomes.map((o, oi) => (
                           <li key={o.id ?? oi} className="flex gap-2 text-[0.9375rem] leading-[1.45]">

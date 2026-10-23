@@ -1,6 +1,7 @@
 import type { Block } from 'payload'
 
 import { headlineFields, linkField, scarcityRef } from '../../fields'
+import { rowLabel } from '../../components/admin/rowLabel'
 
 /**
  * FinalCTA block (SCHEMA §8.1 item 3): the dark closing band before the footer.
@@ -35,6 +36,7 @@ export const FinalCTA: Block = {
       maxRows: 2,
       labels: { singular: 'Button', plural: 'Buttons' },
       admin: {
+        components: { RowLabel: rowLabel(['link.label'], 'Button') },
         description:
           'One or two buttons; at least one is required. The first is the main one.',
         initCollapsed: false,

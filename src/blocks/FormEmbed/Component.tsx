@@ -4,8 +4,8 @@ import React from 'react'
 
 import type { BlockData } from '@/blocks/types'
 
-import { CMSForm, type PayloadFormClassNames, type PayloadFormProps } from '@/components/forms'
-import { RichText } from '@/components/RichText'
+import { CMSForm, PersonalConfirmation, type PayloadFormClassNames, type PayloadFormProps } from '@/components/forms'
+import { RichText, type RichTextData } from '@/components/RichText'
 import { AccentHeadline, Eyebrow, Section } from '@/components/ui'
 import { splitAccentPhrase } from '@/lib/accentPhrase'
 import { cx } from '@/lib/cx'
@@ -30,6 +30,12 @@ const ICON_PATHS = {
     'M176.49,95.51a12,12,0,0,1,0,17l-56,56a12,12,0,0,1-17,0l-24-24a12,12,0,1,1,17-17L112,143l47.51-47.52A12,12,0,0,1,176.49,95.51ZM236,128A108,108,0,1,1,128,20,108.12,108.12,0,0,1,236,128Zm-24,0a84,84,0,1,0-84,84A84.09,84.09,0,0,0,212,128Z',
   warning:
     'M240.26,186.1,152.81,34.23h0a28.74,28.74,0,0,0-49.62,0L15.74,186.1a27.45,27.45,0,0,0,0,27.71A28.31,28.31,0,0,0,40.55,228h174.9a28.31,28.31,0,0,0,24.79-14.19A27.45,27.45,0,0,0,240.26,186.1Zm-20.8,15.7a4.46,4.46,0,0,1-4,2.2H40.55a4.46,4.46,0,0,1-4-2.2,3.56,3.56,0,0,1,0-3.73L124,46.2a4.77,4.77,0,0,1,8,0l87.44,151.87A3.56,3.56,0,0,1,219.46,201.8ZM116,136V104a12,12,0,0,1,24,0v32a12,12,0,0,1-24,0Zm28,40a16,16,0,1,1-16-16A16,16,0,0,1,144,176Z',
+  arrowRight:
+    'M224.49,136.49l-72,72a12,12,0,0,1-17-17L187,140H40a12,12,0,0,1,0-24H187L135.51,64.48a12,12,0,0,1,17-17l72,72A12,12,0,0,1,224.49,136.49Z',
+  arrowLeft:
+    'M228,128a12,12,0,0,1-12,12H69l51.52,51.51a12,12,0,0,1-17,17l-72-72a12,12,0,0,1,0-17l72-72a12,12,0,0,1,17,17L69,116H216A12,12,0,0,1,228,128Z',
+  paperPlane:
+    'M230.14,25.86a20,20,0,0,0-19.57-5.11l-.22.07L18.44,79a20,20,0,0,0-3.06,37.25L99,157l40.71,83.65a19.81,19.81,0,0,0,18,11.38c.57,0,1.15,0,1.73-.07A19.82,19.82,0,0,0,177,237.56L235.18,45.65a1.42,1.42,0,0,0,.07-.22A20,20,0,0,0,230.14,25.86ZM156.91,221.07l-34.37-70.64,46-45.95a12,12,0,0,0-17-17l-46,46L34.93,99.09,210,46Z',
 } as const
 
 function Icon({ name, className }: { name: keyof typeof ICON_PATHS; className?: string }) {
@@ -78,7 +84,7 @@ const steppedCard = cx(
 
 /** Underlined text input (steps 1-2) and the 2px-framed textarea (step 4); no radius. */
 const steppedControl = cx(
-  'max-md:rounded-none max-md:[&:is(textarea)]:min-h-[150px] max-md:[&:is(textarea)]:resize-none',
+  'max-md:rounded-none max-md:[&:is(textarea)]:min-h-[150px] max-md:[&:is(textarea)]:flex-1 max-md:[&:is(textarea)]:resize-none',
   'max-md:[&:not(textarea)]:border-0 max-md:[&:not(textarea)]:border-b-[3px] max-md:[&:not(textarea)]:bg-transparent',
   'max-md:[&:not(textarea)]:px-0.5 max-md:[&:not(textarea)]:py-2 max-md:[&:not(textarea)]:text-2xl',
 )
@@ -95,7 +101,12 @@ const steppedNav = cx(
 const steppedForm: PayloadFormClassNames = {
   ...standardForm,
   form: steppedCard,
-  fields: 'flex flex-wrap gap-x-4 gap-y-5 max-md:px-6 max-md:pt-6.5 max-md:pb-5.5',
+  // Below md the step's fields are a column that fills the step, so a textarea takes the remaining card height.
+  fields: cx(
+    'flex flex-wrap gap-x-4 gap-y-5 max-md:px-6 max-md:pt-6.5 max-md:pb-5.5',
+    'max-md:flex-1 max-md:flex-col max-md:flex-nowrap max-md:[&>div]:w-full max-md:[&>div:has(textarea)]:flex-1',
+  ),
+  progressLabel: 'font-mono text-[11px] uppercase tracking-[0.14em] text-gray-warm',
   control: steppedControl,
   option: 'font-display! text-[1.05rem] font-normal! uppercase',
   progress: 'flex flex-col gap-4 px-6 pt-6.5',
@@ -116,8 +127,16 @@ const steppedForm: PayloadFormClassNames = {
   ),
 }
 
+/*
+ * Reminder, desktop (Thank You.dc.html: `grid 1fr 1fr; gap 20px 24px`): from md the fields sit in a two-column
+ * grid. A field with a form-builder width under 100 takes one column; textareas and full-width fields span both
+ * (`fieldWide`). `md:w-full` cancels the `sm:` percentage width the stacked layout gives narrow fields. Phones keep
+ * the stacked flex-wrap.
+ */
 const reminderForm: PayloadFormClassNames = {
-  fields: 'flex flex-wrap gap-x-4 gap-y-4 md:gap-y-5',
+  fields: 'flex flex-wrap gap-x-4 gap-y-4 md:grid md:grid-cols-2 md:gap-x-6 md:gap-y-5',
+  field: 'md:w-full',
+  fieldWide: 'md:col-span-2',
   label: 'text-gray-warm',
   submit: 'w-full md:w-auto md:self-start',
 }
@@ -190,8 +209,16 @@ function toFormSteps(steps: FormEmbedData['steps']): PayloadFormProps['steps'] {
 
 /** PayloadForm props for the stepped phone layout; `{}` (stacked) unless `mobileLayout` is `stepped`. */
 type SteppedProps = Partial<
-  Pick<PayloadFormProps, 'layout' | 'steppedBelow' | 'steps' | 'selectAsOptions' | 'progressLabel' | 'startLabel' | 'nextLabel' | 'backLabel'>
+  Pick<PayloadFormProps, 'layout' | 'steppedBelow' | 'steps' | 'selectAsOptions' | 'progressLabel' | 'startLabel' | 'nextLabel' | 'backLabel' | 'icons'>
 >
+
+/** Phosphor bold icons for the stepped card (design: ph-check, ph-arrow-right/left, ph-paper-plane-tilt). */
+const steppedIcons: PayloadFormProps['icons'] = {
+  check: <Icon name="check" className="size-[1.1rem]" />,
+  back: <Icon name="arrowLeft" className="size-5" />,
+  next: <Icon name="arrowRight" className="size-[1.1rem]" />,
+  send: <Icon name="paperPlane" className="size-[1.1rem]" />,
+}
 
 function steppedProps({ mobileLayout, steps, stepped }: FormEmbedData): SteppedProps {
   if (mobileLayout !== 'stepped') return {}
@@ -204,6 +231,7 @@ function steppedProps({ mobileLayout, steps, stepped }: FormEmbedData): SteppedP
     startLabel: stepped?.startLabel?.trim() || undefined,
     nextLabel: stepped?.nextLabel?.trim() || undefined,
     backLabel: stepped?.backLabel?.trim() || undefined,
+    icons: steppedIcons,
   }
 }
 
@@ -214,9 +242,17 @@ function steppedProps({ mobileLayout, steps, stepped }: FormEmbedData): SteppedP
  * wrapper adds nothing but the message, same as the stacked layout always had.
  * Undefined (use CMSForm's own handling) for redirect-type forms.
  */
+/** The message without its first heading (the personalised heading replaces it). */
+function withoutFirstHeading(data: RichTextData): RichTextData {
+  const index = data.root.children.findIndex((n) => n.type === 'heading')
+  if (index < 0) return data
+  return { ...data, root: { ...data.root, children: data.root.children.filter((_, i) => i !== index) } }
+}
+
 async function steppedConfirmation(
   value: FormEmbedData['form'],
   sendAnotherLabel?: string | null,
+  headingTemplate?: string | null,
 ): Promise<React.ReactNode | undefined> {
   const id = typeof value === 'object' && value !== null ? value.id : value
   if (typeof id !== 'number') return undefined
@@ -224,6 +260,10 @@ async function steppedConfirmation(
     const payload = await getPayload({ config })
     const doc = await payload.findByID({ collection: 'forms', id, depth: 0, disableErrors: true, overrideAccess: true })
     if (!doc || doc.confirmationType === 'redirect' || !doc.confirmationMessage) return undefined
+    const message = doc.confirmationMessage
+    const template = headingTemplate?.trim()
+    const full = <RichText data={message} disableContainer />
+    const body = template ? <RichText data={withoutFirstHeading(message)} disableContainer /> : null
     return (
       <>
         <div
@@ -240,7 +280,7 @@ async function steppedConfirmation(
           )}
         >
           <Icon name="checkCircle" className="mb-5 size-11 text-ground-accent md:hidden" />
-          <RichText data={doc.confirmationMessage} disableContainer />
+          {template && body ? <PersonalConfirmation template={template} personal={body} fallback={full} /> : full}
         </div>
         <SendAnother
           label={sendAnotherLabel?.trim() || 'Send another'}
@@ -261,7 +301,7 @@ async function Standard(props: FormEmbedData) {
   const lead = body?.trim()
   const hasHeader = Boolean(eyebrow?.trim() || title || lead)
   const stepped = props.mobileLayout === 'stepped'
-  const confirmation = stepped ? await steppedConfirmation(form, props.stepped?.sendAnotherLabel) : undefined
+  const confirmation = stepped ? await steppedConfirmation(form, props.stepped?.sendAnotherLabel, props.stepped?.confirmationHeading) : undefined
 
   return (
     <Section

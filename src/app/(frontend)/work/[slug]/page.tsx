@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound, permanentRedirect, redirect } from 'next/navigation'
 
-import { CaseStudyView, caseStudyBreadcrumb } from '@/components/CaseStudyView'
+import { CaseStudyView, caseStudyBreadcrumb, getCaseStudyLabels } from '@/components/CaseStudyView'
 import { getCaseStudy } from '@/lib/caseStudies'
 import { caseStudyJsonLd, caseStudyMetadata } from '@/lib/metadata'
 import { getPreviewUser } from '@/lib/pages'
@@ -34,7 +34,8 @@ export default async function CaseStudyPage({ params }: Props) {
   const slug = await slugOf(params)
   const study = await getCaseStudy(slug)
   if (study) {
-    const crumbs = caseStudyBreadcrumb(study).map((c) => ({ label: c.label, href: c.url ?? null }))
+    const labels = await getCaseStudyLabels()
+    const crumbs = caseStudyBreadcrumb(study, labels).map((c) => ({ label: c.label, href: c.url ?? null }))
     const jsonLd = await caseStudyJsonLd(study, crumbs)
     return (
       <>
@@ -42,7 +43,7 @@ export default async function CaseStudyPage({ params }: Props) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
         />
-        <CaseStudyView study={study} />
+        <CaseStudyView study={study} labels={labels} />
       </>
     )
   }

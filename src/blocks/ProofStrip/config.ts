@@ -1,6 +1,7 @@
 import type { Block } from 'payload'
 
 import { pricingNote, scarcityRef } from '../../fields'
+import { rowLabel } from '../../components/admin/rowLabel'
 
 /**
  * ProofStrip block (SCHEMA §8.2 item 5). This unit ships ONLY the `scarcity` variant (homepage);
@@ -25,6 +26,7 @@ export const ProofStrip: Block = {
       maxRows: 2,
       labels: { singular: 'Statement', plural: 'Statements' },
       admin: {
+        components: { RowLabel: rowLabel(['key'], 'Statement', { scarcityKeys: true }) },
         description:
           'Up to two capacity statements, shown side by side. Each shows a big line with its reason quietly underneath; both come from "Capacity & scarcity".',
         initCollapsed: false,

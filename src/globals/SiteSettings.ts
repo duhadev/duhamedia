@@ -1,6 +1,7 @@
 import type {
   Condition,
   DateFieldValidation,
+  Field,
   FieldHook,
   GlobalConfig,
   NumberFieldSingleValidation,
@@ -11,6 +12,7 @@ import { date, number, text } from 'payload/shared'
 import { staffOnly, staffOnlyField } from '../access'
 import { linkField, validateHttpsUrl } from '../fields'
 import { revalidateGlobalHook } from '../hooks/revalidateTag'
+import { CASE_STUDY_LABEL_DEFAULTS } from '../lib/caseStudyLabels'
 
 /**
  * `site-settings` global (SCHEMA.md §7.1, §4.3, §10 — Gate S approved 2026-10-17).
@@ -109,6 +111,16 @@ const validateRatingSource: TextFieldSingleValidation = (value, options) => {
   if (base !== true) return base
   return requiredWhenShown(options.siblingData, value, 'Required when the rating is shown: the Google page the rating comes from.')
 }
+
+/** F76: one template label; default and site fallback from CASE_STUDY_LABEL_DEFAULTS. */
+const labelField = (name: keyof typeof CASE_STUDY_LABEL_DEFAULTS, label: string, description: string, width: string): Field => ({
+  name,
+  type: 'text',
+  label,
+  maxLength: 60,
+  defaultValue: CASE_STUDY_LABEL_DEFAULTS[name],
+  admin: { width, description, placeholder: CASE_STUDY_LABEL_DEFAULTS[name] },
+})
 
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
@@ -495,6 +507,57 @@ export const SiteSettings: GlobalConfig = {
                     { name: 'region', type: 'text', label: 'State', admin: { width: '20%' } },
                     { name: 'postalCode', type: 'text', label: 'ZIP code', admin: { width: '20%' } },
                     { name: 'country', type: 'text', admin: { width: '20%' } },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        /* ---------------------------------------------------------------- */
+        {
+          // F76 (human 2026-10-23): the fixed wording of the case-study template
+          // (/work/<slug>). Defaults = the current copy (src/lib/caseStudyLabels.ts);
+          // an empty field falls back to the default on the site.
+          label: 'Template labels',
+          admin: {
+            description:
+              'The small fixed words on every case study page (breadcrumb, date line, boxes and section labels). Leave a box empty to use the standard wording shown in grey.',
+          },
+          fields: [
+            {
+              name: 'caseStudyLabels',
+              type: 'group',
+              label: 'Case study pages',
+              fields: [
+                {
+                  type: 'row',
+                  fields: [
+                    labelField('breadcrumbWork', 'Breadcrumb: Work link', 'First link in the trail above the headline. It goes to the Work page.', '33%'),
+                    labelField('studyWord', 'Study word', 'Shown before the study number in the trail, e.g. "Study 01 — Client".', '33%'),
+                    labelField('inShort', 'Summary box label', 'Small label on the grey summary box under the headline.', '34%'),
+                  ],
+                },
+                {
+                  type: 'row',
+                  fields: [
+                    labelField('publishedPrefix', 'Date line: before the date', 'e.g. "Published" in "Published Feb 2026".', '33%'),
+                    labelField('figuresApproved', 'Date line: approved figures', 'Shown on studies whose figures the client approved.', '33%'),
+                    labelField('readTimeSuffix', 'Date line: after the minutes', 'e.g. "min read" in "8 min read".', '34%'),
+                  ],
+                },
+                {
+                  type: 'row',
+                  fields: [
+                    labelField('clientVoiceNumber', 'Lessons section number', 'Small number above the "what we would do differently" heading.', '20%'),
+                    labelField('clientVoiceDifferently', 'Lessons section heading', 'Heading above the study\'s "do differently" text.', '40%'),
+                    labelField('clientVoicePhases', 'Phases box label', 'Small label on the box that maps the study to our phases.', '40%'),
+                  ],
+                },
+                {
+                  type: 'row',
+                  fields: [
+                    labelField('nextStudy', 'Next study: label', 'Small label on the link to the next case study.', '50%'),
+                    labelField('nextStudyRead', 'Next study: link words', 'The words at the end of that link.', '50%'),
                   ],
                 },
               ],

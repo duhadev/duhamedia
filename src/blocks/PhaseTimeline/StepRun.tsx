@@ -78,7 +78,7 @@ function Diamond({ className }: { className: string }) {
  * Every step renders at the same full weight, the last (the independence
  * handover, "06 Independence — Phase 03") included; no field reduces it.
  */
-export function StepRun({ variant, eyebrow, eyebrowTick, heading, accentPhrase, steps, closingLine }: PhaseTimelineProps) {
+export function StepRun({ variant, eyebrow, eyebrowTick, heading, accentPhrase, steps, closingLine, swipeHint }: PhaseTimelineProps) {
   const isBuild = variant === 'build-run'
   const c = CLASSES[isBuild ? 'build-run' : 'engine-rollout']
   const rows = titledSteps(steps, variant)
@@ -107,7 +107,7 @@ export function StepRun({ variant, eyebrow, eyebrowTick, heading, accentPhrase, 
         {rows.length > 1 ? (
           // UI hint, not content (flagged): hidden from assistive tech.
           <p aria-hidden="true" className={cx('mt-2 text-small opacity-60', c.mobileOnly)}>
-            Swipe →
+            {swipeHint?.trim() || 'Swipe →'}
           </p>
         ) : null}
       </Container>

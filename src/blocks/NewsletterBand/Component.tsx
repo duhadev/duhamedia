@@ -6,6 +6,7 @@ import { AccentHeadline, Container, ButtonLink, Section } from '@/components/ui'
 import type { BlockData } from '@/blocks/types'
 import { CMSForm } from '@/components/forms'
 import { docPath } from '@/lib/docPath'
+import { getRequestPath } from '@/lib/requestPath'
 import type { Form, SiteSetting } from '@/payload-types'
 
 import { bandFormClassNames } from './formClassNames'
@@ -70,6 +71,7 @@ export async function NewsletterBandBlock({
   spacing,
 }: NewsletterBandData) {
   const { form, defaults, newsletterHref } = await load()
+  const sourcePath = form ? await getRequestPath() : undefined
 
   const ownHeading = heading?.trim()
   const title = ownHeading || defaults?.newsletterHeading?.trim() || ''
@@ -90,6 +92,7 @@ export async function NewsletterBandBlock({
       spacing={spacing}
       form={form}
       newsletterHref={newsletterHref}
+      sourcePath={sourcePath}
     />
   )
 }
@@ -104,6 +107,7 @@ function Band({
   spacing,
   form,
   newsletterHref,
+  sourcePath,
 }: {
   title: string
   accent: string | null | undefined
@@ -113,6 +117,7 @@ function Band({
   spacing: NewsletterBandData['spacing']
   form: Loaded['form']
   newsletterHref: string | null
+  sourcePath?: string
 }) {
   const headingId = useId()
   const light = tone === 'light'
@@ -128,6 +133,7 @@ function Band({
         {form ? (
           <CMSForm
             form={form}
+            sourcePath={sourcePath}
             submitLabel={label}
             tone="light"
             submitVariant="dark"

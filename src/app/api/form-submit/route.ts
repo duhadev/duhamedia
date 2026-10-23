@@ -19,7 +19,7 @@ import { MAX_BODY_BYTES, SOURCE_PATH_KEY, type FormSubmitResponse } from '@/inte
  *
  * Response:
  * - `Accept: application/json` (PayloadForm's fetch): JSON `FormSubmitResponse`,
- *   200 on success, 400 on a rejected submission, 403/405/413/415 on a bad request.
+ *   200 on success, 400 on a rejected submission, 503 when Turnstile is misconfigured server-side (same JSON body), 403/405/413/415 on a bad request.
  * - Otherwise (no-JS form post): 303 to the form's redirect, or a minimal HTML
  *   page with the outcome and a link back.
  * Always `Cache-Control: no-store`.
@@ -118,7 +118,7 @@ export async function POST(request: Request): Promise<Response> {
   if (wantsJson) {
     return outcome.result.ok
       ? json(outcome.redirectUrl ? { ok: true, redirect: outcome.redirectUrl } : { ok: true }, 200)
-      : json(outcome.result, 400)
+      : json(outcome.result, outcome.unavailable ? 503 : 400)
   }
 
   const source = formData.get(SOURCE_PATH_KEY)
@@ -128,7 +128,7 @@ export async function POST(request: Request): Promise<Response> {
   }
   return outcome.result.ok
     ? htmlPage('Thanks — we have it.', back, 200)
-    : htmlPage(outcome.result.message, back, 400)
+    : htmlPage(outcome.result.message, back, outcome.unavailable ? 503 : 400)
 }
 
 const methodNotAllowed = () =>

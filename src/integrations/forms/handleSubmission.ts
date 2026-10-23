@@ -57,6 +57,8 @@ export type SubmissionOutcome = {
   submissionId?: number
   /** The form's redirect confirmation, resolved server-side from the form doc. */
   redirectUrl?: string
+  /** Set when the failure is OUR misconfiguration (Turnstile secret/hostname): the route answers 503, not 400. */
+  unavailable?: true
 }
 
 const MSG = {
@@ -274,9 +276,9 @@ export async function handleFormSubmission(
   const turnstile = await verifyTurnstile(input.turnstileToken, input.remoteIp)
   if (!turnstile.ok) {
     const misconfigured = turnstile.codes.some((c) =>
-      ['missing-secret', 'test-secret-in-production', 'invalid-input-secret', 'missing-input-secret'].includes(c),
+      ['missing-secret', 'test-secret-in-production', 'invalid-input-secret', 'missing-input-secret', 'hostname-mismatch'].includes(c),
     )
-    return fail(misconfigured ? MSG.unavailable : MSG.turnstile)
+    return misconfigured ? { ...fail(MSG.unavailable), unavailable: true } : fail(MSG.turnstile)
   }
 
   try {

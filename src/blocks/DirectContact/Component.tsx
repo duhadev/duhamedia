@@ -85,6 +85,17 @@ const ExternalCue = () => (
   </svg>
 )
 
+/** Caption built from Site settings > Location when the editor leaves the caption empty. Missing parts are omitted; nothing if all are missing. */
+function autoCaption(locality?: string | null, region?: string | null, radius?: number | null): string | null {
+  const place = [locality?.trim(), region?.trim()].filter(Boolean).join(', ')
+  const miles = radius && radius > 0 ? Math.round(radius) : 0
+  const parts = [
+    place ? `Based in ${place}` : '',
+    miles ? `${place ? 'serving clients' : 'Serving clients'} within about ${miles} ${miles === 1 ? 'mile' : 'miles'}` : '',
+  ].filter(Boolean)
+  return parts.length ? `${parts.join(', ')}.` : null
+}
+
 /**
  * DirectContact (Contact.dc.html "Direct info + map" desktop / "Direct line"
  * mobile; one section at both breakpoints). Server component, no
@@ -118,7 +129,7 @@ export async function DirectContactBlock({ showEmail, showSocials, showLocation,
   const radius = loc?.serviceRadiusMiles && loc.serviceRadiusMiles > 0 ? loc.serviceRadiusMiles : 30
   const zoom = Math.min(2, Math.max(0.5, map?.zoom ?? 1))
   const placeName = loc?.locality?.trim() || 'Lombard'
-  const caption = map?.caption?.trim() || null
+  const caption = map?.caption?.trim() || autoCaption(loc?.locality, loc?.region, loc?.serviceRadiusMiles)
   const mapProps = {
     lat,
     lon,

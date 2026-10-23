@@ -2,6 +2,7 @@ import type { Block, Condition, TextFieldSingleValidation } from 'payload'
 import { text } from 'payload/shared'
 
 import { eyebrowField, headlineFields, LINK_TARGETS, linkField, metricFields, pricingNote } from '../../fields'
+import { rowLabel } from '../../components/admin/rowLabel'
 
 /**
  * Hero block (SCHEMA §8.1 item 1). Variants shipped so far: `typographic`
@@ -61,6 +62,20 @@ export const Hero: Block = {
         condition: forVariants('typographic'),
       },
     },
+    {
+      name: 'width',
+      type: 'select',
+      label: 'Text column width',
+      options: [
+        { label: 'Narrow (820px reading column)', value: 'narrow' },
+        { label: 'Wide (full site width)', value: 'wide' },
+      ],
+      admin: {
+        description:
+          'Compact heroes only. Narrow keeps the text in a tight column; wide lets it span the full page width. Left empty, the hero picks automatically (wide when it shows figures or the average rating, otherwise narrow).',
+        condition: (_data, siblingData) => siblingData?.variant === 'typographic' && siblingData?.size === 'compact',
+      },
+    },
     eyebrowField({
       description: 'Small uppercase line above the headline, e.g. "Integrated ecommerce growth partner — Chicago".',
     }),
@@ -106,6 +121,7 @@ export const Hero: Block = {
       maxRows: 2,
       labels: { singular: 'Button', plural: 'Buttons' },
       admin: {
+        components: { RowLabel: rowLabel(['link.label'], 'Button') },
         description: 'Up to two. The first is the solid main button, the second is the outlined one.',
         initCollapsed: false,
         condition: forVariants('typographic', 'service'),
@@ -119,6 +135,7 @@ export const Hero: Block = {
       maxRows: 2,
       labels: { singular: 'Callout', plural: 'Callouts' },
       admin: {
+        components: { RowLabel: rowLabel(['label'], 'Callout') },
         description:
           'Short bold-label statements under the paragraph, side by side on desktop, e.g. "What it is:" / "What it isn\'t:".',
         initCollapsed: true,
@@ -176,6 +193,7 @@ export const Hero: Block = {
       maxRows: 4,
       labels: { singular: 'Crumb', plural: 'Crumbs' },
       admin: {
+        components: { RowLabel: rowLabel(['label'], 'Crumb') },
         description:
           'The trail above the headline, e.g. Services / Shopify theme development / Phase 01. The LAST crumb is the current page and never links. Leave a middle crumb without a destination to show it as plain text.',
         initCollapsed: false,
@@ -212,6 +230,7 @@ export const Hero: Block = {
       maxRows: 5,
       labels: { singular: 'Figure', plural: 'Key figures' },
       admin: {
+        components: { RowLabel: rowLabel(['value', 'label'], 'Figure') },
         description:
           'Short facts shown beside the headline on desktop and as a strip under it on mobile, e.g. "$3.1M" / "Client revenue added". Results or counts only, never a price.',
         initCollapsed: true,
@@ -234,6 +253,7 @@ export const Hero: Block = {
       maxRows: 3,
       labels: { singular: 'Phase', plural: 'Phases' },
       admin: {
+        components: { RowLabel: rowLabel(['number', 'label'], 'Phase') },
         description:
           'A compact three-step strip under the buttons, e.g. 01 Build / 02 Operate / 03 Independence. The last step is always shown at full weight.',
         initCollapsed: true,

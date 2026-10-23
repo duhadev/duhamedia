@@ -5,6 +5,7 @@ import { CMSForm } from '@/components/forms'
 import { buttonClasses } from '@/components/ui'
 import { getChrome, getNewsletterFormId, getNewsletterHref, toNavItems, type NavItem } from '@/lib/chrome'
 import { cx } from '@/lib/cx'
+import { getRequestPath } from '@/lib/requestPath'
 
 import { footerNudgeFormClassNames } from './footerNudgeForm'
 import { NavLink } from './NavLink'
@@ -99,6 +100,7 @@ async function StandardZones({
   const newsletterFormId = await getNewsletterFormId(settings.newsletterForm)
   const newsletterHref = newsletterFormId === null ? await getNewsletterHref() : null
   const tagline = settings.footerTagline?.trim()
+  const sourcePath = newsletterFormId !== null ? await getRequestPath() : undefined
 
   return (
     <div
@@ -122,6 +124,7 @@ async function StandardZones({
           {newsletterFormId !== null ? (
             <CMSForm
               form={newsletterFormId}
+              sourcePath={sourcePath}
               submitLabel={nudge.buttonLabel?.trim() || undefined}
               tone="dark"
               submitVariant="ghost-light"

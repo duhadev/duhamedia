@@ -1,4 +1,5 @@
 import { AccentPhraseField as AccentPhraseField_4d104da0adfc74d2a561fd24f447a437 } from '../../../components/admin/AccentPhraseField'
+import { FieldRowLabel as FieldRowLabel_43e563babd789f16cec6776f862a03c0 } from '../../../components/admin/FieldRowLabel'
 import { RscEntryLexicalCell as RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { RscEntryLexicalField as RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { LexicalDiffComponent as LexicalDiffComponent_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
@@ -41,6 +42,7 @@ import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } f
 /** @type import('payload').ImportMap */
 export const importMap = {
   "/components/admin/AccentPhraseField#AccentPhraseField": AccentPhraseField_4d104da0adfc74d2a561fd24f447a437,
+  "/components/admin/FieldRowLabel#FieldRowLabel": FieldRowLabel_43e563babd789f16cec6776f862a03c0,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalField": RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#LexicalDiffComponent": LexicalDiffComponent_44fe37237e0ebf4470c9990d8cb7b07e,

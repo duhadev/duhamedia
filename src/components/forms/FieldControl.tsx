@@ -12,7 +12,7 @@ import { cx } from '@/lib/cx'
 
 export type InputField = Exclude<PublicFormField, { blockType: 'message' }>
 
-export type FieldSlots = Partial<Record<'field' | 'label' | 'control' | 'error' | 'option', string>>
+export type FieldSlots = Partial<Record<'field' | 'fieldWide' | 'label' | 'control' | 'error' | 'option', string>>
 
 const LABEL = 'font-body text-label uppercase tracking-eyebrow'
 const CONTROL_BASE =
@@ -46,6 +46,7 @@ export function FieldControl({
   slots,
   hideLabel = false,
   selectAsOptions = false,
+  optionCheck,
 }: {
   field: InputField
   id: string
@@ -56,6 +57,8 @@ export function FieldControl({
   hideLabel?: boolean
   /** Render a select as tap-to-pick radio rows. */
   selectAsOptions?: boolean
+  /** Replaces the ✓ glyph on a picked option row. */
+  optionCheck?: React.ReactNode
 }) {
   const name = `${FIELD_PREFIX}${field.name}`
   const errorId = `${id}-error`
@@ -67,6 +70,7 @@ export function FieldControl({
     width !== null && 'sm:w-[calc(var(--field-w)-0.5rem)]',
     tone === 'dark' ? 'text-cream' : 'text-ink',
     slots.field,
+    (width === null || field.blockType === 'textarea') && slots.fieldWide,
   )
   const style = width ? ({ '--field-w': `${width}%` } as React.CSSProperties) : undefined
   const errorNode = error ? (
@@ -126,8 +130,8 @@ export function FieldControl({
                 defaultChecked={field.defaultValue === o.value}
                 className="peer sr-only"
               />
-              <span aria-hidden="true" className="hidden peer-checked:inline">
-                ✓
+              <span aria-hidden="true" className={optionCheck ? 'hidden peer-checked:inline-flex' : 'hidden peer-checked:inline'}>
+                {optionCheck ?? '✓'}
               </span>
             </label>
           ))}

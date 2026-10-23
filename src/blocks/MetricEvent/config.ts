@@ -1,6 +1,7 @@
 import type { Block, Condition } from 'payload'
 
 import { eyebrowField, headlineFields, metricFields } from '../../fields'
+import { rowLabel } from '../../components/admin/rowLabel'
 
 /**
  * MetricEvent (SCHEMA §8.2 item 7). Variants shipped: `table` (p2 case-study
@@ -61,6 +62,7 @@ export const MetricEvent: Block = {
       label: 'Rows',
       labels: { singular: 'Row', plural: 'Rows' },
       admin: {
+        components: { RowLabel: rowLabel(['value', 'label'], 'Row') },
         description:
           'Table: one row per measured result (measure, before, after, change). Company facts: one row per fact (label and value). Drag to reorder. On a case study the table rows come from the case study itself.',
         initCollapsed: true,

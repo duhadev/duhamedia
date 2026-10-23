@@ -10,6 +10,8 @@ import { TestimonialClientVoiceView } from '@/blocks/TestimonialRow/Component'
 import type { BlockData } from '@/blocks/types'
 import { PageShell } from '@/components/chrome'
 import { ReadingProgress } from '@/components/ReadingProgress'
+import { type CaseStudyLabels, resolveCaseStudyLabels } from '@/lib/caseStudyLabels'
+import { getChrome } from '@/lib/chrome'
 import type { CaseStudy } from '@/payload-types'
 
 /**
@@ -23,7 +25,27 @@ import type { CaseStudy } from '@/payload-types'
  *
  * Each section keeps its block's own empty state (no client voice → nothing;
  * no other published study → no next line; no newsletter form/page → no band).
+ *
+ * F76 (human 2026-10-23): every fixed label comes from Site settings >
+ * Template labels (`site-settings.caseStudyLabels`), falling back per field to
+ * the current copy (src/lib/caseStudyLabels.ts). The global is read through
+ * the request-cached chrome loader (same read the header/footer make; the
+ * route loads them once and passes them in), and
+ * `site-settings` saves already purge the whole frontend layout.
+ * The closing FinalCTA capacity line follows the study's `track`.
  */
+
+/** The template labels for this request (never throws: a failed read falls back to the defaults). */
+export const getCaseStudyLabels = async (): Promise<CaseStudyLabels> =>
+  resolveCaseStudyLabels((await getChrome()).settings.caseStudyLabels)
+
+/**
+ * F76: the closing capacity line follows the engagement. A growth-engine study
+ * closes on the engines line; build, build + engine, handover or anything
+ * unknown keeps the builds line (the previous behaviour).
+ */
+const capacityForTrack = (track: CaseStudy['track'] | null | undefined): 'builds-line' | 'engines-line' =>
+  track === 'growth' ? 'engines-line' : 'builds-line'
 
 type Narrative = CaseStudy['narrative']
 type LexicalRoot = BlockData<'richContent'>['body']
@@ -39,32 +61,32 @@ const clientName = (study: CaseStudy): string | null =>
  * / "Study" (current crumb, never a link). Exported so the route's
  * BreadcrumbList JSON-LD mirrors exactly what is shown (F78).
  */
-export const caseStudyBreadcrumb = (study: CaseStudy): Array<{ label: string; url?: string }> => [
-  { label: 'Work', url: '/work' },
-  { label: studyCrumb(study) },
+export const caseStudyBreadcrumb = (study: CaseStudy, labels: CaseStudyLabels): Array<{ label: string; url?: string }> => [
+  { label: labels.breadcrumbWork, url: '/work' },
+  { label: studyCrumb(study, labels) },
 ]
 
 /** "Study 01 — Client", "Study 01", "Client" or "Study" (current crumb, never a link). */
-const studyCrumb = (study: CaseStudy): string => {
-  const number = typeof study.studyNumber === 'number' ? `Study ${pad2(study.studyNumber)}` : null
+const studyCrumb = (study: CaseStudy, labels: CaseStudyLabels): string => {
+  const number = typeof study.studyNumber === 'number' ? `${labels.studyWord} ${pad2(study.studyNumber)}` : null
   const client = clientName(study)
   if (number && client) return `${number} — ${client}`
-  return number ?? client ?? 'Study'
+  return number ?? client ?? labels.studyWord
 }
 
 /** "Published Feb 2026 · Client-approved figures · 8 min read" (each part only when it exists). */
-const metaLine = (study: CaseStudy): string => {
+const metaLine = (study: CaseStudy, labels: CaseStudyLabels): string => {
   const parts: string[] = []
   if (study.publishedAt) {
     const date = new Date(study.publishedAt)
     if (!Number.isNaN(date.getTime())) {
       parts.push(
-        `Published ${new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' }).format(date)}`,
+        `${labels.publishedPrefix} ${new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' }).format(date)}`,
       )
     }
   }
-  if (study.figuresApproved === true) parts.push('Client-approved figures')
-  if (typeof study.readTime === 'number' && study.readTime > 0) parts.push(`${study.readTime} min read`)
+  if (study.figuresApproved === true) parts.push(labels.figuresApproved)
+  if (typeof study.readTime === 'number' && study.readTime > 0) parts.push(`${study.readTime} ${labels.readTimeSuffix}`)
   return parts.join(' · ')
 }
 
@@ -105,8 +127,8 @@ const narrativeBody = (narrative: Narrative): LexicalRoot => {
   return { root: { type: 'root', version: 1, direction: 'ltr', format: '', indent: 0, children } }
 }
 
-export function CaseStudyView({ study }: { study: CaseStudy }) {
-  const meta = metaLine(study)
+export function CaseStudyView({ study, labels }: { study: CaseStudy; labels: CaseStudyLabels }) {
+  const meta = metaLine(study, labels)
 
   const hero: BlockData<'hero'> = {
     blockType: 'hero',
@@ -114,11 +136,11 @@ export function CaseStudyView({ study }: { study: CaseStudy }) {
     heading: study.title,
     accentPhrase: study.accentPhrase,
     geometry: true,
-    breadcrumb: caseStudyBreadcrumb(study),
+    breadcrumb: caseStudyBreadcrumb(study, labels),
     resultMetric: study.headlineMetric,
     body: study.engagementLine,
     metaLine: meta || null,
-    summary: { label: 'In short', body: study.inShort },
+    summary: { label: labels.inShort, body: study.inShort },
     media: study.heroMedia,
     mediaFrame: 'browser',
   }
@@ -134,7 +156,7 @@ export function CaseStudyView({ study }: { study: CaseStudy }) {
     blockType: 'caseStudyCards',
     layout: 'next-link',
     source: 'latest',
-    nextLabels: { label: 'Next study', readLabel: 'Read it →' },
+    nextLabels: { label: labels.nextStudy, readLabel: labels.nextStudyRead },
     // No "All studies" fallback link: the design shows only the next-study line.
     allLink: { type: 'custom' },
   }
@@ -148,7 +170,7 @@ export function CaseStudyView({ study }: { study: CaseStudy }) {
   const finalCta: BlockData<'finalCTA'> = {
     blockType: 'finalCTA',
     heading: study.closing?.finalCtaHeading,
-    capacity: 'builds-line',
+    capacity: capacityForTrack(study.track),
     buttons: [],
   }
 
@@ -161,9 +183,9 @@ export function CaseStudyView({ study }: { study: CaseStudy }) {
         <MetricEventBlock {...resultsTableToMetricEvent(study.resultsTable)} />
         <TestimonialClientVoiceView
           clientVoice={study.clientVoice}
-          differentlyNumber="04"
-          differentlyHeading="What we'd do differently"
-          phaseLabel="How this maps to our phases"
+          differentlyNumber={labels.clientVoiceNumber}
+          differentlyHeading={labels.clientVoiceDifferently}
+          phaseLabel={labels.clientVoicePhases}
         />
         <CaseStudyCardsBlock
           {...nextStudy}

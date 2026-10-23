@@ -1,4 +1,6 @@
-import { NextResponse } from 'next/server'
+import { type NextRequest, NextResponse } from 'next/server'
+
+import { REQUEST_PATH_HEADER } from '@/lib/requestPathHeader'
 
 /**
  * Staging / local-dev search exclusion (F78 B1), next@16 `proxy` convention
@@ -13,14 +15,28 @@ import { NextResponse } from 'next/server'
  * - This replaces the layout's old env robots meta, which doubled up with
  *   Next's own not-found `noindex` tag on every non-production 404.
  *
- * Matcher skips `/api/*`, `/admin*` and Next's static/image paths: when a proxy
- * runs, Next buffers the request body (proxyClientMaxBodySize, default 10 MB,
- * silently truncating above it), which must never touch media uploads, form
- * posts or the admin's server functions. Those paths are disallowed in
- * staging's robots.txt (`Disallow: /`) and never linked publicly.
+ * - Every matched request also forwards its pathname to the render as the
+ *   `x-request-path` REQUEST header (src/lib/requestPath.ts), so chrome and blocks
+ *   rendered outside the page router (footer newsletter form, NewsletterBand) can
+ *   record which page a form was submitted from (`sourcePath`, F75).
+ *
+ * Matcher skips only `/api/*` and `/admin`, `/admin/*`: when a proxy runs, Next
+ * buffers the request body (proxyClientMaxBodySize, default 10 MB, silently
+ * truncating above it), which must never touch media uploads, form posts or the
+ * admin's server functions. Those paths are disallowed in staging's robots.txt
+ * (`Disallow: /`) and never linked publicly.
+ *
+ * Security (F75): the header is always OVERWRITTEN (`set`), so a visitor cannot
+ * spoof it on any request the proxy sees. Every other path is matched — incl.
+ * bare `/api` and `/_next/static|image` misses — because those fall through to
+ * the frontend `[...slug]` 404, whose footer form reads the header; skipping
+ * them let a client-supplied `x-request-path` through. Nothing under `/api/*`
+ * or `/admin*` reads it.
  */
-export function proxy(): NextResponse {
-  const response = NextResponse.next()
+export function proxy(request: NextRequest): NextResponse {
+  const requestHeaders = new Headers(request.headers)
+  requestHeaders.set(REQUEST_PATH_HEADER, request.nextUrl.pathname)
+  const response = NextResponse.next({ request: { headers: requestHeaders } })
   if (process.env.APP_ENV !== 'production') {
     response.headers.set('X-Robots-Tag', 'noindex, nofollow')
   }
@@ -28,5 +44,5 @@ export function proxy(): NextResponse {
 }
 
 export const config = {
-  matcher: ['/((?!api/|api$|admin/|admin$|_next/static|_next/image).*)'],
+  matcher: ['/((?!api/|admin/|admin$).*)'],
 }

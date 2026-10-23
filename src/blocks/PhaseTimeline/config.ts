@@ -1,6 +1,7 @@
 import type { Block, Condition } from 'payload'
 
 import { eyebrowField, headlineFields, linkField } from '../../fields'
+import { rowLabel } from '../../components/admin/rowLabel'
 
 /**
  * PhaseTimeline block (SCHEMA.md §8.3 item 11). Variants:
@@ -79,6 +80,7 @@ export const PhaseTimeline: Block = {
       maxRows: 3,
       labels: { singular: 'Phase', plural: 'Phases' },
       admin: {
+        components: { RowLabel: rowLabel(['number', 'title'], 'Phase') },
         initCollapsed: false,
         condition: onlyFor('accordion', 'arc'),
         description:
@@ -132,6 +134,7 @@ export const PhaseTimeline: Block = {
       maxRows: 10,
       labels: { singular: 'Step', plural: 'Steps' },
       admin: {
+        components: { RowLabel: rowLabel(['number', 'title'], 'Step') },
         initCollapsed: true,
         condition: onlyFor('accordion', 'steps', 'build-run', 'engine-rollout'),
         description:
@@ -215,6 +218,7 @@ export const PhaseTimeline: Block = {
           maxRows: 4,
           labels: { singular: 'Outcome', plural: 'Outcomes' },
           admin: {
+            components: { RowLabel: rowLabel(['text'], 'Outcome') },
             condition: onlyFor('steps'),
             description: 'Bullets under "You leave with" at the foot of the card. One short line each.',
           },
@@ -229,6 +233,26 @@ export const PhaseTimeline: Block = {
       admin: {
         condition: onlyFor('accordion', 'steps', 'build-run', 'engine-rollout'),
         description: 'Optional quiet line under the timeline, e.g. "Then Phase 02, if the numbers say it fits."',
+      },
+    },
+    {
+      name: 'outcomesLabel',
+      type: 'text',
+      label: 'Outcomes label',
+      defaultValue: 'You leave with',
+      admin: {
+        condition: onlyFor('steps'),
+        description: 'Small uppercase label above the bullets at the foot of each card. Leave empty to use "You leave with".',
+      },
+    },
+    {
+      name: 'swipeHint',
+      type: 'text',
+      label: 'Swipe hint',
+      defaultValue: 'Swipe →',
+      admin: {
+        condition: onlyFor('build-run', 'engine-rollout'),
+        description: 'Small hint above the swipe row on phones. Leave empty to use "Swipe →".',
       },
     },
     {

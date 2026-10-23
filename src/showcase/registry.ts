@@ -514,6 +514,7 @@ const gT2 = fq(969, 'What makes you different?', 'process-trust', a('Leaving is 
 
 /* DirectContact (p12). */
 const rowLabels = { email: 'Email', socials: 'Socials', location: 'Location', replyTime: 'Reply time' }
+/* Deliberate editor override (the 'map only' entry); other entries leave caption empty → auto caption from site settings (F109). */
 const mapCaption =
   'Based in Lombard, IL — serving the greater Chicagoland area within a ~30-mile radius. Outside the ring? We work remote-first, so reach out anyway.'
 
@@ -1600,6 +1601,7 @@ export const showcaseEntries: ShowcaseEntry[] = [
     label: 'p7 testimonials hero (rating from published testimonials; hidden if none)',
     data: {
       ...compactHero,
+      width: 'wide',
       eyebrow: 'Testimonials',
       heading: "[STRATEGIC PLACEHOLDER — final copy TBD] Don't take our word for it. Take theirs.",
       accentPhrase: 'Take theirs.',
@@ -1874,7 +1876,7 @@ export const showcaseEntries: ShowcaseEntry[] = [
         { fieldNames: ['reason'], heading: 'What’s this about?', accentPhrase: 'about?' },
         { fieldNames: ['message'], heading: 'The short version.', accentPhrase: 'version.', hint: 'Direct works best here too.' },
       ],
-      stepped: { progressLabel: 'Question {n} of {m}', startLabel: 'Start', nextLabel: 'Next', backLabel: 'Back', sendAnotherLabel: 'Send another', selectAsOptions: true },
+      stepped: { progressLabel: 'Question {n} of {m}', startLabel: 'Start', nextLabel: 'Next', backLabel: 'Back', sendAnotherLabel: 'Send another', confirmationHeading: 'Got it, {firstName}.', selectAsOptions: true },
     },
   },
   {
@@ -1886,14 +1888,14 @@ export const showcaseEntries: ShowcaseEntry[] = [
       form: 14, // TODO(seed): form id — hardcoded dev id; the seed must create this form on staging
       ground: 'grey',
       mobileLayout: 'stepped',
-      stepped: { progressLabel: 'Question {n} of {m}', startLabel: 'Start', nextLabel: 'Next', backLabel: 'Back', sendAnotherLabel: 'Send another', selectAsOptions: true },
+      stepped: { progressLabel: 'Question {n} of {m}', startLabel: 'Start', nextLabel: 'Next', backLabel: 'Back', sendAnotherLabel: 'Send another', confirmationHeading: 'Got it, {firstName}.', selectAsOptions: true },
     },
   },
   {
     block: 'directContact',
     variant: 'default',
-    label: 'DirectContact — all rows + map',
-    data: { showEmail: true, showSocials: true, showLocation: true, skipFormLine: 'Skip the form', rowLabels, map: { show: true, caption: mapCaption, zoom: 1 } },
+    label: 'DirectContact — all rows + map (auto caption from site settings)',
+    data: { showEmail: true, showSocials: true, showLocation: true, skipFormLine: 'Skip the form', rowLabels, map: { show: true, zoom: 1 } },
   },
   {
     block: 'directContact',
@@ -1910,7 +1912,7 @@ export const showcaseEntries: ShowcaseEntry[] = [
   {
     block: 'directContact',
     variant: 'map only',
-    label: 'DirectContact — map only, zoom 1.5',
+    label: 'DirectContact — map only, zoom 1.5, caption override',
     data: { showEmail: false, showSocials: false, showLocation: false, map: { show: true, caption: mapCaption, zoom: 1.5 } },
   },
   {

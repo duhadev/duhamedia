@@ -1,6 +1,7 @@
 import type { Block } from 'payload'
 
 import { eyebrowField, headlineFields, linkField, pricingNote } from '../../fields'
+import { rowLabel } from '../../components/admin/rowLabel'
 
 /**
  * TwoTrackPanels block (SCHEMA §8.3 item 10). Variants: `equal` (homepage
@@ -42,7 +43,11 @@ export const TwoTrackPanels: Block = {
       minRows: 2,
       maxRows: 2,
       labels: { singular: 'Track', plural: 'Tracks' },
-      admin: { description: 'Exactly two tracks, shown in this order.', initCollapsed: false },
+      admin: {
+        components: { RowLabel: rowLabel(['label', 'title'], 'Track') },
+        description: 'Exactly two tracks, shown in this order.',
+        initCollapsed: false,
+      },
       fields: [
         {
           name: 'label',

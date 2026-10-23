@@ -9,6 +9,7 @@ import {
   pricingNote,
   validateAccentPhrase,
 } from '../../fields'
+import { rowLabel } from '../../components/admin/rowLabel'
 
 /**
  * CaseStudyCards block (SCHEMA §8.2 item 6).
@@ -281,7 +282,7 @@ export const CaseStudyCards: Block = {
       name: 'fallbackEyebrow',
       type: 'text',
       label: 'Fallback eyebrow',
-      defaultValue: 'No studies live yet — the numbers we can show',
+      defaultValue: 'The numbers we can show',
       admin: {
         condition: notNextLink,
         description: 'Small uppercase line above the fallback headline. In Testimonials mode it sits above the quotes, e.g. "What clients say".',
@@ -323,6 +324,7 @@ export const CaseStudyCards: Block = {
       maxRows: 3,
       labels: { singular: 'Fact', plural: 'Facts' },
       admin: {
+        components: { RowLabel: rowLabel(['value', 'label'], 'Fact') },
         condition: hasFallbackMetrics,
         description:
           'Up to three facts: a ruled list in Ledger mode, a grey strip in Metric strip mode. Real, approved figures or counts only; never a price (use the pricing note).',

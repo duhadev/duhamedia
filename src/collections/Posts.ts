@@ -29,6 +29,7 @@ import { setPublishedAtOnPublish } from '../hooks/publishedAt'
 import { revalidateTagHooks } from '../hooks/revalidateTag'
 import { uniqueSlugHooks } from '../hooks/uniqueSlug'
 import { lexicalWordCount, readTimeMinutes } from '../lib/lexicalText'
+import { rowLabel } from '../components/admin/rowLabel'
 
 /**
  * `posts` (SCHEMA.md §2.1, §6.3, §4.3, §5, §10, X11 — Gate S approved 2026-10-17).
@@ -332,6 +333,7 @@ export const Posts: CollectionConfig = {
                   maxRows: 3,
                   labels: { singular: 'Fact', plural: 'Facts' },
                   admin: {
+                    components: { RowLabel: rowLabel(['value', 'label'], 'Fact') },
                     description: 'Up to 3 short facts, e.g. "4–6 / Weeks". Never a price: use the pricing note. Drag to reorder.',
                   },
                   fields: metricFields(),
@@ -422,6 +424,7 @@ export const Posts: CollectionConfig = {
                   label: 'Fallback metrics',
                   labels: { singular: 'Metric', plural: 'Metrics' },
                   admin: {
+                    components: { RowLabel: rowLabel(['value', 'label'], 'Metric') },
                     condition: (_data, siblingData) => siblingData?.fallbackMode !== 'testimonials',
                     description: 'e.g. "5 / Vendors" → "1 / Team". Drag to reorder.',
                   },

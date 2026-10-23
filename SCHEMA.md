@@ -574,7 +574,7 @@ Order = the final design's `data-screen-label` order, with CLAUDE.md-required se
 | # | Section | Block · variant |
 |---|---|---|
 | 1 | Services hero + **R** phase timeline visual | Hero · typographic (phaseStrip) |
-| 2 | Two doors (track split) | TwoTrackPanels · equal |
+| 2 | Two doors (track split) | TwoTrackPanels · doors **(delta, S5 §D.6)** |
 | 3 | Why both together | TwoTrackPanels · contrast |
 | 4 | Newsletter CTA (moved up in design) | NewsletterBand · band |
 | 5 | **+** The arc | PhaseTimeline · arc |
@@ -841,3 +841,196 @@ Order = the final design's `data-screen-label` order, with CLAUDE.md-required se
 3. `scarcity.capacity` default 7 (real client cap; F7). Restores SCHEMA §7.2's "default 7". Column default via migration.
 4. `seo-defaults.localBusiness.type`: `MarketingAgency` removed (not a schema.org type); only `ProfessionalService`, which is now the default (F12/F13). Enum migration.
 5. `scarcity`: `buildsInProgress` and `enginesRunning` must each be ≤ `capacity` (F8). Validation only.
+
+---
+
+## Delta S5 — schema extras added during big steps 4–5 (pending human Gate S sign-off)
+
+Written 2026-10-23 by `schema-architect` for the batched end-of-step review. **Nothing above this heading is changed by this section**, except one §9 row marked "(delta)" (p4 row 2). Source of truth for every name, type, default and condition below is the code as of 2026-10-23 (`src/blocks/*/config.ts`, `src/globals/SiteSettings.ts`, `src/collections/*`, `src/plugins/formBuilder.ts`); the decisions come from the PROGRESS.md Decision log rows 2026-10-22/23 and the Flags table. Items already signed off in the 2026-10-18 and 2026-10-21 mini Gate S rounds (S1, S2) and the S3/S4 units are **excluded**.
+
+**Status legend** (column "Status"):
+- **H23** — human approved in walk-through 2026-10-23 — needs Gate S formal sign-off.
+- **H22** — human approved in walk-through 2026-10-22 — needs Gate S formal sign-off.
+- **NF** — not flagged to the human: added by a block-coder to satisfy the full-editability rule or to port a design detail. Built and migrated; needs Gate S sign-off.
+- **n/s** — no schema change (render rule, or already in §§0–12); listed so the review is complete.
+
+**Migrations** (column "Mig"): b3a `20261022_030147_b3_homepage_batch1` · b3b `20261022_031049_b3_homepage_batch2` · b4 `20261022_052303_b4_pages_2_6_blocks` · b4b `20261022_053011_b4b_newsletter_band` · b5 `20261022_141454_b5_pages_7_12_blocks` · b5b `20261023_165632_b5b_s5_deltas` (generated, **not yet committed**). "blk" = created with the block's own table. All are additive (new nullable columns / enums / array tables); b5b also drops one column default (D.13).
+
+**Shared factory extras (apply to every block below, not repeated per table):** where §8 says "eyebrow" the code uses `eyebrowField()` (adds `eyebrowTick` checkbox; default tick varies per block), and where §8 says "heading" the code uses `headlineFields()` (adds `accentPhrase`, validated as a substring of `heading`). This is §3 factory behaviour, already approved; the per-block tables only list it where §8 named **no** eyebrow/heading at all.
+
+### D.1 Hero (§8.1 item 1)
+| Field path | Type | Default | Condition | Needed by (page § section) | Flag | Mig | Status |
+|---|---|---|---|---|---|---|---|
+| `size` | select `default` / `compact` | `default` | variant = typographic | p7 §Testimonials hero, p9 §Book hero, p10 §Confirmation, p11 §FAQ hero, p12 §Contact hero (shorter header, narrow column, small corner mark) | — (S5-1; presupposed by F107) | b5 | NF (implied by F107 H23) |
+| `width` | select `narrow` / `wide`, optional | none (empty = automatic: wide when `stats` or `showAggregateRating`, else narrow) | variant = typographic **and** size = compact | p7 §Testimonials hero seeded `wide`; others narrow | F107 | b5b | H23 |
+| `callouts[]` | array max 2 `{ label text ✓, text textarea ✓ }` | — | variant = typographic | p9 §Book hero "What it is: / What it isn't:" (CLAUDE.md p9 "what the call is and isn't") | — (S5-1) | b5 | NF |
+| `resultMetric` | group `metricFields({ required: false })` (`value`, `label`, `sub`, `accent`) | `accent` false | variant = article | p2 §Article header oversized result metric (R2); template feeds it from `case-studies.headlineMetric` | F70 | b4 | H23 |
+| `breadcrumb[]` shape | array max 4 `{ label text ✓, page relationship → pages/case-studies/posts/lead-magnets maxDepth 1, url text (validate: `/path` or `https://`) }` — **replaces** §8.1's `linkField` items | — | variant = service / article | p5 §Breadcrumb, p6 §Breadcrumb, p2 §Article header ("Work / Study 01 — …"): middle/current crumbs are plain text, which `linkField` (label + required destination) cannot express | F70 | b4 | H23 |
+| derived looks (browser frame, article metric, p4 phase strip) | — | — | — | p2, p4 (no design exists, MERGED §7 row 2) | F70 | — | n/s (design sign-off H23) |
+
+Not yet built (no delta, §8.1 still binding): `vsl` variant, `video`, `form`, `formNote`.
+
+### D.2 CaseStudyCards (§8.2 item 6)
+| Field path | Type | Default | Condition | Needed by | Flag | Mig | Status |
+|---|---|---|---|---|---|---|---|
+| `tone` | select `light` / `grey` | `light` | always | p3 §Study ledger and p8 §Logo strip sit on grey bands in the design | — (S4-2) | b4 | NF |
+| `eyebrow`, `eyebrowTick` | `eyebrowField()` | tick true | always (shown only when studies are live) | p1 §Featured case studies eyebrow | — | blk | NF |
+| `track` → **hasMany** | select hasMany `build` / `growth` / `build-and-growth` / `handover` (§8.2: single select) | — | source = track | p5 §Proof = build + build-and-growth; p6 §Proof = growth + build-and-growth | F72 | b4 | H23 |
+| `caseStudies` maxDepth **2** (§8.2: 1) | relationship hasMany → case-studies | — | source = manual | Every card needs the study's own `client` + `heroMedia` populated (nested population is capped by maxDepth) | F60 | — (admin only) | H23 ("F60 already done") |
+| `cardLinkLabel` | text | "Read the case study" | layout = cards | p1 §Featured case studies card link | F48 | b3b | H22 |
+| `loadMoreLabel`, `loadMoreLoadingLabel`, `loadMoreErrorLabel` | text ×3 | "Load more studies" / "Loading…" / "Could not load more studies. Try again." | layout = ledger and `loadMore` on | p3 §Study ledger Load More (CLAUDE.md p3 "Load More, no pagination") | — | b4 | NF |
+| `ledgerLabels` | group `{ number "№", client "Client", summary "What was leaking / what we changed", metric "Returned", kind "Case study", readLabel "Read the study →" }` (all text) | as listed | layout = ledger | p3 §Study ledger column heads + phone row tag/link | — | b4 | NF |
+| `nextLabels` | group `{ label "Next study", readLabel "Read it →" }` | as listed | layout = next-link | p2 §Next study. On the case-study template these are overwritten from `site-settings.caseStudyLabels` (D.17); the block fields apply only to a standalone use | — | b4 | NF |
+| `fallbackAccentPhrase` | text, validate substring of `fallbackHeading` | "anyway." | layout ≠ next-link | p1 fallback "Numbers anyway." accent | — | b3b | NF |
+| `fallbackLogos` | relationship hasMany → clients, maxRows 12, maxDepth 1, optional (empty = all clients ticked `showInLogoStrip`) | — | fallbackMode = logo-strip | p8 §Logo strip at launch — §8.2 named `fallbackLogos` only as "uses clients flagged"; this makes the hand-picked override explicit | — (S5-4) | b5 | NF |
+| `fallbackTestimonials` maxRows 3 | (constraint on an existing field) | — | fallbackMode = testimonials | p5 §Proof fallback | — | — | NF |
+
+`staggered` layout is not built (Gate S Q1 default = ledger; F72 "staggered built with Work hub"): no delta.
+
+### D.3 MetricEvent (§8.2 item 7)
+| Field path | Type | Default | Condition | Needed by | Flag | Mig | Status |
+|---|---|---|---|---|---|---|---|
+| `columns` | group `{ measure, baseline, after, change }` text ×4, all optional (empty → "Measure" / "Before" / "After" / "Change" at render) | none | variant = table | p2 §Results table headings, fed from `case-studies.resultsTable.columns` | F69 | b4 | H23 |
+| `items[].accent` | checkbox (from `metricFields()`; §8.2 item shape lists label/value/baseline/change/sub only) | false | always | p8 §Company facts accent row ("Concurrent builds, capped") | — | b4 | NF |
+| `facts` variant | — | — | — | p8 §Company facts | F69 | b5 | n/s (already §8.2) |
+| ▲/▼ + sr "Increase/Decrease" when `change` starts with + / − | render rule | — | variant = table | p2 §Results table (change never relies on colour) | F69 | — | n/s (H23) |
+
+### D.4 ReviewWall (§8.2 item 8) — `feed` variant (p7)
+| Field path | Type | Default | Condition | Needed by | Flag | Mig | Status |
+|---|---|---|---|---|---|---|---|
+| `eyebrow`, `eyebrowTick`, `heading`, `accentPhrase` | factories, all optional (§8.2 lists none) | tick true | always | Optional section header; left empty on p7 (the hero says it) | — | b5 | NF |
+| `showStudyLinks` | checkbox | true | always | CLAUDE.md p7 "case-study deep-link toggleable" | — | b5 | NF |
+| `studyLinkLabel` | text | "Read the full case study" | `showStudyLinks` on | p7 §Testimonial feed card link | — | b5 | NF |
+| `labels` | group `{ video "Video", googleReview "Google review", linkedin "LinkedIn", play "Play the video testimonial from" }` | as listed | always | p7 source tags (R6: source tag is data) + play button screen-reader text | — | b5 | NF |
+| `loadMore` | group `{ label "Load more", loadingLabel "Loading…", errorLabel "Could not load more testimonials. Try again." }` | as listed | always | p7 Load More | — | b5 | NF |
+| `emptyNote` | textarea, optional (empty → whole section hidden) | — | always | p7 launch state (rule 1: no "coming soon") | — | b5 | NF |
+| `testimonials` validate | ≥ 1 pick when source = manual | — | source = manual | prevents an empty hand-picked feed | — | — | NF (validation only) |
+
+Not yet built: `wall` variant, `inserts`, `wallNote` (p19).
+
+### D.5 TestimonialRow (§8.2 item 9)
+| Field path | Type | Default | Condition | Needed by | Flag | Mig | Status |
+|---|---|---|---|---|---|---|---|
+| `studyCard.label` | text | "A study in full" | studyCard.show on | p1 §Testimonials card eyebrow | — | b3b | NF |
+| `studyCard.readLabel` | text | "Read the study" | studyCard.show on | p1 §Testimonials card link | — | b3b | NF |
+| `studyCard.caseStudy` maxDepth **2** (§8.2: 1) | relationship → case-studies | — | source = manual | the study's `client` must populate for the card kicker | F60 | — | H23 |
+| `clientVoice` (on the block) | group `{ testimonial rel → testimonials maxDepth 2, doDifferently richText, phaseMapping textarea, link linkField }` — mirrors `case-studies.clientVoice` field-for-field | — | variant = client-voice | p2 §Client voice: the template passes the study's group straight through; the block copy serves a standalone use | — (S4-10) | b4 | NF |
+| `differentlyNumber`, `differentlyHeading`, `phaseLabel` | text ×3 | "04" / "What we'd do differently" / "How this maps to our phases" | variant = client-voice | p2 §Client voice labels. On the template these are overwritten from `site-settings.caseStudyLabels` (D.17) | — | b4 | NF |
+
+Not yet built: `leadMetric` (p16).
+
+### D.6 TwoTrackPanels (§8.3 item 10)
+| Field path | Type | Default | Condition | Needed by | Flag | Mig | Status |
+|---|---|---|---|---|---|---|---|
+| `variant` option **`doors`** | 4th option of the existing select | — | — | p4 §Two doors: title + paragraph + filled CTA per door; "$5K and up" / "$1K /mo and up" display numerals shrink to the inline `pricingNote` (R13). §9 p4 row 2 updated "(delta)" | F67, F74 | b4 | H23 |
+| `primary-secondary` look | — | — | — | p5 §Where people usually start (derived design) | F66 | — | n/s (option already §8.3; design H23) |
+| `panels[].accentTitle` | checkbox | false | variant = equal / primary-secondary / doors | p1 §What we do: the design colours track 2's title wine | F46 | b3a | H22 |
+| `eyebrow`, `eyebrowTick` | `eyebrowField()` (§8.3 lists heading only) | tick false | always | optional section eyebrow | — | blk | NF |
+| `panels[].body` no longer required in `contrast` | custom validate (required unless variant = contrast); §8.3: `body ✓` | — | variant = equal / primary-secondary / doors | p4 §Why both together has no body (struck claim + reality line only) | — | b4 | NF |
+| field visibility | `label` hidden for doors; `claim` contrast only; `pricingNote` + `link` hidden for contrast; `conclusion` for contrast / primary-secondary / doors | — | — | per-variant design | F74 | — | n/s |
+
+### D.7 PhaseTimeline (§8.3 item 11)
+| Field path | Type | Default | Condition | Needed by | Flag | Mig | Status |
+|---|---|---|---|---|---|---|---|
+| `outcomesLabel` | text (empty → "You leave with") | "You leave with" | variant = steps | p4 §How it starts, p9 §What happens next | F73 | b5b | H23 |
+| `swipeHint` | text (empty → "Swipe →") | "Swipe →" | variant = build-run / engine-rollout | p5 §Build run, p6 §Engine rollout (phone swipe row) | F73 | b5b | H23 |
+| `steps[].outcomes` maxRows 4; `phases` / `steps` minRows 1 | constraints | — | — | design card heights | — | b4 | NF |
+
+### D.8 RichContent (§8.3 item 13)
+| Field path | Type | Default | Condition | Needed by | Flag | Mig | Status |
+|---|---|---|---|---|---|---|---|
+| `numberSections` | checkbox | true | always | p2/p8/p13/p14 article bodies number every H2 01, 02…; untick where numbers would be wrong | — (S4-8) | b4 | NF |
+
+Not yet built: `legal`, `band`, `lastUpdated`, `facts`, `link`.
+
+### D.9 SpecLedger (§8.3 item 14)
+| Field path | Type | Default | Condition | Needed by | Flag | Mig | Status |
+|---|---|---|---|---|---|---|---|
+| `cardLayout` | select `anatomy` / `feature` | `anatomy` | variant = cards | p5 §Template anatomy (2×2 coded cards) vs p6 §Camera work (two wide image cards) | F68 | b4 | H23 |
+| `tone` | select `auto` / `light` / `grey` | `auto` (grey for anatomy cards + signal-flow, white otherwise) | always | p5/p6 section grounds | F68 | b4 | H23 |
+| `note` | text | — | variant = cards **and** cardLayout = anatomy | p5 §Template anatomy side note "Four templates carry almost every order." | F68 | b4 | H23 |
+| `firstOpen` | checkbox | true | variant = expandable | p5 §Specification, p6 §Channel specification (first row open) | F68 | b4 | H23 |
+| `hub.kicker` | text | — | variant = signal-flow | p6 §Signal flow "Everything reports here" | F68 | b4 | H23 |
+| `hub.note` | text (desktop only) | — | variant = signal-flow | p6 §Signal flow quiet line | F68 | b4 | H23 |
+| `heading` optional + `accentPhrase` | `headlineFields({ required: false })` (§8.3: `heading`) | — | always | designs use the caption only | — | b4 | NF |
+| `items[].code` maxLength 8; `items[].line` hidden for signal-flow | constraints | — | — | "D-01", "T-02", "E-03" | — | b4 | NF |
+| one copy set desktop + mobile | — | — | — | mobile designs show shorter copy | F68 | — | n/s (H23) |
+
+Not yet built: `list` variant (p18).
+
+### D.10 NewsletterBand (§8.4 item 15)
+| Field path | Type | Default | Condition | Needed by | Flag | Mig | Status |
+|---|---|---|---|---|---|---|---|
+| `tone` | select `grey` / `light` | `grey` | always | p3 §Newsletter CTA is a white band with a hairline; others grey | F75 | b4b | H23 |
+| `spacing` | select `standard` / `roomy` | `standard` | always | p4 §Newsletter CTA is roomier | F75 | b4b | H23 |
+| submissions record the source page | uses existing `form-submissions.sourcePath` (§6.13) | — | — | F75 (also the footer form, closes F87) | F75 | — | n/s |
+
+Not yet built: `cross-sell` variant (p18).
+
+### D.11 FormEmbed (§8.4 item 16)
+| Field path | Type | Default | Condition | Needed by | Flag | Mig | Status |
+|---|---|---|---|---|---|---|---|
+| `ground` | select `light` / `grey` | `light` | variant = standard | p9 §Homework form white + roomy vs p12 §Contact form grey band | — (flagged in code comment, no F-number) | b5 | NF |
+| `alertLabel` | text | — | variant = reminder | p10 §Homework reminder phone bar "Required before your call" | — (same) | b5 | NF |
+| `reasons[]` | array max 5 `{ icon select chart / clock / target / check ✓ (default check), text ✓ }` | — | variant = reminder | p10 phone build: three reasons with icons | — (same) | b5 | NF |
+| `steps[]` | array max 10 `{ fieldNames text hasMany ✓, heading, accentPhrase, hint }` | — | variant = standard **and** mobileLayout = stepped | p12 phone "one question at a time" (§8.4 already has `mobileLayout`); unnamed fields fall into the last step | F79 | b5 | H23 |
+| `stepped` | group `{ progressLabel "Question {n} of {m}", confirmationHeading "Got it, {firstName}.", startLabel "Start", nextLabel "Next", backLabel "Back" (sr only), sendAnotherLabel "Send another", selectAsOptions checkbox true }` | as listed | variant = standard **and** mobileLayout = stepped | p12 phone stepped card + confirmation; `confirmationHeading` = F84 personalised confirmation (`{firstName}` = first word of the name; empty → the form's own message) | F79, F84 | b5 (+ `confirmationHeading` b5b) | H23 |
+| `eyebrow` | factory | tick false | variant = standard only | p9 "Pre-call homework" | — | b5 | NF |
+
+### D.12 BookingEmbed (§8.4 item 17)
+| Field path | Type | Default | Condition | Needed by | Flag | Mig | Status |
+|---|---|---|---|---|---|---|---|
+| `newTabLabel` | text | "Trouble with the calendar? Open it in a new tab" | used only in the embed state | p9 §Booking widget, embed state escape link | — | b5 | NF |
+| `fallbackLink` | `linkField` (named; §8.4 "+ fallback link to Contact") | — | no-URL state | p9 fallback | — | b5 | n/s (naming) |
+| `buttonLabel` ✓, `fallbackHeading` ✓ | now required, with defaults "Book your call" / "Booking is offline. Write to us instead." | as listed | — | p9 | — | b5 | NF |
+| `heading` | `headlineFields()` required (§8.4: `heading`) | — | always | also the frame's accessible name (F94: single h2) | F94 | b5 | NF |
+
+### D.13 DirectContact (§8.4 item 18)
+| Field path | Type | Default | Condition | Needed by | Flag | Mig | Status |
+|---|---|---|---|---|---|---|---|
+| `rowLabels` | group `{ email "Email", socials "Socials", location "Location", replyTime "Reply time" }` text, maxLength 30 each | as listed | each shown only when its toggle is on (`replyTime` with `showEmail`) | p12 §Direct info row labels | — | b5 | NF |
+| `map.caption` — default **removed**; **auto rule** | textarea, optional | none (b5 had a placeholder default; b5b drops the column default) | map.show on | p12 caption. Empty → built at render from `site-settings.location`: "Based in {locality}, {region}, serving clients within about {serviceRadiusMiles} miles." (missing parts omitted; nothing if all missing). Typing overrides it | F109 | b5b | H23 |
+| `map.zoom` | number min 0.5, max 2, step 0.25 | 1 | map.show on | p12 map framing (§8.4 had `zoom number`) | — | b5 | NF (constraints) |
+| `skipFormLine` maxLength 40 | constraint | "Skip the form" | always | p12 mobile | — | b5 | NF |
+
+### D.14 AccordionFAQ (§8.5 item 19)
+| Field path | Type | Default | Condition | Needed by | Flag | Mig | Status |
+|---|---|---|---|---|---|---|---|
+| `spacing` | select `middle` / `first` / `last` / `only` | `middle` | variant = group | p11: first/last group get page-edge spacing | — | b5 | NF |
+| `anchorId` validation | lowercase slug (`a-z0-9` + single hyphens); not reserved (`main`, `__next`, `dc-water*`); unique among `group` blocks earlier in the same layout | — | variant = group | p11 jump links (no duplicate DOM ids) | F90 | — | H22 (validation only) |
+| `limit` | number min 1, max 12 | 6 | **always (both sources)** | p4/p5/p6 mini lists. See contradiction C7 | — | b4 | NF |
+| `heading` | plain text ✓ (no accent phrase) | — | always | "Routing questions" | — | b4 | n/s |
+| `category` options | derived from `faqs.category` at config load | — | source = category | cannot drift from the collection | — | b4 | n/s |
+
+### D.15 CategoryTabs (§8.5 item 20), TeamIntro (§8.3 item 12), FinalCTA, MiniCTAStrip, ProofStrip
+- **No schema extras.** `CategoryTabs.ariaLabel` is now required with default "FAQ categories" (NF, constraint only). Render rules only: F91 tabs only for groups with published FAQs, F96 `aria-current="location"` (H22, n/s); F47 ProofStrip big-number layout only for purely numeric statistics (H22, n/s); TeamIntro `member` required when variant = founder-card (matches §8.3).
+- Still to build per §8: MiniCTAStrip `button`, ProofStrip `metrics`, and the blocks OfferBlock, LinkStack, PostList, Error404.
+
+### D.16 Collections
+| Collection · field | Change | Needed by | Flag | Mig | Status |
+|---|---|---|---|---|---|
+| `testimonials.video.poster` required when `format = video` | **Already in §6.4 / §10**; enforced at publish (`Testimonials.ts` `validatePoster`) | p7 video tiles (no poster → empty tile) | F82 | — | n/s (H23 confirms existing rule) |
+| maxDepth 1 → **2**: `case-studies.client`, `case-studies.heroMedia`, `testimonials.client`, `testimonials.video.poster`, `clients.logo`, `team-members.photo` | §6 says maxDepth 1 | populate when reached through a page block (Payload caps nested population per field) | F60 | — (admin config, types identical) | H23 |
+| `forms` field blocks `text` / `email` / `textarea` gain `placeholder` | text, optional (§6.12 lists no field-block changes) | p12 contact form and p9 homework field hints ("you@store.com") | — | b4 | NF |
+
+### D.17 Globals
+| Global · field | Type | Default | Condition | Needed by | Flag | Mig | Status |
+|---|---|---|---|---|---|---|---|
+| `site-settings.caseStudyLabels` (tab "Template labels") | group of 11 text fields, maxLength 60: `breadcrumbWork` "Work", `studyWord` "Study", `inShort` "In short", `publishedPrefix` "Published", `figuresApproved` "Client-approved figures", `readTimeSuffix` "min read", `clientVoiceNumber` "04", `clientVoiceDifferently` "What we'd do differently", `clientVoicePhases` "How this maps to our phases", `nextStudy` "Next study", `nextStudyRead` "Read it →" | as listed (one source: `src/lib/caseStudyLabels.ts`); empty → default per field | — | p2 template fixed wording (breadcrumb, meta line, In-short box, client-voice labels, next-study line) | F76 | b5b | H23 |
+| case-study closing FinalCTA capacity follows `track` (growth → `engines-line`, else `builds-line`) | render rule | — | — | p2 §Final CTA | F76 | — | n/s (H23) |
+| `site-settings.aggregateRating.*` conditional required | `ratingValue`, `reviewCount`, `asOf`, `sourceUrl` required when `show` is on | — | show on | p19/p7 rating hidden until real (R5) | — | — | NF (validation only; see C1) |
+
+### D.18 Summary of open code ↔ SCHEMA contradictions (decide at this Gate S)
+| # | Where | SCHEMA says | Code does | Recommendation |
+|---|---|---|---|---|
+| C1 | `src/blocks/Hero/Component.tsx:32-51`, `config.ts:150-159` | §7.1: the rating comes from `site-settings.aggregateRating` (GBP figure, `show` gate, hidden until real, R5); p19 hero "pulls from GBP" | Computes average + count from **published testimonials with a rating**; `site-settings.aggregateRating` is read by no renderer | Decide the source. Testimonials-derived is self-consistent with what is shown; GBP-derived matches p19's wording. Either way, one of the two must go |
+| C2 | `src/blocks/Hero/config.ts:237` | §9 p8 row 1 "Hero · article (stats, full-bleed media)" | `stats` is shown for typographic / service only, not article | Add `article` to the `stats` condition when p8 is built (admin-only, no DB change), or remap p8 row 1 |
+| C3 | `src/globals/SeoDefaults.ts:273` | Delta log 2026-10-21 #4: default `ProfessionalService`; Decision log 2026-10-23 (F103–F106): "leave `localBusiness.type` unset so plain Organization is emitted" | `defaultValue` is still `ProfessionalService`, so a first admin save of the global emits LocalBusiness | Drop the `defaultValue` (enum unchanged; small migration for the column default) and have the seed leave it null |
+| C4 | `src/blocks/CaseStudyCards/config.ts:124`, `TestimonialRow/config.ts:102`, collection fields in D.16 | maxDepth 1 | maxDepth 2 | Approve (D.2/D.5/D.16, F60) |
+| C5 | `src/blocks/CaseStudyCards/config.ts:104` | `track` single select | hasMany | Approve (F72) |
+| C6 | `src/blocks/TwoTrackPanels/config.ts:273` | `panels[].body ✓` | required except in `contrast` | Approve (D.6) |
+| C7 | `src/blocks/AccordionFAQ/config.ts:150-156` | no `limit`; p11 groups list a whole category | `limit` (default 6) also caps `source = category`, so a p11 group with 7+ published FAQs silently drops the rest | Condition `limit` to `source = selected`, or default it higher for groups |
+| C8 | `src/blocks/CaseStudyCards/config.ts:285` | F77 (2026-10-23): neutral fallback eyebrow "The numbers we can show" | `defaultValue` still "No studies live yet — the numbers we can show" (announces absence) | Seed overrides per F77; consider changing the default too |
+| C9 | `src/blocks/DirectContact/Component.tsx:129,131` | §8.4: values come from `site-settings` | hard fallbacks `'Lombard'` and radius `30` when settings are empty | Accept as a safety net, or render no map when location is empty |
+
+**Delta S5 count: 68 table rows awaiting sign-off (H23 23 · H22 3 · NF 42), 12 n/s rows listed for completeness, 9 contradictions (C1–C9) to decide, 1 §9 mapping change (p4 row 2 → TwoTrackPanels · doors).**

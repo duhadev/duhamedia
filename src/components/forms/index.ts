@@ -2,3 +2,4 @@
 export { CMSForm, type CMSFormProps } from './CMSForm'
 export { PayloadForm, type PayloadFormClassNames, type PayloadFormProps } from './PayloadForm'
 export { TurnstileWidget, type TurnstileWidgetProps } from './TurnstileWidget'
+export { PersonalConfirmation } from './submitted'

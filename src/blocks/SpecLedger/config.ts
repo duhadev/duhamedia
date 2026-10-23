@@ -1,6 +1,7 @@
 import type { Block, Condition } from 'payload'
 
 import { eyebrowField, headlineFields, pricingNote } from '../../fields'
+import { rowLabel } from '../../components/admin/rowLabel'
 
 /**
  * SpecLedger block (SCHEMA §8.3 item 14, new, X7): a coded deliverable ledger.
@@ -97,6 +98,7 @@ export const SpecLedger: Block = {
       maxRows: 10,
       labels: { singular: 'Item', plural: 'Items' },
       admin: {
+        components: { RowLabel: rowLabel(['code', 'title'], 'Item') },
         initCollapsed: true,
         description: 'The cards, rows or tiles. Add, remove and drag to reorder.',
       },
