@@ -1,6 +1,6 @@
 import config from '@payload-config'
 import { getPayload } from 'payload'
-import React from 'react'
+import React, { useId } from 'react'
 
 import type { BlockData } from '@/blocks/types'
 import { AccentHeadline, ButtonLink, DotMatrix, Section } from '@/components/ui'
@@ -32,6 +32,17 @@ async function load(needScarcity: boolean): Promise<Loaded> {
     console.error('[FinalCTA] could not read the scarcity / site-settings globals', error)
     return { scarcity: null, defaults: null }
   }
+}
+
+/** Loud statistic + quiet reason as one group for assistive tech (F55). Own component for `useId`. */
+function Capacity({ statistic, reason }: { statistic: string; reason: string }) {
+  const uid = useId()
+  return (
+    <div role="group" aria-labelledby={`${uid}-stat`} aria-describedby={`${uid}-why`} className="mt-4.5 md:mt-5">
+      <p id={`${uid}-stat`} className="text-body-mobile font-bold md:text-body">{statistic}</p>
+      <p id={`${uid}-why`} className="mt-1 text-small-mobile opacity-70 md:text-small">{reason}</p>
+    </div>
+  )
 }
 
 /**
@@ -84,10 +95,7 @@ export async function FinalCTABlock({ heading, accentPhrase, body, capacity, but
         {title ? <AccentHeadline text={title} accent={accent} level={2} accentColor="ground" /> : null}
         {body?.trim() ? <p className="mt-4.5 text-body-mobile opacity-85 md:mt-5 md:text-body">{body}</p> : null}
         {statistic && reason ? (
-          <div className="mt-4.5 md:mt-5">
-            <p className="text-body-mobile font-bold md:text-body">{statistic}</p>
-            <p className="mt-1 text-small-mobile opacity-70 md:text-small">{reason}</p>
-          </div>
+          <Capacity statistic={statistic} reason={reason} />
         ) : null}
         {links.length ? (
           <div className="mt-7 flex flex-col items-center justify-center gap-3 md:mt-8 md:flex-row md:gap-3.5">

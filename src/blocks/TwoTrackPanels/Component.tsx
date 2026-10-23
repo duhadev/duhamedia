@@ -40,10 +40,10 @@ function Equal({ eyebrow, eyebrowTick, heading, accentPhrase, panels }: Props) {
                     {p.label}
                   </Eyebrow>
                 ) : null}
-                <p className="text-body-mobile leading-[1.7] md:text-body md:leading-[1.7]">
-                  <span className={`font-display font-normal uppercase ${p.accentTitle ? 'text-ground-accent' : ''}`}>
+                <div className="text-body-mobile leading-[1.7] md:text-body md:leading-[1.7]">
+                  <h3 className={`inline font-display font-normal uppercase ${p.accentTitle ? 'text-ground-accent' : ''}`}>
                     {p.title}
-                  </span>{' '}
+                  </h3>{' '}
                   {p.body}
                   {p.pricingNote?.trim() ? <> {p.pricingNote.trim()}</> : null}
                   {linkText ? (
@@ -54,7 +54,7 @@ function Equal({ eyebrow, eyebrowTick, heading, accentPhrase, panels }: Props) {
                       </CMSLink>
                     </>
                   ) : null}
-                </p>
+                </div>
               </div>
             )
           })}
@@ -102,7 +102,8 @@ function Contrast({ eyebrow, eyebrowTick, heading, accentPhrase, panels, conclus
                   <span className="font-mono text-[10px] font-bold uppercase tracking-[0.1em] text-gray-warm">{p.label}</span>
                 ) : null}
                 <p className={`${p.label ? 'mt-2.5' : ''} text-[1.0625rem] leading-[1.4] text-gray-warm md:text-lg md:leading-[1.4]`}>
-                  <del className="decoration-ground-accent decoration-2">{p.claim}</del>
+                  <span className="sr-only">Common claim: </span>
+                  <s className="decoration-ground-accent decoration-2">{p.claim}</s>
                 </p>
                 <h3 className="mt-2.5 font-display text-xl font-normal uppercase leading-[1.12] md:mt-3 md:text-2xl">{p.title}</h3>
               </div>
@@ -217,6 +218,8 @@ function Doors({ heading, accentPhrase, eyebrow, eyebrowTick, panels, conclusion
   if ((panels ?? []).length !== rows.length) {
     console.error('[TwoTrackPanels] a door is missing its title or body and was skipped.')
   }
+  // Door titles are h3 under the section headline; without one they are the section's h2.
+  const TitleTag = heading?.trim() ? 'h3' : 'h2'
   return (
     <Section tone="light" pad="none" className="pb-7 md:pb-18">
       <Container>
@@ -233,14 +236,14 @@ function Doors({ heading, accentPhrase, eyebrow, eyebrowTick, panels, conclusion
             const wine = p.accentTitle === true
             const inner = (
               <>
-                <span className="flex items-baseline justify-between gap-3 md:flex-col md:items-start md:gap-4">
-                  <span className="font-display text-lg leading-[1.05] uppercase md:text-2xl">{p.title}</span>
+                <div className="flex items-baseline justify-between gap-3 md:flex-col md:items-start md:gap-4">
+                  <TitleTag className="font-display text-lg leading-[1.05] font-normal uppercase md:text-2xl">{p.title}</TitleTag>
                   {p.pricingNote?.trim() ? (
                     <span className={`shrink-0 text-small-mobile md:text-small ${wine ? 'text-ground-accent' : 'text-gray-warm'}`}>
                       {p.pricingNote.trim()}
                     </span>
                   ) : null}
-                </span>
+                </div>
                 <span className={`text-[0.9375rem] leading-[1.55] text-ink/80 md:text-base md:leading-[1.6] ${cta ? 'md:mb-2' : ''}`}>{p.body}</span>
                 {cta ? (
                   <span

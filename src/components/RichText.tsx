@@ -79,6 +79,7 @@ export const linkConverters = (className?: string): Pick<JSXConverters, 'link' |
     return (
       <a href={href} className={className} {...(newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
         {children}
+        {newTab ? <span className="sr-only"> (opens in a new tab)</span> : null}
       </a>
     )
   }

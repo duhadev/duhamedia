@@ -23,7 +23,22 @@ export const RESERVED_ANCHOR_IDS = ['main', '__next', 'dc-water'] as const
  * `group` FAQ blocks of the same layout. Empty is allowed.
  */
 const validateAnchorId: TextFieldSingleValidation = (value, options) => {
-  const base = text(value, options)
+  try {
+    return checkAnchorId(value, options)
+  } catch {
+    // Never throw: in the browser `options` is shaped differently from the server's. Publish-time server run decides.
+    return true
+  }
+}
+
+const checkAnchorId = (value: string | null | undefined, options: Parameters<TextFieldSingleValidation>[1]): string | true => {
+  // The stock text validator reads `req.payload.config`, which does not exist in the browser: guard it.
+  let base: string | true = true
+  try {
+    base = text(value, options) as string | true
+  } catch {
+    base = true
+  }
   if (base !== true) return base
   if (typeof value !== 'string' || value.trim() === '') return true
   if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(value)) return 'Use lowercase letters, numbers and single hyphens only, e.g. "pricing".'
@@ -31,9 +46,9 @@ const validateAnchorId: TextFieldSingleValidation = (value, options) => {
     return `"${value}" is used by the site itself. Pick a different anchor, e.g. "pricing" or "builds".`
   }
   // path is ['layout', 2, 'anchorId'] in the admin and ['layout', '2', 'anchorId'] on the server.
-  const { path, data } = options
-  const idx = path.length >= 3 ? Number(path[path.length - 2]) : NaN
-  const rows = Number.isInteger(idx) ? (data as Record<string, unknown>)?.[String(path[0])] : undefined
+  const { path, data } = options ?? {}
+  const idx = Array.isArray(path) && path.length >= 3 ? Number(path[path.length - 2]) : NaN
+  const rows = Number.isInteger(idx) && data ? (data as Record<string, unknown>)[String(path[0])] : undefined
   if (Array.isArray(rows)) {
     const clash = rows.slice(0, idx).some((r) => {
       const b = r as { blockType?: unknown; variant?: unknown; anchorId?: unknown } | null

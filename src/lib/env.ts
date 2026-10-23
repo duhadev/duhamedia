@@ -1,20 +1,15 @@
 import 'server-only'
 
 /**
- * Runtime environment helpers. Server-only: read on every call, never inlined
- * at build time (no NEXT_PUBLIC_* anywhere), so one image serves every env.
+ * Runtime environment helpers for Next server code. Server-only: read on every
+ * call, never inlined at build time (no NEXT_PUBLIC_* anywhere), so one image
+ * serves every env. The implementations live in `./siteUrl` (importable from
+ * the Payload config too: one shared SITE_URL helper, F65 B1).
  */
-export type AppEnv = 'production' | 'staging' | 'development'
+import { getAppEnv } from './siteUrl'
 
-export function getAppEnv(): AppEnv {
-  const value = process.env.APP_ENV
-  return value === 'production' || value === 'staging' ? value : 'development'
-}
+export { absoluteUrl, getAppEnv, getSiteUrl, type AppEnv } from './siteUrl'
 
 export function isProduction(): boolean {
   return getAppEnv() === 'production'
-}
-
-export function getSiteUrl(): string {
-  return (process.env.SITE_URL || 'http://localhost:3000').replace(/\/+$/, '')
 }

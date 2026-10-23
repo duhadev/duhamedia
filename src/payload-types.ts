@@ -438,6 +438,9 @@ export interface HeroBlock {
          * e.g. "01".
          */
         number: string;
+        /**
+         * The step name, e.g. "Build", "Operate", "Independence".
+         */
         label: string;
         id?: string | null;
       }[]
@@ -1977,7 +1980,7 @@ export interface MetricEventBlock {
     change?: string | null;
   };
   /**
-   * One row per measured result. Drag to reorder. On a case study this is filled from the case study itself.
+   * Table: one row per measured result (measure, before, after, change). Company facts: one row per fact (label and value). Drag to reorder. On a case study the table rows come from the case study itself.
    */
   items?:
     | {

@@ -1,6 +1,6 @@
 import config from '@payload-config'
 import { getPayload } from 'payload'
-import React from 'react'
+import React, { useId } from 'react'
 
 import { AccentHeadline, Container, ButtonLink, Section } from '@/components/ui'
 import type { BlockData } from '@/blocks/types'
@@ -80,14 +80,49 @@ export async function NewsletterBandBlock({
 
   if (!form && !newsletterHref) return null
 
+  return (
+    <Band
+      title={title}
+      accent={accent}
+      quiet={quiet}
+      label={label}
+      tone={tone}
+      spacing={spacing}
+      form={form}
+      newsletterHref={newsletterHref}
+    />
+  )
+}
+
+/** The band markup. Own sync component so `useId` can name the section by its heading (accessible name for the signup region). */
+function Band({
+  title,
+  accent,
+  quiet,
+  label,
+  tone,
+  spacing,
+  form,
+  newsletterHref,
+}: {
+  title: string
+  accent: string | null | undefined
+  quiet: string
+  label: string
+  tone: NewsletterBandData['tone']
+  spacing: NewsletterBandData['spacing']
+  form: Loaded['form']
+  newsletterHref: string | null
+}) {
+  const headingId = useId()
   const light = tone === 'light'
   const pad = spacing === 'roomy' ? 'py-12 md:py-16' : 'py-9 md:py-14'
 
   return (
-    <Section tone={light ? 'light' : 'grey'} pad="none" divider={light ? 'bottom' : 'none'} className={pad}>
+    <Section aria-labelledby={title ? headingId : undefined} tone={light ? 'light' : 'grey'} pad="none" divider={light ? 'bottom' : 'none'} className={pad}>
       <Container className="flex flex-col gap-4 md:flex-row md:flex-wrap md:items-center md:justify-between md:gap-8">
         <div>
-          {title ? <AccentHeadline text={title} accent={accent} level={3} /> : null}
+          {title ? <AccentHeadline id={headingId} text={title} accent={accent} level={3} /> : null}
           {quiet ? <p className="mt-2 text-small text-gray-warm">{quiet}</p> : null}
         </div>
         {form ? (

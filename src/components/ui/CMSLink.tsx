@@ -61,17 +61,21 @@ export function CMSLink({
   if (!href || content === null || content === undefined || content === '') return null
 
   const newTab = link?.newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {}
+  // SEO/a11y F64 A2: AT users get the same "opens in a new tab" cue sighted users infer.
+  const cue = link?.newTab ? <span className="sr-only"> (opens in a new tab)</span> : null
 
   if (href.startsWith('/') && !href.startsWith('//')) {
     return (
       <Link href={href} className={className} {...newTab} {...rest}>
         {content}
+        {cue}
       </Link>
     )
   }
   return (
     <a href={href} className={className} {...newTab} {...rest}>
       {content}
+      {cue}
     </a>
   )
 }

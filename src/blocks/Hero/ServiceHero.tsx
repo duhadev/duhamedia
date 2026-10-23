@@ -67,7 +67,7 @@ export function ServiceHero({
             ) : null}
           </div>
           {hasAside ? (
-            <aside className="-mx-container-mobile md:-mx-container lg:mx-0 lg:border-l lg:border-cream/30 lg:pl-7">
+            <div className="-mx-container-mobile md:-mx-container lg:mx-0 lg:border-l lg:border-cream/30 lg:pl-7">
               {figures.length ? (
                 <ul
                   className={cx(
@@ -112,7 +112,7 @@ export function ServiceHero({
                   ) : null}
                 </div>
               ) : null}
-            </aside>
+            </div>
           ) : null}
         </Container>
       </Section>

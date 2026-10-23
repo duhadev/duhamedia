@@ -77,7 +77,7 @@ const makeConverters =
           <div className="border-2 border-ink bg-gray-light">
             <Media
               resource={media}
-              alt={n.fields?.alt ?? undefined}
+              alt={n.fields?.alt?.trim() || undefined}
               sizes="(min-width: 768px) 820px, 100vw"
               className="block h-auto w-full"
             />

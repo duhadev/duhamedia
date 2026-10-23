@@ -244,7 +244,7 @@ export const Hero: Block = {
           type: 'row',
           fields: [
             { name: 'number', type: 'text', required: true, admin: { width: '25%', description: 'e.g. "01".' } },
-            { name: 'label', type: 'text', required: true, admin: { width: '75%' } },
+            { name: 'label', type: 'text', required: true, admin: { width: '75%', description: 'The step name, e.g. "Build", "Operate", "Independence".' } },
           ],
         },
       ],

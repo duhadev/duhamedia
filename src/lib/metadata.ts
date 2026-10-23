@@ -5,12 +5,12 @@ import type { Metadata } from 'next'
 import { getPayload } from 'payload'
 import { cache } from 'react'
 
-import { DEFAULT_TITLE_TEMPLATE, TITLE_PLACEHOLDER } from '@/globals/SeoDefaults'
-import { getSiteUrl, isProduction } from '@/lib/env'
+import { DEFAULT_DESCRIPTION_MAX, DEFAULT_TITLE_TEMPLATE, TITLE_PLACEHOLDER } from '@/globals/SeoDefaults'
+import { absoluteUrl, getSiteUrl, isProduction } from '@/lib/env'
 import { docPath } from '@/lib/docPath'
 import { HOME_SLUG, pagePath } from '@/lib/pagePath'
 import type { CaseStudy, Media, Page, SeoDefault } from '@/payload-types'
-import { HOME_SEO_TITLE } from '@/plugins/seo'
+import { HOME_SEO_TITLE, truncate } from '@/plugins/seo'
 
 /**
  * Per-page `<head>` metadata (router unit B2; next@16 `generateMetadata`,
@@ -25,11 +25,13 @@ import { HOME_SEO_TITLE } from '@/plugins/seo'
  * - share image: `meta.image` → `seo-defaults.defaultOgImage`, each only via its
  *   1200×630 `og` size (Media `imageSizes.og`); none when neither has one.
  * - canonical / og:url: `SITE_URL` + `pagePath(slug)` (absolute).
- * - robots: noindex,nofollow when APP_ENV ≠ production, when the page is in
- *   draft preview, or when the page sets `noindex` or `zeroLeakage`
- *   (campaign landing pages are never indexed). `robots` is a nested field,
- *   so the page's value REPLACES the layout's (generate-metadata.md
- *   "Merging"): exactly one robots tag.
+ * - robots meta: noindex,nofollow when the page is in draft preview, or sets
+ *   `noindex` or `zeroLeakage` (campaign landing pages are never indexed);
+ *   otherwise `index, follow` in production and NO robots meta elsewhere.
+ *   The environment rule (staging / dev never indexed) is NOT metadata any
+ *   more: src/proxy.ts sends `X-Robots-Tag: noindex, nofollow` on every
+ *   non-production response (F78 B1), so no route ever prints two robots
+ *   meta tags (the layout sets none).
  *
  * Every global read is defensive: an unsaved global has no row (payload@3.91.0
  * globals/operations/findOne.js) and a failed read must not take a page down.
@@ -92,8 +94,7 @@ const buildMetadata = async (input: MetaInput): Promise<Metadata> => {
   const title = input.title
   const description = clean(input.description) || clean(defaults.defaultDescription) || undefined
   const image = ogImage(input.image) ?? ogImage(defaults.defaultOgImage)
-  const url = input.path ? `${getSiteUrl()}${input.path}` : undefined
-  const noindex = !isProduction() || input.noindex
+  const url = input.path ? absoluteUrl(input.path) : undefined
 
   return {
     title: { absolute: title },
@@ -119,7 +120,7 @@ const buildMetadata = async (input: MetaInput): Promise<Metadata> => {
       description,
       images: image ? [image] : undefined,
     },
-    robots: noindex ? NOINDEX : { index: true, follow: true },
+    robots: input.noindex ? NOINDEX : isProduction() ? { index: true, follow: true } : undefined,
   }
 }
 
@@ -137,16 +138,29 @@ export const pageMetadata = async (page: Page, { preview = false }: { preview?: 
   })
 }
 
-/** `/` before a `home` doc is published (fresh DB): brand title + seo-defaults description/image. */
+/**
+ * `/` before a `home` doc is published (fresh DB): brand title + seo-defaults
+ * description/image, and NOINDEX (F65 B3): the placeholder is not the
+ * homepage, and the sitemap (published pages only) does not list it either.
+ */
 export const homeFallbackMetadata = (): Promise<Metadata> =>
-  buildMetadata({ title: HOME_SEO_TITLE, path: '/', noindex: false })
+  buildMetadata({ title: HOME_SEO_TITLE, path: '/', noindex: true })
+
+/** A case study's own description: `meta.description`, else its summary cut to 155 (F78 B2); '' when none. */
+const caseStudyDescription = (study: CaseStudy): string => {
+  const own = clean(study.meta?.description)
+  if (own) return own
+  const summary = clean(study.cardSummary) || clean(study.inShort)
+  return summary ? truncate(summary, DEFAULT_DESCRIPTION_MAX) : ''
+}
 
 /**
  * `/work/<slug>` (S4-12). Same precedence as pages, with the study's own
  * fallbacks in between (the same ones plugin-seo's generate buttons use,
  * src/plugins/seo.ts `summaryOf` / `generateImage`):
  * - title: `meta.title` → seo-defaults template with `%s` = the study title.
- * - description: `meta.description` → `cardSummary` → `inShort` → seo-defaults.
+ * - description: `meta.description` (≤155 by validation) → `cardSummary` →
+ *   `inShort` (either cut to 155 at a word boundary, F78 B2) → seo-defaults.
  * - share image: `meta.image` → `heroMedia` (its `og` size) → seo-defaults.
  * - canonical `/work/<slug>`; noindex outside production and in draft preview.
  * - Open Graph type `article` with published / modified times.
@@ -160,7 +174,7 @@ export const caseStudyMetadata = async (
   const image = ogImage(study.meta?.image) ? study.meta?.image : ogImage(study.heroMedia) ? study.heroMedia : null
   return buildMetadata({
     title,
-    description: clean(study.meta?.description) || clean(study.cardSummary) || clean(study.inShort) || null,
+    description: caseStudyDescription(study) || null,
     image,
     path: docPath('case-studies', study),
     noindex: preview,
@@ -184,17 +198,67 @@ export const absoluteMediaUrl = (
   return /^https?:\/\//.test(url) ? url : `${getSiteUrl()}${url.startsWith('/') ? '' : '/'}${url}`
 }
 
+export type Crumb = { label: string; href: string | null }
+
+/** Google: `headline` should not exceed 110 characters. */
+const HEADLINE_MAX = 110
+
+/** `href` → absolute http(s) URL, or `null` (unresolved, mailto:, tel:, …). */
+const absoluteHref = (href: string | null): string | null => {
+  if (!href) return null
+  if (href.startsWith('/') && !href.startsWith('//')) return absoluteUrl(href)
+  return /^https?:\/\//.test(href) ? href : null
+}
+
 /**
- * schema.org `Article` for a case study (headline, dates, image, author and
- * publisher = the Organization from seo-defaults, url = canonical). Facts
- * only: everything comes from the document or seo-defaults; nothing invented.
- * Serialised by the route with `<` escaped.
+ * schema.org `BreadcrumbList` mirroring a VISIBLE breadcrumb trail (Hero
+ * `breadcrumb`, F78 INFO recipe): same labels, same order. The last crumb is
+ * the current page (`item` = its canonical URL). Earlier crumbs without a
+ * resolvable destination are left out (Google requires `item` on every
+ * non-last element) and positions renumber. `null` when fewer than two remain.
  */
-export const caseStudyJsonLd = async (study: CaseStudy): Promise<Record<string, unknown>> => {
+export const breadcrumbJsonLd = (
+  crumbs: readonly Crumb[],
+  currentUrl: string | undefined,
+): Record<string, unknown> | null => {
+  const named = crumbs.map((c) => ({ label: clean(c.label), href: c.href })).filter((c) => c.label)
+  if (named.length < 2) return null
+  const last = named[named.length - 1]
+  const trail = named
+    .slice(0, -1)
+    .map((c) => ({ name: c.label, item: absoluteHref(c.href) }))
+    .filter((c): c is { name: string; item: string } => Boolean(c.item))
+  const items = [...trail, { name: last.label, item: currentUrl }]
+  if (items.length < 2) return null
+  return {
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((c, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: c.name,
+      ...(c.item ? { item: c.item } : {}),
+    })),
+  }
+}
+
+/**
+ * schema.org `Article` + `BreadcrumbList` for a case study, as one `@graph`
+ * (F78 LOW). Facts only: everything comes from the document or seo-defaults.
+ * - headline: the title, cut to 110 at a word boundary (Google limit).
+ * - description: the same text as the meta description (own fields only).
+ * - image: the share image first (the same `og` crop as og:image:
+ *   `meta.image` → `heroMedia`), then the hero's original upload (other aspect
+ *   ratio, larger), de-duplicated.
+ * - inLanguage `en` (the site is English only, `<html lang="en">`).
+ * - author / publisher = the Organization from seo-defaults; url = canonical.
+ * - breadcrumb = the visible Hero trail (Work → this study).
+ * Never Review / AggregateRating (F64 A6). Serialised by the route with `<` escaped.
+ */
+export const caseStudyJsonLd = async (study: CaseStudy, crumbs: readonly Crumb[]): Promise<Record<string, unknown>> => {
   const defaults = await getSeoDefaults()
   const site = getSiteUrl()
   const path = docPath('case-studies', study)
-  const url = path ? `${site}${path}` : undefined
+  const url = path ? absoluteUrl(path) : undefined
   const logo = absoluteMediaUrl(defaults.organization?.logo, 'original')
   const organization = {
     '@type': 'Organization',
@@ -202,16 +266,23 @@ export const caseStudyJsonLd = async (study: CaseStudy): Promise<Record<string, 
     url: site,
     ...(logo ? { logo: { '@type': 'ImageObject', url: logo } } : {}),
   }
-  const image = absoluteMediaUrl(study.heroMedia)
-  return {
-    '@context': 'https://schema.org',
+  const share = ogImage(study.meta?.image) ? study.meta?.image : study.heroMedia
+  const images = [absoluteMediaUrl(share), absoluteMediaUrl(study.heroMedia, 'original')].filter(
+    (u, i, all): u is string => Boolean(u) && all.indexOf(u) === i,
+  )
+  const description = caseStudyDescription(study)
+  const breadcrumb = breadcrumbJsonLd(crumbs, url)
+  const article = {
     '@type': 'Article',
-    headline: clean(study.title),
+    headline: truncate(clean(study.title), HEADLINE_MAX),
+    ...(description ? { description } : {}),
+    inLanguage: 'en',
     ...(study.publishedAt ? { datePublished: study.publishedAt } : {}),
     ...(study.updatedAt ? { dateModified: study.updatedAt } : {}),
-    ...(image ? { image: [image] } : {}),
+    ...(images.length ? { image: images } : {}),
     ...(url ? { url, mainEntityOfPage: { '@type': 'WebPage', '@id': url } } : {}),
     author: organization,
     publisher: organization,
   }
+  return { '@context': 'https://schema.org', '@graph': breadcrumb ? [article, breadcrumb] : [article] }
 }

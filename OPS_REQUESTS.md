@@ -80,3 +80,13 @@ Requests from the duhamedia.com build to the server agent, relayed by the human.
 - **Why:** CLAUDE.md Security §1. Every public form (contact, pre-call homework, newsletter, lead magnet, footer nudge) submits only to this path; Turnstile is verified server-side before anything is stored, and this rule caps abuse before it reaches the server.
 - **Also:** `SITE_URL` must be exactly the public origin on staging and production (`https://staging.duhamedia.com`, `https://duhamedia.com`) — the form route's same-origin check and the Turnstile hostname check both depend on it; a wrong value makes every form submission fail.
 - **Done when:** 6+ rapid POSTs to `https://staging.duhamedia.com/api/form-submit` from one IP within 10 s return Cloudflare's 429/block page; a single normal form submit on staging still works.
+
+## #11 — Keep the `X-Robots-Tag` header on staging · 2026-10-23 · Open (human, Cloudflare dashboard)
+- **Need:** no Cloudflare Transform Rule, cache setting or header-modification rule may strip or override the `X-Robots-Tag` response header on `staging.duhamedia.com` (or production).
+- **Why:** outside production the site now sends `X-Robots-Tag: noindex, nofollow` from `src/proxy.ts` (driven by `APP_ENV`), replacing the per-page robots meta. Staging's noindex depends on this header plus `robots.txt` `Disallow: /`.
+- **Done when:** `curl -sI https://staging.duhamedia.com/` (through Access) shows `x-robots-tag: noindex, nofollow`; production shows no such header.
+
+## #12 — `SITE_URL` is now mandatory on staging and production · 2026-10-23 · Open (server agent)
+- **Need:** each server `.env` sets `SITE_URL` to the exact public origin: staging `https://staging.duhamedia.com`, production `https://duhamedia.com` (no trailing slash needed). `APP_ENV` must be `staging` / `production` respectively.
+- **Why:** canonicals, sitemap, Open Graph URLs, live preview and the form route's Turnstile hostname check all use it. With `APP_ENV` ≠ development and `SITE_URL` unset or invalid, pages error and `/api/health` returns **503**, so the deploy script's health poll rolls the release back instead of serving localhost URLs.
+- **Done when:** after a staging deploy, `curl -s https://staging.duhamedia.com/api/health` returns 200 and the homepage canonical is `https://staging.duhamedia.com`.

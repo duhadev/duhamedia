@@ -62,7 +62,7 @@ export const MetricEvent: Block = {
       labels: { singular: 'Row', plural: 'Rows' },
       admin: {
         description:
-          'One row per measured result. Drag to reorder. On a case study this is filled from the case study itself.',
+          'Table: one row per measured result (measure, before, after, change). Company facts: one row per fact (label and value). Drag to reorder. On a case study the table rows come from the case study itself.',
         initCollapsed: true,
       },
       fields: [

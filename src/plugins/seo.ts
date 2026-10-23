@@ -24,6 +24,7 @@ import {
 } from '../globals/SeoDefaults'
 import { docPath } from '../lib/docPath'
 import { HOME_SLUG } from '../lib/pagePath'
+import { absoluteUrl } from '../lib/siteUrl'
 
 /**
  * P3: `@payloadcms/plugin-seo@3.91.0` (DECISIONS §I, CLAUDE.md "Approved
@@ -231,25 +232,18 @@ export const generateImage: GenerateImage<SeoDoc> = async (args) => {
   }
 }
 
-/** `SITE_URL` (server-side env, DECISIONS: no NEXT_PUBLIC_*) without a trailing slash, or '' if unset/invalid. */
-export const siteOrigin = (): string => {
-  const raw = (process.env.SITE_URL ?? '').trim()
-  if (!raw) return ''
-  try {
-    const url = new URL(raw)
-    return /^https?:$/.test(url.protocol) ? url.origin : ''
-  } catch {
-    return ''
-  }
-}
-
-/** `SITE_URL` + `docPath()`; a relative path when SITE_URL is missing; '' when the doc has no public path. */
+/**
+ * `SITE_URL` + `docPath()` via the shared `getSiteUrl()` (localhost only in
+ * development; staging/production without SITE_URL throws, which is caught
+ * below: the admin button gets '' and the error is logged, never a localhost
+ * URL). '' when the doc has no public path.
+ */
 export const generateURL: GenerateURL<SeoDoc> = (args) => {
   try {
     const collection = slugOf(args)
     const path = collection ? docPath(collection, args.doc) : null
     if (!path) return ''
-    return `${siteOrigin()}${path}`
+    return absoluteUrl(path)
   } catch (err) {
     args.req.payload.logger.warn({ err, msg: 'plugin-seo generateURL failed' })
     return ''

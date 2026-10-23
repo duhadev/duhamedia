@@ -3,7 +3,7 @@ import type { MetadataRoute } from 'next'
 import { getPayload } from 'payload'
 
 import { docPath } from '@/lib/docPath'
-import { getSiteUrl } from '@/lib/env'
+import { absoluteUrl } from '@/lib/env'
 import { NOT_FOUND_SLUG, pagePath } from '@/lib/pagePath'
 
 /**
@@ -15,7 +15,10 @@ import { NOT_FOUND_SLUG, pagePath } from '@/lib/pagePath'
  * - PUBLISHED `pages` only (public access + `_status` filter + `draft: false`),
  *   absolute URLs from server-side `SITE_URL`, `lastModified` = `updatedAt`.
  * - Left out: the reserved `404` doc, pages with `noindex`, zero-leakage
- *   (campaign landing) pages. `home` is listed once, as `/`. `/_showcase`
+ *   (campaign landing) pages. `home` is listed once, as the bare origin
+ *   (`absoluteUrl('/')`), the same form as its canonical (F65 B2). The `/`
+ *   placeholder shown before a home doc is published is noindex and, having
+ *   no published doc, is not listed (F65 B3). `/_showcase`
  *   and `/_preview` are not pages and never appear.
  * - PUBLISHED `case-studies` at `/work/<slug>` (S4-12), after the pages, newest
  *   first. posts / lead-magnets join when their template routes land.
@@ -53,15 +56,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     sort: '-publishedAt',
     select: { slug: true, updatedAt: true },
   })
-  const site = getSiteUrl()
   const pageEntries = docs.flatMap((doc) => {
     if (doc.noindex === true || doc.zeroLeakage === true) return []
     const path = pagePath(doc.slug)
-    return path ? [{ url: `${site}${path}`, lastModified: doc.updatedAt }] : []
+    return path ? [{ url: absoluteUrl(path), lastModified: doc.updatedAt }] : []
   })
   const studyEntries = studies.flatMap((doc) => {
     const path = docPath('case-studies', doc)
-    return path ? [{ url: `${site}${path}`, lastModified: doc.updatedAt }] : []
+    return path ? [{ url: absoluteUrl(path), lastModified: doc.updatedAt }] : []
   })
   return [...pageEntries, ...studyEntries]
 }

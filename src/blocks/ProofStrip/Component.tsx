@@ -1,6 +1,6 @@
 import config from '@payload-config'
 import { getPayload } from 'payload'
-import React from 'react'
+import React, { useId } from 'react'
 
 import type { BlockData } from '@/blocks/types'
 import { Container, Eyebrow, Media, Section } from '@/components/ui'
@@ -34,43 +34,15 @@ export async function ProofStripBlock({ statements, pricingNote, logos }: BlockD
         <Container className="max-md:px-0">
           <div className={cx('grid', resolved.length > 1 ? 'grid-cols-2' : 'grid-cols-1')}>
             {resolved.map((s, i) => (
-              <div
+              <StatGroup
                 key={i}
+                s={s}
+                first={i === 0}
                 className={cx(
                   'px-4.5 py-7 text-center md:px-8 md:py-11',
                   i === 0 && resolved.length > 1 && 'border-r border-divider',
                 )}
-              >
-                {s.big ? (
-                  <>
-                    <span
-                      className={cx(
-                        'block font-display text-[3.25rem] leading-[.9] font-normal md:text-[5rem]',
-                        i === 0 && 'text-ground-accent',
-                      )}
-                    >
-                      {s.loud}
-                    </span>
-                    {s.label ? (
-                      <span className="mt-2.5 block font-display text-[0.9375rem] font-normal uppercase tracking-[0.02em] md:mt-3.5 md:text-[1.125rem]">
-                        {s.label}
-                      </span>
-                    ) : null}
-                  </>
-                ) : (
-                  <span
-                    className={cx(
-                      'block text-balance font-display text-h3-mobile font-normal uppercase tracking-[0.02em] md:text-h3',
-                      i === 0 && 'text-ground-accent',
-                    )}
-                  >
-                    {s.loud.replace(/ (\S+)$/, '\u00A0$1')}
-                  </span>
-                )}
-                <span className="mt-2 block text-[0.75rem] leading-[1.4] text-gray-warm md:text-[0.8125rem]">
-                  {s.reason}
-                </span>
-              </div>
+              />
             ))}
           </div>
         </Container>
@@ -84,7 +56,7 @@ export async function ProofStripBlock({ statements, pricingNote, logos }: BlockD
         <div className={cx(resolved.length || note ? 'border-t border-divider' : '')}>
           <Container className="pt-8 pb-10 text-center md:pt-10 md:pb-12">
             {logos?.eyebrow?.trim() ? <Eyebrow muted>{logos.eyebrow.trim()}</Eyebrow> : null}
-            <ul className={cx('mt-5 grid list-none grid-cols-2 items-start justify-items-center gap-x-4 gap-y-5 p-0 opacity-55 md:mt-6 md:items-center md:gap-x-10 md:gap-y-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-14',
+            <ul aria-label={logos?.eyebrow?.trim() || 'Clients'} className={cx('mt-5 grid list-none grid-cols-2 items-start justify-items-center gap-x-4 gap-y-5 p-0 opacity-55 md:mt-6 md:items-center md:gap-x-10 md:gap-y-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-14',
                 MD_COLS[Math.min(clients.length, 6)],
               )}>
               {clients.map((c) => (
@@ -103,6 +75,54 @@ export async function ProofStripBlock({ statements, pricingNote, logos }: BlockD
         </div>
       ) : null}
     </Section>
+  )
+}
+
+/**
+ * One loud/quiet statement. `role=group` named by the loud number (+ its label) and described by
+ * the quiet reason, so assistive tech announces them as one unit (F55). Own component for `useId`.
+ */
+function StatGroup({ s, className, first }: { s: Resolved; className: string; first: boolean }) {
+  const uid = useId()
+  return (
+    <div
+      role="group"
+      aria-labelledby={`${uid}-n${s.big && s.label ? ` ${uid}-l` : ''}`}
+      aria-describedby={`${uid}-r`}
+      className={className}
+    >
+      {s.big ? (
+        <>
+          <span
+            id={`${uid}-n`}
+            className={cx(
+              'block font-display text-[3.25rem] leading-[.9] font-normal md:text-[5rem]',
+              first && 'text-ground-accent',
+            )}
+          >
+            {s.loud}
+          </span>
+          {s.label ? (
+            <span id={`${uid}-l`} className="mt-2.5 block font-display text-[0.9375rem] font-normal uppercase tracking-[0.02em] md:mt-3.5 md:text-[1.125rem]">
+              {s.label}
+            </span>
+          ) : null}
+        </>
+      ) : (
+        <span
+          id={`${uid}-n`}
+          className={cx(
+            'block text-balance font-display text-h3-mobile font-normal uppercase tracking-[0.02em] md:text-h3',
+            first && 'text-ground-accent',
+          )}
+        >
+          {s.loud.replace(/ (\S+)$/, '\u00A0$1')}
+        </span>
+      )}
+      <span id={`${uid}-r`} className="mt-2 block text-[0.75rem] leading-[1.4] text-gray-warm md:text-[0.8125rem]">
+        {s.reason}
+      </span>
+    </div>
   )
 }
 

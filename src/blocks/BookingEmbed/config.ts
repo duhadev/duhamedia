@@ -78,9 +78,8 @@ export const BookingEmbed: Block = {
       type: 'collapsible',
       label: 'When no booking link is set',
       admin: {
-        initCollapsed: true,
         description:
-          'Shown instead of the booking button while Site settings > Booking has no booking page address.',
+          'Shown instead of the booking button while Site settings > Booking has no booking page address: the headline, an optional paragraph and a link (usually to Contact).',
       },
       fields: [
         {

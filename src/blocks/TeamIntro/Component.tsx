@@ -110,6 +110,7 @@ export function TeamIntroBlock({
                         href={s.url}
                         target="_blank"
                         rel="noopener noreferrer"
+                        aria-label={`${person.name} on ${SOCIAL[s.platform].label} (opens in a new tab)`}
                         className="inline-flex min-h-target items-center gap-1.5 text-[13px] font-bold text-ink no-underline md:gap-2 md:text-sm"
                       >
                         <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" className="size-4 md:size-4.5">

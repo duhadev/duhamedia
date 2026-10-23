@@ -1,4 +1,14 @@
-import type { Block } from 'payload'
+import type { Block, Condition } from 'payload'
+
+/** Block-level toggles (default on). Group fields read them through `blockData`. */
+type Toggles = { showEmail?: boolean; showSocials?: boolean; showLocation?: boolean }
+const on = (k: keyof Toggles): Condition => (_d, _s, { blockData }) => (blockData as Toggles | undefined)?.[k] !== false
+const anyRowOn: Condition = (_d, s) => {
+  const t = s as Toggles | undefined
+  return t?.showEmail !== false || t?.showSocials !== false || t?.showLocation !== false
+}
+const mapOn: Condition = (_d, s) => (s as { show?: boolean } | undefined)?.show !== false
+
 
 /**
  * DirectContact block (SCHEMA §8.4 item 18, R9; replaces MapEmbed, X5).
@@ -52,21 +62,21 @@ export const DirectContact: Block = {
       name: 'rowLabels',
       type: 'group',
       label: 'Row labels',
-      admin: { description: 'The small labels in front of each detail (shown on larger screens, and for location and reply time on phones).' },
+      admin: { condition: anyRowOn, description: 'The small labels in front of each detail (shown on larger screens, and for location and reply time on phones).' },
       fields: [
         {
           type: 'row',
           fields: [
-            { name: 'email', type: 'text', defaultValue: 'Email', maxLength: 30, admin: { width: '25%' } },
-            { name: 'socials', type: 'text', defaultValue: 'Socials', maxLength: 30, admin: { width: '25%' } },
-            { name: 'location', type: 'text', defaultValue: 'Location', maxLength: 30, admin: { width: '25%' } },
+            { name: 'email', type: 'text', defaultValue: 'Email', maxLength: 30, admin: { width: '25%', condition: on('showEmail') } },
+            { name: 'socials', type: 'text', defaultValue: 'Socials', maxLength: 30, admin: { width: '25%', condition: on('showSocials') } },
+            { name: 'location', type: 'text', defaultValue: 'Location', maxLength: 30, admin: { width: '25%', condition: on('showLocation') } },
             {
               name: 'replyTime',
               type: 'text',
               label: 'Reply time',
               defaultValue: 'Reply time',
               maxLength: 30,
-              admin: { width: '25%', description: 'Label for the reply-time note set in Site settings. Shown with the contact details.' },
+              admin: { width: '25%', condition: on('showEmail'), description: 'Label for the reply-time note set in Site settings. Shown with the contact details.' },
             },
           ],
         },
@@ -85,9 +95,8 @@ export const DirectContact: Block = {
         {
           name: 'caption',
           type: 'textarea',
-          defaultValue:
-            'Based in Lombard, IL — serving the greater Chicagoland area within a ~30-mile radius. Outside the ring? We work remote-first, so reach out anyway.',
-          admin: { description: 'The sentence under the map. Also read out to screen-reader users as the map description.' },
+          defaultValue: '[Where we are based and the area we serve — final copy TBD]',
+          admin: { condition: mapOn, description: 'The sentence under the map. Also read out to screen-reader users as the map description.' },
         },
         {
           name: 'zoom',
@@ -96,6 +105,7 @@ export const DirectContact: Block = {
           min: 0.5,
           max: 2,
           admin: {
+            condition: mapOn,
             step: 0.25,
             description: '1 shows the whole service ring with room around it. Higher zooms in (fewer towns visible), lower zooms out.',
           },

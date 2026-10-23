@@ -1,4 +1,4 @@
-import type { Block, Condition } from 'payload'
+import type { Block, Condition, RelationshipFieldManyValidation } from 'payload'
 
 import { eyebrowField, headlineFields } from '../../fields'
 
@@ -18,6 +18,16 @@ import { eyebrowField, headlineFields } from '../../fields'
 
 const isAll: Condition = (_d, s) => (s?.source ?? 'all') === 'all'
 const isManual: Condition = (_d, s) => s?.source === 'manual'
+/** Hand-pick needs at least one testimonial (hidden fields are not validated, so this only fires in hand-pick mode). */
+const validatePicked: RelationshipFieldManyValidation = (value, { siblingData }) => {
+  try {
+    if ((siblingData as { source?: string } | undefined)?.source !== 'manual') return true
+    if (Array.isArray(value) && value.length > 0) return true
+    return 'Pick at least one testimonial, or switch "Which testimonials appear" to "All published testimonials".'
+  } catch {
+    return true
+  }
+}
 const linksOn: Condition = (_d, s) => s?.showStudyLinks !== false
 
 export const ReviewWall: Block = {
@@ -43,6 +53,7 @@ export const ReviewWall: Block = {
     }),
     {
       name: 'source',
+      label: 'Which testimonials appear',
       type: 'select',
       required: true,
       defaultValue: 'all',
@@ -76,6 +87,7 @@ export const ReviewWall: Block = {
       relationTo: 'testimonials',
       hasMany: true,
       maxDepth: 2,
+      validate: validatePicked,
       admin: {
         condition: isManual,
         description: 'Pick testimonials in the order shown. Drag to reorder. Drafts are skipped on the site until they are published.',
@@ -133,12 +145,14 @@ export const ReviewWall: Block = {
             },
             {
               name: 'googleReview',
+              label: 'Google review',
               type: 'text',
               defaultValue: 'Google review',
               admin: { width: '25%', description: 'Tag on Google reviews.' },
             },
             {
               name: 'linkedin',
+              label: 'LinkedIn',
               type: 'text',
               defaultValue: 'LinkedIn',
               admin: { width: '25%', description: 'Tag on LinkedIn reviews.' },

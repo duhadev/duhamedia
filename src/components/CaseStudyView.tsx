@@ -34,6 +34,16 @@ const pad2 = (n: number): string => String(n).padStart(2, '0')
 const clientName = (study: CaseStudy): string | null =>
   typeof study.client === 'object' && study.client !== null ? study.client.name?.trim() || null : null
 
+/**
+ * The visible Hero trail: "Work" → "Study 01 — Client" / "Study 01" / "Client"
+ * / "Study" (current crumb, never a link). Exported so the route's
+ * BreadcrumbList JSON-LD mirrors exactly what is shown (F78).
+ */
+export const caseStudyBreadcrumb = (study: CaseStudy): Array<{ label: string; url?: string }> => [
+  { label: 'Work', url: '/work' },
+  { label: studyCrumb(study) },
+]
+
 /** "Study 01 — Client", "Study 01", "Client" or "Study" (current crumb, never a link). */
 const studyCrumb = (study: CaseStudy): string => {
   const number = typeof study.studyNumber === 'number' ? `Study ${pad2(study.studyNumber)}` : null
@@ -104,7 +114,7 @@ export function CaseStudyView({ study }: { study: CaseStudy }) {
     heading: study.title,
     accentPhrase: study.accentPhrase,
     geometry: true,
-    breadcrumb: [{ label: 'Work', url: '/work' }, { label: studyCrumb(study) }],
+    breadcrumb: caseStudyBreadcrumb(study),
     resultMetric: study.headlineMetric,
     body: study.engagementLine,
     metaLine: meta || null,

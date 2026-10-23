@@ -34,11 +34,13 @@ function Picture({
 /* ------------------------------ cards ---------------------------------- */
 
 /** p5 §Template anatomy: title + code, picture, one line. 2 x 2 from md. */
-function AnatomyCard({ item }: { item: Item }) {
+type CardTag = 'h2' | 'h3'
+
+function AnatomyCard({ item, Title }: { item: Item; Title: CardTag }) {
   return (
     <div className="border-2 border-ink bg-cream">
       <div className="flex items-baseline justify-between gap-2.5 border-b-2 border-ink px-4 py-3 md:px-5.5 md:py-4.5">
-        <h3 className={cx(DISPLAY, 'text-[1.0625rem] md:text-[1.375rem]')}>{item.title}</h3>
+        <Title className={cx(DISPLAY, 'text-[1.0625rem] md:text-[1.375rem]')}>{item.title}</Title>
         {hasText(item.code) ? <span className={cx(CODE, 'text-[10px]')}>{item.code}</span> : null}
       </div>
       <Picture
@@ -56,11 +58,11 @@ function AnatomyCard({ item }: { item: Item }) {
 }
 
 /** p6 §Camera work: title + line on top, large picture fills the rest. */
-function FeatureCard({ item }: { item: Item }) {
+function FeatureCard({ item, Title }: { item: Item; Title: CardTag }) {
   return (
     <div className="grid w-full grid-rows-[auto_1fr] border-2 border-ink">
       <div className="border-b-2 border-ink px-4 py-4.5 md:px-7 md:py-6">
-        <h3 className={cx(DISPLAY, 'text-[1.125rem] md:text-[1.25rem]')}>{item.title}</h3>
+        <Title className={cx(DISPLAY, 'text-[1.125rem] md:text-[1.25rem]')}>{item.title}</Title>
         {hasText(item.line) ? (
           <p className="mt-1.5 text-[0.9375rem] leading-normal md:mt-2 md:leading-[1.55]">{item.line}</p>
         ) : null}
@@ -107,6 +109,8 @@ function Detail({ label, text, className }: { label?: string | null; text?: stri
 function ExpandRow({ item, open, last }: { item: Item; open: boolean; last: boolean }) {
   const border = last ? 'border-b-2 border-ink' : 'border-b border-divider'
   const hasBody = hasText(item.what) || hasText(item.proof)
+  // On phones the one-liner is not drawn inside an openable row (design), but it must stay readable by AT: visually hidden there, not display:none.
+  const lineClass = hasBody ? 'max-md:sr-only md:block text-[0.9375rem]' : 'hidden text-[0.9375rem] md:block'
 
   const head = (
     <>
@@ -117,7 +121,7 @@ function ExpandRow({ item, open, last }: { item: Item; open: boolean; last: bool
       )}
       <span className={cx(DISPLAY, 'flex-1 text-[1.0625rem] md:text-[1.375rem]')}>{item.title}</span>
       {hasText(item.line) ? (
-        <span className="hidden text-[0.9375rem] md:block">{item.line}</span>
+        <span className={lineClass}>{item.line}</span>
       ) : (
         <span aria-hidden="true" className="hidden md:block" />
       )}
@@ -260,6 +264,8 @@ export function SpecLedgerBlock(props: SpecLedgerData) {
 
   // The caption is the section's h2 unless a headline (or the hub headline) already is.
   const CaptionTag = hasText(heading) || hubHeading ? 'p' : 'h2'
+  // Card titles are h3 only when an h2 (headline or caption) precedes them; otherwise they are the section's h2.
+  const cardTitleTag: CardTag = hasText(heading) || hasText(eyebrow) ? 'h3' : 'h2'
   const caption = hasText(eyebrow) ? (
     <CaptionTag
       className={cx(
@@ -307,7 +313,7 @@ export function SpecLedgerBlock(props: SpecLedgerData) {
             >
               {items.map((item, i) => (
                 <li key={item.id ?? i} className={cx('m-0 min-w-0', layout !== 'anatomy' && 'flex')}>
-                  {layout === 'anatomy' ? <AnatomyCard item={item} /> : <FeatureCard item={item} />}
+                  {layout === 'anatomy' ? <AnatomyCard item={item} Title={cardTitleTag} /> : <FeatureCard item={item} Title={cardTitleTag} />}
                 </li>
               ))}
             </ul>

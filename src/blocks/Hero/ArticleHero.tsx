@@ -7,6 +7,27 @@ import { cx } from '@/lib/cx'
 import { Breadcrumb } from './Breadcrumb'
 import { LOGO_MASK } from './logoMask'
 
+const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
+const DATE_RE = /\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.? (?:(\d{1,2}),? )?(\d{4})\b/
+
+/**
+ * The meta line is plain text; wrap a recognised date ("Feb 2026", "Feb 12, 2026")
+ * in a machine-readable <time>. Placeholders / unrecognised text stay plain.
+ */
+function MetaText({ text }: { text: string }) {
+  const m = DATE_RE.exec(text)
+  if (!m) return <>{text}</>
+  const month = String(MONTHS.indexOf(m[1].toLowerCase()) + 1).padStart(2, '0')
+  const dateTime = m[2] ? `${m[3]}-${month}-${m[2].padStart(2, '0')}` : `${m[3]}-${month}`
+  return (
+    <>
+      {text.slice(0, m.index)}
+      <time dateTime={dateTime}>{m[0]}</time>
+      {text.slice(m.index + m[0].length)}
+    </>
+  )
+}
+
 /**
  * Hero, `article` variant (Case Study.dc.html "Article header", desktop +
  * mobile builds): 820px column on the dot-matrix ground with the wine logo
@@ -75,7 +96,7 @@ export function ArticleHero({
         {scope || meta ? (
           <div className="mt-5 flex flex-col gap-1 border-y border-divider py-3 md:mt-7 md:flex-row md:flex-wrap md:items-baseline md:justify-between md:gap-4 md:py-3.5">
             {scope ? <span className="text-small-mobile font-bold md:text-[0.9375rem]">{scope}</span> : null}
-            {meta ? <span className="text-small-mobile text-gray-warm md:text-small">{meta}</span> : null}
+            {meta ? <span className="text-small-mobile text-gray-warm md:text-small"><MetaText text={meta} /></span> : null}
           </div>
         ) : null}
         {summaryBody ? (

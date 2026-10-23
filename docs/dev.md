@@ -11,7 +11,7 @@ Entry format for every unit: **Files** / **Fields & schema** / **Wiring** (regis
 - [Frontend foundation (B0)](#frontend-foundation-unit-b0)
 - [Site chrome (B1)](#site-chrome-unit-b1)
 - [Page router (B2)](#page-router-unit-b2)
-- [Shared components and form foundation (big step 4)](#shared-components-and-form-foundation-big-step-4)
+- [Shared components and form foundation (big steps 4 and 5)](#shared-components-and-form-foundation-big-step-4)
 1. [Homepage](#1-homepage)
    - [Hero (B3)](#hero-unit-b3)
    - [ProofStrip (B3)](#proofstrip-unit-b3)
@@ -50,11 +50,26 @@ Entry format for every unit: **Files** / **Fields & schema** / **Wiring** (regis
    - [PhaseTimeline, engine-rollout variant (S4-4)](#phasetimeline-engine-rollout-variant-unit-s4-4)
    - [CaseStudyCards, metric-strip fallback (S4-2)](#casestudycards-metric-strip-fallback-unit-s4-2)
 7. [Testimonials](#7-testimonials)
+   - [Hero, compact size and aggregate rating (S5-1)](#hero-compact-size-and-aggregate-rating-unit-s5-1)
+   - [ReviewWall, feed variant (S5-2)](#reviewwall-feed-variant-unit-s5-2)
 8. [About](#8-about)
+   - [MetricEvent, facts variant (S5-3)](#metricevent-facts-variant-unit-s5-3)
+   - [CaseStudyCards, logo-strip fallback (S5-4)](#casestudycards-logo-strip-fallback-unit-s5-4)
 9. [Book a Call](#9-book-a-call)
+   - [Hero, callouts (S5-1)](#hero-callouts-unit-s5-1)
+   - [BookingEmbed (S5-5)](#bookingembed-unit-s5-5)
+   - [FormEmbed, standard variant (S5-6)](#formembed-standard-variant-unit-s5-6)
+   - [MiniCTAStrip, inline variant (S5-7)](#minictastrip-inline-variant-unit-s5-7)
 10. [Thank You](#10-thank-you)
+    - [FormEmbed, reminder variant (S5-6)](#formembed-reminder-variant-unit-s5-6)
 11. [FAQ](#11-faq)
+    - [CategoryTabs (S5-9)](#categorytabs-unit-s5-9)
+    - [AccordionFAQ, group variant (S5-8)](#accordionfaq-group-variant-unit-s5-8)
+    - [Page-level FAQPage JSON-LD (PageFaqJsonLd)](#page-level-faqpage-json-ld-pagefaqjsonld)
 12. [Contact](#12-contact)
+    - [FormEmbed, stepped phone layout (S5-6)](#formembed-stepped-phone-layout-unit-s5-6)
+    - [DirectContact (S5-10)](#directcontact-unit-s5-10)
+    - [Organization / LocalBusiness JSON-LD (OrganizationJsonLd)](#organization--localbusiness-json-ld-organizationjsonld)
 13. [DEV-SEO template](#13-dev-seo-template)
 14. [MKT-SEO template](#14-mkt-seo-template)
 15. [Campaign LP template](#15-campaign-lp-template)
@@ -108,8 +123,8 @@ Sitewide frontend machinery, not tied to a page. Every block unit depends on it.
   - `Media` renders a media doc with `next/image` (alt from the doc; `alt=""` only for decorative images). It keeps the upload path and query and drops the origin; with `fill`, the focal point sets `object-position`. Renders nothing for an empty or id-only upload.
 - `src/lib/cx.ts`: class-name joiner.
 - `src/lib/accentPhrase.ts`: `splitAccentPhrase(heading, accent)` returns `[before, accent, after]` (case-insensitive match, heading's own spelling) or `null`. Shares its matching rule with `accentPhraseError` / `validateAccentPhrase`.
-- `src/blocks/index.ts`: `pageBlocks` (block configs only; 14 blocks registered after big step 4, in this order: `Hero`, `MiniCTAStrip`, `FinalCTA`, `ProofStrip`, `CaseStudyCards`, `MetricEvent`, `TestimonialRow`, `TwoTrackPanels`, `PhaseTimeline`, `TeamIntro`, `RichContent`, `SpecLedger`, `NewsletterBand`, `AccordionFAQ`; the order is the admin "Add section" picker order. B3 registered the first 9, without `MetricEvent`). Must not import React or CSS because `payload.config.ts` loads it.
-- `src/blocks/components.ts`: `blockComponents` (`blockType` to component), typed `{ [K in PageBlockType]: ComponentType<BlockData<K>> }`; a missing entry is a type error. Keys: `hero`, `miniCTAStrip`, `finalCTA`, `proofStrip`, `caseStudyCards`, `metricEvent`, `testimonialRow`, `twoTrackPanels`, `phaseTimeline`, `teamIntro`, `richContent`, `specLedger`, `newsletterBand`, `accordionFAQ`.
+- `src/blocks/index.ts`: `pageBlocks` (block configs only; 19 blocks registered after big step 5, in this order: `Hero`, `MiniCTAStrip`, `FinalCTA`, `ProofStrip`, `CaseStudyCards`, `MetricEvent`, `ReviewWall`, `TestimonialRow`, `TwoTrackPanels`, `PhaseTimeline`, `TeamIntro`, `RichContent`, `SpecLedger`, `NewsletterBand`, `FormEmbed`, `BookingEmbed`, `DirectContact`, `AccordionFAQ`, `CategoryTabs`; the order is the admin "Add section" picker order. B3 registered the first 9, without `MetricEvent`; big step 5 added `ReviewWall`, `FormEmbed`, `BookingEmbed`, `DirectContact`, `CategoryTabs`). Must not import React or CSS because `payload.config.ts` loads it.
+- `src/blocks/components.ts`: `blockComponents` (`blockType` to component), typed `{ [K in PageBlockType]: ComponentType<BlockData<K>> }`; a missing entry is a type error. Keys: `hero`, `miniCTAStrip`, `finalCTA`, `proofStrip`, `caseStudyCards`, `metricEvent`, `reviewWall`, `testimonialRow`, `twoTrackPanels`, `phaseTimeline`, `teamIntro`, `richContent`, `specLedger`, `newsletterBand`, `formEmbed`, `bookingEmbed`, `directContact`, `accordionFAQ`, `categoryTabs`.
 - `src/blocks/types.ts`: `PageLayoutBlock`, `PageBlockType`, `BlockData<K>`, all derived from the generated `Page` type (resolve to `never` while no block exists).
 - `src/fields/index.ts`: shared field factories. B3 added `eyebrowField()`, `headlineFields()`, `scarcityRef()` and the `required` option of `metricFields()` (below); `linkField`, `metricFields`, `pricingNote`, `validateAccentPhrase` / `accentPhraseAdminField` and `contentVersions` predate B3.
   - `eyebrowField({ defaultTick = true, description })`: a `row` (no data nesting) holding `eyebrow` (text, 70% width) and `eyebrowTick` (checkbox "Show the diamond marker", 30%, default from `defaultTick`). Both optional; an empty eyebrow renders nothing.
@@ -154,7 +169,7 @@ Sitewide header and footers. Not a block; not tied to one page.
 - `src/components/chrome/SiteHeader.tsx`: async server component. Variants `standard | logo-only | none` (`HeaderVariant`).
 - `src/components/chrome/MobileNav.tsx`: the only `'use client'` file in the chrome. Menu toggle (`aria-expanded` / `aria-controls`), Escape closes and returns focus to the button, closes on route change. Panel links are rendered on the server and passed in as `children`.
 - `src/components/chrome/SiteFooter.tsx`: async server component. Variants `standard | reduced-nav | legal-only` (`FooterVariant`).
-- `src/components/chrome/SiteLogo.tsx`, `NavLink.tsx`, `PageShell.tsx`, `index.ts` (barrel).
+- `src/components/chrome/SiteLogo.tsx`, `NavLink.tsx`, `PageShell.tsx`, `footerNudgeForm.ts`, `index.ts` (barrel).
 - `src/lib/chrome.ts`: `getChrome()` (React `cache`, `server-only`; Local API `findGlobal` on `navigation` and `site-settings`, `depth: 1`, `overrideAccess: false`), plus `toNavItems` / `toNavItem` (drop links with no text or unresolved destination) and `getNewsletterHref()` (published `newsletter` page lookup).
 - `public/logo-duha.png`: logo mark, rendered unoptimised.
 
@@ -163,7 +178,7 @@ Sitewide header and footers. Not a block; not tied to one page.
   - Header links: `navigation.header.links`. Header CTA: `navigation.header.cta`.
   - Footer brand line: `site-settings.footerTagline`.
   - Footer columns: `navigation.footer.standard.columns[]`.
-  - Newsletter nudge: `navigation.footer.standard.newsletterNudge.{heading,line,buttonLabel}`.
+  - Newsletter nudge: `navigation.footer.standard.newsletterNudge.{heading,line,buttonLabel}`; inline form: `site-settings.newsletterForm` (relationship to `forms`).
   - Reduced footer links: `navigation.footer.reduced.links`.
   - Legal bar: `navigation.footer.legalLinks`, plus "© {current year} {`site-settings.legalName`}" (falls back to `Duha Media`).
   - Variant selection: `pages.headerVariant` / `pages.footerVariant`.
@@ -177,7 +192,12 @@ Sitewide header and footers. Not a block; not tied to one page.
   - Footer `standard`: brand (logo + tagline), link columns, newsletter nudge, legal bar.
   - Footer `reduced-nav`: logo + reduced links, legal bar.
   - Footer `legal-only`: legal bar only.
-- The nudge button links to the published `newsletter` page; the button is hidden while that page is unpublished or missing.
+- Newsletter nudge (F42): when `site-settings.newsletterForm` is set and the form exists (`getNewsletterFormId` in `src/lib/chrome.ts`, trusted `findByID`, `depth: 0`), the nudge renders an inline email form through `CMSForm` (`tone="dark"`, `submitVariant="ghost-light"`, `submitSize="sm"`, `turnstileAppearance="interaction-only"`, classes from `src/components/chrome/footerNudgeForm.ts`, `submitLabel` = `newsletterNudge.buttonLabel`). The form is submitted without `sourcePath`. A set-but-missing form logs one warning per process and the nudge falls back to the link below. Without `newsletterForm`, the nudge button links to the published `newsletter` page and is hidden while that page is unpublished or missing.
+- `footerNudgeForm.ts` slots (`footerNudgeFormClassNames`): `form` (`flex flex-row flex-wrap items-start gap-x-2 gap-y-2`), `fields` (`flex min-w-0 flex-1 flex-wrap gap-4`), `field` (`gap-0!`), `label` (`sr-only`), `control` (text size and `placeholder:text-cream/60`), `footer` (`contents`, lifts the button into the form's flex row), `submit` (`self-stretch`), `turnstile` and `status` (`order-last basis-full`, wrap onto their own line), `success` (`text-small`).
+- Skip link and focus target (F41): `PageShell` renders a skip link (`href="#main"`, first focusable element) and wraps `children` in `<div id="main" tabIndex={-1} className="outline-none">`, so the target exists regardless of which route file owns `<main>`. `id="main"` is a reserved FAQ anchor id (see [AccordionFAQ group](#accordionfaq-group-variant-unit-s5-8)).
+- Accessible names (F41): the logo link (`SiteLogo`, `href` set) has `aria-label` = `<seo-defaults organization name> home` (from `SiteHeader`; falls back to `Duha Media home`) and the mark image has `alt=""`, so the link is announced once. The desktop nav is `aria-label="Main"`, the mobile panel nav `aria-label="Main (mobile)"`, the toggle button `aria-label="Menu"`.
+- Footer semantics (F95, reversing the F41 `h2`): link-column titles are `<p id="footer-col-<index>">` (class `HEADING`), each column is `<nav aria-labelledby="footer-col-<index>">`. The nudge heading is also a `<p>`. Other footer navs: `aria-label="Footer"` (reduced) and `aria-label="Legal"`.
+- Dark-ground focus ring: `<footer>` carries `data-tone="dark"`; see [Dark-ground focus ring](#dark-ground-focus-ring-rule).
 - Fallbacks:
   - A global read failure logs `console.error` and renders minimal chrome (logo, no links, bare ©).
   - Unresolved links and empty columns are dropped.
@@ -186,8 +206,8 @@ Sitewide header and footers. Not a block; not tied to one page.
 - Migration: none.
 
 **Notes**
-- No inline newsletter form in the footer yet; the nudge is link-only (flag F42, pending the form-rendering block).
-- Gate 2 accessibility findings are pending a human decision (F41): skip link, logo double accessible name, footer column title semantics, duplicate `Main` nav label (desktop and mobile navs both use `aria-label="Main"`).
+- The footer inline form (F42) and the four F41 accessibility fixes (skip link, logo accessible name, distinct nav labels, footer column titles) landed in big step 5; they are described under Wiring above. Footer column titles are `<p>` (F95), not `h2`.
+- The footer form's field ids are unique per instance (see [Forms: stepped layout and per-instance ids](#forms-stepped-layout-and-per-instance-ids-big-step-5)).
 
 ---
 
@@ -251,7 +271,7 @@ Resolves `pages` documents to URLs and produces their head metadata, draft previ
 
 **Notes**
 - Live preview: autosave is off (S3/F21), so the live pane shows the last **saved** draft and does not auto-refresh on Save draft. Open decision, tracked as F57.
-- Organization / LocalBusiness JSON-LD is not built. There is no JSON-LD in the page output yet.
+- Structured data in page output (big step 5): one merged FAQPage ([PageFaqJsonLd](#page-level-faqpage-json-ld-pagefaqjsonld)) and, on `home` and `contact`, Organization / LocalBusiness ([OrganizationJsonLd](#organization--localbusiness-json-ld-organizationjsonld)). `PageView` now renders both after `RenderBlocks`.
 - Open SEO findings, F65 (Gate 2, none applied): `getSiteUrl()` falls back to `http://localhost:3000` when `SITE_URL` is unset, so a production container without it would emit localhost canonicals and sitemap URLs silently (and `getSiteUrl` and `siteOrigin` are two separate helpers); home canonical vs sitemap trailing-slash consistency; the `/` placeholder (no home doc) is indexable in production and absent from the sitemap; the seo-defaults placeholder description and OG alt are live until seeded; seed must set `noindex` on Thank You and gated templates; Organization/LocalBusiness JSON-LD (page scope); `not-found` has no description.
 - QA of the authenticated preview and the redirect create/verify/delete test were pending when this entry was written.
 - Case-study cards link to `/work/<slug>`; that route now exists ([S4-12](#template-route-and-view-unit-s4-12)). Posts and lead-magnets still have no frontend route.
@@ -309,7 +329,7 @@ Sitewide helpers added while building pages 2 to 6. Several blocks depend on the
 - `handleFormSubmission` order: (1) `verifyTurnstile`, nothing is read or stored before it passes (misconfigured secret returns "unavailable", a failed check returns the friendly "couldn't confirm" message); (2) load the form with a trusted Local API read; (3) `validateSubmission` against the form's own fields (unknown or duplicate keys reject the whole submission; per-type length and format caps from `MAX_LENGTH`); (4) `payload.create('form-submissions')` with `overrideAccess: false` and `context.turnstileVerified = true`, the only code path that sets that flag (`turnstileVerifiedOrAdmin`, `src/access/index.ts`).
 - `verifyTurnstile`: Cloudflare siteverify, 10 s timeout, never throws, logs error codes only. Outside development `TURNSTILE_SECRET_KEY` is required and Cloudflare's test secrets are refused (`test-secret-in-production`); the reply hostname must equal the host of `SITE_URL` (a wrong `SITE_URL` breaks every form). Development falls back to the always-pass test secret and test site key.
 - `CMSForm` (server): props = `PayloadFormProps` minus `form`, `siteKey`, `confirmation`, `messages`, plus `form` (id or populated `Form`; always re-read by id with a trusted read, then reduced by `toPublicForm` so `emails`, `redirect`, `confirmationMessage` and integration fields never reach the browser), optional `confirmation` node. Reads `TURNSTILE_SITE_KEY` at request time (prop, no `NEXT_PUBLIC_*`). Renders the confirmation message and `message` blocks as server-rendered `RichText`. Renders nothing when the form cannot be loaded.
-- `PayloadForm` (client) props: `form`, `siteKey`, `confirmation?`, `messages?`, `sourcePath?`, `leadMagnetId?`, `submitLabel?`, `turnstileAppearance?` (`'always'` default, or `'interaction-only'`), `tone?` (`light` | `dark`), `submitVariant?`, `submitSize?`, `className?`, `classNames?`.
+- `PayloadForm` (client) props: `form`, `siteKey`, `confirmation?`, `messages?`, `sourcePath?`, `leadMagnetId?`, `submitLabel?`, `turnstileAppearance?` (`'always'` default, or `'interaction-only'`), `tone?` (`light` | `dark`), `submitVariant?`, `submitSize?`, `className?`, `classNames?`, and, added in big step 5, `layout?`, `steppedBelow?`, `steps?`, `selectAsOptions?`, `progressLabel?`, `startLabel?`, `nextLabel?`, `backLabel?`, `idPrefix?` (see [Forms: stepped layout and per-instance ids](#forms-stepped-layout-and-per-instance-ids-big-step-5)).
   - `classNames` slots: `form`, `fields`, `field`, `label`, `control`, `error`, `turnstile`, `footer`, `submit`, `status`, `success`. The layout slots `form`, `fields`, `footer`, `turnstile`, `submit` REPLACE the default layout classes when set (defaults: form `flex flex-col gap-6`, fields `flex flex-wrap gap-4`, footer `flex flex-col gap-3`, submit `self-start`, turnstile `min-h-[65px] w-full`, or `w-full` with `interaction-only`); the others are appended.
   - Behaviour: submits with `fetch` and the form's own FormData; keeps inputs on error; resets the Turnstile token and focuses the status region after each response; a `redirect` in the response navigates (site path via `router.push`). Without JS the plain `action` / `method="post"` posts to the same route. `placeholder` is rendered on `text`, `email`, `textarea` and `select` fields.
 - `TurnstileWidget` (client) props: `siteKey`, `appearance?` (`'always'` | `'interaction-only'`, Cloudflare's `appearance`), `onTokenChange?`, `theme?`, `className?`. Uses `@marsidev/react-turnstile` (pinned 1.6.2, Gate 0 Q4), `size: 'flexible'`, auto refresh on expiry and timeout, hidden input name `cf-turnstile-response`. `interaction-only` collapses the row to zero height unless Cloudflare needs a click.
@@ -318,13 +338,67 @@ Sitewide helpers added while building pages 2 to 6. Several blocks depend on the
 
 **Notes**
 - Event sending is not in this path. The `form-submissions` `afterChange` enqueue and the delivery job remain `TODO(integration)` in `src/plugins/formBuilder.ts`.
-- First consumer: [NewsletterBand](#newsletterband-unit-s4-11). `FormEmbed` and the lead-magnet capture are not built yet.
+- First consumer: [NewsletterBand](#newsletterband-unit-s4-11). Big step 5 added the footer nudge form ([B1](#site-chrome-unit-b1)) and `FormEmbed` ([standard](#formembed-standard-variant-unit-s5-6), [reminder](#formembed-reminder-variant-unit-s5-6), [stepped](#formembed-stepped-phone-layout-unit-s5-6)). The lead-magnet capture is not built yet.
 - PROGRESS flag F71 (rate-limit path, hostname check, custom validation, misconfiguration returns 400).
 
 ### Showcase Lexical builders (`src/showcase/lexical.ts`)
 
 - Tiny builders for static Lexical fixtures in `/_showcase` (never DB data). Exports: `text(t, { bold })`, `p(...children)`, `h('h2'|'h3'|'h4', t)`, `quote(t)`, `hr()`, `ul(...items)`, `internalLink(t, doc | null)` (`doc: null` = unresolved target, renders as plain text), `customLink(t, url, newTab?)`, `figure(media, caption)` (upload node with the RichContent `caption` field), `root(...children)`; type `LexicalRoot` (= `Faq['answer']`).
 - Used by the showcase fixtures for `accordionFAQ` answers, `richContent` bodies and `testimonialRow` client-voice `doDifferently`.
+
+### Forms: stepped layout and per-instance ids (big step 5)
+
+**Files**
+- `src/components/forms/PayloadForm.tsx`, `FieldControl.tsx`, `steps.ts` (`FormStep`, `ResolvedStep`, `resolveSteps`), `CMSForm.tsx`, `TurnstileWidget.tsx`.
+
+**Fields & schema**: none. The editor-facing fields that feed these props are on [FormEmbed](#formembed-standard-variant-unit-s5-6) (`steps`, `stepped`).
+
+**Wiring**
+- Stepped layout (`PayloadForm` props):
+  - `layout`: `'stacked'` (default) or `'stepped'`. `steppedBelow`: `'sm'` | `'md'` (default) | `'lg'` (`40rem`, `48rem`, `64rem`).
+  - `steps`: `FormStep[]` = `{ fieldNames: string[], heading?, hint? }`. `selectAsOptions` (default false): `select` fields render as tap-to-pick option rows. `progressLabel` (default `Question {n} of {m}`; `{n}` and `{m}` are replaced), `startLabel` (first-step button; default = `nextLabel`), `nextLabel` (default `Next`), `backLabel` (default `Back`; accessible name of the arrow-only Back button).
+  - Progressive enhancement: the server render, no-JS and viewports at or above `steppedBelow` are the stacked form. Below it, after hydration (`useBelow`, `useSyncExternalStore` on `matchMedia`), one step shows at a time. All fields stay in the DOM (hidden), so the submission is the same FormData to the same route.
+  - `resolveSteps(fields, steps?)`: no `steps` = one step per input field with the field label as heading. With `steps`: an input field goes to the first step naming it; unknown names are ignored; steps with no real field are dropped; input fields no step names are appended to the LAST step; `message` blocks travel with the next input field (or the last step). A single-field step with no heading takes the field label.
+  - Validation: while stepped the form is `noValidate`; per-step validation is inline (the field's own error slot, cleared on edit). A step change moves focus to the step heading (`<h3 id="<idBase>-step-<i>" tabIndex={-1}>`); a failed field or server error focuses that field, jumping to its step. Turnstile mounts on the last step only.
+  - The Next and Send buttons are keyed (`key="next"` / `key="send"`). They previously shared one unkeyed slot, so React changed the button's `type` to `submit` during the click and the form submitted on arrival at the last step.
+  - Slots added to `PayloadFormClassNames`: `progress`, `step`, `stepHeader`, `stepNav` (stepped-only; they replace the defaults when set), `option` (appended).
+- Per-instance ids (F97, F98):
+  - `CMSForm` takes a number from a request-scoped counter (`cache(() => ({ n: 0 }))`) and passes `idPrefix = f<n>` to `PayloadForm`; the id base is `<idPrefix>-<useId()>`. `useId()` alone collided between the layout's footer form and a page-block form (same RSC tree path).
+  - Field ids are `<idBase>-<field name>`; the Turnstile container id is `<idBase>-turnstile` (`TurnstileWidget` takes an `id` prop; the library default `cf-turnstile` is shared and was duplicated).
+  - `FormEmbed`'s reminder switch used to render the form twice in the streamed HTML, which also duplicated ids; see [FormEmbed, reminder variant](#formembed-reminder-variant-unit-s5-6).
+
+**Notes**
+- Residual differences from the design inside this foundation, accepted by default (F84): progress label 13px vs the design's 11px, text check marks and arrows instead of icons, textarea fixed at 150px, no personalised "Got it, {firstName}" or booking line on the stepped confirmation.
+
+### VideoFacade (`src/components/VideoFacade.tsx`)
+
+**Files**: `src/components/VideoFacade.tsx`; `src/lib/youtube.ts` (`youtubeVideoId(url)`). Used by `ReviewWall/feed.tsx` and `TestimonialRow/Component.tsx`.
+
+**Fields & schema**: none. The video URL is `testimonials.video.url`.
+
+**Wiring**
+- Props: `videoId`, `label` (accessible name of the play control), `title` (iframe title), `className?`, `children?` (poster and overlays, server-rendered by the caller). The wrapper supplies `group relative`.
+- Click-to-load: no request to YouTube is made until the click. On click the control is replaced by an iframe at `https://www.youtube-nocookie.com/embed/<id>?autoplay=1&rel=0` (`allow="autoplay; encrypted-media; picture-in-picture"`, `allowFullScreen`, `loading="lazy"`) and focus moves to it.
+- Before hydration (and without JS) the control is an `<a href="https://www.youtube.com/watch?v=<id>" target="_blank" rel="noopener noreferrer">` with sr-only text `<label> (opens YouTube in a new tab)`; after hydration (`useSyncExternalStore`) it is a `<button type="button" aria-label=label>`.
+- Revalidation and migration: none.
+
+**Notes**
+- F51(c) decision: embed the player, click-to-load, nocookie. A video testimonial without a poster renders an empty tile with the play control and does not fetch a YouTube thumbnail (F82).
+- No Content-Security-Policy exists in the app (F83). If one is added (or set at Cloudflare) it needs `frame-src https://www.youtube-nocookie.com`.
+
+### Button transition (`src/components/ui/Button.tsx`)
+
+- The base class list uses `transition-[color,background-color,border-color,filter,translate]` (previously `transition-all`), duration 180ms. `transition-all` tweened `outline-color` from the inherited cream ring to ink, so the header "Book a Call" button showed a cream ring on white at the first frames of focus. Applies to every `Button` / `ButtonLink`.
+
+### Dark-ground focus ring rule
+
+- `src/app/(frontend)/styles.css`, `@layer base`: `:focus-visible` is a 2px ink ring with 2px offset; `[data-tone='dark'] :focus-visible, [data-tone='dark']:focus-visible` sets `outline-color` to the `cream` token.
+- Hook: `data-tone`. `Section` (`src/components/ui/Section.tsx`) renders `data-tone={tone}` (`light` | `grey` | `dark`), and the standard `<footer>` in `SiteFooter` carries `data-tone="dark"`. The skip link sets its own cream outline (`focus:outline-cream`).
+
+### Absolute media URLs for structured data (`src/lib/metadata.ts`)
+
+- `absoluteMediaUrl(media, size = 'og')` returns an absolute URL for a populated media doc: `sizes.og.url` for `'og'` (falling back to `url`), `url` for `'original'`; relative URLs are prefixed with `getSiteUrl()`. Unpopulated ids return `undefined`.
+- Logos in JSON-LD use `'original'`: the Article JSON-LD publisher logo (`caseStudyJsonLd`) and [OrganizationJsonLd](#organization--localbusiness-json-ld-organizationjsonld). Share images keep `'og'`.
 
 ---
 
@@ -333,6 +407,8 @@ Sitewide helpers added while building pages 2 to 6. Several blocks depend on the
 Variants added to these blocks by big step 4 (Hero, CaseStudyCards, TwoTrackPanels, PhaseTimeline, TestimonialRow) are documented under pages 2 to 6, where each is first used.
 
 Locked section order: Hero → Scarcity strip → Client logo strip → Featured case studies → Mini CTA strip → What we do → Process timeline → Founder/team + about → Testimonials → Final CTA → Footer (standard).
+
+The homepage also renders the company structured data: [Organization / LocalBusiness JSON-LD](#organization--localbusiness-json-ld-organizationjsonld) (documented under page 12).
 
 All blocks below are registered in `src/blocks/index.ts` and `src/blocks/components.ts` (shared description in [B0](#frontend-foundation-unit-b0)) and have fixtures in `src/showcase/registry.ts`. Every block lives on `pages.layout` (tables `pages_blocks_<slug>` plus `_pages_v_blocks_<slug>` for versions). Unless stated, revalidation is the `pages` collection hook (tag `pages` + the page path) and the frontend is `force-dynamic`. Client islands: the only one among these blocks is `PhaseTimeline/AccordionSteps.tsx`; every other block is a server component. Data-reading blocks (ProofStrip, CaseStudyCards, TestimonialRow, FinalCTA) are async server components using the Local API with public access.
 
@@ -1126,27 +1202,380 @@ Section: Proof (fallback, directly above the FAQ). Extends [CaseStudyCards](#cas
 
 ## 7. Testimonials
 
-*No units documented yet.*
+Locked section order (SCHEMA §9): Hero (typographic, `showAggregateRating`) → Testimonial feed → Final CTA ([FinalCTA (B3)](#finalcta-unit-b3)) → Footer (standard). Migration for all big step 5 blocks and fields: `20261022_141454_b5_pages_7_12_blocks` (summary under [Hero, compact size](#hero-compact-size-and-aggregate-rating-unit-s5-1)).
+
+### Hero, compact size and aggregate rating (unit S5-1)
+
+Section: Testimonials hero. Extends [Hero (B3)](#hero-unit-b3). The `compact` size is also used by pages 9, 10, 11 and 12; those pages link here.
+
+**Files**
+- `src/blocks/Hero/config.ts`, `src/blocks/Hero/Component.tsx` (`HeroBlock` loads the rating, `TypographicHero` renders; `Wrap` is the content column).
+
+**Fields & schema** (new on the `typographic` variant; the shapes for the other variants are unchanged)
+- `size`: select `default` | `compact`, default `default`; shown only for `typographic`.
+- `callouts`: array, max 2 rows, shown only for `typographic`; each `label` (text, required) and `text` (textarea, required). Documented under [page 9](#hero-callouts-unit-s5-1).
+- `showAggregateRating`: checkbox, default false; shown only for `typographic`.
+
+**Wiring**
+- Registered already (B3); no new registration. Showcase: `hero` / `typographic compact + rating` (p7), `typographic compact + callouts` (p9), `typographic compact` (p10, p12), `typographic compact — minimal` (p11).
+- Rating: `loadAggregateRating()` runs only when `showAggregateRating` is true. Local API `find` on `testimonials`, `where` `_status = published` and `rating exists`, `select: { rating: true }`, `depth: 0`, `pagination: false`, `overrideAccess: false`. Ratings outside 1 to 5 are ignored. Average = mean to one decimal; the count is the number of rated testimonials. Nothing rated, or a failed read (logged), renders no rating line. Computed per request, never stored.
+- Rating text: appended to the eyebrow as `<eyebrow> · <avg> avg · <N> rating(s)` (`rating` singular when N is 1). With no eyebrow the rating text is the eyebrow.
+- Migration: `20261022_141454_b5_pages_7_12_blocks` adds `size` (enum `enum_pages_blocks_hero_size`, default `default`) and `show_aggregate_rating` (boolean, default false) to `pages_blocks_hero` and `_pages_v_blocks_hero`, and the tables `pages_blocks_hero_callouts` / `_pages_v_blocks_hero_callouts`. The same migration also creates the tables for `ReviewWall`, `FormEmbed` (+ `_reasons`, `_steps`), `BookingEmbed`, `DirectContact`, `CategoryTabs`, `pages_texts` / `_pages_v_texts` (hasMany text for `formEmbed.steps[].fieldNames`), adds `anchor_id` and `spacing` (enum `enum_pages_blocks_accordion_f_a_q_spacing`) to the AccordionFAQ tables, and adds enum values `inline` (`miniCTAStrip.variant`), `logo-strip` (`caseStudyCards.fallbackMode`), `facts` (`metricEvent.variant`) and `group` (`accordionFAQ.variant`). Additive; scratch-database up/down/up proven. Registered in `src/migrations/index.ts`. (An earlier `20261022_140138_b5_pages_7_12_blocks` was regenerated as `…141454…` when `formEmbed.stepped.sendAnotherLabel` was added.)
+
+**Notes**
+- Compact styling: no width cap on the h1, mobile h1 2.25rem; paragraph max 52ch; the logo shape is 340px (220px on mobile) at the top-right; content padding 80/56px desktop and 48/36px mobile.
+- Content column (`Wrap`): `narrow = compact && no stats && !showAggregateRating`. Narrow = the 820px column (`max-w-205`); otherwise the full site container (`max-w-site`, 1200px). The page 7 hero therefore uses the wide column only because its rating flag is ticked; unticking the flag shrinks it to 820px (F107, flagged; an explicit width field would be a schema delta).
+- No `Review` / `AggregateRating` JSON-LD is emitted anywhere (self-serving ratings, F64/F78).
+- The hero is still the only block that renders the page `h1`.
+
+### ReviewWall, feed variant (unit S5-2)
+
+Section: Testimonial feed (brand showcase). New block.
+
+**Files**
+- `src/blocks/ReviewWall/config.ts`, `Component.tsx` (`ReviewWallBlock`, async server component; exports `ReviewWallProps`), `feed.tsx` (`FeedCardData`, `FeedLabels`, `toFeedCard`, `FeedItems`, `FEED_LIST`), `LoadMore.tsx` (`FeedLoadMore`, client island).
+- Uses `src/components/VideoFacade.tsx` ([VideoFacade](#videofacade-srccomponentsvideofacadetsx)) and `src/lib/youtube.ts`.
+
+**Fields & schema** (slug `reviewWall`, `interfaceName: 'ReviewWallBlock'`)
+- `variant`: select, required, default `feed` (only option; `wall` for page 19 will add its own option).
+- `eyebrow` / `eyebrowTick`: `eyebrowField({ defaultTick: true })`. `heading` / `accentPhrase`: `headlineFields({ required: false })`. Both empty on the Testimonials page.
+- `source`: select, required, default `all`: `all` (published testimonials) or `manual`.
+- `sourceFilter`: select, `hasMany`, options `direct`, `google-review`, `linkedin`; shown when `source = all`; empty = every kind. Stored in table `pages_blocks_review_wall_source_filter`.
+- `testimonials`: relationship to `testimonials`, `hasMany`, `maxDepth: 2`; shown when `source = manual`.
+- `pageSize`: number 1 to 24, default 6 (cards at first and per Load More).
+- `showStudyLinks`: checkbox, default true. `studyLinkLabel`: text, default `Read the full case study`; shown while links are on.
+- `labels`: group `video` (`Video`), `googleReview` (`Google review`), `linkedin` (`LinkedIn`), `play` (`Play the video testimonial from`, the person's name is appended).
+- `loadMore`: group `label` (`Load more`), `loadingLabel` (`Loading…`), `errorLabel` (`Could not load more testimonials. Try again.`).
+- `emptyNote`: textarea; one quiet line when nothing matches.
+
+**Wiring**
+- Registered in `pageBlocks` (after `MetricEvent`); component key `reviewWall`.
+- Showcase (5 entries, `reviewWall` / `feed`): hand-picked mix (video, Google, LinkedIn, direct; the draft study on card 4 gives no link), case-study links off, Load More at 2 per load, live (all published testimonials from the database), fallback (LinkedIn-only filter with an empty note).
+- Data (Local API, `draft: false`, `overrideAccess: false`):
+  - `source = all`: `find` on `testimonials`, `where` `_status = published` (plus `source in <sourceFilter>` when set), `sort: ['sortOrder', '-createdAt']`, `limit: pageSize`, `depth: 2`; `hasNextPage` is kept.
+  - `source = manual`: the page-populated picks in pick order (`resolvePicks`). Picks that arrive as bare ids (drafts, unreadable) are dropped. Because the page is read at depth 2 and `testimonials.caseStudy` has `maxDepth: 1`, a pick whose `caseStudy` is still a number (when links are on), or whose video client's `logo` is a number, is re-read in one public `find` (`id in <ids>`, published only, `depth: 2`). Fully populated picks (showcase fixtures, live preview) trigger no query. A failed re-read is logged and the picks render without links or logos.
+- Load More (`FeedLoadMore`, `'use client'`, reason: appending cards on click and a browser fetch):
+  - The first page is server-rendered; the button renders only after hydration (`useSyncExternalStore`), so there is no dead control without JS. It renders at all only when `cards.length > pageSize` or the automatic source has `hasNextPage`.
+  - Hand-picked cards are all resolved on the server and revealed `pageSize` at a time. For `source = all`, later pages come from public REST: `GET /api/testimonials?<where and sort as qs brackets>&limit=<pageSize>&page=<n>&depth=2` with `credentials: 'omit'` and `Accept: application/json`. The `where` carries an explicit `_status = published` filter; collection read access (`publishedOrStaff`) also limits an anonymous request to published docs. A draft case study is therefore not populated and its link never renders. Cards already shown are de-duplicated by id.
+  - The list is `aria-live="polite"`, `aria-busy` while loading; focus moves to the first new card; an error shows `errorLabel` in a `role="alert"` line.
+  - The query-string serialiser `toQuery` duplicates the one in `CaseStudyCards` (same qs bracket syntax).
+- Revalidation: `pages` hook only; testimonials are read per request (`force-dynamic`).
+- Migration: `20261022_141454_b5_pages_7_12_blocks` (tables `pages_blocks_review_wall`, `pages_blocks_review_wall_source_filter`, `_pages_v_*`; enums `…_variant`, `…_source`, `…_source_filter`; the existing `testimonials_id` rels column is reused).
+
+**Notes**
+- Card data (`toFeedCard`): a testimonial is skipped when not published or when `quote` or `authorName` is empty. `format = video` needs a valid YouTube URL (`youtubeVideoId`); otherwise it degrades to a text card and logs an error. Stars come from `rating` (0 = no stars, never defaulted). Client logo and name show on video cards only. The case-study link needs `caseStudy._status = published` and `showStudyLinks` (`docPath('case-studies', …)`).
+- Video cards use the poster as the click-to-load facade; text cards cover written quotes, Google reviews and LinkedIn. Breakpoints: card type and padding switch at `md`; the side-by-side video card and two-up text pairs start at `lg`.
+- Empty state: no card and no `emptyNote` renders nothing (warn); with `emptyNote` it renders the header and the note line. Never "coming soon".
+- Alternative left open by the coder: raising `testimonials.caseStudy` `maxDepth` to 2 would remove the re-read.
+- The dev-only testimonial id 7 ("tmp") was deleted on the human's instruction (Decision log 2026-10-22).
 
 ## 8. About
 
-*No units documented yet.*
+Locked section order (SCHEMA §9): Article header ([Hero, article variant](#hero-article-variant-unit-s4-1), `stats`, full-bleed media) → Article body ([RichContent, article variant](#richcontent-article-variant-unit-s4-8)) → Company facts (MetricEvent `facts`, below) → Founder ([TeamIntro, founder-card variant](#teamintro-founder-card-variant-unit-b3)) → Logo strip at launch (CaseStudyCards `logo-strip` fallback, below) → Final CTA ([FinalCTA (B3)](#finalcta-unit-b3)) → Footer (standard). `pages.readingProgress` is on for About ([Page router](#page-router-unit-b2)).
+
+### MetricEvent, facts variant (unit S5-3)
+
+Section: Company facts. Extends [MetricEvent, table variant](#metricevent-table-variant-unit-s4-9).
+
+**Files**
+- `src/blocks/MetricEvent/config.ts`, `src/blocks/MetricEvent/Component.tsx` (`MetricEventBlock` dispatches on `variant`; `MetricTable`, `MetricFacts`).
+
+**Fields & schema**
+- `variant`: options now `table` and `facts`.
+- Fields used by `facts`: `eyebrow` (the table caption, e.g. "The company, in numbers"), `heading` / `accentPhrase` (optional), `items` (each `metricFields()`: `value`, `label`, `sub`, `accent`; the `baseline` and `change` fields belong to `table`), `note` (quiet line under the list). `columns` is not used.
+
+**Wiring**
+- Registered (S4-9); no new registration. Showcase: `metricEvent` / `facts` (4 rows with a note), `facts` (one row).
+- Reads no collection or global.
+- Migration: `20261022_141454_b5_pages_7_12_blocks` (`ALTER TYPE … ADD VALUE 'facts'` on `enum_pages_blocks_metric_event_variant` and `enum__pages_v_blocks_metric_event_variant`; no new columns).
+
+**Notes**
+- Output: a real `<table>` in the 820px column on a light section; label (`th scope="row"`) left, value right in the display face (`accent` rows in the accent colour); `sub` shows under the label. Row order is the editor's order; the first row has the heavy top rule. The caption is the visible eyebrow, or sr-only (`heading` or `Facts`) when the eyebrow is empty. Markup is identical at both breakpoints.
+- Rows without both `label` and `value` are skipped; with no valid row the block renders nothing (`console.warn`). No colour-only meaning.
+- Placeholder rows must stay demonstrative (CLAUDE.md content rule 3: no invented founding year, headcount or counts).
+- Server component.
+
+### CaseStudyCards, logo-strip fallback (unit S5-4)
+
+Section: Logo strip at launch (case study pull later). Extends [CaseStudyCards (B3)](#casestudycards-unit-b3) and its S4-2 extensions.
+
+**Files**
+- `src/blocks/CaseStudyCards/config.ts`, `src/blocks/CaseStudyCards/Component.tsx` (`Fallback` dispatches; `resolveLogoClients`, `LogoStripFallback`).
+
+**Fields & schema**
+- `fallbackMode`: option `logo-strip` added ("Logo strip: the text block, then the client logos (falls back to the note if there are none)").
+- `fallbackLogos`: relationship to `clients`, `hasMany`, `maxRows: 12`, `maxDepth: 1`; shown when `fallbackMode = logo-strip`. Optional: empty = every published client ticked `showInLogoStrip`; picks choose and order by hand.
+- Uses the existing `fallbackEyebrow`, `fallbackHeading`, `fallbackAccentPhrase`, `fallbackBody`, `pricingNote` and `tone`.
+
+**Wiring**
+- Registered (B3); no new registration. Showcase: `caseStudyCards` / `logo-strip` (4 fixture clients; 2 clients on a grey section; database-backed with zero clients, which shows the note).
+- Data (Local API, `overrideAccess: false`): picks are re-read by id (`id in <ids>`, `_status = published`, `depth: 1`) and kept in the editor's order; with no picks, `clients` where `showInLogoStrip = true` and `_status = published`, `sort: 'sortOrder'`, `limit: 12`, `depth: 1`. A failed read is logged and degrades to the note.
+- Migration: `20261022_141454_b5_pages_7_12_blocks` (`ALTER TYPE … ADD VALUE 'logo-strip'` on `enum_pages_blocks_case_study_cards_fallback_mode` and the `_pages_v` enum; the `clients_id` column on the rels tables already exists from ProofStrip).
+
+**Notes**
+- Only used while no case study is published; once one is, the block renders the cards (Launch-state rule). With no usable client the section renders the `note` fallback (text block only).
+- Output: text block, then a row of grey-scaled logos at 55% opacity (a client without a logo renders its name in the display face). Grid columns follow the count (`LOGO_COLS`), a centred flex row from `lg`.
+- `resolveLogoClients` and the row markup duplicate the ProofStrip logo-strip rule (ProofStrip keeps them private and is a cleared block); flagged for a later shared extraction.
+- Server component.
 
 ## 9. Book a Call
 
-*No units documented yet.*
+Locked section order (SCHEMA §9): Hero (compact, callouts) → Booking widget → Pre-call homework form → What happens next ([PhaseTimeline, steps variant](#phasetimeline-arc-and-steps-variants-unit-s4-4)) → Social proof strip ([TestimonialRow (B3)](#testimonialrow-unit-b3), `row`) → Quick-question escape line (MiniCTAStrip `inline`) → Footer (reduced-nav). For the compact Hero see [page 7](#hero-compact-size-and-aggregate-rating-unit-s5-1).
+
+### Hero, callouts (unit S5-1)
+
+Section: Book hero ("what the call is and isn't"). Part of [Hero, compact size](#hero-compact-size-and-aggregate-rating-unit-s5-1).
+
+**Fields & schema**
+- `callouts`: array, max 2 rows (`label` text, required; `text` textarea, required), `typographic` only.
+
+**Wiring**
+- Rendered by `TypographicHero`: rows with an empty `label` or `text` are dropped; up to two. Mobile: stacked; from `md`, a two-column grid, each item with a 2px ink top rule and the label in bold followed by the text. Placed under the paragraph, above the buttons.
+- Showcase: `hero` / `typographic compact + callouts`. Migration: `20261022_141454_b5_pages_7_12_blocks` (`pages_blocks_hero_callouts`, `_pages_v_blocks_hero_callouts`).
+
+**Notes**
+- The p9 placeholder uses `subNote` for the audience line. Compact Hero column: 820px (no rating flag).
+
+### BookingEmbed (unit S5-5)
+
+Section: Booking widget (desktop) / Booking flow (mobile). New block.
+
+**Files**
+- `src/blocks/BookingEmbed/config.ts`, `Component.tsx` (`BookingEmbedBlock` async loader; `BookingEmbedView` synchronous view; `Panel`, `Note`; exports `BookingEmbedData`, `BookingMode`, `BookingSettingsOverride`), `BookingLaunchLink.tsx` (client island).
+
+**Fields & schema** (slug `bookingEmbed`, `interfaceName: 'BookingEmbedBlock'`; no `variant` field)
+- `heading` (required) / `accentPhrase`: `headlineFields()`. `body`: textarea.
+- `buttonLabel`: text, required, default `Book your call`. `noteUnderButton`: text.
+- `newTabLabel`: text, default `Trouble with the calendar? Open it in a new tab` (embed state only).
+- `thankYouPage`: relationship to `pages`, `maxDepth: 0`; empty = the page with slug `thank-you`.
+- `fallbackHeading` (required, default `Booking is offline. Write to us instead.`), `fallbackBody`, `fallbackLink` (`linkField`, normally Contact): inside a collapsible "When no booking link is set".
+- The booking address and mode are NOT block fields: `site-settings.bookingUrl` and `site-settings.bookingMode` (`embed` | `link-out`, Booking tab) are read at render, so every booking surface changes together.
+
+**Wiring**
+- Registered in `pageBlocks`; component key `bookingEmbed`. Showcase: `bookingEmbed` / `link-out`, `embed`, `no-url`. The showcase forces a state through the non-schema prop `settingsOverride: { bookingUrl, bookingMode?, thankYouHref? }`, typed in `ShowcaseEntry` (`bookingEmbed: { settingsOverride?: BookingSettingsOverride }`); page content never sets it.
+- Data (`load`, Local API, `overrideAccess: false`): `findGlobal` `site-settings` `depth: 0`; in `link-out` mode with a valid URL, `find` on `pages` for the chosen page (or slug `thank-you`), `limit: 1`, `depth: 0`, `draft: false` → `docPath`. A failure is logged and the block shows the no-URL state.
+- URL rule (`safeBookingUrl`): only `https:` addresses count. Empty (warn) or invalid (error) = the no-URL state.
+- States, chosen at render:
+  - `link-out` (default, launch): a bordered panel (2px ink border, dot matrix, wine logo shape, display heading) with a full-width bar button. The button is `BookingLaunchLink`: an `<a target="_blank" rel="noopener noreferrer">` to the booking URL; on click it also calls `router.push(thankYouHref)` in a `setTimeout(0)` so this tab moves to Thank You (DECISIONS §Q option b). Without JS, or with no published Thank You page, it is a plain new-tab link. The bar has an sr-only `(opens in a new tab)`.
+  - `embed` (`bookingMode = embed`): below `md` the same link-out panel (no thank-you redirect); from `md` an `<iframe>` of the booking URL (`loading="lazy"`, `referrerPolicy="strict-origin-when-cross-origin"`, `sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"`, `title` = heading or button label) plus the `newTabLabel` link.
+  - no-URL fallback: the panel with `fallbackHeading` (or the heading), `fallbackBody` and the Contact link as the bar button; logs an error when the Contact link does not resolve.
+- Unique ids: `BookingEmbedView` is a synchronous component so `React.useId()` can make the heading id unique (`booking-<block id>` or `booking-panel-<useId>`). In embed mode the mobile panel's heading id gets a `-mobile` suffix and the desktop heading is an sr-only `<p>` (not an `h2`), so the DOM never holds two identical ids or two identical `h2`. The section is `aria-labelledby` that id.
+- Migration: `20261022_141454_b5_pages_7_12_blocks` (`pages_blocks_booking_embed`, `_pages_v_blocks_booking_embed`; enum `…_fallback_link_type`; FK `thank_you_page_id` to `pages`, `ON DELETE set null`).
+
+**Notes**
+- Framing of the Nextcloud page from `duhamedia.com` depends on the server's frame-ancestors setting (OPS_REQUESTS); the launch state is link-out (TBD: confirmed booking URL and framing answer are not recorded in the code).
+- The design has no link-out or fallback panel (MERGED Conflict 8); both reuse the booking-flow frame.
+- Client island reason: two navigations from one click.
+
+### FormEmbed, standard variant (unit S5-6)
+
+Section: Pre-call homework form (page 9); also the Contact form (page 12). New block. The `reminder` variant is on [page 10](#formembed-reminder-variant-unit-s5-6), the stepped phone layout on [page 12](#formembed-stepped-phone-layout-unit-s5-6).
+
+**Files**
+- `src/blocks/FormEmbed/config.ts` (exports `REASON_ICONS`), `Component.tsx` (`FormEmbedBlock`, `Standard`, `Reminder`, `formExists`, `steppedProps`, `steppedConfirmation`), `ReminderSwitch.tsx` and `SendAnother.tsx` (client islands). The form itself is the shared [`CMSForm` / `PayloadForm`](#form-foundation-s4-7).
+
+**Fields & schema** (slug `formEmbed`, `interfaceName: 'FormEmbedBlock'`)
+- `variant`: select, required, default `standard` (`standard` | `reminder`).
+- `form`: relationship to `forms`, required, `maxDepth: 1`.
+- `eyebrow` / `eyebrowTick` (standard only; `eyebrowField({ defaultTick: false })`), `heading` / `accentPhrase` (`headlineFields({ required: false })`), `body` (textarea), `submitLabel` (text; empty = the form's own label).
+- `ground`: select `light` (default, "White, roomy", Book a Call) | `grey` ("Grey band, tighter", Contact); standard only. Beyond SCHEMA §8.4 (flagged).
+- `mobileLayout`: select `stacked` (default) | `stepped`; standard only.
+- Reminder-only and stepped-only fields are listed on their entries.
+
+**Wiring**
+- Registered in `pageBlocks`; component key `formEmbed`. Showcase fixtures reference the dev form id 14 ("DEV Contact (showcase)", kept for QA) and render nothing where no form exists; entries cover standard (homework), standard stepped (Contact, two entries), reminder and an empty-form entry.
+- `formExists`: trusted `payload.count` on `forms` (`overrideAccess: true`, because forms are staff-read and a public request gets a bare id). No form chosen, a deleted form (FK is `set null`) or a failed check hides the whole section and logs an error.
+- Standard render: `Section` (`tone` from `ground`; padding `py-section-mobile md:py-section` for light, `py-12 md:py-section-tight` for grey), an 820px column, optional eyebrow / `h2` heading / lead, then `CMSForm` with `tone="light"`, `submitVariant="dark"`, `submitSize="md"` and class slots `standardForm` (`fields: flex flex-wrap gap-x-4 gap-y-5`, `submit: w-full md:w-auto md:self-start`). Form-builder field `width` (percent) drives the two-column grid: `PayloadForm` sizes a field under 100% as `calc(width% - 0.5rem)` from `sm`, which assumes the `gap-x-4` column gap.
+- Turnstile is always on (inside `CMSForm`). Revalidation: `pages` hook only. Migration: `20261022_141454_b5_pages_7_12_blocks` (`pages_blocks_form_embed`, `pages_blocks_form_embed_reasons`, `pages_blocks_form_embed_steps` and `_pages_v_*`; enums `…_variant`, `…_ground`, `…_mobile_layout`, `…_reasons_icon`; FK `form_id` to `forms`, `ON DELETE set null`; `pages_texts` / `_pages_v_texts` for `steps.fieldNames`).
+
+**Notes**
+- The p9 homework form needs a seeded form (`precall-homework`); the code does not create it.
+- Async server component; the only client code is `PayloadForm` (and the reminder / send-another islands on their variants).
+
+### MiniCTAStrip, inline variant (unit S5-7)
+
+Section: Quick-question escape line to Contact. Extends [MiniCTAStrip (B3)](#minictastrip-unit-b3).
+
+**Files**
+- `src/blocks/MiniCTAStrip/config.ts`, `Component.tsx` (`MiniCTAStripBlock` dispatches; `MiniCTAInline`).
+
+**Fields & schema**
+- `variant`: options now `band` and `inline`. `text` and `link` are shared; with `inline`, `text` is the lead-in sentence (shown as written) and `link` is the underlined link after it.
+
+**Wiring**
+- Showcase: `miniCTAStrip` / `inline`, `inline — link unresolved`. Migration: `20261022_141454_b5_pages_7_12_blocks` (`ALTER TYPE … ADD VALUE 'inline'` on `enum_pages_blocks_mini_c_t_a_strip_variant` and the `_pages_v` enum).
+
+**Notes**
+- Output: a light section with one sentence in a paragraph (0.9375rem, grey) and the link as bold ink text with a 2px underline. The link's hit area is extended to 44px with an `after:` pseudo-element (`-inset-y-3`) so the underline stays tight to the text. An unresolved link renders the sentence alone.
+- Inline links inside a sentence are measured below 44px in QA (F99); accepted by default under the WCAG 2.5.8 inline exception, with the MiniCTAStrip hit area still to be verified.
+- Server component.
 
 ## 10. Thank You
 
-*No units documented yet.*
+Locked section order (SCHEMA §9): Confirmation ([Hero, compact](#hero-compact-size-and-aggregate-rating-unit-s5-1), no buttons) → Homework reminder (conditional; FormEmbed `reminder`) → While-you-wait ([NewsletterBand (S4-11)](#newsletterband-unit-s4-11)) → Footer (reduced-nav). The page is `noindex` (set on the document; the seed must set it, F65).
+
+Hero note: the p10 showcase hero reads "Call booked. Invite's in your inbox." That conflicts with SCHEMA Q6 (the Thank You page is reached from the homework form or, with link-out booking, when the booking tab opens), so the copy is to be reworded before seeding (F80).
+
+### FormEmbed, reminder variant (unit S5-6)
+
+Section: Homework reminder (conditional). Part of [FormEmbed](#formembed-standard-variant-unit-s5-6).
+
+**Files**
+- `src/blocks/FormEmbed/Component.tsx` (`Reminder`), `src/blocks/FormEmbed/ReminderSwitch.tsx` (client island).
+
+**Fields & schema** (`variant = reminder`)
+- Uses `form`, `heading` / `accentPhrase`, `body`, `submitLabel` from the shared set.
+- `alertLabel`: text; phones only, the warning bar across the top of the card (e.g. "Required before your call"); empty = no bar.
+- `reasons`: array, max 5 rows, phones only; each `icon` (select `chart` | `clock` | `target` | `check`, required, default `check`) and `text` (text, required).
+- `doneHeading` (default `Homework received.`) and `doneBody`: the "done" state text, joined with a space.
+
+**Wiring**
+- Registered with `formEmbed`. Showcase: `formEmbed` / `reminder`.
+- Render: on a grey band from `md` (`py-12 md:bg-gray-light md:py-section-tight`; white on phones), a 2px ink card with shadow; heading and lead; `reasons` list (`md:hidden`); the form via `CMSForm` (class slots `reminderForm`). `confirmation` = the done text when set, else the form's own message.
+- `ReminderSwitch` (`'use client'`, reason: reads `useSearchParams`): blocks receive only their own row, not the page's `searchParams`. It renders the server-rendered `done` node when `?homework=done`, else `pending`. `done` is a `role="status"` success line; when there is no done text it falls back to `pending`.
+- No `<Suspense>` around it, on purpose: the `(frontend)` segment is `force-dynamic`, so `useSearchParams` never bails out of a static prerender, and a Suspense fallback of `pending` put the same form (same ids) into the streamed HTML twice (F98). To verify when pushing: that the CI `next build` still passes with `useSearchParams` outside Suspense. If the router ever passes `searchParams` to blocks, this can become a server-side branch.
+- Migration: see [FormEmbed, standard](#formembed-standard-variant-unit-s5-6) (`pages_blocks_form_embed_reasons`, enum `…_reasons_icon`).
+
+**Notes**
+- Desktop design shows a two-column field grid in the reminder card; the build follows the form's field widths, and the phone-only reasons and alert bar are hidden from `md` (F101, default accepted until the homework form is seeded).
+- Server component with one client island.
 
 ## 11. FAQ
 
-*No units documented yet.*
+Locked section order (SCHEMA §9): Hero (compact, eyebrow and heading only) → Category nav → Pricing & Contracts group (`openFirst`) → Builds → Marketing → Process & Trust → Still have questions ([FinalCTA (B3)](#finalcta-unit-b3), two buttons, capacity `none`) → Footer (standard). `pages.readingProgress` is on for FAQ. For the compact Hero see [page 7](#hero-compact-size-and-aggregate-rating-unit-s5-1).
+
+### CategoryTabs (unit S5-9)
+
+Section: Category nav. New block.
+
+**Files**
+- `src/blocks/CategoryTabs/config.ts`, `Component.tsx` (`CategoryTabsBlock`, `deriveCategoryTabs`, `CategoryTab`, `CategoryTabSource`), `CategoryTabsNav.tsx` (client island).
+
+**Fields & schema** (slug `categoryTabs`, `interfaceName: 'CategoryTabsBlock'`)
+- `ariaLabel`: text, required, default `FAQ categories` (screen-reader name of the nav, not shown).
+- The visible tabs are NOT fields. They are derived from the page's AccordionFAQ `group` blocks.
+
+**Wiring**
+- Registered last in `pageBlocks`; component key `categoryTabs`. Showcase: `categoryTabs` with four tabs (placed directly before the four AccordionFAQ group entries so the anchors resolve), and a zero-tab entry (renders nothing, warns).
+- Derivation: `RenderBlocks` computes `deriveCategoryTabs([...blocks])` once per page and injects `tabs` into every `categoryTabs` row (a row that already carries `tabs`, like a showcase fixture, keeps its own). `deriveCategoryTabs` takes each `accordionFAQ` row with `variant = group` and a non-empty `anchorId`, in layout order, as `{ label: heading (or anchorId), anchorId, from: { source, faqs, category, limit } }`; a duplicate `anchorId` is warned about and skipped (first wins).
+- Published-only filter: `CategoryTabsBlock` (async server component) calls `loadAccordionFaqs` per tab that has `from` and drops tabs whose group would render nothing (no published questions), so no tab links to a missing section. Hand-written tabs (no `from`) are never filtered. With no valid tab the block renders nothing (warn).
+- `CategoryTabsNav` (`'use client'`, reason: scroll-spy (scroll listener and offset math), smooth scroll and `aria-current` state): sticky bar (`sticky top-header-mobile md:top-header z-10`, sticky on phones too), the active tab gets `aria-current="location"`, reduced motion switches smooth scroll off. Without JS the tabs are plain in-page anchors.
+- Revalidation: `pages` hook only. Migration: `20261022_141454_b5_pages_7_12_blocks` (`pages_blocks_category_tabs`, `_pages_v_blocks_category_tabs`).
+
+**Notes**
+- Active state is derived from scroll position (ink pill on mobile, wine underline on desktop in the design); the design's phone tab bar is non-sticky wrapping pills, the build is sticky on phones too (flagged by the coder).
+- Real `/faq` is not seeded yet, so the sticky bar on a real page is untested (QA note).
+
+### AccordionFAQ, group variant (unit S5-8)
+
+Section: category groups (Pricing & Contracts, Builds, Marketing, Process & Trust). Extends [AccordionFAQ, mini variant](#accordionfaq-mini-variant-unit-s4-6).
+
+**Files**
+- `src/blocks/AccordionFAQ/config.ts` (exports `RESERVED_ANCHOR_IDS`), `Component.tsx` (`GroupFaq`; exports `loadAccordionFaqs`, `faqJsonLdItems`).
+
+**Fields & schema**
+- `variant`: options now `mini` and `group`. One `group` block per category.
+- `anchorId`: text, `group` only; validated (below). It becomes the section `id`.
+- `spacing`: select `middle` (default) | `first` | `last` | `only`, `group` only. Page-edge padding: middle `py-5 md:py-8`, first `pt-11 pb-5 md:pt-16 md:pb-8`, last `pt-5 pb-12 md:pt-8 md:pb-16`, only `pt-11 pb-12 md:pt-16 md:pb-16`. Beyond SCHEMA.
+- Shared with `mini`: `eyebrow`, `heading` (required), `source` (`selected` | `category`), `category` (options come from `faqs.category`), `faqs` (relationship, hasMany, `maxDepth: 1`), `limit` (1 to 12, default 6), `openFirst`, `allLink`.
+- `anchorId` validator (`validateAnchorId`): lowercase letters, numbers and single hyphens (`^[a-z0-9]+(-[a-z0-9]+)*$`); not equal to, and not prefixed `<id>-` by, any of `RESERVED_ANCHOR_IDS` (`main`, `__next`, `dc-water`); and not the same as an earlier `group` block's `anchorId` in the same layout (checked from the block's position in `options.data.layout`, on publish like every field validator). `main` is the skip-link target in `PageShell`; `dc-water` is the map SVG pattern id prefix ([DirectContact](#directcontact-unit-s5-10)). If the `dc-water` id naming changes, update `RESERVED_ANCHOR_IDS`.
+
+**Wiring**
+- Same registration as `mini`. Showcase: four `group` entries (pricing with `openFirst` and `first` spacing, builds, marketing, process with `last` spacing).
+- Output: `<Section id={anchorId} class="scroll-mt-31 md:scroll-mt-34 …">` (124px / 136px scroll margin; clears the sticky header and the sticky category bar on phones and from `md`), an 820px column, an `h2` in the display face, then the shared native `<details>` question rows (`FaqRow`). A group renders nothing (warn) when it has no published question.
+- A group emits no JSON-LD itself. `mini` emits its own FAQPage unless `emitJsonLd={false}` is injected (see the next entry).
+- Migration: `20261022_141454_b5_pages_7_12_blocks` (`anchor_id` varchar and `spacing` enum columns on `pages_blocks_accordion_f_a_q` and `_pages_v_blocks_accordion_f_a_q`; `ALTER TYPE … ADD VALUE 'group'` on the variant enums).
+
+**Notes**
+- A duplicate `anchorId` inside an unpublished draft still renders duplicate ids in the preview only (validators do not run for drafts); accepted, drafts are never public.
+- Server component.
+
+### Page-level FAQPage JSON-LD (PageFaqJsonLd)
+
+**Files**
+- `src/components/PageFaqJsonLd.tsx`, `src/components/PageView.tsx`, `src/components/RenderBlocks.tsx`.
+
+**Fields & schema**: none.
+
+**Wiring**
+- `PageView` renders `<RenderBlocks blocks={layout} pageJsonLd />` and `<PageFaqJsonLd layout={layout} />`. With `pageJsonLd`, `RenderBlocks` injects `emitJsonLd={false}` into every `accordionFAQ` row, so the blocks emit none.
+- `PageFaqJsonLd` (async server component): collects the published questions of every `accordionFAQ` block on the page through `loadAccordionFaqs` (same published-only rules and limit clamp as the render path), de-duplicates by FAQ id in layout order, and emits ONE `application/ld+json` `FAQPage` (`mainEntity` from `faqJsonLdItems`; `<` escaped to `<`). Renders nothing when there is no question.
+- Applies to every `pages` document (`/` and `[...slug]`); the case-study template is unaffected. A `category`-source block reads the database twice per request (here and when it renders; `force-dynamic`, no cache).
+- Migration: none.
+
+**Notes**
+- Fixes the finding that two AccordionFAQ blocks on one page produced two FAQPage scripts (A1 of F78).
 
 ## 12. Contact
 
-*No units documented yet.*
+Locked section order (SCHEMA §9): Hero (compact, routing line) → Contact form (FormEmbed `standard`, mobile stepped) → Direct info + map (DirectContact) → Footer (standard). For the compact Hero see [page 7](#hero-compact-size-and-aggregate-rating-unit-s5-1); for the standard FormEmbed see [page 9](#formembed-standard-variant-unit-s5-6). The page also renders [OrganizationJsonLd](#organization--localbusiness-json-ld-organizationjsonld).
+
+### FormEmbed, stepped phone layout (unit S5-6)
+
+Section: Contact form (phone build: one question at a time). Part of [FormEmbed](#formembed-standard-variant-unit-s5-6); the engine is [Forms: stepped layout](#forms-stepped-layout-and-per-instance-ids-big-step-5).
+
+**Files**
+- `src/blocks/FormEmbed/config.ts`, `Component.tsx` (`steppedProps`, `toFormSteps`, `stepHeading`, `steppedConfirmation`, class maps `steppedForm`, `steppedCard`, `steppedControl`, `steppedNav`), `SendAnother.tsx`; `src/components/forms/PayloadForm.tsx`, `steps.ts`.
+
+**Fields & schema** (shown when `variant = standard` and `mobileLayout = stepped`)
+- `steps`: array, max 10 rows: `fieldNames` (text, `hasMany`, required: the form-builder field "Name"s in this step), `heading` / `accentPhrase` (`headlineFields({ required: false })`), `hint` (text). Empty array = one question per step, headed by the field label. A form field no step names is added to the last step.
+- `stepped`: group, "Stepped layout: buttons and progress": `progressLabel` (default `Question {n} of {m}`), `startLabel` (`Start`), `nextLabel` (`Next`), `backLabel` (`Back`, read aloud), `sendAnotherLabel` (`Send another`), `selectAsOptions` (checkbox, default true).
+- `steps` and `stepped` are schema additions beyond SCHEMA §8.4 (F79, flagged for a mini Gate S).
+
+**Wiring**
+- `steppedProps` maps the block onto `PayloadForm`: `layout: 'stepped'`, `steppedBelow: 'md'`, `steps` (blank names dropped; empty `steps` becomes `undefined`), `selectAsOptions`, and the four labels. Below `md` the form is the design's card (2px ink border, min height 520px, progress block on top, nav bar pinned to the bottom behind a 2px rule, dotted ground on step 1, wine mark on steps 1 and 2); from `md` the layout is the stacked form. The class maps use `max-md:` scoping so the stacked rendering keeps its defaults.
+- Confirmation (`steppedConfirmation`): the form's own `confirmationMessage` rendered through `RichText` on a dark panel with a check mark and a "Send another" bar. Skipped (`undefined`, so `CMSForm`'s own handling applies) for redirect-type forms, a form with no message, or a failed read. `SendAnother` (`'use client'`) reloads the page, because `PayloadForm` has no reset and a second submission needs a fresh Turnstile token.
+- Dev form for QA: id 14 ("DEV Contact (showcase)"); the showcase has two stepped entries.
+- Migration: `20261022_141454_b5_pages_7_12_blocks` (`pages_blocks_form_embed_steps`, `pages_texts` with `path` for `fieldNames`, the `stepped_*` columns on `pages_blocks_form_embed`, and the `_pages_v` equivalents). This file was regenerated when `sendAnotherLabel` was added.
+
+**Notes**
+- The wine-mark disc on the stepped card is kept as a small corner cap clear of the progress bar and the heading, a departure from the design geometry (F102, accepted by the human).
+- Step headings are `<h3>` inside the card with focus moved to them on step change (F81).
+- Keying of the Next / Send buttons fixed "step-4 error shown on arrival" (see the forms entry).
+
+### DirectContact (unit S5-10)
+
+Section: Direct info + map. New block; replaces the baseline `MapEmbed` (X5 / R9).
+
+**Files**
+- `src/blocks/DirectContact/config.ts`, `Component.tsx` (`DirectContactBlock`, async server component; `SocialIcon`), `ServiceAreaMap.tsx` (`ServiceAreaMap`, `mapStamp`).
+
+**Fields & schema** (slug `directContact`, `interfaceName: 'DirectContactBlock'`; no variant)
+- `showEmail`, `showSocials`, `showLocation`: checkboxes, default true.
+- `skipFormLine`: text, max 40, default `Skip the form` (phones; empty hides it).
+- `rowLabels`: group `email` (`Email`), `socials` (`Socials`), `location` (`Location`), `replyTime` (`Reply time`), each max 30. Beyond SCHEMA.
+- `map`: group `show` (checkbox, default true), `caption` (textarea, default "Based in Lombard, IL — serving the greater Chicagoland area within a ~30-mile radius. Outside the ring? We work remote-first, so reach out anyway."; also the screen-reader description), `zoom` (number 0.5 to 2, step 0.25, default 1).
+- Values are not block fields: they come from `site-settings` at render (`contactEmail`, `responseTimeNote`, `socials[]` (`handle`, `url`), `location` (`displayLine`, `locality`, `region`, `latitude`, `longitude`, `serviceRadiusMiles`)).
+
+**Wiring**
+- Registered in `pageBlocks`; component key `directContact`. Showcase: all rows plus map, no map, email only, map only at zoom 1.5.
+- `loadSettings`: `findGlobal` `site-settings`, `depth: 0`, `overrideAccess: false`; a failure is logged and the block renders without details. Rows without a value are omitted; socials need a non-empty `handle` and an `http(s)` `url`. If no row and no map would render, the block renders nothing (warn).
+- Map: a static schematic SVG drawn by the site (no external map service, no dependencies, no tiles), centred on `latitude` / `longitude` (fallback Lombard 41.88 / -88.008), with the service-radius ring (`serviceRadiusMiles`, fallback 30). Social icons are hand-inlined SVG (unverified against real profiles; dev has no socials).
+- Per-instance pattern id (F89): `ServiceAreaMap` renders both a mobile and a desktop SVG, and the water hatching pattern id is `dc-water-<size>-<useId()>` (non-alphanumerics stripped), so the page holds no duplicate id (the same id used to appear 4 times on the showcase and the hatching could vanish).
+- Migration: `20261022_141454_b5_pages_7_12_blocks` (`pages_blocks_direct_contact`, `_pages_v_blocks_direct_contact`).
+
+**Notes**
+- Row labels show on `md` and up (and for location and reply time on phones). The email link and the social links are 44px tall at all widths after the Gate 1 rework.
+- Server component; no interactivity.
+
+### Organization / LocalBusiness JSON-LD (OrganizationJsonLd)
+
+Rendered on page 1 (Homepage) and page 12 (Contact). Documented once, here; the Homepage section links to this entry.
+
+**Files**
+- `src/components/OrganizationJsonLd.tsx` (exports `OrganizationJsonLd`, `CONTACT_SLUG`, `ORGANIZATION_JSONLD_SLUGS`), `src/components/PageView.tsx`, `src/lib/metadata.ts` (`absoluteMediaUrl`).
+
+**Fields & schema**: none. Reads the `seo-defaults` global (`organization.name`, `organization.logo`, `organization.foundingDate`, `localBusiness.type`, `localBusiness.areaServed`, `localBusiness.openingHours`) and `site-settings` (`legalName`, `contactEmail`, `location.{locality,region,country,latitude,longitude}`, `socials[].url`, `gbpUrl`) through `getSeoDefaults()` and `getChrome()`.
+
+**Wiring**
+- `PageView` renders `<OrganizationJsonLd />` inside `<main>` when `page.slug` is in `ORGANIZATION_JSONLD_SLUGS` (`home`, `contact`). One `application/ld+json` script.
+- `@type` = `seo-defaults.localBusiness.type` (only `ProfessionalService`, a schema.org LocalBusiness subtype) when set, else `Organization`. Properties: `name`, `legalName`, `url` (`SITE_URL`), `logo` (`ImageObject`, original upload via `absoluteMediaUrl(…, 'original')`), `email`, `foundingDate`, `address` (`PostalAddress`: locality, region, country), `sameAs` (social profile URLs plus the GBP link, de-duplicated). With a business type: `geo` (`GeoCoordinates`, when both coordinates are numbers), `areaServed`, `openingHours` (the stored "a; b" string split on `;`).
+- `compact` drops empty strings, non-finite numbers, empty arrays and objects with nothing but `@type`. Nothing is hardcoded and nothing is emitted for an unset field; `<` is escaped to `<`.
+- Revalidation: both globals' `revalidateGlobalHook` purge the whole `(frontend)` layout on save, which covers `/` and `/contact`. Migration: none.
+
+**Notes**
+- No `aggregateRating` (Google excludes self-published ratings).
+- Open flags: F103 (no switch to enable LocalBusiness; dev `localBusiness.type` is null, so the output is `Organization` until the seed or an editor sets it), F104 (schema.org marks `ProfessionalService` deprecated but still valid; S2 locked it), F105 (the address is locality, region and country only, which may not qualify for a Google local rich result; a street and postal code would be a human fact and possibly a field), F106 (stored geo has fewer than the 5 decimals Google recommends).
 
 ## 13. DEV-SEO template
 

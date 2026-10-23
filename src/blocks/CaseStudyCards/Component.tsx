@@ -195,7 +195,7 @@ function StudyCard({ study, linkLabel }: { study: CaseStudy; linkLabel: string }
   const client = typeof study.client === 'object' && study.client !== null ? (study.client as Client).name : null
   const metric = study.headlineMetric
   const hero = typeof study.heroMedia === 'object' ? study.heroMedia : null
-  const href = study.slug ? `/work/${study.slug}` : null
+  const href = docPath('case-studies', study)
 
   const body = (
     <>

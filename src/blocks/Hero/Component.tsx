@@ -128,7 +128,7 @@ function TypographicHero({
           </div>
         ) : null}
         {verticalMicrocopy ? (
-          <span className="mt-3 block text-[11px] font-bold uppercase tracking-[0.2em] text-gray-warm lg:hidden">
+          <span aria-hidden="true" className="mt-3 block text-[11px] font-bold uppercase tracking-[0.2em] text-gray-warm lg:hidden">
             {verticalMicrocopy}
           </span>
         ) : null}
