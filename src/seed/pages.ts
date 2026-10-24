@@ -9,8 +9,9 @@ import { SEED_CONTEXT, ensure, link, noLink, ph, phSub, type SeedCtx } from './l
  * seeded as draft documents in library.ts). Sections follow SCHEMA.md §9 in
  * the LOCKED order — one block per section, nothing added, removed or merged.
  * Header/footer variants per CLAUDE.md rule 4; noindex on p10, p15, p17, p21
- * (SCHEMA §6.1, F65). Pages are published so every route renders; their copy
- * is placeholder (F61: Gate 3 blocks any bracket placeholder on a public page).
+ * (SCHEMA §6.1, F65) and on the four p20 legal pages until counsel content
+ * exists (F190). Explicit `metaTitle`s per F191. Pages are published so
+ * every route renders; their copy is placeholder (F61: Gate 3 blocks any bracket placeholder on a public page).
  *
  * Links are custom site paths (as typed by an editor), so a page can point at
  * a page created later in the same run.
@@ -21,6 +22,8 @@ type Layout = Page['layout']
 type PageSpec = {
   slug: string
   title: string
+  /** SEO tab `meta.title`, rendered as-is (`title.absolute`, src/lib/metadata.ts): carries its own brand suffix. ≤ 60 chars (F191). */
+  metaTitle?: string
   description: string
   headerVariant?: Page['headerVariant']
   footerVariant?: Page['footerVariant']
@@ -199,6 +202,7 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
     /* ---------------- p3 Work ---------------- */
     {
       slug: 'work',
+      metaTitle: 'Ecommerce Case Studies and Results — Duha Media',
       title: 'Work',
       description: 'Case studies from stores we built, ran and handed over — published as clients sign off on the figures.',
       layout: [
@@ -266,6 +270,7 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
     /* ---------------- p4 Services Hub ---------------- */
     {
       slug: 'services',
+      metaTitle: 'Shopify Development and Ecommerce Marketing — Duha Media',
       title: 'Services',
       description: 'Two tracks, one team: Shopify theme development and a marketing engine, ending in a handover to your team.',
       layout: [
@@ -383,6 +388,7 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
     /* ---------------- p5 Shopify Theme Development ---------------- */
     {
       slug: 'services/shopify-theme-development',
+      metaTitle: 'Shopify Theme Development, Chicago — Duha Media',
       title: 'Shopify Theme Development',
       description: 'Shopify theme builds and revisions with tracking and SEO shipped inside the build. Builds start at $5K, scoped in writing.',
       layout: [
@@ -396,7 +402,7 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
           pricingNote: 'Builds start at $5K',
           subNote: '[Placeholder — typical revision length]',
           ctas: [{ link: L('Book a call', '/book-a-call') }],
-          breadcrumb: [{ label: 'Services', url: '/services' }, { label: 'Shopify theme development' }, { label: 'Phase 01 — build the foundation' }],
+          breadcrumb: [{ label: 'Services', url: '/services' }, { label: 'Shopify theme development' }],
           stats: [{ value: '[N weeks]', label: 'Typical revision' }],
         },
         {
@@ -500,6 +506,7 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
     /* ---------------- p6 Marketing ---------------- */
     {
       slug: 'services/marketing',
+      metaTitle: 'Ecommerce Marketing Engine, Chicago — Duha Media',
       title: 'Marketing',
       description: 'Email, ads, content, SEO, Google Business Profile and CRM run by one team on one dashboard. Engines start at $1K/mo.',
       layout: [
@@ -513,7 +520,7 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
           pricingNote: 'Engines start at $1K/mo',
           subNote: '[Placeholder minimum-term note]',
           ctas: [{ link: L('Book a call', '/book-a-call') }],
-          breadcrumb: [{ label: 'Services', url: '/services' }, { label: 'Marketing' }, { label: 'Phase 02 — operate the engine' }],
+          breadcrumb: [{ label: 'Services', url: '/services' }, { label: 'Marketing' }],
         },
         {
           blockType: 'specLedger',
@@ -639,6 +646,7 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
     /* ---------------- p8 About ---------------- */
     {
       slug: 'about',
+      metaTitle: 'About Duha Media — One Team, Store to Handover',
       title: 'About',
       readingProgress: true,
       description: 'Duha Media is one accountable team: we build the store, operate the growth engine, then hand it over. Lombard, IL — serving Chicagoland.',
@@ -753,6 +761,7 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
     /* ---------------- p9 Book a Call ---------------- */
     {
       slug: 'book-a-call',
+      metaTitle: 'Book a Growth Strategy Call — Duha Media',
       title: 'Book a call',
       footerVariant: 'reduced-nav',
       description: 'Book a 30-minute growth strategy call: your store, your channels, and whether we are the right fit — with numbers on the table.',
@@ -820,6 +829,7 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
     /* ---------------- p11 FAQ ---------------- */
     {
       slug: 'faq',
+      metaTitle: 'FAQ: Pricing, Builds and Marketing — Duha Media',
       title: 'FAQ',
       readingProgress: true,
       description: 'Straight answers on pricing, builds, marketing and how we work. Builds start at $5K; engines start at $1K/mo.',
@@ -846,6 +856,7 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
     /* ---------------- p12 Contact ---------------- */
     {
       slug: 'contact',
+      metaTitle: 'Contact Duha Media — Partnerships, Press, Clients',
       title: 'Contact',
       description: 'Partnerships, press and existing clients: write to us here. Prospects: book a 30-minute call. We reply within 1 business day.',
       layout: [
@@ -966,6 +977,7 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
     /* ---------------- p16 Newsletter ---------------- */
     {
       slug: 'newsletter',
+      metaTitle: 'Ecommerce Growth Newsletter — Duha Media',
       title: 'Newsletter',
       description: 'One useful email a month: what worked across client stores, what did not, with the data attached. Unsubscribe anytime.',
       layout: [
@@ -1050,6 +1062,7 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
     /* ---------------- p19 Review Hub ---------------- */
     {
       slug: 'reviews',
+      metaTitle: 'Client Reviews — Duha Media',
       title: 'Reviews',
       description: 'Reviews from clients, quoted verbatim from where they posted them, so you can verify every one.',
       layout: [
@@ -1095,24 +1108,28 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
     /* ---------------- p20 Legal ×4 (structure only — counsel provides every word) ---------------- */
     {
       slug: 'privacy',
+      noindex: true, // F190: until counsel content exists (Gate 3 step clears it)
       title: 'Privacy Policy',
       description: '[Placeholder] Privacy policy — counsel-provided content to follow.',
       layout: legalDoc('Privacy Policy', ['Scope', 'Data we collect', "How it's used", 'Sharing & processors', 'Your rights']),
     },
     {
       slug: 'terms',
+      noindex: true, // F190: until counsel content exists (Gate 3 step clears it)
       title: 'Terms',
       description: '[Placeholder] Terms — counsel-provided content to follow.',
       layout: legalDoc('Terms', ['Scope', 'Using this site', 'Intellectual property', 'Limitations']),
     },
     {
       slug: 'cookies',
+      noindex: true, // F190: until counsel content exists (Gate 3 step clears it)
       title: 'Cookie Policy',
       description: '[Placeholder] Cookie policy — counsel-provided content to follow.',
       layout: legalDoc('Cookie Policy', ['Scope', 'Cookies we use', 'Your choices']),
     },
     {
       slug: 'gdpr',
+      noindex: true, // F190: until counsel content exists (Gate 3 step clears it)
       title: 'GDPR',
       description: '[Placeholder] GDPR notice — counsel-provided content to follow.',
       layout: legalDoc('GDPR', ['Scope', 'Lawful basis', 'Your rights', 'Data transfers']),
@@ -1141,7 +1158,7 @@ export async function seedPages(ctx: SeedCtx, ids: LibraryIds) {
   const { payload, req } = ctx
   const created: Record<string, number> = {}
   for (const spec of pageSpecs(ids)) {
-    const { slug, title, description, ...flags } = spec
+    const { slug, title, metaTitle, description, ...flags } = spec
     // Book a Call's booking block hands the original tab to the Thank You page (created earlier in this list).
     const layout: Layout = spec.layout.map((block) =>
       block.blockType === 'bookingEmbed' ? { ...block, thankYouPage: created['thank-you'] ?? null } : block,
@@ -1159,7 +1176,7 @@ export async function seedPages(ctx: SeedCtx, ids: LibraryIds) {
           zeroLeakage: flags.zeroLeakage ?? false,
           readingProgress: flags.readingProgress ?? false,
           noindex: flags.noindex ?? false,
-          meta: { description },
+          meta: { description, ...(metaTitle ? { title: metaTitle } : {}) },
           layout,
         },
         context: SEED_CONTEXT,

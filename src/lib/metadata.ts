@@ -262,6 +262,7 @@ export const caseStudyJsonLd = async (study: CaseStudy, crumbs: readonly Crumb[]
   const url = path ? absoluteUrl(path) : undefined
   const logo = absoluteMediaUrl(defaults.organization?.logo, 'original')
   const organization = {
+    '@id': `${site}/#organization`,
     '@type': 'Organization',
     name: siteName(defaults),
     url: site,
@@ -380,6 +381,7 @@ export const postJsonLd = async (post: Post, faqItems: FaqItem[]): Promise<Recor
   const url = path ? absoluteUrl(path) : undefined
   const logo = absoluteMediaUrl(defaults.organization?.logo, 'original')
   const organization = {
+    '@id': `${getSiteUrl()}/#organization`,
     '@type': 'Organization',
     name: siteName(defaults),
     url: getSiteUrl(),

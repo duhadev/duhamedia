@@ -8,9 +8,23 @@ import React, { createContext, useContext } from 'react'
  * state). `null` when the form has no `name` field or it was blank.
  */
 const FirstNameContext = createContext<string | null>(null)
+/** Heading level of the personalised confirmation heading (h3 under a section h2; h2 when the page has none above). */
+const HeadingTagContext = createContext<'h2' | 'h3'>('h3')
 
-export function SubmittedFirstName({ value, children }: { value: string | null; children: React.ReactNode }) {
-  return <FirstNameContext.Provider value={value}>{children}</FirstNameContext.Provider>
+export function SubmittedFirstName({
+  value,
+  headingTag = 'h3',
+  children,
+}: {
+  value: string | null
+  headingTag?: 'h2' | 'h3'
+  children: React.ReactNode
+}) {
+  return (
+    <HeadingTagContext.Provider value={headingTag}>
+      <FirstNameContext.Provider value={value}>{children}</FirstNameContext.Provider>
+    </HeadingTagContext.Provider>
+  )
 }
 
 /**
@@ -29,11 +43,12 @@ export function PersonalConfirmation({
   fallback: React.ReactNode
 }) {
   const firstName = useContext(FirstNameContext)
+  const headingTag = useContext(HeadingTagContext)
   if (!firstName) return <>{fallback}</>
   return (
     <>
       <div className="md:hidden">
-        <h3>{template.replaceAll('{firstName}', firstName)}</h3>
+        {React.createElement(headingTag, null, template.replaceAll('{firstName}', firstName))}
         {personal}
       </div>
       <div className="hidden md:block">{fallback}</div>

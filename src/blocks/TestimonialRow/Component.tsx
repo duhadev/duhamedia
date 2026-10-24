@@ -220,6 +220,8 @@ export function TestimonialRowView({
 
   const showCta = Boolean(resolveLinkHref(cta) && cta?.label?.trim())
   const twoCol = cards.length > 0 && study !== null
+  // A video card beside a text card: the text card must not stretch to the video card's height (empty body).
+  const mixedFormats = cards.some((t) => t.format === 'video') && cards.some((t) => t.format !== 'video')
   const studyLabel = studyCard?.label?.trim()
 
   const eyebrowEl = eyebrow ? (
@@ -281,7 +283,7 @@ export function TestimonialRowView({
           {cards.length > 0 ? (
             <div className="flex flex-col gap-3.5 md:gap-5">
               {eyebrowEl}
-              <div className={cx('grid gap-4 md:gap-5', !twoCol && COLS[Math.min(cards.length, 3) as 1 | 2 | 3])}>
+              <div className={cx('grid gap-4 md:gap-5', !twoCol && COLS[Math.min(cards.length, 3) as 1 | 2 | 3], mixedFormats && 'md:items-start')}>
                 {cards.map((t) => (
                   <TestimonialCard key={t.id} t={t} />
                 ))}

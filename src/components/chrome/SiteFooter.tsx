@@ -7,6 +7,7 @@ import { getChrome, getNewsletterFormId, getNewsletterHref, toNavItems, type Nav
 import { cx } from '@/lib/cx'
 import { getRequestPath } from '@/lib/requestPath'
 
+import { HIT_AREA } from './hit'
 import { footerNudgeFormClassNames } from './footerNudgeForm'
 import { NavLink } from './NavLink'
 import { SiteLogo } from './SiteLogo'
@@ -15,7 +16,10 @@ export type FooterVariant = 'standard' | 'reduced-nav' | 'legal-only'
 
 const EDGE = 'mx-auto w-full max-w-site px-container-mobile md:px-container'
 // Mobile footer links meet the 44px touch target; on desktop (pointer) the design's tight list spacing is kept.
-const LIST_LINK = 'flex min-h-target items-center text-cream no-underline opacity-85 md:min-h-0 md:opacity-75'
+// Horizontal rows (reduced footer) keep the tight desktop look and get an invisible 44px hit area.
+const LIST_LINK = `${HIT_AREA} flex min-h-target items-center text-cream no-underline opacity-85 md:min-h-0 md:opacity-75`
+// Vertical column lists: neighbours are only a line apart, so a hit area cannot overhang without overlapping; the row itself is 44px on every breakpoint.
+const COL_LINK = 'flex min-h-target items-center text-cream no-underline opacity-85 md:opacity-75'
 const HEADING =
   'text-[10px] font-bold tracking-[0.1em] uppercase opacity-55 md:mb-1 md:text-label md:tracking-[0.08em] md:opacity-100'
 
@@ -60,7 +64,7 @@ export async function SiteFooter({ variant = 'standard' }: { variant?: FooterVar
                 <NavLink
                   key={item.href + item.label}
                   item={item}
-                  className="inline-flex min-h-target items-center text-cream no-underline md:min-h-0"
+                  className={`${HIT_AREA} inline-flex min-h-target items-center text-cream no-underline md:min-h-0`}
                 />
               ))}
             </nav>
@@ -147,12 +151,12 @@ async function StandardZones({
       {columns.length > 0 ? (
         <div className="grid grid-cols-2 gap-x-5 gap-y-5.5 border-t border-on-accent/20 pt-6 md:contents md:border-0 md:pt-0 max-md:[&>:last-child:nth-child(odd)]:col-span-2">
           {columns.map((column, index) => (
-            <nav key={column.title} aria-labelledby={`footer-col-${index}`} className="flex flex-col text-[15px] md:gap-2.5 md:text-small">
+            <nav key={column.title} aria-labelledby={`footer-col-${index}`} className="flex flex-col text-[15px] md:text-small">
               <p id={`footer-col-${index}`} className={HEADING}>
                 {column.title}
               </p>
               {column.links.map((item) => (
-                <NavLink key={item.href + item.label} item={item} className={LIST_LINK} />
+                <NavLink key={item.href + item.label} item={item} className={COL_LINK} />
               ))}
             </nav>
           ))}

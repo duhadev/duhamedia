@@ -24,7 +24,8 @@ const TONES = {
  * crumb, the last marked `aria-current="page"` and never a link. The markup is
  * a plain nav/ol/li (visible text = crumb label) so a page-scope BreadcrumbList
  * JSON-LD can be generated from the same field with no markup change. Links
- * get a 44px hit area through an invisible pseudo-element (the bar stays slim).
+ * get a 44px hit area through an invisible pseudo-element (the bar stays slim); it is biased downward
+ * (8px above, the rest below) because the bar sits right under the sticky header, which would otherwise clip a centred area.
  */
 export function Breadcrumb({ items, tone }: { items: Crumb[]; tone: keyof typeof TONES }) {
   const crumbs = items.filter((c) => c.label?.trim())
@@ -49,7 +50,7 @@ export function Breadcrumb({ items, tone }: { items: Crumb[]; tone: keyof typeof
                 <CMSLink
                   link={link}
                   className={cx(
-                    "relative no-underline after:absolute after:inset-x-0 after:top-1/2 after:h-11 after:-translate-y-1/2 after:content-[''] hover:underline",
+                    "relative no-underline after:absolute after:inset-x-0 after:-top-2 after:h-11 after:content-[''] hover:underline",
                     t.link,
                   )}
                 >

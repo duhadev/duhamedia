@@ -90,6 +90,8 @@ export type PayloadFormProps = {
   siteKey: string | null
   /** Rendered confirmation message (server-rendered rich text). Shown in place of the form on success. */
   confirmation?: React.ReactNode
+  /** Level of the headings PayloadForm itself renders (personalised confirmation, stepped question). `h2` when no section heading precedes the form. Default `h3`. */
+  confirmationHeadingTag?: 'h2' | 'h3'
   /** Server-rendered nodes for `message` blocks, keyed by `PublicFormField.key`. */
   messages?: Record<string, React.ReactNode>
   /** Page path stored on the submission (`sourcePath`), e.g. "/newsletter". */
@@ -166,6 +168,7 @@ export function PayloadForm({
   form,
   siteKey,
   confirmation,
+  confirmationHeadingTag = 'h3',
   messages,
   sourcePath,
   leadMagnetId,
@@ -188,6 +191,7 @@ export function PayloadForm({
   idPrefix,
 }: PayloadFormProps) {
   const router = useRouter()
+  const StepHeading = confirmationHeadingTag
   const [state, setState] = useState<FormSubmitResponse | null>(null)
   const [pending, setPending] = useState(false)
   const [localError, setLocalError] = useState<string | null>(null)
@@ -342,7 +346,7 @@ export function PayloadForm({
         role="status"
         className={cx('font-body outline-none', tone === 'dark' ? 'text-cream' : 'text-ink', classNames.success, className)}
       >
-        <SubmittedFirstName value={firstName}>{confirmation ?? <p>{DEFAULT_SUCCESS}</p>}</SubmittedFirstName>
+        <SubmittedFirstName value={firstName} headingTag={confirmationHeadingTag}>{confirmation ?? <p>{DEFAULT_SUCCESS}</p>}</SubmittedFirstName>
       </div>
     )
   }
@@ -492,9 +496,9 @@ export function PayloadForm({
             {s.heading || s.hint ? (
               <div className={classNames.stepHeader ?? 'flex flex-col gap-3'}>
                 {s.heading ? (
-                  <h3 id={headingId} tabIndex={-1} className="font-display text-h2-mobile font-normal uppercase outline-none">
+                  <StepHeading id={headingId} tabIndex={-1} className="font-display text-h2-mobile font-normal uppercase outline-none">
                     {s.heading}
-                  </h3>
+                  </StepHeading>
                 ) : null}
                 {s.hint ? <div className="font-body text-small text-gray-warm">{s.hint}</div> : null}
               </div>

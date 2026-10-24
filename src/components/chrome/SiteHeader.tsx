@@ -4,6 +4,7 @@ import { Container, ButtonLink } from '@/components/ui'
 import { getChrome, toNavItem, toNavItems } from '@/lib/chrome'
 import { getSeoDefaults, siteName } from '@/lib/metadata'
 
+import { HIT_AREA } from './hit'
 import { MobileNav } from './MobileNav'
 import { NavLink } from './NavLink'
 import { SiteLogo } from './SiteLogo'
@@ -41,7 +42,7 @@ export async function SiteHeader({ variant = 'standard' }: { variant?: HeaderVar
   const homeLabel = `${siteName(await getSeoDefaults())} home`
   const links = toNavItems(navigation.header?.links)
   const cta = toNavItem(navigation.header?.cta)
-  const linkClass = 'inline-flex min-h-target items-center text-[15px] font-medium text-ink no-underline'
+  const linkClass = `${HIT_AREA} inline-flex min-h-target items-center text-[15px] font-medium text-ink no-underline`
 
   return (
     <header className="sticky top-0 z-50 border-b border-divider bg-cream">

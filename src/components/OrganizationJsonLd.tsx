@@ -61,6 +61,8 @@ export async function OrganizationJsonLd() {
 
   const data = compact({
     '@context': 'https://schema.org',
+    // Stable node id: Article publishers (posts, case studies) reference the same entity.
+    '@id': `${site}/#organization`,
     '@type': businessType || 'Organization',
     name: siteName(defaults),
     legalName: settings.legalName ?? undefined,

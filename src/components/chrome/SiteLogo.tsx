@@ -4,6 +4,8 @@ import React from 'react'
 
 import { cx } from '@/lib/cx'
 
+import { HIT_AREA } from './hit'
+
 /**
  * Logo mark + "DUHA MEDIA" wordmark (SiteHeader / SiteFooter / LP header).
  * `size` = the design's per-context sizes: header 28/34 (mobile/desktop),
@@ -48,7 +50,7 @@ export function SiteLogo({
   )
   const cls = cx('flex items-center', s.gap, className)
   return href ? (
-    <Link href={href} aria-label={label ?? 'Duha Media home'} className={cx(cls, 'text-ink no-underline')}>
+    <Link href={href} aria-label={label ?? 'Duha Media home'} className={cx(cls, HIT_AREA, 'text-ink no-underline')}>
       {inner}
     </Link>
   ) : (

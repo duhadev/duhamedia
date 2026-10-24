@@ -329,6 +329,8 @@ async function Standard(props: FormEmbedData) {
             submitSize="md"
             classNames={stepped ? steppedForm : standardForm}
             confirmation={confirmation}
+            // No section h2 above the form → the form's own headings are the first level under the h1.
+            confirmationHeadingTag={title ? 'h3' : 'h2'}
             {...steppedProps(props)}
           />
         </div>
