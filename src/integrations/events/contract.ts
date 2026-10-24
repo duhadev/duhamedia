@@ -33,10 +33,10 @@ export type SiteEventV1 = {
 }
 
 /**
- * Event types the delivery job can build today (A1 contact, A2 newsletter).
+ * Event types the delivery job can build today (A1 contact, A2 newsletter, A3 lead_magnet).
  * `newsletter` is queued by the contact-sync job after double opt-in, never at create.
  */
-export const DELIVERABLE_EVENT_TYPES: readonly string[] = ['contact', 'newsletter']
+export const DELIVERABLE_EVENT_TYPES: readonly string[] = ['contact', 'newsletter', 'lead_magnet']
 
 export const MAX_BODY_BYTES = 32 * 1024
 export const TRUNCATION_KEY = '_truncated'
@@ -44,9 +44,15 @@ const TOP_LEVEL = ['name', 'email', 'company'] as const
 
 export const eventEnv = (): SiteEventV1['env'] => (process.env.APP_ENV === 'production' ? 'production' : 'staging')
 
+/**
+ * `extraFields` (A3): server-derived values appended to `fields` AFTER the
+ * submitted ones, in the given order (they win over a submitted field of the
+ * same name). `lead_magnet` uses it to name the asset and carry the opt-in.
+ */
 export function buildSubmissionEvent(
   submission: Pick<FormSubmission, 'id' | 'eventId' | 'submissionData' | 'createdAt'>,
   form: Pick<Form, 'formKey' | 'eventType' | 'fields'>,
+  extraFields: Record<string, string> = {},
 ): SiteEventV1 {
   if (!submission.eventId) throw new Error('submission has no eventId')
   if (!form.eventType || form.eventType === 'none') throw new Error('form sends no event')
@@ -67,6 +73,10 @@ export function buildSubmissionEvent(
   }
   for (const key of TOP_LEVEL) if (defined.has(key)) event[key] = values.get(key) ?? ''
   for (const [key, value] of values) if (!(TOP_LEVEL as readonly string[]).includes(key)) event.fields[key] = value
+  for (const [key, value] of Object.entries(extraFields)) {
+    delete event.fields[key] // re-insert so derived keys always come last, in their own order
+    event.fields[key] = value
+  }
   // Fixed key order (contract order) so the bytes are stable for a given submission.
   const { v, eventId, env, type, form: formKey, submissionId, name, email, company, fields, timestamp } = event
   return { v, eventId, env, type, form: formKey, submissionId, name, email, company, fields, timestamp }
@@ -106,4 +116,28 @@ export function serializeEvent(event: SiteEventV1): string {
   }
   // Pathological (thousands of fields): drop them all, say so.
   return JSON.stringify({ ...event, fields: { [TRUNCATION_KEY]: 'all fields omitted (body limit 32 KB)' } })
+}
+
+/**
+ * A3 `lead_magnet` event fields (INTEGRATIONS.md): `asset` (lead magnet title),
+ * `assetSlug`, `assetId`, and `newsletterOptIn` ("yes" | "no": whether the
+ * visitor ticked the form's opt-in checkbox — the signup itself is still
+ * pending double opt-in at that point). Missing lead magnet → empty strings,
+ * so the lead is still announced.
+ */
+export function leadMagnetEventFields(
+  leadMagnet: { id: number | string; title?: string | null; slug?: string | null } | null,
+  form: Pick<Form, 'newsletterSync' | 'newsletterOptInField'>,
+  submission: Pick<FormSubmission, 'submissionData'>,
+): Record<string, string> {
+  const optInField = form.newsletterOptInField?.trim()
+  const ticked =
+    form.newsletterSync === true &&
+    (!optInField || (submission.submissionData ?? []).some((r) => r.field === optInField && r.value === 'true'))
+  return {
+    asset: leadMagnet?.title ?? '',
+    assetSlug: leadMagnet?.slug ?? '',
+    assetId: leadMagnet ? String(leadMagnet.id) : '',
+    newsletterOptIn: ticked ? 'yes' : 'no',
+  }
 }

@@ -21,7 +21,7 @@ import { MEDIA_DIR } from './Media'
  * `focalPoint`, `crop` in uploads/types.d.ts; `mimeTypes` enforced
  * server-side in uploads/checkFileRestrictions.js.
  */
-const DOWNLOADS_STATIC_DIR = path.join(MEDIA_DIR, 'downloads')
+export const DOWNLOADS_STATIC_DIR = path.join(MEDIA_DIR, 'downloads')
 
 export const Downloads: CollectionConfig = {
   slug: 'downloads',

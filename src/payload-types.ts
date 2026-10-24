@@ -137,6 +137,7 @@ export interface Config {
       deliverSiteEvent: TaskDeliverSiteEvent;
       sendNewsletterConfirmation: TaskSendNewsletterConfirmation;
       syncNewsletterContact: TaskSyncNewsletterContact;
+      sendLeadMagnetAsset: TaskSendLeadMagnetAsset;
       inline: {
         input: unknown;
         output: unknown;
@@ -3946,6 +3947,14 @@ export interface FormSubmission {
     syncAttempts?: number | null;
     contactId?: string | null;
   };
+  /**
+   * The email that sends the requested lead-magnet file or link. Empty for other forms.
+   */
+  assetEmail?: {
+    status?: ('pending' | 'sent' | 'failed') | null;
+    note?: string | null;
+    attempts?: number | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -4067,7 +4076,12 @@ export interface PayloadJob {
     | {
         executedAt: string;
         completedAt: string;
-        taskSlug: 'inline' | 'deliverSiteEvent' | 'sendNewsletterConfirmation' | 'syncNewsletterContact';
+        taskSlug:
+          | 'inline'
+          | 'deliverSiteEvent'
+          | 'sendNewsletterConfirmation'
+          | 'syncNewsletterContact'
+          | 'sendLeadMagnetAsset';
         taskID: string;
         input?:
           | {
@@ -4100,7 +4114,9 @@ export interface PayloadJob {
         id?: string | null;
       }[]
     | null;
-  taskSlug?: ('inline' | 'deliverSiteEvent' | 'sendNewsletterConfirmation' | 'syncNewsletterContact') | null;
+  taskSlug?:
+    | ('inline' | 'deliverSiteEvent' | 'sendNewsletterConfirmation' | 'syncNewsletterContact' | 'sendLeadMagnetAsset')
+    | null;
   queue?: string | null;
   waitUntil?: string | null;
   processing?: boolean | null;
@@ -5860,6 +5876,13 @@ export interface FormSubmissionsSelect<T extends boolean = true> {
         syncAttempts?: T;
         contactId?: T;
       };
+  assetEmail?:
+    | T
+    | {
+        status?: T;
+        note?: T;
+        attempts?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -6845,6 +6868,20 @@ export interface TaskSyncNewsletterContact {
   input: {
     submissionId: number;
     attempt: number;
+  };
+  output: {
+    result: string;
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskSendLeadMagnetAsset".
+ */
+export interface TaskSendLeadMagnetAsset {
+  input: {
+    submissionId: number;
+    attempt: number;
+    chain: string;
   };
   output: {
     result: string;

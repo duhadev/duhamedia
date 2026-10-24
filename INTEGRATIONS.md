@@ -19,14 +19,15 @@ Sources: `CLAUDE.md` → "Integration architecture" (locked, Oct 2026); `DECISIO
 | `APP_ENV` | Event `env` field (`production` \| `staging`); `development` locally |
 | `SITE_EVENT_URL` | Destination of signed events (internal address, firewalled to the site container; provided by the server agent; never hardcoded) |
 | `SITE_EVENT_SECRET` | HMAC-SHA256 signing key |
-| `SITE_EVENT_RETRY_DELAYS_S` | **Development only** (ignored unless `APP_ENV=development`): five comma-separated seconds compressing the retry schedule for local proofs (events **and** newsletter queues). Never set on the server |
+| `SITE_EVENT_RETRY_DELAYS_S` | **Development only** (ignored unless `APP_ENV=development`): five comma-separated seconds compressing the retry schedule for local proofs (events **and** newsletter queues, incl. the A3 asset email). Never set on the server |
 | `PAYLOAD_SECRET` | Also keys the newsletter confirm links (HMAC key derived from it; rotating it voids pending links) |
 | `SITE_URL` | Origin of the newsletter confirm link in the confirmation email |
-| `RESEND_API_KEY` | Email transport (`@payloadcms/email-resend`) + Contacts API. **Full-access** key (sending-only cannot manage contacts). Unset on staging/production → confirmation emails and contact syncs fail closed (`failed`, not retried) |
+| `RESEND_API_KEY` | Email transport (`@payloadcms/email-resend`), the lead-magnet asset email (direct `POST /emails`) + Contacts API. **Full-access** key (sending-only cannot manage contacts). Unset on staging/production → confirmation emails and contact syncs fail closed (`failed`, not retried) |
 | `RESEND_NEWSLETTER_SEGMENT_ID` | Newsletter Segment |
 | `RESEND_NEWSLETTER_TOPIC_ID` | Newsletter Topic (replaces the retired `RESEND_AUDIENCE_ID`) |
 | `TURNSTILE_SITE_KEY` | Turnstile widget (passed to client components as a server-read prop; no `NEXT_PUBLIC_*`) |
 | `TURNSTILE_SECRET_KEY` | Turnstile server-side verification |
+| `MEDIA_DIR` | Root of uploads; the A3 job reads lead-magnet files from `${MEDIA_DIR}/downloads` (server-side only) |
 
 ---
 
@@ -91,7 +92,8 @@ Every public form (contact, pre-call homework, newsletter, lead-magnet capture, 
 | 6. Respond | `src/app/api/form-submit/route.ts` | JSON (`Accept: application/json`, what `PayloadForm` sends): `200 { ok: true, redirect? }` — `redirect` is the form's redirect confirmation, resolved from the stored form doc. No-JS form post: `303` to that redirect, or a minimal noindex HTML page with the outcome and a "Go back" link to `_source`. | `400 { ok: false, message, fieldErrors? }` (HTML page without JS). |
 
 - **Newsletter (A2, built):** the same `beforeChange` also stamps the `newsletter` group (`optInStatus: pending-confirmation`, `emailStatus: pending`) when the form has **Newsletter sync** on and, if it names an **Opt-in field**, that checkbox was ticked; the same `afterChange` queues the confirmation email (newsletter queue, same transaction). A form with Event type **Newsletter** starts with an empty `deliveryStatus`: its event is sent only after the visitor confirms (see the `newsletter` event).
-- **Where event sending hooks in (A1, built):** `enqueueSubmissionDelivery`, a `form-submissions` `afterChange` (operation `create`) in `formSubmissionOverrides.hooks` (src/plugins/formBuilder.ts → src/hooks/formSubmissions.ts), after the plugin's `sendEmail`. It enqueues the delivery job when `deliveryStatus === 'pending'` and the form's event type is one the job can build (today: `contact`; `newsletter` is queued later by the A2 sync job). Hooking the collection rather than the handler means admin-entered submissions follow the same path.
+- **Lead magnets (A3, built):** the same `beforeChange` re-checks `leadMagnet` (must be a lead magnet whose capture form is this form; with none given, the single published lead magnet using the form is assumed, ambiguous → none) and stamps `assetEmail.status: pending`; the same `afterChange` queues the asset email (newsletter queue, same transaction). See the `lead_magnet` event.
+- **Where event sending hooks in (A1, built):** `enqueueSubmissionDelivery`, a `form-submissions` `afterChange` (operation `create`) in `formSubmissionOverrides.hooks` (src/plugins/formBuilder.ts → src/hooks/formSubmissions.ts), after the plugin's `sendEmail`. It enqueues the delivery job when `deliveryStatus === 'pending'` and the form's event type is one the job can build (today: `contact` and `lead_magnet`; `newsletter` is queued later by the A2 sync job). Hooking the collection rather than the handler means admin-entered submissions follow the same path.
 - **Turnstile env behaviour:**
   - `development`: an unset `TURNSTILE_SECRET_KEY` / `TURNSTILE_SITE_KEY` falls back to Cloudflare's always-pass test keys.
   - `staging` / `production`: an unset secret, or any Cloudflare **test** secret, **fails closed** ("This form is unavailable right now") and logs `missing-secret` / `test-secret-in-production`. An unset site key renders the form with no widget; submitting shows the same message.
@@ -139,6 +141,11 @@ Every public form (contact, pre-call homework, newsletter, lead-magnet capture, 
 | A2 confirm page `/newsletter/confirm` | src/app/(frontend)/newsletter/confirm/page.tsx |
 | A2 admin actions endpoint + buttons | src/integrations/newsletter/actionEndpoint.ts, src/components/admin/NewsletterActions.tsx |
 | A2 columns + job slugs | migration `src/migrations/20261024_030205_a2_newsletter.ts` |
+| A3 task `sendLeadMagnetAsset` (queue `newsletter`), `queueAssetEmail()` | src/integrations/leadMagnet/tasks.ts |
+| A3 email build + attachment read + Resend `POST /emails` (Idempotency-Key, 30 s timeout, in-process serialisation) | src/integrations/leadMagnet/assetEmail.ts |
+| A3 re-send endpoint + button (`assetEmail.assetEmailActions` ui field) | src/integrations/leadMagnet/resendEndpoint.ts, src/components/admin/AssetEmailActions.tsx |
+| A3 `lead_magnet` event fields (`leadMagnetEventFields`) | src/integrations/events/contract.ts, used by deliveryTask.ts |
+| A3 columns + job slug | migration `src/migrations/20261024_034121_a3_lead_magnet.ts` |
 
 - **Where jobs run.** Inside the site container. There is no worker process. Payload starts its cron on the first `getPayload({ cron: true })`: any admin or `/api/*` request, plus `/api/health` and `/api/form-submit` (both pass `cron: true`). The deploy script's first health poll therefore starts delivery. The cron never starts during `next build`. Finished jobs are deleted (`deleteJobOnComplete` default), so `payload_jobs` only holds queued or scheduled attempts.
 - **Same transaction.** The job row is written with the submission's `req`, so it commits or rolls back together with the lead.
@@ -175,7 +182,7 @@ Every public form (contact, pre-call homework, newsletter, lead-magnet capture, 
 | `contact` | `contact` | Contact form | Launch | **built (A1)**: Gate A local proofs done, staging pending |
 | `contact` | `precall-homework` | Pre-call homework form (Book a Call) | **Off at launch** | sending code exists (A1); stays off via the form's **Send event** toggle |
 | `newsletter` | per form (Form key) | Newsletter page, footer nudge, Thank You, lead-magnet opt-in | Launch (double opt-in) | **built (A2)**: Gate A local proofs done, staging pending |
-| `lead_magnet` | — | Lead Magnet template | Launch | not built |
+| `lead_magnet` | per form (Form key) | Lead Magnet template | Launch | **built (A3)**: Gate A local proofs done, staging pending |
 | `site_error` | — | Server-side error handler | Launch | not built |
 | `booking` | — | Nextcloud → secretary directly | Launch | no site code |
 | content published | — | Publish on `posts` / `case-studies` | Queued (v2) | not built |
@@ -256,9 +263,49 @@ Every public form (contact, pre-call homework, newsletter, lead-magnet capture, 
 
 ### `lead_magnet`
 
-- **Status:** not built.
-- **Trigger:** capture form on the Lead Magnet template (18). `fields` names the asset. If the newsletter opt-in toggle is ticked, the newsletter flow runs as well.
-- **Delivery (mini Gate S 2026-10-21):** an uploaded asset is sent as an **email attachment** (Resend), read from disk server-side with `overrideAccess` — `downloads` is staff-only, so there is no public file URL. External-URL assets are linked in the email body.
+- **Status:** built (A3, 2026-10-24). Gate A local proofs done against a Resend stub and a secretary stub. Staging pending: the asset email arrives in a real inbox with the file attached (human), and the human confirms the `[staging]` Matrix message. **Lead magnets stay draft until this clears staging (F149).**
+- **Trigger:** a stored submission that carries a valid `leadMagnet` (the capture form on `/resources/<slug>` sends `_leadMagnet`; the handler keeps it only for a published lead magnet whose capture form is this form, and `beforeChange` re-checks it for every create path). Two independent things happen, each its own job, queued in the submission's transaction:
+  1. **Asset email** (`sendLeadMagnetAsset`, queue `newsletter`), tracked in the **Asset email** group (`assetEmail.status` pending / sent / failed, `note`, `attempts`).
+  2. **`lead_magnet` event** (A1 `deliverSiteEvent`, queue `events`), tracked in the A1 delivery fields, when the form has **Event type = Lead magnet** and **Send event** on.
+  A down secretary never holds up the email; a Resend outage never holds up the event.
+- **Newsletter opt-in:** if the form has **Newsletter sync** on with **Opt-in field** = the checkbox, a ticked box also starts the A2 double opt-in on the same submission (as built). No separate `newsletter` event is sent for it: one submission carries one `eventId`, and the `lead_magnet` event already says `newsletterOptIn: "yes"` (ticked; the signup is still pending confirmation at that moment). The A2 sync never announces it, because the form's event type is `lead_magnet`.
+- **Form contract** (seed/editors): Form key e.g. `lead-magnet` (sent as `form`); fields `email` (required), optionally `name` / `company` (lifted to top level), the opt-in checkbox (e.g. `newsletter`); Event type **Lead magnet**, **Send event** on; **Newsletter sync** on + **Opt-in field** = the checkbox's name. The lead magnet's **Capture form** points at it.
+- **Exact payload** (Gate A, submission 33, test identity, opt-in ticked; wire body is compact JSON in this key order; `form` is the temp form's key):
+
+```json
+{
+  "v": 1,
+  "eventId": "7f869b3f-fec1-4ad3-b639-6ac38883dafa",
+  "env": "staging",
+  "type": "lead_magnet",
+  "form": "gate-a3-lead-magnet",
+  "submissionId": "33",
+  "name": "Gate Tester A3",
+  "email": "test+gate-a3@duhamedia.com",
+  "fields": {
+    "newsletter": "true",
+    "asset": "Gate A3 test checklist [STRATEGIC PLACEHOLDER — final copy TBD]",
+    "assetSlug": "gate-a3-test",
+    "assetId": "11",
+    "newsletterOptIn": "yes"
+  },
+  "timestamp": "2026-10-24T03:45:16.598Z"
+}
+```
+
+  - Submitted fields come first (here the raw checkbox `newsletter`), then the four derived keys, always last and in this order: `asset` (lead magnet title), `assetSlug`, `assetId`, `newsletterOptIn` (`"yes"` | `"no"`). A derived key wins over a submitted field of the same name. If the submission has no lead magnet, the three asset keys are `""` (the lead is still announced). Title/slug are read at send time (public fields only). Signing, truncation, retry and re-send are exactly A1's.
+
+#### Asset email
+
+- **What is sent** (mini Gate S 2026-10-18 / 2026-10-21): one email, from the adapter's sender (`Duha Media <no-reply@duhamedia.com>`), to the submitted `email`, subject = the lead magnet's **Delivery email › Subject**, body = its **Intro** (paragraphs) + the asset + a placeholder footer ("You asked for this on duhamedia.com. If that was not you, ignore this email." / "Duha Media, Chicago"). Plain HTML + text, no tracking, every editor value HTML-escaped, CR/LF stripped from the subject.
+  - **Uploaded file** (`asset.file` → `downloads`): read from `${MEDIA_DIR}/downloads/<filename>` on the server (basename only, must stay inside that directory) and sent as an **attachment** (base64 `content`, filename = the stored filename). The body says "Attached: <Downloads title> (<filename>)." No URL to the file appears anywhere: `downloads` is staff-only (anonymous `/api/downloads`, `/api/downloads/<id>` and `/api/downloads/file/<name>` → 403), `asset` / `deliveryEmail` are stripped from every public read and cannot be used in `where` (400 QueryError), and the page HTML contains neither.
+  - **External link** (`asset.externalUrl`): a "Get <title>" button + the plain URL in the body; no attachment.
+- **Limits:** Resend accepts ≤ 40 MB per email after base64 (https://resend.com/docs/api-reference/emails/send-email, https://resend.com/docs/dashboard/emails/attachments); PDF/CSV/XLSX/ZIP are not on Resend's blocked list (https://resend.com/docs/knowledge-base/what-attachment-types-are-not-supported). The site caps the **raw file at 10 MB** (≈ 13.4 MB encoded: deliverable to common mailboxes, bounded memory). Bigger → `failed`, not retried, note "the file is X MB; attachments are limited to 10.0 MB. Upload a smaller file or use a link, then re-send."
+- **Transport:** plain `fetch` `POST https://api.resend.com/emails` (the same request body `@payloadcms/email-resend@3.91.0` builds), because the adapter has no request timeout and cannot send HTTP headers. Adds `Idempotency-Key: lead-magnet-asset/<eventId>/<chain>` (one chain = one attempt-1 plus its retries; Resend keeps keys 24 h, the schedule spans ≈ 14.6 h) and a **30 s** timeout. Attachment sends are serialised in-process (Payload autoRun runs a batch in parallel), so at most one file is held in memory at a time.
+- **Classification:** 2xx → `sent` (note: filename, bytes, sha256 prefix, Resend email id). 5xx, 429, 409 (idempotency conflict / concurrent), timeout, network, transient file-read error → retry on the schedule. Other 4xx → `failed`, not retried. Not retried either: `RESEND_API_KEY` unset on staging/production; lead magnet deleted; no delivery subject/intro; no file or link; file missing on disk; file over 10 MB. Development without a key: built but not delivered ("development without RESEND_API_KEY, not delivered").
+- **Re-send:** open the submission → **Asset email** group → **Re-send asset email** (enabled when `sent` or `failed`, disabled while `pending`). It starts a NEW chain = a new Idempotency-Key = a genuinely new email. API: `POST /api/form-submissions/:id/asset-email/resend`, staff only (403 otherwise); 200 / 400 (no lead magnet) / 404 / 409 (pending). Find failures: filter **Asset email › Asset email status** equals Failed (indexed).
+- **Logs:** `[lead-magnet] asset email: …` with `submissionId`, `attempt` and the outcome only; never the address, file URL or content.
+- **Gate A proofs (local, 2026-10-24):** see the A3 report to the PM. Covered: stored + email sent with the attachment byte-identical (sha256) + event delivered; event re-send → `duplicate`, one announcement; asset re-send → new email (new key); Resend "accepted then 500" → retry replays the key → one email; secretary down → email still sent, event 6 attempts → `failed` → re-send → delivered; Resend 500 → 6 attempts → `failed` → re-send → sent; tampered signature → 401 → `failed`, not retried; Resend 422 → `failed`, not retried; 11.3 MB file → `failed` (cap); external-URL asset → link email, escaping verified; opt-in ticked → A2 confirm + sync, no extra event; anonymous access to the asset → 403 / stripped / 400.
 
 ### `site_error`
 
@@ -338,4 +385,4 @@ Classification: 2xx → next step; 404 only on step 1 means "new"; 5xx, 429, 409
 - API: `POST /api/form-submissions/:id/newsletter/resend-confirmation` | `/resync`, staff only (403 otherwise); 200 / 400 (not a newsletter signup, unknown action) / 404 / 409 (wrong state or already queued).
 - Find stuck signups: filter **Newsletter sync › Confirmation email** or **› Resend sync** equals Failed (indexed columns).
 
-**Not built here:** unsubscribe handling stays in Resend (topic preferences / `{{{RESEND_UNSUBSCRIBE_URL}}}`); unconfirmed signups are kept as submissions (no purge job). Lead-magnet opt-ins run the confirmation + sync on the lead-magnet submission; whether they also send a separate `newsletter` event is A3's call (one submission carries one `eventId` / delivery status today).
+**Not built here:** unsubscribe handling stays in Resend (topic preferences / `{{{RESEND_UNSUBSCRIBE_URL}}}`); unconfirmed signups are kept as submissions (no purge job). Lead-magnet opt-ins run the confirmation + sync on the lead-magnet submission and send no separate `newsletter` event (A3: the `lead_magnet` event carries `newsletterOptIn`).

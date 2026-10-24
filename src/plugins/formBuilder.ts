@@ -16,6 +16,7 @@ import { richTextLinkFeature } from '../fields'
 import { blockDeleteIfReferenced, formSubmissionsSentence } from '../hooks/blockDeleteIfReferenced'
 import { enqueueSubmissionDelivery, stampSubmissionDelivery } from '../hooks/formSubmissions'
 import { resendDeliveryEndpoint } from '../integrations/events/resendEndpoint'
+import { resendAssetEmailEndpoint } from '../integrations/leadMagnet/resendEndpoint'
 import { newsletterActionEndpoint } from '../integrations/newsletter/actionEndpoint'
 import { revalidateLiveCollectionHooks } from '../hooks/revalidateTag'
 
@@ -352,6 +353,41 @@ const submissionSystemFields: Field[] = [
       },
     ],
   },
+  {
+    // A3 (src/integrations/leadMagnet/*): the lead-magnet asset email, tracked
+    // separately from event delivery and from the newsletter group. Stamped
+    // `pending` at create when the submission carries a valid `leadMagnet`.
+    name: 'assetEmail',
+    type: 'group',
+    label: 'Asset email',
+    access: systemCreate,
+    admin: {
+      readOnly: true,
+      condition: (data) => Boolean(data?.assetEmail?.status),
+      description: 'The email that sends the requested lead-magnet file or link. Empty for other forms.',
+    },
+    fields: [
+      {
+        name: 'status',
+        type: 'select',
+        label: 'Asset email status',
+        index: true,
+        options: [
+          { label: 'Pending', value: 'pending' },
+          { label: 'Sent', value: 'sent' },
+          { label: 'Failed', value: 'failed' },
+        ],
+      },
+      { name: 'note', type: 'textarea', label: 'Asset email note' },
+      { name: 'attempts', type: 'number', label: 'Asset email attempts', defaultValue: 0, min: 0, admin: { step: 1 } },
+      // Admin action: POST /api/form-submissions/:id/asset-email/resend. `ui` = no column.
+      {
+        name: 'assetEmailActions',
+        type: 'ui',
+        admin: { components: { Field: '/components/admin/AssetEmailActions#AssetEmailActions' } },
+      },
+    ],
+  },
   // A1: admin "Re-send" button → POST /api/form-submissions/:id/resend
   // (src/integrations/events/resendEndpoint.ts), same eventId. `ui` = no column.
   {
@@ -428,10 +464,10 @@ export const formBuilder: Plugin = formBuilderPlugin({
     hooks: {
       beforeChange: [stampSubmissionDelivery],
       // A1: enqueue the delivery job on create (never inline). The plugin's
-      // sendEmail runs first. A2: also queues the double opt-in email.
+      // sendEmail runs first. A2: also queues the double opt-in email. A3: and the lead-magnet asset email.
       afterChange: [enqueueSubmissionDelivery],
     },
-    endpoints: [resendDeliveryEndpoint, newsletterActionEndpoint],
+    endpoints: [resendDeliveryEndpoint, newsletterActionEndpoint, resendAssetEmailEndpoint],
     fields: ({ defaultFields }) => [...withFormMaxDepth(adaptPluginFields(defaultFields)), ...submissionSystemFields],
   },
 })

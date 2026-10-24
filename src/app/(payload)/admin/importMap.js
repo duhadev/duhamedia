@@ -28,6 +28,7 @@ import { ValueBulletRowLabel as ValueBulletRowLabel_51164b16e5c3488951a3ed8785d5
 import { LeadMagnetAssetFileField as LeadMagnetAssetFileField_dc6e9e7f6a87095250af2140b6169c99 } from '../../../components/admin/LeadMagnetAssetFields'
 import { LeadMagnetAssetUrlField as LeadMagnetAssetUrlField_dc6e9e7f6a87095250af2140b6169c99 } from '../../../components/admin/LeadMagnetAssetFields'
 import { NewsletterActions as NewsletterActions_2e85ff0335632d28356a9545cb69a388 } from '../../../components/admin/NewsletterActions'
+import { AssetEmailActions as AssetEmailActions_caca34aca9b30c2c86102552083c8128 } from '../../../components/admin/AssetEmailActions'
 import { ResendDeliveryButton as ResendDeliveryButton_b36f25de0dae00d3918bb2d86ac50745 } from '../../../components/admin/ResendDeliveryButton'
 import { QueryPresetsAccessCell as QueryPresetsAccessCell_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
 import { QueryPresetsWhereCell as QueryPresetsWhereCell_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
@@ -73,6 +74,7 @@ export const importMap = {
   "/components/admin/LeadMagnetAssetFields#LeadMagnetAssetFileField": LeadMagnetAssetFileField_dc6e9e7f6a87095250af2140b6169c99,
   "/components/admin/LeadMagnetAssetFields#LeadMagnetAssetUrlField": LeadMagnetAssetUrlField_dc6e9e7f6a87095250af2140b6169c99,
   "/components/admin/NewsletterActions#NewsletterActions": NewsletterActions_2e85ff0335632d28356a9545cb69a388,
+  "/components/admin/AssetEmailActions#AssetEmailActions": AssetEmailActions_caca34aca9b30c2c86102552083c8128,
   "/components/admin/ResendDeliveryButton#ResendDeliveryButton": ResendDeliveryButton_b36f25de0dae00d3918bb2d86ac50745,
   "@payloadcms/next/client#QueryPresetsAccessCell": QueryPresetsAccessCell_2b8867833a34864a02ddf429b0728a40,
   "@payloadcms/next/client#QueryPresetsWhereCell": QueryPresetsWhereCell_2b8867833a34864a02ddf429b0728a40,

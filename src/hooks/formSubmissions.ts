@@ -1,9 +1,10 @@
 import { randomUUID } from 'node:crypto'
 
-import type { CollectionAfterChangeHook, CollectionBeforeChangeHook } from 'payload'
+import type { CollectionAfterChangeHook, CollectionBeforeChangeHook, PayloadRequest } from 'payload'
 
 import { DELIVERABLE_EVENT_TYPES } from '../integrations/events/contract'
 import { DELIVERY_WRITE, queueDelivery } from '../integrations/events/deliveryTask'
+import { queueAssetEmail } from '../integrations/leadMagnet/tasks'
 import { queueConfirmationEmail } from '../integrations/newsletter/tasks'
 import type { FormSubmission } from '../payload-types'
 
@@ -76,9 +77,18 @@ export const stampSubmissionDelivery: CollectionBeforeChangeHook = async ({ data
   const optedIn =
     form?.newsletterSync === true && (!optInField || rows.some((r) => r?.field === optInField && r?.value === 'true'))
 
+  // A3: the lead magnet this submission requested. The public handler only keeps
+  // a published lead magnet whose capture form is this form; re-checked here
+  // for every create path. Without one (e.g. admin-entered), the single
+  // published lead magnet using this form is assumed; ambiguous → none.
+  const leadMagnet = formId !== null && formId !== '' && form ? await resolveLeadMagnet(req, formId, data?.leadMagnet) : null
+
   return {
     ...data,
     eventId: randomUUID(),
+    leadMagnet,
+    // A3: the asset email (newsletter queue), queued in afterChange below.
+    assetEmail: leadMagnet ? { status: 'pending', attempts: 0 } : {},
     // A `newsletter` event is sent only AFTER the visitor confirms (the sync job
     // stamps `pending` then), so it starts empty rather than forever-pending.
     deliveryStatus: sendsEvent && form?.eventType !== 'newsletter' ? 'pending' : null,
@@ -116,6 +126,8 @@ export const enqueueSubmissionDelivery: CollectionAfterChangeHook<FormSubmission
 
   // A2: the double opt-in email, same transaction as the signup (newsletter queue).
   if (doc.newsletter?.emailStatus === 'pending') await queueConfirmationEmail(req.payload, { submissionId: doc.id, req })
+  // A3: the lead-magnet asset email, same transaction (newsletter queue).
+  if (doc.assetEmail?.status === 'pending') await queueAssetEmail(req.payload, { submissionId: doc.id, req })
 
   if (doc.deliveryStatus !== 'pending') return doc
 
@@ -133,4 +145,37 @@ export const enqueueSubmissionDelivery: CollectionAfterChangeHook<FormSubmission
 
   await queueDelivery(req.payload, { submissionId: doc.id, req })
   return doc
+}
+
+const idOf = (raw: unknown): number | string | null =>
+  typeof raw === 'number' || (typeof raw === 'string' && raw !== '')
+    ? raw
+    : raw && typeof raw === 'object' && 'id' in raw
+      ? (raw as { id: number | string }).id
+      : null
+
+/**
+ * A3: the lead magnet a new submission requested, or null. A given id counts
+ * only if it is a lead magnet whose capture form is this form (published:
+ * the public handler already insists on that; an admin may enter one for a
+ * draft). No id → the one published lead magnet using this form, if exactly one.
+ * Trusted read (`overrideAccess`, same `req`/transaction).
+ */
+async function resolveLeadMagnet(req: PayloadRequest, formId: number | string, raw: unknown): Promise<number | null> {
+  const given = idOf(raw)
+  if (given !== null && !/^\d+$/.test(String(given))) return null
+  const { docs } = await req.payload.find({
+    collection: 'lead-magnets',
+    where:
+      given !== null
+        ? { and: [{ id: { equals: given } }, { form: { equals: formId } }] }
+        : { and: [{ form: { equals: formId } }, { _status: { equals: 'published' } }] },
+    depth: 0,
+    limit: 2,
+    pagination: false,
+    select: { form: true },
+    overrideAccess: true,
+    req,
+  })
+  return docs.length === 1 ? docs[0].id : null
 }

@@ -24,6 +24,7 @@ import { SiteSettings } from './globals/SiteSettings'
 import { migrations } from './migrations'
 import { isAdmin, staffOnly } from './access'
 import { EVENTS_QUEUE, deliverSiteEventTask } from './integrations/events/deliveryTask'
+import { sendLeadMagnetAssetTask } from './integrations/leadMagnet/tasks'
 import {
   NEWSLETTER_QUEUE,
   sendNewsletterConfirmationTask,
@@ -82,10 +83,11 @@ export default buildConfig({
   // request, and /api/health, which the deploy script polls on start).
   // Never during `next build` (payload index.js `_initializeCrons`: !isNextBuild()).
   jobs: {
-    tasks: [deliverSiteEventTask, sendNewsletterConfirmationTask, syncNewsletterContactTask],
+    tasks: [deliverSiteEventTask, sendNewsletterConfirmationTask, syncNewsletterContactTask, sendLeadMagnetAssetTask],
     autoRun: [
       { cron: '* * * * *', queue: EVENTS_QUEUE, limit: 10 },
-      // A2: double opt-in email + Resend contact sync (Resend limit 10 req/s; ≤ 10 jobs/min).
+      // A2: double opt-in email + Resend contact sync; A3: lead-magnet asset email (all Resend-bound;
+      // Resend limit 10 req/s; ≤ 10 jobs/min).
       { cron: '* * * * *', queue: NEWSLETTER_QUEUE, limit: 10 },
     ],
     // Payload's default is "any logged-in user" (incl. the pipeline) for

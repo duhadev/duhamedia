@@ -2,7 +2,7 @@ import type { Payload, PayloadRequest, TaskConfig, Where } from 'payload'
 
 import type { FormSubmission } from '../../payload-types'
 
-import { DELIVERABLE_EVENT_TYPES, buildSubmissionEvent, serializeEvent } from './contract'
+import { DELIVERABLE_EVENT_TYPES, buildSubmissionEvent, leadMagnetEventFields, serializeEvent } from './contract'
 import { sendSignedEvent, type SendOutcome } from './send'
 
 /**
@@ -153,7 +153,25 @@ export const deliverSiteEventTask: TaskConfig<DeliverIO> = {
       if (!DELIVERABLE_EVENT_TYPES.includes(form.eventType)) {
         outcome = { kind: 'unconfigured', reason: `event type "${form.eventType}" is not built yet` }
       } else {
-        outcome = await sendSignedEvent(serializeEvent(buildSubmissionEvent(sub, form)))
+        let extra: Record<string, string> = {}
+        if (form.eventType === 'lead_magnet') {
+          // A3: name the asset. Title/slug are public fields; trusted read, no staff-only data.
+          const lmId = typeof sub.leadMagnet === 'object' ? sub.leadMagnet?.id : sub.leadMagnet
+          const lm = lmId
+            ? await payload.findByID({
+                collection: 'lead-magnets',
+                id: lmId,
+                depth: 0,
+                draft: false,
+                disableErrors: true,
+                overrideAccess: true,
+                select: { title: true, slug: true },
+                req,
+              })
+            : null
+          extra = leadMagnetEventFields(lm, form, sub)
+        }
+        outcome = await sendSignedEvent(serializeEvent(buildSubmissionEvent(sub, form, extra)))
       }
     } catch (error) {
       // Our side failed before/around the send (e.g. DB blip): retry on the schedule.
