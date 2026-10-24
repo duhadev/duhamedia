@@ -213,23 +213,30 @@ const absoluteHref = (href: string | null): string | null => {
 
 /**
  * schema.org `BreadcrumbList` mirroring a VISIBLE breadcrumb trail (Hero
- * `breadcrumb`, F78 INFO recipe): same labels, same order. The last crumb is
- * the current page (`item` = its canonical URL). Earlier crumbs without a
- * resolvable destination are left out (Google requires `item` on every
- * non-last element) and positions renumber. `null` when fewer than two remain.
+ * `breadcrumb`, F78 INFO recipe; F197): same labels, same order. The trail is
+ * every LINKED crumb, then the current page: the first crumb after the last
+ * linked one (the visible last crumb never links, so it is never "linked").
+ * Crumbs after the current page are trailing non-page context (e.g. the
+ * service pages' "Phase 01 — …") and are omitted; the current page's `item` is
+ * its canonical URL. Unlinked crumbs before a linked one are left out (Google
+ * requires `item` on every non-last element) and positions renumber. A plain
+ * two-crumb trail (Work → study) is unchanged. `null` when fewer than two remain.
  */
 export const breadcrumbJsonLd = (
   crumbs: readonly Crumb[],
   currentUrl: string | undefined,
 ): Record<string, unknown> | null => {
-  const named = crumbs.map((c) => ({ label: clean(c.label), href: c.href })).filter((c) => c.label)
+  const named = crumbs.map((c) => ({ label: clean(c.label), item: absoluteHref(c.href) })).filter((c) => c.label)
   if (named.length < 2) return null
-  const last = named[named.length - 1]
+  // Last crumb with a destination, never counting the final crumb (rendered unlinked).
+  let lastLinked = -1
+  for (let i = 0; i < named.length - 1; i++) if (named[i].item) lastLinked = i
+  const current = named[lastLinked + 1]
   const trail = named
-    .slice(0, -1)
-    .map((c) => ({ name: c.label, item: absoluteHref(c.href) }))
-    .filter((c): c is { name: string; item: string } => Boolean(c.item))
-  const items = [...trail, { name: last.label, item: currentUrl }]
+    .slice(0, lastLinked + 1)
+    .filter((c): c is { label: string; item: string } => Boolean(c.item))
+    .map((c) => ({ name: c.label, item: c.item }))
+  const items: Array<{ name: string; item: string | undefined }> = [...trail, { name: current.label, item: currentUrl }]
   if (items.length < 2) return null
   return {
     '@type': 'BreadcrumbList',

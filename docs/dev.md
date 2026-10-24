@@ -137,6 +137,8 @@ Entry format for every unit: **Files** / **Fields & schema** / **Wiring** (regis
 - [Block showcase sandbox (`/_showcase`)](#block-showcase-sandbox-_showcase)
 - [Deploy](#deploy)
 - [Integrations](#integrations)
+- [Local development](#local-development)
+- [Seed (`pnpm seed`)](#seed-pnpm-seed)
 - [Restructure log](#restructure-log)
 
 ---
@@ -238,6 +240,8 @@ Sitewide header and footers. Not a block; not tied to one page.
 - Migration: none.
 
 **Notes**
+- Touch targets (P4 rework, rule 7): `HIT_AREA` in `src/components/chrome/hit.ts` is a class string that adds an invisible centred `::after` at least as big as the element and at least 44x44px, so a slim link keeps its visual box but gets a 44px hit area. Callers must keep neighbours at least the overhang apart. Used by `SiteHeader` nav links (`linkClass`), `SiteLogo` (when it is a link), and `SiteFooter` horizontal link rows (`LIST_LINK`, reduced-nav) and the legal-bar links. The hero breadcrumbs use the same idiom with their own pseudo-element (see [BreadcrumbJsonLd](#breadcrumbjsonld)).
+- Footer link rows (F198): the standard footer's vertical column links (`COL_LINK`) carry `min-h-target` at every width, so each row is 44px on desktop too (columns are about 10px per link taller than before; a hit area cannot overhang there without overlapping neighbours). The horizontal rows (`LIST_LINK`, legal bar) use `md:min-h-0` plus `HIT_AREA` on desktop.
 - The footer inline form (F42) and the four F41 accessibility fixes (skip link, logo accessible name, distinct nav labels, footer column titles) landed in big step 5; they are described under Wiring above. Footer column titles are `<p>` (F95), not `h2`.
 - The footer form's field ids are unique per instance (see [Forms: stepped layout and per-instance ids](#forms-stepped-layout-and-per-instance-ids-big-step-5)).
 
@@ -370,7 +374,7 @@ Sitewide helpers added while building pages 2 to 6. Several blocks depend on the
 - Full submission path, event contract and retry rules: `INTEGRATIONS.md`, section "Form submission path (S4-7, lead flow steps 1–2)".
 
 **Notes**
-- Event sending is not in this path. The `form-submissions` `afterChange` enqueue and the delivery job remain `TODO(integration)` in `src/plugins/formBuilder.ts`.
+- Event sending is not in this path itself: the `form-submissions` `afterChange` enqueue (`enqueueSubmissionDelivery`, `src/plugins/formBuilder.ts`) and the jobs are built (A1 to A4); see [Integrations](#integrations).
 - First consumer: [NewsletterBand](#newsletterband-unit-s4-11). Big step 5 added the footer nudge form ([B1](#site-chrome-unit-b1)) and `FormEmbed` ([standard](#formembed-standard-variant-unit-s5-6), [reminder](#formembed-reminder-variant-unit-s5-6), [stepped](#formembed-stepped-phone-layout-unit-s5-6)). Big step 6 added the Hero form slot ([card](#hero-form-slot-card-unit-s6-1), [inline](#hero-form-slot-inline-style-and-slashbreaks-unit-s6-1)) and the lead-magnet capture ([template](#template-route-and-view-unit-s6-t2)); `PayloadForm` now dispatches the [`cmsform:submitted` event](#payloadform-cmsformsubmitted-event) on success.
 - PROGRESS flag F71 (rate-limit path, hostname check, custom validation, misconfiguration returns 400).
 
@@ -516,7 +520,9 @@ Additive migration; no drops, type changes or renames. Contents:
 
 **Wiring**
 - `heroCrumbs(layout)` takes the trail of the FIRST `hero` block that has a `breadcrumb` and variant `service` or `article`; each crumb's destination follows the visible trail rule (`page` reference, else `url`).
-- `breadcrumbJsonLd`: mirrors the visible trail (same labels and order); earlier crumbs without a resolvable absolute destination are dropped and positions renumber; the last crumb is the current page (`item` = canonical URL); returns `null` with fewer than two items.
+- `breadcrumbJsonLd` (F197): the list is every LINKED crumb (resolvable absolute destination) plus the current page. The current page is the first crumb after the last linked one (the visible last crumb never links, so it is never counted as linked); its `item` is the canonical URL. Crumbs after the current page (trailing non-page context, e.g. the service pages' "Phase 01 — …") are omitted. Unlinked crumbs before a linked one are dropped (Google requires `item` on every non-last element) and positions renumber. A plain two-crumb trail (Work → study) is unchanged. Returns `null` with fewer than two items.
+- Visible trail (`src/blocks/Hero/Breadcrumb.tsx`) uses the same rule to pick the current page: `aria-current="page"` is set on the crumb `i === current` (first crumb after the last linked one), so the markup and the JSON-LD agree. The last crumb is never a link. Links get a 44px pseudo-element hit area, biased downward (`after:-top-2 after:h-11`) because the bar sits under the sticky header.
+- The service pages' design shows three crumbs (F197: Services → page → "Phase 0N"); the seed and dev data carry all three, the JSON-LD lists Services → the page. The mobile "Ph. 01" short label from the design has no field (F200), so the full label shows at every width.
 - `PageView` renders one `BreadcrumbList` script after the blocks and the FAQPage (`<` escaped) when the Hero shows a trail. The case-study template folds its trail into the `Article` `@graph` instead. Posts emit none (no visible trail).
 - Migration: none.
 
@@ -762,6 +768,7 @@ Section: Testimonials (3 cards) plus the "A study in full" card. Variant built n
 - States: no testimonials and no study/figure → the block renders nothing; testimonials only (no study, no complete fallback figure) → the cards reflow into a row; study/figure only → the study column alone. The fallback figure needs both `value` and `label`, otherwise nothing renders in the slot.
 - A video testimonial renders a poster with a link to the YouTube watch URL in a new tab (no embed); an unparseable YouTube URL logs an error and the quote renders alone. Rating shows stars only when set.
 - The inline video tile is a stop-gap; it is flagged to be replaced by the shared VideoTile (SCHEMA X4) when that exists.
+- Alignment (P4 rework): when the shown cards mix video and non-video formats (`mixedFormats`), the card grid adds `md:items-start`, so a text card keeps its own height instead of stretching to the video card's.
 
 ### TeamIntro, founder-card variant (unit B3)
 
@@ -805,6 +812,7 @@ Section: Final CTA (restates capacity), the dark band before the footer. One var
 - Editing `site-settings` or `scarcity` revalidates through their global hooks (layout-wide), so default headline/button and capacity changes appear without a rebuild.
 - A heading left empty with no site default logs an error and the headline is omitted. The accent phrase only applies to an explicit heading.
 - The CTA buttons use the `ghost-light` variant; the second button has a lighter border.
+- Layout (P4 rework): with two buttons the stack is `w-55 max-w-full` on mobile (the design's 220px; one button stays `w-full`) and `md:w-auto md:min-w-55` from `md`. The corner logo mark sits lower when there are two buttons (`-bottom-32.5` on mobile, versus `-bottom-22.5` for one button; `md:-bottom-25` either way), so it does not overlap the buttons.
 
 ## 2. Case Study template
 
@@ -1515,6 +1523,7 @@ Section: Pre-call homework form (page 9); also the Contact form (page 12). New b
 **Notes**
 - The p9 homework form needs a seeded form (`precall-homework`); the code does not create it.
 - Async server component; the only client code is `PayloadForm` (and the reminder / send-another islands on their variants).
+- Confirmation heading level (F192, F199): `FormEmbed` passes `confirmationHeadingTag={title ? 'h3' : 'h2'}` to `PayloadForm` (prop type `'h2' | 'h3'`, default `h3`). A block with a heading keeps `h3` under its `h2`; a block with no heading uses `h2`. The same tag is used for the stepped layout's per-question headings, because they share the prop.
 
 ### MiniCTAStrip, inline variant (unit S5-7)
 
@@ -1693,6 +1702,7 @@ Rendered on page 1 (Homepage) and page 12 (Contact). Documented once, here; the 
 
 **Wiring**
 - `PageView` renders `<OrganizationJsonLd />` inside `<main>` when `page.slug` is in `ORGANIZATION_JSONLD_SLUGS` (`home`, `contact`). One `application/ld+json` script.
+- `@id` (F193) = `<SITE_URL>/#organization`, the same id used by the Article / BlogPosting `publisher` and `author` objects in `src/lib/metadata.ts` (`caseStudyJsonLd`, `postJsonLd`), so the entities can be joined by `@id`.
 - `@type` = `seo-defaults.localBusiness.type` (only `ProfessionalService`, a schema.org LocalBusiness subtype) when set, else `Organization`. Properties: `name`, `legalName`, `url` (`SITE_URL`), `logo` (`ImageObject`, original upload via `absoluteMediaUrl(…, 'original')`), `email`, `foundingDate`, `address` (`PostalAddress`: locality, region, country), `sameAs` (social profile URLs plus the GBP link, de-duplicated). With a business type: `geo` (`GeoCoordinates`, when both coordinates are numbers), `areaServed`, `openingHours` (the stored "a; b" string split on `;`).
 - `compact` drops empty strings, non-finite numbers, empty arrays and objects with nothing but `@type`. Nothing is hardcoded and nothing is emitted for an unset field; `<` is escaped to `<`.
 - Revalidation: both globals' `revalidateGlobalHook` purge the whole `(frontend)` layout on save, which covers `/` and `/contact`. Migration: none.
@@ -3308,14 +3318,14 @@ Plugin options:
 - Hooks, `forms`: `afterChange` / `afterDelete` = `revalidateLiveCollectionHooks('forms')`. Collections without drafts feed public pages, so every save and delete calls `revalidateTag('forms', 'max')` and `revalidatePath('/', 'layout')`. Skipped when `context.disableRevalidate` is set; same safe-guard behaviour as the other revalidate hooks.
 - Hooks, `form-submissions`:
   - `beforeChange`: plugin `createCharge` (no-op), then `stampSubmissionDelivery`. On `create` only: `eventId` = fresh `randomUUID()` (node:crypto) on every create, overwriting any caller-supplied value; `deliveryStatus` = `pending` only if the submission's form has `sendEvent` true and `eventType` not `none`, else `null` (caller values overwritten either way). The form is read with `overrideAccess: true` and the same `req`. Updates (re-send) never regenerate `eventId`.
-  - `afterChange`: the plugin's `sendEmail` (notification email via Resend). It is awaited inside the submit request (open flag F20). No integration `afterChange` exists yet (`TODO(integration)`).
+  - `afterChange`: the plugin's `sendEmail` (notification email via Resend). It is awaited inside the submit request (open flag F20). `afterChange` also runs `enqueueSubmissionDelivery` (A1 to A3, after `sendEmail`); see [Integrations](#integrations).
 - Pages using it: p9 (homework form), p10, p12 (contact form), p16 and every NewsletterBand / footer nudge (via `site-settings.newsletterForm`), p18 (via `lead-magnets.form`). Blocks (FormEmbed, NewsletterBand) are not built yet.
 - Frontend rule: forms are staff-read, so the frontend reads form definitions server-side with `overrideAccess` and must never pass the `emails` array (notification addresses) to client components.
 - Migration: `20261021_233028_p1_form_builder`. Additive.
   - Up: enums `enum_forms_confirmation_type`, `enum_forms_redirect_type`, `enum_forms_event_type`, `enum_form_submissions_delivery_status`, `enum_form_submissions_newsletter_sync_status`, `enum_form_submissions_newsletter_opt_in_status`, and four `enum_payload_query_presets_*` (read/update/delete constraint, related_collection = `form-submissions`); tables `forms`, `forms_blocks_{checkbox,email,message,number,select,select_options,text,textarea,date}`, `forms_emails`, `forms_rels`, `form_submissions`, `form_submissions_submission_data`, `payload_query_presets`, `payload_query_presets_rels`; unique `forms_form_key_idx` and `form_submissions_event_id_idx`, index on `delivery_status`; `form_submissions.form_id` NOT NULL FK → `forms` ON DELETE set null; adds `lead_magnets.form_id`, `_lead_magnets_v.version_form_id`, `site_settings.newsletter_form_id` (FKs → `forms`, set null) and `forms_id` / `form_submissions_id` on `payload_locked_documents_rels` (FK cascade); all with indexes.
   - Down: hand-fixed to drop the five FKs that point into the new tables (`lead_magnets`, `_lead_magnets_v`, `payload_locked_documents_rels` ×2, `site_settings`) before the `DROP TABLE … CASCADE` statements (same fix as C2), then drops the added indexes, columns and enums.
 
-`TODO(integration)` list (nothing below exists yet; each is an `automation-engineer` unit):
+Historical `TODO(integration)` list (as written at P1). Items 1 to 4 are built since: item 1 = `POST /api/form-submit`; item 2 = `enqueueSubmissionDelivery` + the A1 to A3 jobs; item 3 = `ResendDeliveryButton` + `POST /api/form-submissions/:id/resend`; item 4 = the "Failed deliveries" preset is created by [`pnpm seed`](#seed-pnpm-seed). Item 5 (F20, notification email off the request path) is not confirmed built (TBD). See [Integrations](#integrations).
 1. Form handler (server action or route): Turnstile siteverify first, then `payload.create` on `form-submissions` with `context.turnstileVerified = true` and `overrideAccess: false`; may set `sourcePath` and `leadMagnet`.
 2. `afterChange` on create: enqueue the event delivery job (never send inline) and, for forms with `newsletterSync`, the newsletter sync job. Jobs write with `overrideAccess` (field-level create restrictions otherwise strip their values); reading or writing `newsletter.confirmTokenHash` needs `showHiddenFields`.
 3. `resend` `ui` field on `form-submissions` plus a staff-only endpoint that re-enqueues the job keeping the same `eventId`. A `ui` field has no column, so no migration.
@@ -3589,6 +3599,8 @@ Source: `DECISIONS.md` §D, §E, §F and `OPS_REQUESTS.md` #3. Items marked **TB
 | `RESEND_NEWSLETTER_SEGMENT_ID` | Resend newsletter Segment |
 | `RESEND_NEWSLETTER_TOPIC_ID` | Resend newsletter Topic (replaces the retired `RESEND_AUDIENCE_ID`) |
 | `FORMS_DEFAULT_TO_EMAIL` | Optional. Notification inbox when a form's "Email to" is empty (form-builder `defaultToEmail`). Unset: falls back to the Resend from-address. Open flag F16 |
+| `SITE_EVENT_RETRY_DELAYS_S` | Development only (ignored unless `APP_ENV=development`): compresses the event/newsletter retry schedule for local proofs. Never set on the server |
+| `SITE_ERROR_WINDOW_S` | Development only (ignored unless `APP_ENV=development`): shortens the 10-minute `site_error` rate-limit window. Never set on the server |
 | `TURNSTILE_SITE_KEY` | Cloudflare Turnstile site key (passed to client components as a prop) |
 | `TURNSTILE_SECRET_KEY` | Cloudflare Turnstile secret for server-side verification |
 
@@ -3600,7 +3612,51 @@ Local dev: values live only in the untracked `.env`, created from the committed 
 
 Every lead, signup and site error is sent to the OpenClaw secretary as a signed HTTP event, and newsletter signups sync to Resend Contacts. The full contract, signing, retry schedule, re-send procedure and per-event status live in [`INTEGRATIONS.md`](../INTEGRATIONS.md).
 
-The submit-side data model (forms, submissions, delivery fields) is documented in [`form-builder` (P1)](#form-builder-unit-p1). The public submission path (Turnstile verify, validation, store) is built: see [Shared components and form foundation](#shared-components-and-form-foundation-big-step-4) and `INTEGRATIONS.md` "Form submission path". Still open `TODO(integration)` items: the `form-submissions` `afterChange` enqueue and the signed-event delivery job, the newsletter-sync job, the re-send endpoint and the "Failed deliveries" preset (see the [P1 Wiring section](#form-builder-unit-p1)).
+The submit-side data model (forms, submissions, delivery fields) is documented in [`form-builder` (P1)](#form-builder-unit-p1). The public submission path (Turnstile verify, validation, store) is built: see [Shared components and form foundation](#shared-components-and-form-foundation-big-step-4) and `INTEGRATIONS.md` "Form submission path". Units A1 to A4 are built and locally Gate-A proven; the staging Gate A proofs are pending (OPS_REQUESTS #13, #14). This section is a map of the code only; behaviour, payloads and procedures are in `INTEGRATIONS.md`.
+
+### Code map
+
+**A1: event delivery (`src/integrations/events/`)**
+- `contract.ts`: v1 event type and `buildSubmissionEvent`, `serializeEvent` (32 KB cap, deterministic truncation, `_truncated` note), `eventEnv()` (`production` only when `APP_ENV=production`, else `staging`), `DELIVERABLE_EVENT_TYPES` (`contact`, `newsletter`, `lead_magnet`), `leadMagnetEventFields`.
+- `send.ts`: `sendSignedEvent(body)` (HMAC-SHA256 over `timestamp.rawBody`, timestamp taken at send time, 10 s timeout, never throws), `signBody`.
+- `deliveryTask.ts`: task `deliverSiteEvent`, queue `events`; `queueDelivery`, `retryDelaysMs()` (1 min, 5 min, 30 min, 2 h, 12 h); the task never throws and re-queues attempt n+1 with `waitUntil` instead of using Payload's native retries (`retries: 0`). `stampSubmission()` writes only the named columns through the adapter (one conditional UPDATE, no hooks, no whole-document write), because the `events` and `newsletter` queues run in parallel and a whole-document `payload.update` let one job's stale write revert the other's status (found at the A2 Gate A). All status stamps (A1 to A3) go through it.
+- `resendEndpoint.ts`: `POST /api/form-submissions/:id/resend`, staff only; allowed when delivery is `failed` or `delivered`, refused while `pending`; same `eventId`.
+- Registered by `src/plugins/formBuilder.ts` (`enqueueSubmissionDelivery` in `formSubmissionOverrides.hooks.afterChange`; `src/hooks/formSubmissions.ts`).
+
+**A2: newsletter double opt-in (`src/integrations/newsletter/`)**
+- `token.ts`: confirm token `<submissionId>.<expiresAtMs>.<sig>`, HMAC key derived from `PAYLOAD_SECRET` (no new env var), 72 h (`CONFIRM_TTL_MS`); only `sha256(token)` is stored (`newsletter.confirmTokenHash`).
+- `email.ts`: the confirmation email (`confirmationEmail`). `resendContacts.ts`: Resend Contact + Segment + Topic via plain `fetch` (no Resend SDK).
+- `tasks.ts`: queue `newsletter`; tasks `sendNewsletterConfirmation` and `syncNewsletterContact`; `queueConfirmationEmail`, `queueContactSync`. On `synced`, for forms whose event type is `newsletter` with Send event on, it stamps `deliveryStatus: pending` and queues the A1 job.
+- `confirm.ts`: `confirmNewsletterSignup(payload, token)` returns `confirmed | already | expired | invalid | error`.
+- `actionEndpoint.ts`: `POST /api/form-submissions/:id/newsletter/:action` (`resend-confirmation`, `resync`), staff only.
+- Route: `src/app/(frontend)/newsletter/confirm/page.tsx` (`/newsletter/confirm?token=…`, GET). The posts slug `confirm` is shadowed by this route (F168).
+
+**A3: lead-magnet asset email (`src/integrations/leadMagnet/`)**
+- `assetEmail.ts`: reads the attachment from `${MEDIA_DIR}/downloads` server-side (link for an external URL), direct Resend `POST /emails` with an Idempotency-Key, 10 MB cap.
+- `tasks.ts`: task `sendLeadMagnetAsset` on the `newsletter` queue (one Resend rate bucket), tracked in the submission's `assetEmail` group (`status` pending / sent / failed, `note`, `attempts`), separately from event delivery. The `lead_magnet` event itself is the A1 task.
+- `resendEndpoint.ts`: `POST /api/form-submissions/:id/asset-email/resend`, staff only; a new chain id gives a new Idempotency-Key.
+
+**A4: site errors (`src/integrations/siteError/`, `src/instrumentation.ts`)**
+- `report.ts`: `reportSiteError` (synchronous, never throws, fire-and-forget), `reportNextRequestError`, `reportPayloadError` (the `hooks.afterError` hook, status >= 500), `registerSiteErrorPayload` (called from `onInit`). Scrubs emails, Postgres params and tokens; no request bodies, cookies or headers; fingerprint = sha256(name + top frame + route) first 16 characters; in-memory rate limit of one event per fingerprint per 10 minutes with the suppressed count flushed as one event (`globalThis` state).
+- `task.ts`: task `deliverSiteError` (queue `events`), job-only; there is no collection or admin view for site errors (F177).
+- `src/instrumentation.ts`: `onRequestError`, Node runtime only, dynamic import of the reporter. `/api/form-submit` also reports store failures.
+
+**Jobs config (`src/payload.config.ts`)**
+- `jobs.tasks`: the five tasks above. `jobs.autoRun`: `* * * * *` on queue `events` and on queue `newsletter`, `limit: 10` each. `jobs.access`: `queue`, `run`, `cancel` are admin only (`isAdmin`); our code queues through the Local API with `overrideAccess`.
+- The cron starts on the first `getPayload({ config, cron: true })`: called in `GET /api/health` (polled by the deploy script on start) and in `POST /api/form-submit`. Payload does not start it during `next build`. Finished jobs are deleted (`deleteJobOnComplete`, Payload default).
+- `hooks.afterError: [reportPayloadError]`, `onInit: registerSiteErrorPayload`.
+
+**Admin buttons (`src/components/admin/`, registered as `admin.components.Field` on `form-submissions` fields in `src/plugins/formBuilder.ts`)**
+- `ResendDeliveryButton` (event re-send), `NewsletterActions` (resend confirmation, re-sync), `AssetEmailActions` (resend asset email). Each calls its endpoint above.
+
+**Dev-only env names** (ignored unless `APP_ENV=development`; never set on the server): `SITE_EVENT_RETRY_DELAYS_S` (five comma-separated positive seconds replacing the retry schedule, all queues), `SITE_ERROR_WINDOW_S` (seconds replacing the 10-minute `site_error` window). Both are in `.env.example`.
+
+**Migrations** (all additive; each `down` starts with the F88 guard `to_regclass('public.users')` and returns early when `users` is gone; the A2 to A4 `down`s first delete that task's queued `payload_jobs` and `payload_jobs_log` rows):
+- `20261023_204052_a1_event_delivery`: `payload_jobs` and `payload_jobs_log` tables, three enums.
+- `20261024_030205_a2_newsletter`: `form_submissions.newsletter_email_status` / `_note` / `_attempts` / `newsletter_contact_id` (+ enum), job task enum values `sendNewsletterConfirmation`, `syncNewsletterContact`.
+- `20261024_034121_a3_lead_magnet`: `form_submissions.asset_email_status` / `_note` / `_attempts` (+ enum), task value `sendLeadMagnetAsset`.
+- `20261024_165445_a4_site_error`: task enum value `deliverSiteError`.
+- Each new task adds enum values to `payload_jobs_task_slug` and `payload_jobs_log_task_slug`, so each task needs a migration (F160).
 
 ---
 
@@ -3617,10 +3673,56 @@ The submit-side data model (forms, submissions, delivery fields) is documented i
   - Whenever a migration adds a collection, Payload's generated `down()` emits `DROP TABLE … CASCADE` before the `DROP CONSTRAINT` for the new `payload_locked_documents_rels_*_fk`, so `down` fails (the CASCADE already removed the FK). Hand-reorder `down()` to drop those FKs first (done in C2 and C3–C6).
   - `payload migrate:reset` (payload@3.91.0) runs every `down` oldest-first (F88). The initial migration's `down` therefore drops every table and enum type in the `public` schema, and later `down`s return early once `users` is gone; run reset only against a scratch database that holds only Payload's schema. Newest-first `migrate:down` is unaffected.
   - Migrations from the latest steps: `20261022_141454_b5_pages_7_12_blocks`, `20261023_170339_b5b_s5_deltas` (see [S5 close-out schema deltas](#s5-close-out-schema-deltas-20261023_170339_b5b_s5_deltas)), `20261023_195241_b6_pages_13_21_blocks` (big step 6: new tables `pages_blocks_offer_block`, `pages_blocks_proof_strip_metrics`, `pages_blocks_review_wall_inserts`, `pages_blocks_rich_content_facts`, `pages_blocks_link_stack` (+ `_links`), `pages_blocks_post_list`, `pages_blocks_error404` (+ `_links`), each with a `_pages_v_` equivalent; new columns on `pages_blocks_hero`, `proof_strip`, `review_wall`, `testimonial_row`, `rich_content`, `newsletter_band`; 16 enum `ADD VALUE` statements; eight `site_settings.post_labels_*` columns; additive only). Generate against a scratch DB migrated to HEAD; the dev DB uses push and its Drizzle prompt may stall on a "DATA LOSS" question when a schema change lands while the config is mid-edit (dev only).
+  - Integration migrations after that: `a1_event_delivery`, `a2_newsletter`, `a3_lead_magnet`, `a4_site_error` (listed under [Integrations](#integrations)).
+- `pnpm seed` fills an empty database with the placeholder site; see [Seed](#seed-pnpm-seed).
 - Browser-based proofs (anything needing the human's admin session) are run by the PM or `qa-reviewer`, not by the integrator or schema agents.
 - Script safety: throwaway users created by scripts or tests must use a unique `test+gate-<purpose>@duhamedia.com` address and be deleted by the returned id only.
 - Local image test: `docker build .` then `docker run --network host --env-file .env …`.
 - `next.config.ts` sets `agentRules: false`: Next 16.3 otherwise appends an agent-rules block to `CLAUDE.md` on `next dev`.
+
+## Seed (`pnpm seed`)
+
+**Files**: `src/seed/index.ts` (runner), `lib.ts` (`ensure`, `ensureGlobal`, `findId`, `globalIsSaved`, `SEED_CONTEXT`, `PH` / `ph` / `phSub` placeholder helpers), `assets.ts`, `library.ts`, `globals.ts`, `pages.ts`.
+
+**Command**
+- `pnpm seed` = `cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_MIGRATING=true payload run src/seed/index.ts`. `payload run` imports the file with the project's `.env` and tsconfig paths. `PAYLOAD_MIGRATING=true` makes `@payloadcms/db-postgres@3.91.0` skip the dev-mode schema push on connect, so the seed writes data only; apply migrations (or run `pnpm dev` for push) first.
+- `SEED_DRY_RUN=1 pnpm seed`: runs everything inside the transaction, then rolls back. `SEED_DRY_RUN=fresh pnpm seed`: same, and also writes every global as if it had never been saved (exercises the global path). `0` / `false` / empty = a real run.
+- Output: one line per document (`create` / `skip`, with id), then created and skipped counts by kind. No secrets are printed. Exit code 1 on any error.
+
+**Rules**
+- Create-only and idempotent. `ensure()` looks a document up by a stable key (slug, `formKey`, alt text, filename/title, a unique text field; drafts included) and creates it only when absent; it never updates or deletes. `ensureGlobal()` writes a global only when it has no saved row, so a saved global is never touched even when some fields are empty.
+- One database transaction for the whole run (`initTransaction` / `commitTransaction` / `killTransaction`); a failure rolls everything back. If the adapter does not open a transaction the run aborts.
+- Every write passes `context: { disableRevalidate: true, seed: true }` and `overrideAccess: true` (the seed runs outside Next, so there is nothing to revalidate).
+- Never runs on deploy. Running it against staging or production is a human-approved action, logged in PROGRESS.md. Staging method is pending OPS_REQUESTS #15: the standalone image has no `src/` or Payload CLI (F180; the option under discussion is a one-off container from the builder stage). TBD.
+- Assets are generated at run time (no binaries committed): `sharp` renders SVG to PNG for the share image and a placeholder image, plus a placeholder CSV worksheet.
+
+**What it creates** (58 documents on the dev run, plus up to four globals):
+
+| Kind | Count | Notes |
+|---|---|---|
+| `media` | 2 | share image (1200x630) and a placeholder image; alt text says placeholder |
+| `downloads` | 1 | placeholder worksheet |
+| `forms` | 4 | `contact`, `precall-homework`, `newsletter`, `lead-magnet` (keyed by `formKey`) |
+| `payload-query-presets` | 1 | shared "Failed deliveries" on `form-submissions` (`deliveryStatus` = `failed`) |
+| `clients` | 6 | `[Client A]` to `[Client F]`, published, `showInLogoStrip` false |
+| `team-members` | 1 | founder, published, bracketed bio |
+| `testimonials` | 7 | published, no ratings |
+| `faqs` | 10 | published, `listOnFaqPage` true |
+| `case-studies` | 2 | **drafts** |
+| `posts` | 3 | **drafts** |
+| `lead-magnets` | 1 | **draft** |
+| `pages` | 20 | published: `home`, `work`, `services`, `services/shopify-theme-development`, `services/marketing`, `testimonials`, `about`, `thank-you`, `book-a-call`, `faq`, `contact`, `lp/sample-campaign`, `newsletter`, `links`, `reviews`, `privacy`, `terms`, `cookies`, `gdpr`, `404` |
+| globals | up to 4 | `site-settings`, `scarcity`, `navigation`, `seo-defaults` (only if never saved) |
+
+- Drafts: case studies, posts and the lead magnet are created with `draft: true` and `_status: 'draft'` (Launch-state rule; lead magnets stay draft until the `lead_magnet` delivery exists, F149). Public queries return published only, so they never render publicly.
+- Forms: `contact` (event type `contact`, Send event on), `precall-homework` (Send event off at launch, Gate 0), `newsletter` (event `newsletter`, newsletter sync on), `lead-magnet` (event `lead_magnet`, newsletter sync on, opt-in field `newsletter`). Notification "Email to" is left empty, so mail goes to `FORMS_DEFAULT_TO_EMAIL` when set (F186).
+- Pages: locked section order per SCHEMA §9. Hero headlines and subheads carry the literal `[STRATEGIC PLACEHOLDER — final copy TBD]` label (`ph()` / `phSub()`). Page SEO: explicit `meta.title` per page (F191; stored absolute, `buildMetadata` does not apply the template again) and a plain `meta.description`. `noindex` is set on `thank-you`, `lp/sample-campaign`, `links`, `404`, and on `privacy`, `terms`, `cookies`, `gdpr` until counsel content exists (F190; clearing it is a Gate 3 step). The `bookingEmbed` block on `book-a-call` gets `thankYouPage` set to the `thank-you` page created earlier in the same run.
+
+**Notes**
+- `payload run` re-parses argv and forwards positional arguments only, so a CLI flag such as `--dry-run` is silently dropped; use env vars. Two earlier "dry runs" were real runs for this reason (dev only).
+- Uploaded files are written to `MEDIA_DIR` before the commit, so a failed or dry run can leave orphan files there (never a database row).
+- Dev globals created before the seed are left as they are (create-only), so a dev database can lack seeded scarcity rows (F181).
+- Seeded copy is placeholder; flags F182 to F188 in PROGRESS.md list the content decisions still open (scarcity counts, hidden clients, ratings, homework fields, notification recipient, hero label placement, meta descriptions).
 
 ## Restructure log
 

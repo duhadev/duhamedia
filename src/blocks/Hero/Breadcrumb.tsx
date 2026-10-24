@@ -21,7 +21,7 @@ const TONES = {
 
 /**
  * Hero breadcrumb trail: `<nav aria-label>` + ordered list, one `<li>` per
- * crumb, the last marked `aria-current="page"` and never a link. The markup is
+ * crumb, the current page marked `aria-current="page"` and never a link. The markup is
  * a plain nav/ol/li (visible text = crumb label) so a page-scope BreadcrumbList
  * JSON-LD can be generated from the same field with no markup change. Links
  * get a 44px hit area through an invisible pseudo-element (the bar stays slim); it is biased downward
@@ -31,6 +31,10 @@ export function Breadcrumb({ items, tone }: { items: Crumb[]; tone: keyof typeof
   const crumbs = items.filter((c) => c.label?.trim())
   if (!crumbs.length) return null
   const t = TONES[tone]
+  // Current page = first crumb after the last linked one (the final crumb never counts as linked), mirroring breadcrumbJsonLd.
+  let lastLinked = -1
+  for (let i = 0; i < crumbs.length - 1; i++) if (resolveLinkHref(linkOf(crumbs[i]))) lastLinked = i
+  const current = lastLinked + 1
   return (
     <nav aria-label="Breadcrumb">
       <ol className={cx('flex flex-wrap items-center gap-x-2.5 gap-y-1 font-bold uppercase md:gap-x-3', t.list)}>
@@ -57,7 +61,7 @@ export function Breadcrumb({ items, tone }: { items: Crumb[]; tone: keyof typeof
                   {crumb.label}
                 </CMSLink>
               ) : (
-                <span aria-current={last ? 'page' : undefined} className={cx(last ? t.current : t.link)}>
+                <span aria-current={i === current ? 'page' : undefined} className={cx(last ? t.current : t.link)}>
                   {crumb.label}
                 </span>
               )}

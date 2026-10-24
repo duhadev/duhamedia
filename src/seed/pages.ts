@@ -402,7 +402,7 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
           pricingNote: 'Builds start at $5K',
           subNote: '[Placeholder — typical revision length]',
           ctas: [{ link: L('Book a call', '/book-a-call') }],
-          breadcrumb: [{ label: 'Services', url: '/services' }, { label: 'Shopify theme development' }],
+          breadcrumb: [{ label: 'Services', url: '/services' }, { label: 'Shopify theme development' }, { label: 'Phase 01 — build the foundation' }],
           stats: [{ value: '[N weeks]', label: 'Typical revision' }],
         },
         {
@@ -520,7 +520,7 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
           pricingNote: 'Engines start at $1K/mo',
           subNote: '[Placeholder minimum-term note]',
           ctas: [{ link: L('Book a call', '/book-a-call') }],
-          breadcrumb: [{ label: 'Services', url: '/services' }, { label: 'Marketing' }],
+          breadcrumb: [{ label: 'Services', url: '/services' }, { label: 'Marketing' }, { label: 'Phase 02 — operate the engine' }],
         },
         {
           blockType: 'specLedger',
