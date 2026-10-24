@@ -27,6 +27,7 @@ import * as migration_20261023_195241_b6_pages_13_21_blocks from './20261023_195
 import * as migration_20261023_204052_a1_event_delivery from './20261023_204052_a1_event_delivery';
 import * as migration_20261024_030205_a2_newsletter from './20261024_030205_a2_newsletter';
 import * as migration_20261024_034121_a3_lead_magnet from './20261024_034121_a3_lead_magnet';
+import * as migration_20261024_165445_a4_site_error from './20261024_165445_a4_site_error';
 
 export const migrations = [
   {
@@ -172,6 +173,11 @@ export const migrations = [
   {
     up: migration_20261024_034121_a3_lead_magnet.up,
     down: migration_20261024_034121_a3_lead_magnet.down,
-    name: '20261024_034121_a3_lead_magnet'
+    name: '20261024_034121_a3_lead_magnet',
+  },
+  {
+    up: migration_20261024_165445_a4_site_error.up,
+    down: migration_20261024_165445_a4_site_error.down,
+    name: '20261024_165445_a4_site_error'
   },
 ];

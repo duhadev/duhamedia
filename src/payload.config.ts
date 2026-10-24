@@ -30,6 +30,8 @@ import {
   sendNewsletterConfirmationTask,
   syncNewsletterContactTask,
 } from './integrations/newsletter/tasks'
+import { registerSiteErrorPayload, reportPayloadError } from './integrations/siteError/report'
+import { deliverSiteErrorTask } from './integrations/siteError/task'
 import { formBuilder } from './plugins/formBuilder'
 import { redirects } from './plugins/redirects'
 import { seo } from './plugins/seo'
@@ -83,7 +85,14 @@ export default buildConfig({
   // request, and /api/health, which the deploy script polls on start).
   // Never during `next build` (payload index.js `_initializeCrons`: !isNextBuild()).
   jobs: {
-    tasks: [deliverSiteEventTask, sendNewsletterConfirmationTask, syncNewsletterContactTask, sendLeadMagnetAssetTask],
+    tasks: [
+      deliverSiteEventTask,
+      sendNewsletterConfirmationTask,
+      syncNewsletterContactTask,
+      sendLeadMagnetAssetTask,
+      // A4: site_error events (job-only; queue `events`).
+      deliverSiteErrorTask,
+    ],
     autoRun: [
       { cron: '* * * * *', queue: EVENTS_QUEUE, limit: 10 },
       // A2: double opt-in email + Resend contact sync; A3: lead-magnet asset email (all Resend-bound;
@@ -98,6 +107,14 @@ export default buildConfig({
       cancel: ({ req }) => isAdmin(req.user),
     },
   },
+  // A4 site_error: REST/GraphQL/endpoint errors with status >= 500 (payload@3.91.0
+  // utilities/routeError.js calls config.hooks.afterError after collection hooks).
+  // Next-side errors are reported from src/instrumentation.ts.
+  hooks: {
+    afterError: [reportPayloadError],
+  },
+  // A4: hands the instance to the site_error reporter (shared with instrumentation).
+  onInit: (payload) => registerSiteErrorPayload(payload),
   sharp,
   telemetry: false,
   // seo is order-independent (touches only pages/case-studies/posts/lead-magnets).

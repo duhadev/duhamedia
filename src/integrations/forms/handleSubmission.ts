@@ -3,6 +3,7 @@ import type { Payload, PayloadRequest } from 'payload'
 import { docPath } from '@/lib/docPath'
 import type { Form, FormSubmission } from '@/payload-types'
 
+import { reportSiteError } from '../siteError/report'
 import { verifyTurnstile } from '../turnstile'
 import {
   FIELD_PREFIX,
@@ -321,6 +322,15 @@ export async function handleFormSubmission(
     return { result: { ok: true }, submissionId: created.id, redirectUrl }
   } catch (err) {
     payload.logger.error(`[forms] submission failed: ${err instanceof Error ? err.name : 'unknown error'}`)
+    // A4: a lead that could not be stored is a server error (status >= 500 only;
+    // the reporter scrubs values and never sees the submitted data).
+    reportSiteError(err, {
+      source: 'forms',
+      route: '/api/form-submit',
+      path: '/api/form-submit',
+      method: 'POST',
+      status: typeof (err as { status?: unknown })?.status === 'number' ? (err as { status: number }).status : 500,
+    })
     return fail(MSG.storage)
   }
 }

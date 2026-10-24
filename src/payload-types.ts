@@ -138,6 +138,7 @@ export interface Config {
       sendNewsletterConfirmation: TaskSendNewsletterConfirmation;
       syncNewsletterContact: TaskSyncNewsletterContact;
       sendLeadMagnetAsset: TaskSendLeadMagnetAsset;
+      deliverSiteError: TaskDeliverSiteError;
       inline: {
         input: unknown;
         output: unknown;
@@ -4081,7 +4082,8 @@ export interface PayloadJob {
           | 'deliverSiteEvent'
           | 'sendNewsletterConfirmation'
           | 'syncNewsletterContact'
-          | 'sendLeadMagnetAsset';
+          | 'sendLeadMagnetAsset'
+          | 'deliverSiteError';
         taskID: string;
         input?:
           | {
@@ -4115,7 +4117,14 @@ export interface PayloadJob {
       }[]
     | null;
   taskSlug?:
-    | ('inline' | 'deliverSiteEvent' | 'sendNewsletterConfirmation' | 'syncNewsletterContact' | 'sendLeadMagnetAsset')
+    | (
+        | 'inline'
+        | 'deliverSiteEvent'
+        | 'sendNewsletterConfirmation'
+        | 'syncNewsletterContact'
+        | 'sendLeadMagnetAsset'
+        | 'deliverSiteError'
+      )
     | null;
   queue?: string | null;
   waitUntil?: string | null;
@@ -6882,6 +6891,21 @@ export interface TaskSendLeadMagnetAsset {
     submissionId: number;
     attempt: number;
     chain: string;
+  };
+  output: {
+    result: string;
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskDeliverSiteError".
+ */
+export interface TaskDeliverSiteError {
+  input: {
+    body: string;
+    eventId: string;
+    fingerprint: string;
+    attempt: number;
   };
   output: {
     result: string;

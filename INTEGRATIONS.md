@@ -20,6 +20,7 @@ Sources: `CLAUDE.md` → "Integration architecture" (locked, Oct 2026); `DECISIO
 | `SITE_EVENT_URL` | Destination of signed events (internal address, firewalled to the site container; provided by the server agent; never hardcoded) |
 | `SITE_EVENT_SECRET` | HMAC-SHA256 signing key |
 | `SITE_EVENT_RETRY_DELAYS_S` | **Development only** (ignored unless `APP_ENV=development`): five comma-separated seconds compressing the retry schedule for local proofs (events **and** newsletter queues, incl. the A3 asset email). Never set on the server |
+| `SITE_ERROR_WINDOW_S` | **Development only** (ignored unless `APP_ENV=development`): seconds; shortens the 10-minute `site_error` rate-limit window for local proofs. Never set on the server |
 | `PAYLOAD_SECRET` | Also keys the newsletter confirm links (HMAC key derived from it; rotating it voids pending links) |
 | `SITE_URL` | Origin of the newsletter confirm link in the confirmation email |
 | `RESEND_API_KEY` | Email transport (`@payloadcms/email-resend`), the lead-magnet asset email (direct `POST /emails`) + Contacts API. **Full-access** key (sending-only cannot manage contacts). Unset on staging/production → confirmation emails and contact syncs fail closed (`failed`, not retried) |
@@ -146,6 +147,10 @@ Every public form (contact, pre-call homework, newsletter, lead-magnet capture, 
 | A3 re-send endpoint + button (`assetEmail.assetEmailActions` ui field) | src/integrations/leadMagnet/resendEndpoint.ts, src/components/admin/AssetEmailActions.tsx |
 | A3 `lead_magnet` event fields (`leadMagnetEventFields`) | src/integrations/events/contract.ts, used by deliveryTask.ts |
 | A3 columns + job slug | migration `src/migrations/20261024_034121_a3_lead_magnet.ts` |
+| A4 reporter (filters, scrubbing, fingerprint, rate limit, enqueue) + Payload `afterError` adapter + `onInit` registration | src/integrations/siteError/report.ts |
+| A4 task `deliverSiteError` (queue `events`) | src/integrations/siteError/task.ts |
+| A4 Next `onRequestError` | src/instrumentation.ts |
+| A4 job slug | migration `src/migrations/20261024_165445_a4_site_error.ts` |
 
 - **Where jobs run.** Inside the site container. There is no worker process. Payload starts its cron on the first `getPayload({ cron: true })`: any admin or `/api/*` request, plus `/api/health` and `/api/form-submit` (both pass `cron: true`). The deploy script's first health poll therefore starts delivery. The cron never starts during `next build`. Finished jobs are deleted (`deleteJobOnComplete` default), so `payload_jobs` only holds queued or scheduled attempts.
 - **Same transaction.** The job row is written with the submission's `req`, so it commits or rolls back together with the lead.
@@ -183,7 +188,7 @@ Every public form (contact, pre-call homework, newsletter, lead-magnet capture, 
 | `contact` | `precall-homework` | Pre-call homework form (Book a Call) | **Off at launch** | sending code exists (A1); stays off via the form's **Send event** toggle |
 | `newsletter` | per form (Form key) | Newsletter page, footer nudge, Thank You, lead-magnet opt-in | Launch (double opt-in) | **built (A2)**: Gate A local proofs done, staging pending |
 | `lead_magnet` | per form (Form key) | Lead Magnet template | Launch | **built (A3)**: Gate A local proofs done, staging pending |
-| `site_error` | — | Server-side error handler | Launch | not built |
+| `site_error` | — | Server-side error handler | Launch | **built (A4)**: Gate A local proofs done, staging pending |
 | `booking` | — | Nextcloud → secretary directly | Launch | no site code |
 | content published | — | Publish on `posts` / `case-studies` | Queued (v2) | not built |
 
@@ -309,12 +314,50 @@ Every public form (contact, pre-call homework, newsletter, lead-magnet capture, 
 
 ### `site_error`
 
-- **Status:** not built.
-- **Source:** server-side error handler (Next.js + Payload). Server-side only.
-- `fingerprint` = error name + top stack frame + route (stable).
-- Local dedupe/rate limit: at most one event per fingerprint per 10 minutes; `count` carries the suppressed total. A crash loop must not flood the queue or Matrix.
-- **Never** include request bodies, cookies, headers or form PII. `stack` = first 20 lines.
-- **Missing upload files:** Payload 3.91.0 answers a request for a file missing from disk (`/api/media/file/<name>`, `/api/downloads/file/<name>`) with a **500** "Something went wrong.", not a 404. These must not page the human per request: ignore them, or collapse them into one rate-limited fingerprint per collection (noted 2026-10-17, C2).
+- **Status:** built (A4, 2026-10-24). Gate A local proofs done against a stub receiver (HMAC verified). Staging pending: one deliberate server error on staging → the human confirms the `[staging]` Matrix message.
+- **Sources (server-side only):**
+  - **Next `onRequestError`** (`src/instrumentation.ts`, Node runtime only): Server Components, route handlers, server actions, proxy. Includes the error `digest` (the code the visitor sees on the error page) in `fields.digest`. `request.headers` is never read.
+  - **Payload `hooks.afterError`** (config level; payload@3.91.0 `utilities/routeError.js` and the GraphQL handler): REST, GraphQL and custom-endpoint errors, which Payload answers itself so Next never sees them. Reported only when the status is **≥ 500** (no status = 500; GraphQL uses `originalError`). Validation, 403, 404, 409 (S3 friendly blocks) are never reported. The hook returns nothing, so Payload's response is unchanged.
+  - **`/api/form-submit` store failure** (`handleSubmission.ts`): a lead that could not be saved is caught by that route, so it reports explicitly (status ≥ 500 only).
+- **Ignored:** `/api/health` (and the health route catches its own failures anyway: the secretary already polls it), `/api/payload-jobs*` (loop guard), Next control-flow digests (`NEXT_*` redirect/not-found, `DYNAMIC_SERVER_USAGE`, `BAILOUT_TO_CLIENT_SIDE_RENDERING`), Payload's client-upload `"Expected response from the upload handler."` 500 (reachable by an anonymous multipart POST, S3 note), client disconnects (`AbortError`, `ResponseAborted`). Missing upload files already answer 404 (S3 `missingFileHandler`), so they are not errors.
+- **Payload (exact shape):**
+
+```json
+{
+  "v": 1,
+  "eventId": "uuid (new per event; fixed across that event's retries)",
+  "env": "production | staging",
+  "type": "site_error",
+  "fields": {
+    "source": "next | payload | forms",
+    "route": "/[...slug] (Next routePath) or /api/<collection>/:id (normalised)",
+    "errorName": "TypeError",
+    "method": "GET",
+    "routeType": "render | route | action | proxy (Next only)",
+    "digest": "3064188959 (Next only, when present)",
+    "status": "500 (Payload/forms only)",
+    "firstSeenAt": "ISO-8601 (first occurrence this event stands for)",
+    "lastSeenAt": "ISO-8601 (last occurrence this event stands for)"
+  },
+  "timestamp": "ISO-8601 (= lastSeenAt)",
+  "error": {
+    "fingerprint": "16 hex chars",
+    "message": "scrubbed, ≤ 1000 characters",
+    "stack": "scrubbed, first 20 lines, each ≤ 300 characters",
+    "url": "request path, no query string",
+    "count": 1
+  }
+}
+```
+
+  No `form`, `submissionId`, `name`, `email` or `company`. `fields._truncated` appears only if the body ever exceeded 32 KB (it cannot by construction: ≈ 8 KB worst case).
+- **Fingerprint:** `sha256(errorName + "\n" + topStackFrame + "\n" + route)`, first 16 hex characters. `topStackFrame` = the first scrubbed `at …` line (working-directory prefix removed). `route` = Next's `routePath` (the route file pattern, so every slug of `/[...slug]` shares it), or for Payload the request path with numeric / UUID / long-hex segments → `:id` and the file name after `/file/` → `:file`. Stable for one build; a new deploy may change frame line numbers and so start new fingerprints (acceptable: new code, new errors).
+- **No PII:** request bodies, cookies and headers are never read. Message, stack and URL are scrubbed: email addresses → `[email]`; Drizzle `params: …` → `params: [redacted]`; Postgres `Key (col)=(value)` → `=([redacted])`; JWT-like and ≥ 40-character tokens → `[token]`; query string dropped from the URL; pnpm store paths collapsed. Logs carry fingerprint / eventId / attempt / count only.
+- **Rate limit (in memory, process-wide):** at most **one event per fingerprint per 10 minutes**. The first occurrence is queued at once (`count: 1`). Later occurrences inside the window are counted, and when the window ends ONE event is queued with `count` = the number of suppressed occurrences (latest sample's message/stack) and a new window starts. So a crash loop yields ≤ 6 events per fingerprint per hour, with no occurrence uncounted. At most 500 fingerprints are tracked at once (expired idle ones are pruned; beyond that new fingerprints are dropped with one warning per minute). State lives on `globalThis` (Next bundles instrumentation and route code separately). Justification for memory over a table: one long-lived container (no workers to share with); a restart loses only the pending suppressed counts and at most one extra event per fingerprint per boot, and errors are not leads (CLAUDE.md: Postgres is the durable record of *leads*).
+- **Delivery (job-only, no collection):** task `deliverSiteError` on the `events` queue, `retries: 0`, the locked schedule (≈ 1 min, 5 min, 30 min, 2 h, 12 h, then failed) by self re-queue, exactly like `deliverSiteEvent`. The job input holds the exact body (fixed `eventId` and bytes); the signed `X-Duha-Timestamp` is fresh per attempt. 2xx (incl. `{"duplicate": true}`) → delivered; 4xx/3xx → failed, not retried; 5xx/timeout/network → retry; `SITE_EVENT_URL`/`SITE_EVENT_SECRET` unset → failed, not retried (in development with them unset the event is not queued at all). The queue call is fire-and-forget **without** the failing request's `req` (its transaction is usually rolled back), so reporting never delays or changes the response. Outcomes are log lines only (`[site-error] delivered / … attempt n after … / failed: …`); there is no admin view or re-send for site errors.
+- **Never recurses / never throws:** synchronous re-entrancy guard; every adapter and the reporter swallow their own errors (logged as `[site-error] reporter failed (not reported)` / `not queued: …`); the task never throws.
+- **Limits / not covered:** errors outside a request (cron job internals, unhandled rejections at process level) are not reported; job failures have their own status on submissions. If Payload never initialised (e.g. Postgres down at boot) nothing can be queued; `/api/health` → 503 covers that, and the deploy script rolls back.
+- **Gate A proofs (local, 2026-10-24):** see the A4 report to the PM. Covered: one error → one delivered event, signature verified, no cookie/header/body/email/query value in it; 20 identical errors → 1 event at once (`count: 1`) + 1 event at window end (`count: 19`); same message on a different route → different fingerprint; Server Component error carries `digest`; Payload endpoint 500 → reported; `/api/health`, client-upload "Expected response" 500s, 403/404 → nothing; secretary down → 6 attempts → failed, error response unaffected (16 ms); wrong secret → 401 → failed, not retried; reporter internal failure and queue failure → one log line each, no event, no recursion, request unaffected.
 
 ### `booking`
 
