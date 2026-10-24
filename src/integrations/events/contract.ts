@@ -32,8 +32,11 @@ export type SiteEventV1 = {
   timestamp: string
 }
 
-/** Event types the delivery job can build today (A1). Others stay `pending` until their unit lands. */
-export const DELIVERABLE_EVENT_TYPES: readonly string[] = ['contact']
+/**
+ * Event types the delivery job can build today (A1 contact, A2 newsletter).
+ * `newsletter` is queued by the contact-sync job after double opt-in, never at create.
+ */
+export const DELIVERABLE_EVENT_TYPES: readonly string[] = ['contact', 'newsletter']
 
 export const MAX_BODY_BYTES = 32 * 1024
 export const TRUNCATION_KEY = '_truncated'

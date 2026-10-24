@@ -24,6 +24,11 @@ import { SiteSettings } from './globals/SiteSettings'
 import { migrations } from './migrations'
 import { isAdmin, staffOnly } from './access'
 import { EVENTS_QUEUE, deliverSiteEventTask } from './integrations/events/deliveryTask'
+import {
+  NEWSLETTER_QUEUE,
+  sendNewsletterConfirmationTask,
+  syncNewsletterContactTask,
+} from './integrations/newsletter/tasks'
 import { formBuilder } from './plugins/formBuilder'
 import { redirects } from './plugins/redirects'
 import { seo } from './plugins/seo'
@@ -77,8 +82,12 @@ export default buildConfig({
   // request, and /api/health, which the deploy script polls on start).
   // Never during `next build` (payload index.js `_initializeCrons`: !isNextBuild()).
   jobs: {
-    tasks: [deliverSiteEventTask],
-    autoRun: [{ cron: '* * * * *', queue: EVENTS_QUEUE, limit: 10 }],
+    tasks: [deliverSiteEventTask, sendNewsletterConfirmationTask, syncNewsletterContactTask],
+    autoRun: [
+      { cron: '* * * * *', queue: EVENTS_QUEUE, limit: 10 },
+      // A2: double opt-in email + Resend contact sync (Resend limit 10 req/s; ≤ 10 jobs/min).
+      { cron: '* * * * *', queue: NEWSLETTER_QUEUE, limit: 10 },
+    ],
     // Payload's default is "any logged-in user" (incl. the pipeline) for
     // GET /api/payload-jobs/run etc. Our own code uses the Local API (overrideAccess).
     access: {

@@ -19,8 +19,10 @@ Sources: `CLAUDE.md` → "Integration architecture" (locked, Oct 2026); `DECISIO
 | `APP_ENV` | Event `env` field (`production` \| `staging`); `development` locally |
 | `SITE_EVENT_URL` | Destination of signed events (internal address, firewalled to the site container; provided by the server agent; never hardcoded) |
 | `SITE_EVENT_SECRET` | HMAC-SHA256 signing key |
-| `SITE_EVENT_RETRY_DELAYS_S` | **Development only** (ignored unless `APP_ENV=development`): five comma-separated seconds compressing the retry schedule for local proofs. Never set on the server |
-| `RESEND_API_KEY` | Email transport (`@payloadcms/email-resend`) + Contacts API. **Full-access** key (sending-only cannot manage contacts) |
+| `SITE_EVENT_RETRY_DELAYS_S` | **Development only** (ignored unless `APP_ENV=development`): five comma-separated seconds compressing the retry schedule for local proofs (events **and** newsletter queues). Never set on the server |
+| `PAYLOAD_SECRET` | Also keys the newsletter confirm links (HMAC key derived from it; rotating it voids pending links) |
+| `SITE_URL` | Origin of the newsletter confirm link in the confirmation email |
+| `RESEND_API_KEY` | Email transport (`@payloadcms/email-resend`) + Contacts API. **Full-access** key (sending-only cannot manage contacts). Unset on staging/production → confirmation emails and contact syncs fail closed (`failed`, not retried) |
 | `RESEND_NEWSLETTER_SEGMENT_ID` | Newsletter Segment |
 | `RESEND_NEWSLETTER_TOPIC_ID` | Newsletter Topic (replaces the retired `RESEND_AUDIENCE_ID`) |
 | `TURNSTILE_SITE_KEY` | Turnstile widget (passed to client components as a server-read prop; no `NEXT_PUBLIC_*`) |
@@ -88,7 +90,8 @@ Every public form (contact, pre-call homework, newsletter, lead-magnet capture, 
 | 5. Hooks (existing) | `src/hooks/formSubmissions.ts`, plugin `sendEmail` | `beforeChange`: fresh `eventId` (UUID); `deliveryStatus: pending` only when the form has **Send event** on and an event type; otherwise empty. `afterChange`: form-builder's notification email (Resend). | Not gated on the event. |
 | 6. Respond | `src/app/api/form-submit/route.ts` | JSON (`Accept: application/json`, what `PayloadForm` sends): `200 { ok: true, redirect? }` — `redirect` is the form's redirect confirmation, resolved from the stored form doc. No-JS form post: `303` to that redirect, or a minimal noindex HTML page with the outcome and a "Go back" link to `_source`. | `400 { ok: false, message, fieldErrors? }` (HTML page without JS). |
 
-- **Where event sending hooks in (A1, built):** `enqueueSubmissionDelivery`, a `form-submissions` `afterChange` (operation `create`) in `formSubmissionOverrides.hooks` (src/plugins/formBuilder.ts → src/hooks/formSubmissions.ts), after the plugin's `sendEmail`. It enqueues the delivery job when `deliveryStatus === 'pending'` and the form's event type is one the job can build (today: `contact`). Hooking the collection rather than the handler means admin-entered submissions follow the same path. The newsletter sync job is a later unit.
+- **Newsletter (A2, built):** the same `beforeChange` also stamps the `newsletter` group (`optInStatus: pending-confirmation`, `emailStatus: pending`) when the form has **Newsletter sync** on and, if it names an **Opt-in field**, that checkbox was ticked; the same `afterChange` queues the confirmation email (newsletter queue, same transaction). A form with Event type **Newsletter** starts with an empty `deliveryStatus`: its event is sent only after the visitor confirms (see the `newsletter` event).
+- **Where event sending hooks in (A1, built):** `enqueueSubmissionDelivery`, a `form-submissions` `afterChange` (operation `create`) in `formSubmissionOverrides.hooks` (src/plugins/formBuilder.ts → src/hooks/formSubmissions.ts), after the plugin's `sendEmail`. It enqueues the delivery job when `deliveryStatus === 'pending'` and the form's event type is one the job can build (today: `contact`; `newsletter` is queued later by the A2 sync job). Hooking the collection rather than the handler means admin-entered submissions follow the same path.
 - **Turnstile env behaviour:**
   - `development`: an unset `TURNSTILE_SECRET_KEY` / `TURNSTILE_SITE_KEY` falls back to Cloudflare's always-pass test keys.
   - `staging` / `production`: an unset secret, or any Cloudflare **test** secret, **fails closed** ("This form is unavailable right now") and logs `missing-secret` / `test-secret-in-production`. An unset site key renders the form with no widget; submitting shows the same message.
@@ -130,10 +133,17 @@ Every public form (contact, pre-call homework, newsletter, lead-magnet capture, 
 | Re-send endpoint | src/integrations/events/resendEndpoint.ts |
 | Re-send button (sidebar `ui` field `resendDelivery`) | src/components/admin/ResendDeliveryButton.tsx |
 | Jobs tables | migration `src/migrations/20261023_204052_a1_event_delivery.ts` |
+| Column-targeted status writes `stampSubmission()` (see below) | src/integrations/events/deliveryTask.ts |
+| A2 tasks `sendNewsletterConfirmation`, `syncNewsletterContact` (queue `newsletter`) | src/integrations/newsletter/tasks.ts |
+| A2 confirm token / email copy / Resend Contacts calls / confirm logic | src/integrations/newsletter/{token,email,resendContacts,confirm}.ts |
+| A2 confirm page `/newsletter/confirm` | src/app/(frontend)/newsletter/confirm/page.tsx |
+| A2 admin actions endpoint + buttons | src/integrations/newsletter/actionEndpoint.ts, src/components/admin/NewsletterActions.tsx |
+| A2 columns + job slugs | migration `src/migrations/20261024_030205_a2_newsletter.ts` |
 
 - **Where jobs run.** Inside the site container. There is no worker process. Payload starts its cron on the first `getPayload({ cron: true })`: any admin or `/api/*` request, plus `/api/health` and `/api/form-submit` (both pass `cron: true`). The deploy script's first health poll therefore starts delivery. The cron never starts during `next build`. Finished jobs are deleted (`deleteJobOnComplete` default), so `payload_jobs` only holds queued or scheduled attempts.
 - **Same transaction.** The job row is written with the submission's `req`, so it commits or rolls back together with the lead.
-- **Per attempt:** the job re-reads the submission and skips unless it is `pending`. That makes a stray or duplicate job harmless. It then builds the body, signs it with a fresh timestamp, POSTs it with a **10 s timeout**, and stamps `deliveryStatus`, `deliveryNote`, `deliveryAttempts` (+1, a lifetime total across re-sends) and `lastAttemptAt`. Status writes carry `context.siteEventDeliveryWrite`, are updates (never creates), and so never re-trigger the enqueue or the notification email.
+- **Status writes touch only their own columns** (`stampSubmission`, an adapter-level `payload.db.updateOne` with just those keys). `payload.update` writes back every field of the document it read; with the `events` and `newsletter` queues running in parallel, a stale whole-document write from one job reverted the other's status (found at A2 Gate A: a concurrent re-sync turned `delivered` back into `pending`, with no job left). Hooks and validation do not run on these writes; they only ever carry system status columns.
+- **Per attempt:** the job re-reads the submission and skips unless it is `pending`. That makes a stray or duplicate job harmless. It then builds the body, signs it with a fresh timestamp, POSTs it with a **10 s timeout**, and stamps `deliveryStatus`, `deliveryNote`, `deliveryAttempts` (+1, a lifetime total across re-sends) and `lastAttemptAt`. Status writes are column-targeted adapter updates (never creates), so they never re-trigger the enqueue or the notification email.
 - **Classification:**
   - `2xx` → `delivered`. The note says `already received (duplicate)` when the body is `{"duplicate": true}`.
   - `5xx`, timeout or network error (e.g. `ECONNREFUSED`) → the next attempt is queued with `waitUntil`, and the status stays `pending`.
@@ -164,7 +174,7 @@ Every public form (contact, pre-call homework, newsletter, lead-magnet capture, 
 |---|---|---|---|---|
 | `contact` | `contact` | Contact form | Launch | **built (A1)**: Gate A local proofs done, staging pending |
 | `contact` | `precall-homework` | Pre-call homework form (Book a Call) | **Off at launch** | sending code exists (A1); stays off via the form's **Send event** toggle |
-| `newsletter` | — | Newsletter page, footer nudge, Thank You, lead-magnet opt-in | Launch (double opt-in) | not built |
+| `newsletter` | per form (Form key) | Newsletter page, footer nudge, Thank You, lead-magnet opt-in | Launch (double opt-in) | **built (A2)**: Gate A local proofs done, staging pending |
 | `lead_magnet` | — | Lead Magnet template | Launch | not built |
 | `site_error` | — | Server-side error handler | Launch | not built |
 | `booking` | — | Nextcloud → secretary directly | Launch | no site code |
@@ -220,11 +230,29 @@ Every public form (contact, pre-call homework, newsletter, lead-magnet capture, 
 
 ### `newsletter`
 
-- **Status:** not built.
-- **Sources:** Newsletter page (16), the standard footer's newsletter nudge, Thank You (10), the opt-in toggle on lead-magnet forms (18).
-- **Double opt-in: yes** (human, Gate 0 Q2). Flow: store the signup as pending → Resend sends a signed, expiring confirm link → on click, create the Contact + add to Segment + Topic opt-in → **then** send the `newsletter` event.
-- Resend sync and event delivery are tracked separately, each with the job/retry/status pattern.
-- See [Resend newsletter flow](#resend-newsletter-flow-contacts--segment--topic).
+- **Status:** built (A2, 2026-10-24). Gate A local proofs done against a Resend stub and a secretary stub. Staging pending: a real confirmation email arrives, the Contact exists in the Segment with the Topic opted in (human / server agent checks the Resend dashboard), and the human confirms the `[staging]` Matrix message.
+- **Sources:** every form that is `site-settings.newsletterForm` — the standard footer's inline nudge (F42), `NewsletterBand` (p2–4, p10, p13, p14), the p16 Hero form slot — plus any form with **Newsletter sync** on (lead-magnet capture forms, gated by their opt-in checkbox).
+- **Double opt-in: yes** (human, Gate 0 Q2). The event is sent **only after** the visitor clicks the confirm link **and** the Resend sync succeeded.
+- **Form contract** (seed/editors): the newsletter form has an `email` field, **Newsletter sync** on, **Event type = Newsletter**, **Send event** on, Form key `newsletter`. Event type Newsletter + Send event without Newsletter sync is refused by validation. Lead-magnet forms: Newsletter sync on + **Opt-in field** = the checkbox's field name; their own event type stays `lead_magnet` (A3).
+- **Trigger:** the contact-sync job, on `synced`, stamps `deliveryStatus: pending` and queues the A1 delivery job — once per submission (only while `deliveryStatus` is empty, so an admin re-sync never re-announces).
+- **Exact payload** (Gate A, submission 26, test identity; wire body is compact JSON in this key order; `form` is the dev form's key):
+
+```json
+{
+  "v": 1,
+  "eventId": "14eed7ba-eb4e-42b5-b3db-a57400513d49",
+  "env": "staging",
+  "type": "newsletter",
+  "form": "dev-newsletter",
+  "submissionId": "26",
+  "email": "test+gate-a2@duhamedia.com",
+  "fields": {},
+  "timestamp": "2026-10-24T03:05:19.622Z"
+}
+```
+
+  `name` / `company` appear only if the form defines those fields. `timestamp` = the signup (submission `createdAt`), not the confirmation. Signing, truncation, retry and re-send are exactly A1's.
+- See [Resend newsletter flow](#resend-newsletter-flow-contacts--segment--topic) for the confirmation and sync steps.
 
 ### `lead_magnet`
 
@@ -265,4 +293,49 @@ Resend deprecated **Audiences** in November 2025. The site uses global **Contact
 - **Footer of every broadcast (CAN-SPAM):** `{{{RESEND_UNSUBSCRIBE_URL}}}` + the postal address from `site-settings`. The postal address is **on hold** (Gate 0 Q3) — a launch blocker until the human provides it; never invent one.
 - **Rate limit:** 10 req/s per team; the queue's `limit` keeps us far under it.
 - Separate staging and production Segment/Topic IDs are requested (OPS_REQUESTS #2) so staging signups never enter the real list.
-- *Exact calls, confirm-link signing/expiry and Gate A proof: filled in when built.*
+
+### Double opt-in flow (A2, built)
+
+```
+visitor submits (Turnstile ok) ─► submission stored ─► newsletter.optInStatus = pending-confirmation
+                                                        newsletter.emailStatus = pending
+                                   └─ same transaction: job sendNewsletterConfirmation (queue newsletter)
+job: email with signed link (Resend via @payloadcms/email-resend) ─► emailStatus sent | retry | failed
+visitor clicks SITE_URL/newsletter/confirm?token=… ─► optInStatus confirmed, syncStatus pending
+                                   └─ same transaction: job syncNewsletterContact
+job: Resend Contact + Segment + Topic opt-in ─► syncStatus synced | retry | failed
+       └─ on synced (form Event type Newsletter + Send event): deliveryStatus pending + job deliverSiteEvent (queue events)
+job (A1): signed `newsletter` event ─► deliveryStatus delivered | retry | failed
+```
+
+Three independent statuses on the submission (all read-only in the admin, group **Newsletter sync**): **Opt-in status** (pending confirmation / confirmed / expired), **Confirmation email** (pending / sent / failed, + note + attempts), **Resend sync** (pending / synced / failed, + note + attempts + Resend contact ID); event delivery stays in the A1 fields. A down secretary never blocks the sync; a Resend outage never blocks a contact event.
+
+**Confirmation email** — `payload.sendEmail` (the configured adapter), from the adapter's default from-address (`Duha Media <no-reply@duhamedia.com>`), subject "Confirm your Duha Media newsletter signup", plain HTML + text, no tracking. Copy is placeholder in brand voice (src/integrations/newsletter/email.ts). Errors: the adapter's HTTP status decides (4xx except 409/429 → `failed`, not retried; 5xx/429/409/network → retry on the schedule). With no `RESEND_API_KEY`: development logs to the console transport ("sent via console transport, not delivered"); staging/production → `failed` at once.
+
+**Confirm link** — `SITE_URL/newsletter/confirm?token=<submissionId>.<expiresAtMs>.<sig>`:
+- `sig` = base64url HMAC-SHA256 over `nl-confirm:v1:<submissionId>:<eventId>:<expiresAtMs>`, keyed with HMAC-SHA256(`PAYLOAD_SECRET`, `duha:newsletter-confirm:v1`). Node crypto, constant-time compares.
+- Valid **72 hours** from the first send attempt of a chain; retries of the same chain re-send the same link. Only `sha256(token)` is stored (`confirmTokenHash`, a `hidden` field: never in the API or admin).
+- Single use: it acts only while the signup is `pending-confirmation` and the link's hash is the one on record, as ONE conditional UPDATE (two simultaneous clicks confirm once).
+- Page states (noindex, standard chrome, the Error404 view without numeral): **confirmed** "You're on the list." · **already** (genuine link, already confirmed: nothing changes) · **expired** (past 72 h → signup stamped `expired`; or replaced by a newer re-send) · **invalid** (malformed, tampered, wrong id: nothing read beyond the id, nothing changes) · **error** (our side; nothing committed). Performing the confirmation on GET is a known trade-off: link-scanning mail filters can pre-click (flagged to the PM).
+
+**Resend calls** (src/integrations/newsletter/resendContacts.ts; plain `fetch`, `Authorization: Bearer RESEND_API_KEY`, 10 s timeout each; verified against https://resend.com/docs/api-reference/contacts/create-contact, …/get-contact, …/update-contact, …/list-contact-segments, …/add-contact-to-segment, …/update-contact-topics and the official SDK `resend@6.34.1` source):
+
+| Step | Call | Body |
+|---|---|---|
+| 1 | `GET /contacts/{email}` | — (404 = new contact) |
+| 2a new | `POST /contacts` | `{"email":"…","unsubscribed":false,"segments":[{"id":"<SEGMENT>"}],"topics":[{"id":"<TOPIC>","subscription":"opt_in"}]}` → done in one call |
+| 2b existing, globally unsubscribed | `PATCH /contacts/{id}` | `{"unsubscribed":false}` (the confirm click is fresh, explicit consent) |
+| 3b | `GET /contacts/{id}/segments` | — (skip step 4b if already a member) |
+| 4b | `POST /contacts/{id}/segments/{SEGMENT}` | none |
+| 5b | `PATCH /contacts/{id}/topics` | `[{"id":"<TOPIC>","subscription":"opt_in"}]` (the array is the body) |
+
+Classification: 2xx → next step; 404 only on step 1 means "new"; 5xx, 429, 409 (`resource_locked` / concurrent), timeout, network → retry on the schedule; any other 4xx (bad key, `restricted_api_key`, `invalid_permission`, validation) → `failed`, not retried; any of the three env names unset → `failed` ("not synced: … not set"). Notes carry the method, a redacted path and Resend's error `name` only — never the email, key or response body. All steps are idempotent, so retries and admin re-syncs are safe.
+
+**Admin (re-send / re-sync)** — open the submission → **Newsletter sync** group:
+- **Re-send confirmation email**: enabled while not confirmed and no email is mid-chain (failed, sent-but-not-clicked, or expired). Issues a NEW link (the old one stops working) and puts the signup back to pending confirmation.
+- **Re-run Resend sync**: enabled once confirmed and the sync is failed or synced. Never re-sends the event.
+- Re-sending the **event** is A1's **Re-send to secretary** (same `eventId` → secretary dedupes).
+- API: `POST /api/form-submissions/:id/newsletter/resend-confirmation` | `/resync`, staff only (403 otherwise); 200 / 400 (not a newsletter signup, unknown action) / 404 / 409 (wrong state or already queued).
+- Find stuck signups: filter **Newsletter sync › Confirmation email** or **› Resend sync** equals Failed (indexed columns).
+
+**Not built here:** unsubscribe handling stays in Resend (topic preferences / `{{{RESEND_UNSUBSCRIBE_URL}}}`); unconfirmed signups are kept as submissions (no purge job). Lead-magnet opt-ins run the confirmation + sync on the lead-magnet submission; whether they also send a separate `newsletter` event is A3's call (one submission carries one `eventId` / delivery status today).

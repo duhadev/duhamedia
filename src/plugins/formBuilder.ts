@@ -16,6 +16,7 @@ import { richTextLinkFeature } from '../fields'
 import { blockDeleteIfReferenced, formSubmissionsSentence } from '../hooks/blockDeleteIfReferenced'
 import { enqueueSubmissionDelivery, stampSubmissionDelivery } from '../hooks/formSubmissions'
 import { resendDeliveryEndpoint } from '../integrations/events/resendEndpoint'
+import { newsletterActionEndpoint } from '../integrations/newsletter/actionEndpoint'
 import { revalidateLiveCollectionHooks } from '../hooks/revalidateTag'
 
 /**
@@ -112,6 +113,9 @@ const validateEventType: SelectFieldSingleValidation = (value, options) => {
   if (base !== true) return base
   const sendEvent = (options.siblingData as { sendEvent?: boolean } | undefined)?.sendEvent === true
   if (sendEvent && (!value || value === 'none')) return 'Choose an event type, or turn off "Send event".'
+  // A2: a newsletter event is sent only after double opt-in, which needs newsletter sync.
+  const newsletterSync = (options.siblingData as { newsletterSync?: boolean } | undefined)?.newsletterSync === true
+  if (sendEvent && value === 'newsletter' && !newsletterSync) return 'A newsletter event needs "Newsletter sync" on (double opt-in).'
   return true
 }
 
@@ -292,32 +296,60 @@ const submissionSystemFields: Field[] = [
     label: 'Newsletter sync',
     access: systemCreate,
     admin: { readOnly: true, description: 'Resend contact sync, tracked separately from event delivery.' },
+    // A2 (src/integrations/newsletter/*): optInStatus → confirmation email
+    // (email*) → visitor clicks → contact sync (sync*) → newsletter event (delivery*).
     fields: [
-      {
-        name: 'syncStatus',
-        type: 'select',
-        options: [
-          { label: 'Pending', value: 'pending' },
-          { label: 'Synced', value: 'synced' },
-          { label: 'Failed', value: 'failed' },
-        ],
-      },
-      { name: 'syncNote', type: 'textarea' },
-      { name: 'syncAttempts', type: 'number', defaultValue: 0, min: 0, admin: { step: 1 } },
       {
         name: 'optInStatus',
         type: 'select',
         label: 'Opt-in status',
+        index: true,
         options: [
           { label: 'Pending confirmation', value: 'pending-confirmation' },
           { label: 'Confirmed', value: 'confirmed' },
           { label: 'Expired', value: 'expired' },
         ],
+        admin: { description: 'Double opt-in. Empty when this submission does not join the newsletter.' },
       },
+      {
+        name: 'emailStatus',
+        type: 'select',
+        label: 'Confirmation email',
+        index: true,
+        options: [
+          { label: 'Pending', value: 'pending' },
+          { label: 'Sent', value: 'sent' },
+          { label: 'Failed', value: 'failed' },
+        ],
+      },
+      { name: 'emailNote', type: 'textarea', label: 'Confirmation email note' },
+      { name: 'emailAttempts', type: 'number', label: 'Confirmation email attempts', defaultValue: 0, min: 0, admin: { step: 1 } },
       // Hash of the double opt-in token only; `hidden` = never in API responses or the admin.
       { name: 'confirmTokenHash', type: 'text', hidden: true },
-      { name: 'confirmExpiresAt', type: 'date', admin: { date: { pickerAppearance: 'dayAndTime' } } },
-      { name: 'confirmedAt', type: 'date', admin: { date: { pickerAppearance: 'dayAndTime' } } },
+      { name: 'confirmExpiresAt', type: 'date', label: 'Link expires', admin: { date: { pickerAppearance: 'dayAndTime' } } },
+      { name: 'confirmedAt', type: 'date', label: 'Confirmed at', admin: { date: { pickerAppearance: 'dayAndTime' } } },
+      {
+        name: 'syncStatus',
+        type: 'select',
+        label: 'Resend sync',
+        index: true,
+        options: [
+          { label: 'Pending', value: 'pending' },
+          { label: 'Synced', value: 'synced' },
+          { label: 'Failed', value: 'failed' },
+        ],
+        admin: { description: 'Resend contact + newsletter segment + topic opt-in, after confirmation.' },
+      },
+      { name: 'syncNote', type: 'textarea', label: 'Resend sync note' },
+      { name: 'syncAttempts', type: 'number', label: 'Resend sync attempts', defaultValue: 0, min: 0, admin: { step: 1 } },
+      { name: 'contactId', type: 'text', label: 'Resend contact ID' },
+      // Admin actions: re-send the confirmation email / re-run the sync
+      // (POST /api/form-submissions/:id/newsletter/:action). `ui` = no column.
+      {
+        name: 'newsletterActions',
+        type: 'ui',
+        admin: { components: { Field: '/components/admin/NewsletterActions#NewsletterActions' } },
+      },
     ],
   },
   // A1: admin "Re-send" button → POST /api/form-submissions/:id/resend
@@ -396,10 +428,10 @@ export const formBuilder: Plugin = formBuilderPlugin({
     hooks: {
       beforeChange: [stampSubmissionDelivery],
       // A1: enqueue the delivery job on create (never inline). The plugin's
-      // sendEmail runs first. TODO(newsletter unit): the newsletter sync job.
+      // sendEmail runs first. A2: also queues the double opt-in email.
       afterChange: [enqueueSubmissionDelivery],
     },
-    endpoints: [resendDeliveryEndpoint],
+    endpoints: [resendDeliveryEndpoint, newsletterActionEndpoint],
     fields: ({ defaultFields }) => [...withFormMaxDepth(adaptPluginFields(defaultFields)), ...submissionSystemFields],
   },
 })

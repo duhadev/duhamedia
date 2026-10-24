@@ -1,4 +1,4 @@
-import type { Payload, PayloadRequest, TaskConfig } from 'payload'
+import type { Payload, PayloadRequest, TaskConfig, Where } from 'payload'
 
 import type { FormSubmission } from '../../payload-types'
 
@@ -63,6 +63,36 @@ export const queueDelivery = (
 /** Context flag on our own status writes, so submission hooks never react to them. */
 export const DELIVERY_WRITE = 'siteEventDeliveryWrite'
 
+/**
+ * Status stamps write ONLY the given columns (adapter-level UPDATE), never the
+ * whole document. `payload.update` writes back every field of the doc it read,
+ * and the `events` and `newsletter` queues run in parallel, so one job's stale
+ * whole-doc write reverted the other's status (found at A2 Gate A, 2026-10-24:
+ * a concurrent re-sync turned a `delivered` stamp back into `pending`, with no
+ * job left to finish it). Verified @payloadcms/drizzle@3.91.0:
+ * transform/write/traverseFields.js skips undefined fields (group subfields
+ * too), and updateOne.js with `where` + `options.atomic` is one conditional
+ * UPDATE that returns null when no row matched. No hooks or validation run;
+ * these are system columns only (deliveryStatus/Note/Attempts, lastAttemptAt,
+ * the `newsletter` group), never visitor data.
+ */
+export const stampSubmission = (
+  payload: Payload,
+  id: number,
+  data: Record<string, unknown>,
+  req?: PayloadRequest,
+  where?: Where,
+): Promise<unknown> =>
+  where
+    ? payload.db.updateOne({
+        collection: 'form-submissions',
+        where: { and: [{ id: { equals: id } }, where] },
+        data,
+        options: { atomic: true },
+        req,
+      })
+    : payload.db.updateOne({ collection: 'form-submissions', id, data, req, returning: false })
+
 type Stamp = Pick<FormSubmission, 'deliveryStatus' | 'deliveryNote'>
 
 const describe = (o: SendOutcome): string => {
@@ -108,15 +138,12 @@ export const deliverSiteEventTask: TaskConfig<DeliverIO> = {
     }
 
     const stamp = async (data: Stamp) => {
-      await payload.update({
-        collection: 'form-submissions',
-        id: submissionId,
-        data: { ...data, deliveryAttempts: (sub.deliveryAttempts ?? 0) + 1, lastAttemptAt: new Date().toISOString() },
-        depth: 0,
-        overrideAccess: true,
-        context: { [DELIVERY_WRITE]: true },
+      await stampSubmission(
+        payload,
+        submissionId,
+        { ...data, deliveryAttempts: (sub.deliveryAttempts ?? 0) + 1, lastAttemptAt: new Date().toISOString() },
         req,
-      })
+      )
     }
 
     let outcome: SendOutcome

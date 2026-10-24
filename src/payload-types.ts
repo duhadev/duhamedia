@@ -135,6 +135,8 @@ export interface Config {
   jobs: {
     tasks: {
       deliverSiteEvent: TaskDeliverSiteEvent;
+      sendNewsletterConfirmation: TaskSendNewsletterConfirmation;
+      syncNewsletterContact: TaskSyncNewsletterContact;
       inline: {
         input: unknown;
         output: unknown;
@@ -3926,13 +3928,23 @@ export interface FormSubmission {
    * Resend contact sync, tracked separately from event delivery.
    */
   newsletter?: {
-    syncStatus?: ('pending' | 'synced' | 'failed') | null;
-    syncNote?: string | null;
-    syncAttempts?: number | null;
+    /**
+     * Double opt-in. Empty when this submission does not join the newsletter.
+     */
     optInStatus?: ('pending-confirmation' | 'confirmed' | 'expired') | null;
+    emailStatus?: ('pending' | 'sent' | 'failed') | null;
+    emailNote?: string | null;
+    emailAttempts?: number | null;
     confirmTokenHash?: string | null;
     confirmExpiresAt?: string | null;
     confirmedAt?: string | null;
+    /**
+     * Resend contact + newsletter segment + topic opt-in, after confirmation.
+     */
+    syncStatus?: ('pending' | 'synced' | 'failed') | null;
+    syncNote?: string | null;
+    syncAttempts?: number | null;
+    contactId?: string | null;
   };
   updatedAt: string;
   createdAt: string;
@@ -4055,7 +4067,7 @@ export interface PayloadJob {
     | {
         executedAt: string;
         completedAt: string;
-        taskSlug: 'inline' | 'deliverSiteEvent';
+        taskSlug: 'inline' | 'deliverSiteEvent' | 'sendNewsletterConfirmation' | 'syncNewsletterContact';
         taskID: string;
         input?:
           | {
@@ -4088,7 +4100,7 @@ export interface PayloadJob {
         id?: string | null;
       }[]
     | null;
-  taskSlug?: ('inline' | 'deliverSiteEvent') | null;
+  taskSlug?: ('inline' | 'deliverSiteEvent' | 'sendNewsletterConfirmation' | 'syncNewsletterContact') | null;
   queue?: string | null;
   waitUntil?: string | null;
   processing?: boolean | null;
@@ -5836,13 +5848,17 @@ export interface FormSubmissionsSelect<T extends boolean = true> {
   newsletter?:
     | T
     | {
-        syncStatus?: T;
-        syncNote?: T;
-        syncAttempts?: T;
         optInStatus?: T;
+        emailStatus?: T;
+        emailNote?: T;
+        emailAttempts?: T;
         confirmTokenHash?: T;
         confirmExpiresAt?: T;
         confirmedAt?: T;
+        syncStatus?: T;
+        syncNote?: T;
+        syncAttempts?: T;
+        contactId?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -6800,6 +6816,32 @@ export interface CollectionsWidget {
  * via the `definition` "TaskDeliverSiteEvent".
  */
 export interface TaskDeliverSiteEvent {
+  input: {
+    submissionId: number;
+    attempt: number;
+  };
+  output: {
+    result: string;
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskSendNewsletterConfirmation".
+ */
+export interface TaskSendNewsletterConfirmation {
+  input: {
+    submissionId: number;
+    attempt: number;
+  };
+  output: {
+    result: string;
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskSyncNewsletterContact".
+ */
+export interface TaskSyncNewsletterContact {
   input: {
     submissionId: number;
     attempt: number;

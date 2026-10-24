@@ -1,7 +1,7 @@
 import { commitTransaction, initTransaction, killTransaction, type Endpoint } from 'payload'
 
 import { isStaff } from '../../access/roles'
-import { DELIVERY_WRITE, queueDelivery } from './deliveryTask'
+import { queueDelivery, stampSubmission } from './deliveryTask'
 
 /**
  * `POST /api/form-submissions/:id/resend` — the admin "Re-send" action (lead flow step 5).
@@ -46,15 +46,12 @@ export const resendDeliveryEndpoint: Endpoint = {
 
     const shouldCommit = await initTransaction(req)
     try {
-      await req.payload.update({
-        collection: 'form-submissions',
+      await stampSubmission(
+        req.payload,
         id,
-        data: { deliveryStatus: 'pending', deliveryNote: `Re-send requested ${new Date().toISOString()}.` },
-        depth: 0,
-        overrideAccess: true,
-        context: { [DELIVERY_WRITE]: true },
+        { deliveryStatus: 'pending', deliveryNote: `Re-send requested ${new Date().toISOString()}.` },
         req,
-      })
+      )
       await queueDelivery(req.payload, { submissionId: id, req })
       if (shouldCommit) await commitTransaction(req)
     } catch (error) {

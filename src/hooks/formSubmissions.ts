@@ -4,6 +4,7 @@ import type { CollectionAfterChangeHook, CollectionBeforeChangeHook } from 'payl
 
 import { DELIVERABLE_EVENT_TYPES } from '../integrations/events/contract'
 import { DELIVERY_WRITE, queueDelivery } from '../integrations/events/deliveryTask'
+import { queueConfirmationEmail } from '../integrations/newsletter/tasks'
 import type { FormSubmission } from '../payload-types'
 
 /**
@@ -42,14 +43,19 @@ export const stampSubmissionDelivery: CollectionBeforeChangeHook = async ({ data
         ? (raw as { id: number | string }).id
         : null
 
-  let form: { sendEvent?: boolean | null; eventType?: string | null } | null = null
+  let form: {
+    sendEvent?: boolean | null
+    eventType?: string | null
+    newsletterSync?: boolean | null
+    newsletterOptInField?: string | null
+  } | null = null
   if (formId !== null && formId !== '') {
     try {
       form = await req.payload.findByID({
         collection: 'forms',
         id: formId,
         depth: 0,
-        select: { sendEvent: true, eventType: true },
+        select: { sendEvent: true, eventType: true, newsletterSync: true, newsletterOptInField: true },
         disableErrors: true,
         overrideAccess: true,
         req,
@@ -62,10 +68,23 @@ export const stampSubmissionDelivery: CollectionBeforeChangeHook = async ({ data
 
   const sendsEvent = form?.sendEvent === true && !!form.eventType && form.eventType !== 'none'
 
+  // A2 double opt-in: the signup waits for the confirm click. Sync only when
+  // the form syncs and, on forms with an opt-in checkbox (lead magnets), only
+  // when it was ticked. Caller-sent newsletter values are always overwritten.
+  const optInField = form?.newsletterOptInField?.trim()
+  const rows = Array.isArray(data?.submissionData) ? (data.submissionData as { field?: unknown; value?: unknown }[]) : []
+  const optedIn =
+    form?.newsletterSync === true && (!optInField || rows.some((r) => r?.field === optInField && r?.value === 'true'))
+
   return {
     ...data,
     eventId: randomUUID(),
-    deliveryStatus: sendsEvent ? 'pending' : null,
+    // A `newsletter` event is sent only AFTER the visitor confirms (the sync job
+    // stamps `pending` then), so it starts empty rather than forever-pending.
+    deliveryStatus: sendsEvent && form?.eventType !== 'newsletter' ? 'pending' : null,
+    newsletter: optedIn
+      ? { optInStatus: 'pending-confirmation', emailStatus: 'pending', emailAttempts: 0, syncAttempts: 0 }
+      : {},
   }
 }
 
@@ -78,12 +97,14 @@ export const stampSubmissionDelivery: CollectionBeforeChangeHook = async ({ data
  * queues/localAPI.js → db.create with req): no job without its lead, no lead
  * without its job. `deliveryStatus: pending` was already stamped in
  * beforeChange (above); only event types the job can build are queued here.
- * Newsletter events are sent after double opt-in confirmation, not at create.
+ * Newsletter events are sent after double opt-in confirmation, not at create
+ * (src/integrations/newsletter/tasks.ts); here only the confirmation email is queued.
  *
  * Runs after the plugin's own `sendEmail` (plugin-form-builder@3.91.0
  * FormSubmissions/index.js:105-110), which is not gated on the event.
- * Our own status writes are updates (never `create`) and carry
- * `context[DELIVERY_WRITE]`, so they never re-enter here.
+ * Our own status writes are adapter-level updates (`stampSubmission`, no
+ * hooks) and never `create`, so they never re-enter here; the
+ * `context[DELIVERY_WRITE]` guard stays for any Local API update that sets it.
  */
 export const enqueueSubmissionDelivery: CollectionAfterChangeHook<FormSubmission> = async ({
   doc,
@@ -91,7 +112,12 @@ export const enqueueSubmissionDelivery: CollectionAfterChangeHook<FormSubmission
   req,
   context,
 }) => {
-  if (operation !== 'create' || context?.[DELIVERY_WRITE] || doc.deliveryStatus !== 'pending') return doc
+  if (operation !== 'create' || context?.[DELIVERY_WRITE]) return doc
+
+  // A2: the double opt-in email, same transaction as the signup (newsletter queue).
+  if (doc.newsletter?.emailStatus === 'pending') await queueConfirmationEmail(req.payload, { submissionId: doc.id, req })
+
+  if (doc.deliveryStatus !== 'pending') return doc
 
   const formId = typeof doc.form === 'object' ? doc.form.id : doc.form
   const form = await req.payload.findByID({
