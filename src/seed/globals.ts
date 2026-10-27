@@ -9,7 +9,7 @@ import { SEED_CONTEXT, ensureGlobal, link, type SeedCtx } from './lib'
  * Values: approved facts from the Decision log (F1 legal name, F2 contact
  * email, F4 Lombard map point, F5 copy), SCHEMA §7 defaults, and the design's
  * nav labels (MERGED §4.2). Booking URL stays empty (no Nextcloud URL yet →
- * BookingEmbed's designed no-URL state). Socials stay empty (unknown fact).
+ * BookingEmbed's designed no-URL state). Socials = the human's real profiles (2026-10-27).
  * Postal address = the LLC's mailing address (human 2026-10-27). `localBusiness.type` stays unset (F103: plain Organization).
  */
 export async function seedGlobals(ctx: SeedCtx, ids: LibraryIds) {
@@ -24,7 +24,13 @@ export async function seedGlobals(ctx: SeedCtx, ids: LibraryIds) {
         footerTagline: 'First we build. Then we scale.',
         contactEmail: 'hello@duhamedia.com',
         responseTimeNote: 'We reply within 1 business day',
-        socials: [],
+        socials: [
+          { platform: 'instagram', handle: '@duhamediaofficial', url: 'https://www.instagram.com/duhamediaofficial/' },
+          { platform: 'linkedin', handle: '@duha-media', url: 'https://www.linkedin.com/company/duha-media' },
+          { platform: 'x', handle: '@duhamedia_', url: 'https://x.com/duhamedia_' },
+          // No Facebook username: the page name is shown instead (human, 2026-10-27).
+          { platform: 'facebook', handle: 'Duha Media', url: 'https://www.facebook.com/profile.php?id=61591931455408' },
+        ],
         location: {
           locality: 'Lombard',
           region: 'IL',
@@ -35,6 +41,7 @@ export async function seedGlobals(ctx: SeedCtx, ids: LibraryIds) {
           latitude: 41.88,
           longitude: -88.008,
         },
+        gbpUrl: 'https://maps.app.goo.gl/wpBhDHuhh5XmmYvg6',
         bookingUrl: '',
         bookingMode: 'link-out',
         aggregateRating: { show: false },

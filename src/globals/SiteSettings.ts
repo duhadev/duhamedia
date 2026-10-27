@@ -65,23 +65,43 @@ const SOCIAL_PLATFORMS = [
   { label: 'GitHub', value: 'github' },
 ]
 
-/** "duhamedia" / " @duhamedia " → "@duhamedia" (CLAUDE.md: full @handle per platform). */
-const normaliseHandle: FieldHook = ({ value }) => {
+const HANDLE_RE = /^@[A-Za-z0-9._-]{1,100}$/
+/** A bare handle with or without the @ (no spaces): what gets an @ prepended. */
+const HANDLE_LIKE_RE = /^@?[A-Za-z0-9._-]{1,100}$/
+/**
+ * Mini Gate S delta (human, 2026-10-27): a Facebook page without a username has no
+ * @handle, so the page NAME is shown instead (e.g. "Duha Media"). Facebook only.
+ */
+const FACEBOOK_NAME_RE = /^[A-Za-z0-9 .&'\-,]{1,100}$/
+
+const platformOf = (siblingData: unknown): unknown => (siblingData as { platform?: unknown } | undefined)?.platform
+
+/**
+ * "duhamedia" / " @duhamedia " → "@duhamedia" (CLAUDE.md: full @handle per platform).
+ * Facebook: a value that does not look like a handle (e.g. contains a space) is a page
+ * name and is kept as typed (trimmed), without an @.
+ */
+const normaliseHandle: FieldHook = ({ value, siblingData }) => {
   if (typeof value !== 'string') return value
   const trimmed = value.trim()
   if (trimmed === '') return trimmed
+  if (platformOf(siblingData) === 'facebook' && !HANDLE_LIKE_RE.test(trimmed)) return trimmed
   return trimmed.startsWith('@') ? trimmed : `@${trimmed}`
 }
-
-const HANDLE_RE = /^@[A-Za-z0-9._-]{1,100}$/
 
 const validateHandle: TextFieldSingleValidation = (value, options) => {
   const base = text(value, options)
   if (base !== true) return base
   if (typeof value !== 'string' || value.trim() === '') return true
-  return HANDLE_RE.test(value.trim())
-    ? true
-    : 'Enter the handle as it appears on the platform, e.g. @duhamedia (letters, numbers, dots, dashes, underscores).'
+  const trimmed = value.trim()
+  if (HANDLE_RE.test(trimmed)) return true
+  // `options.siblingData` = the array row (payload@3.91.0 fields/config/types.d.ts BaseValidateOptions).
+  if (platformOf(options.siblingData) === 'facebook') {
+    return FACEBOOK_NAME_RE.test(trimmed)
+      ? true
+      : 'Enter the page handle (e.g. @duhamedia) or, for a page without a username, the page name (letters, numbers, spaces and . & \' - ,).'
+  }
+  return 'Enter the handle as it appears on the platform, e.g. @duhamedia (letters, numbers, dots, dashes, underscores).'
 }
 
 /* Aggregate rating: hidden on the site until real (R5). When "Show" is on, every
@@ -227,7 +247,8 @@ export const SiteSettings: GlobalConfig = {
                       hooks: { beforeValidate: [normaliseHandle] },
                       admin: {
                         width: '30%',
-                        description: 'The full handle, e.g. @duhamedia. The @ is added if you leave it out.',
+                        description:
+                          'The full handle, e.g. @duhamedia. The @ is added if you leave it out. For a Facebook page without a username, enter the page name (e.g. Duha Media).',
                       },
                     },
                     {

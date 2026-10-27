@@ -328,7 +328,7 @@ export interface HeroBlock {
    */
   body?: string | null;
   /**
-   * Article layout: the one- or two-sentence introduction between the headline and the thin byline rule (articles feed it from their "Dek"). Leave empty to skip it.
+   * Article layout: the one- or two-sentence introduction between the headline and the thin byline rule (articles fill it from the post’s Standfirst field). Leave empty to skip it.
    */
   standfirst?: string | null;
   /**
@@ -6051,7 +6051,7 @@ export interface SiteSetting {
     | {
         platform: 'linkedin' | 'instagram' | 'youtube' | 'x' | 'facebook' | 'github';
         /**
-         * The full handle, e.g. @duhamedia. The @ is added if you leave it out.
+         * The full handle, e.g. @duhamedia. The @ is added if you leave it out. For a Facebook page without a username, enter the page name (e.g. Duha Media).
          */
         handle: string;
         /**
