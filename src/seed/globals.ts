@@ -9,8 +9,8 @@ import { SEED_CONTEXT, ensureGlobal, link, type SeedCtx } from './lib'
  * Values: approved facts from the Decision log (F1 legal name, F2 contact
  * email, F4 Lombard map point, F5 copy), SCHEMA §7 defaults, and the design's
  * nav labels (MERGED §4.2). Booking URL stays empty (no Nextcloud URL yet →
- * BookingEmbed's designed no-URL state). Socials and postal address stay empty
- * (unknown facts). `localBusiness.type` stays unset (F103: plain Organization).
+ * BookingEmbed's designed no-URL state). Socials stay empty (unknown fact).
+ * Postal address = the LLC's mailing address (human 2026-10-27). `localBusiness.type` stays unset (F103: plain Organization).
  */
 export async function seedGlobals(ctx: SeedCtx, ids: LibraryIds) {
   const { payload, req } = ctx
@@ -38,6 +38,14 @@ export async function seedGlobals(ctx: SeedCtx, ids: LibraryIds) {
         bookingUrl: '',
         bookingMode: 'link-out',
         aggregateRating: { show: false },
+        postalAddress: {
+          line1: '30 N Gould St',
+          line2: 'Ste R',
+          city: 'Sheridan',
+          region: 'WY',
+          postalCode: '82801',
+          country: 'USA',
+        },
         newsletterForm: ids.forms.newsletter,
         templateDefaults: {
           newsletterHeading: 'One useful email a month.',

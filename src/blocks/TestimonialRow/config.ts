@@ -134,6 +134,7 @@ export const TestimonialRow: Block = {
     {
       name: 'ctaStyle',
       type: 'select',
+      label: 'Button style',
       defaultValue: 'link',
       options: [
         { label: 'Underlined text link', value: 'link' },

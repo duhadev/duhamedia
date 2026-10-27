@@ -244,13 +244,16 @@ export const ReviewWall: Block = {
             description: 'Shows the client logo (or its name when there is no logo). Skipped while the client is a draft.',
           },
         },
-        scarcityRef({
-          name: 'statement',
-          label: 'Statement',
-          defaultValue: 'capacity',
-          description:
-            'Which statement from "Capacity & scarcity" to show. The number and its reason are always shown together; edit them there, not here.',
-        }),
+        (() => {
+          const statement = scarcityRef({
+            name: 'statement',
+            label: 'Statement',
+            defaultValue: 'capacity',
+            description:
+              'Which statement from "Capacity & scarcity" to show. The number and its reason are always shown together; edit them there, not here.',
+          })
+          return { ...statement, admin: { ...statement.admin, condition: kindIs('scarcity') } }
+        })(),
         {
           name: 'position',
           type: 'number',
