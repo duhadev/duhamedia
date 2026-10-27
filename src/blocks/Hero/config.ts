@@ -122,7 +122,7 @@ export const Hero: Block = {
       label: 'Standfirst',
       admin: {
         description:
-          'Article layout: the one- or two-sentence introduction between the headline and the thin byline rule (articles feed it from their "Dek"). Leave empty to skip it.',
+          'Article layout: the one- or two-sentence introduction between the headline and the thin byline rule (articles fill it from the post's Standfirst field). Leave empty to skip it.',
         condition: forVariants('article'),
       },
     },

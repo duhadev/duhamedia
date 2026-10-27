@@ -15,8 +15,8 @@ Sections are added here as each part of the site is finished and approved.
 | I want to… | How |
 |---|---|
 | Edit scarcity numbers | **Admin → Globals → Capacity & scarcity** → change the four counts and/or the **Statements** → **Save**. Live straight away (no Publish). See [Capacity & scarcity](#capacity--scarcity). |
-| Add a redirect | **Admin → Redirects → Create New** → **Old address** (starts with `/`) → **Send visitors to** a page or another address → **Redirect type** (normally 301) → **Save**. Applies immediately; the public site starts carrying out redirects when its pages go live. See [Redirects](#redirects-site-wide). |
-| Edit page copy or images | **Admin → Collections → Pages → (page) → Content tab → Sections** → open the section (block) → edit its text fields or pick an image → **Publish changes**. Add, remove or reorder sections with **Add Section** and the drag handle. Pages 7 to 12 are documented so far; see [Pages](#pages-site-pages) and the page's own entry. Images: [Media library](#media-library-images). |
+| Add a redirect | **Admin → Redirects → Create New** → **Old address** (starts with `/`) → **Send visitors to** a page or another address → **Redirect type** (normally 301) → **Save**. Applies immediately on the live site (the page routing carries out redirects when no page exists at the old address). See [Redirects](#redirects-site-wide). |
+| Edit page copy or images | **Admin → Collections → Pages → (page) → Content tab → Sections** → open the section (block) → edit its text fields or pick an image → **Publish changes**. Add, remove or reorder sections with **Add Section** and the drag handle. Pages 7 to 21 are documented; see [Pages](#pages-site-pages) and the page's own entry. Images: [Media library](#media-library-images). |
 | Find form submissions and failed deliveries | **Admin → Form submissions** → filter **Delivery status** equals **Failed** (or use the **Failed deliveries** saved view if it exists). To retry: open the submission → right-hand sidebar → **Re-send to secretary**. See [Contact form: what happens to a submission](#contact-form-what-happens-to-a-submission) and [Forms and form submissions](#forms-and-form-submissions). |
 | Change the booking link | **Admin → Globals → Site settings → Booking tab → Booking page address** → paste the full `https://` address → **Save**. Keep **How the booking page opens** on the new-tab button. Live straight away; the Book a Call page follows. See [Booking widget](#booking-widget-bookingembed). |
 | Send a newsletter broadcast (Resend dashboard steps) | [fill in once built] |
@@ -80,15 +80,28 @@ Sections are added here as each part of the site is finished and approved.
     - [Template labels (case study pages, article pages)](#template-labels-case-study-pages-article-pages)
 13. [DEV-SEO template](#13-dev-seo-template)
     - [Posts (articles and newsletter issues)](#posts-articles-and-newsletter-issues)
+    - [Article text, bands and closing box (Rich content)](#article-text-bands-and-closing-box-rich-content)
+    - [Article header: Standfirst](#article-header-standfirst-hero-article-layout)
 14. [MKT-SEO template](#14-mkt-seo-template)
 15. [Campaign LP template](#15-campaign-lp-template)
+    - [Hero, "Video" layout](#hero-video-layout-headline-video-one-button)
+    - [Proof strip, "Metrics" layout](#proof-strip-metrics-layout)
+    - [The offer (OfferBlock)](#the-offer-offerblock)
+    - [Testimonial row: lead figure and "Button style"](#testimonial-row-lead-figure-and-button-style)
 16. [Newsletter](#16-newsletter)
+    - [Hero with a sign-up form](#hero-with-a-sign-up-form-hero-show-a-signup-form-in-the-hero)
+    - [Recent issues (PostList)](#recent-issues-postlist)
+    - [Social proof (Testimonial row)](#social-proof-testimonial-row-lead-figure)
 17. [Link-in-Bio](#17-link-in-bio)
+    - [Link stack (link in bio)](#link-stack-link-in-bio)
 18. [Lead Magnet template](#18-lead-magnet-template)
     - [Lead magnets (the collection)](#lead-magnets-the-collection)
+    - [Page sections on a lead magnet page](#page-sections-on-a-lead-magnet-page-hero-form-whats-inside-cross-sell)
 19. [Review Hub](#19-review-hub)
+    - [Review wall, "Wall" layout](#review-wall-wall-layout)
 20. [Legal template](#20-legal-template)
 21. [404](#21-404)
+    - [404 error state (Error404)](#404-error-state-error404)
 - [Site-wide settings (header, footers, contact details)](#site-wide-settings)
   - [Site settings](#site-settings)
   - [Capacity & scarcity](#capacity--scarcity)
@@ -162,16 +175,17 @@ A **lead magnet** is a free resource (a guide, checklist or worksheet) that visi
 
 **Editable by marketing**
 - **Add a file:** **Admin → Collections → Downloads → Create New** → choose the file → give it a **Title** (required) → **Save**.
-- The **Title** is what you see in the admin and is used as the link text in the email that delivers the file.
+- The **Title** is what you see in the admin and is named in the delivery email ("Attached: (title) (file name)").
 - Accepted types: PDF, CSV, Excel (`.xlsx` only, not the older `.xls`) and ZIP.
 - **Replace or remove:** open the file in **Admin → Collections → Downloads**, then edit or delete it.
 
-**Forms & leads:** n/a here. The capture form that sends this file is covered under [Lead Magnet template](#18-lead-magnet-template) once that part is built.
+**Forms & leads:** n/a here. The capture form that sends this file is covered under [Lead Magnet template](#18-lead-magnet-template).
 
 **Social share:** n/a.
 
 **Other**
-- Each file gets a **public web link**: anyone with the link can download it. Never upload anything confidential.
+- Files here are **not public**: only signed-in staff can open them, and the page never shows a link to them. Visitors receive an uploaded file **as an attachment on the delivery email** (see [Lead magnets](#lead-magnets-the-collection)), so anyone who signs up can forward it. Still, never upload anything confidential.
+- **Size limit:** an uploaded file is emailed only if it is **10 MB or smaller**. A bigger one makes the email fail (the submission shows it); upload a smaller file or use an external link in the lead magnet instead.
 
 ### Why can't I delete this?
 
@@ -196,7 +210,7 @@ A **lead magnet** is a free resource (a guide, checklist or worksheet) that visi
 
 ## Content libraries (site-wide)
 
-These four collections hold reusable content: client brands, team members, testimonials and reviews, and FAQs. You write each item once here, and the page sections that show it (logo strips, testimonial rows, FAQ lists) pull it in automatically. Those page sections are built later and are described under each page as they land.
+These four collections hold reusable content: client brands, team members, testimonials and reviews, and FAQs. You write each item once here, and the page sections that show it (logo strips, testimonial rows, FAQ lists) pull it in automatically. The page sections are described under each page.
 
 Case studies are a library too, but because each one is a full page of its own, their editing guide lives under [2. Case Study template → Case studies (the collection)](#case-studies-the-collection). The same goes for articles and newsletter issues, whose guide is under [13. DEV-SEO template → Posts](#posts-articles-and-newsletter-issues), and for free downloads (lead magnets), whose guide is under [18. Lead Magnet template → Lead magnets](#lead-magnets-the-collection).
 
@@ -296,7 +310,7 @@ Every client quote, video testimonial and public review (Google, LinkedIn) lives
   - **List on the FAQ page** (sidebar): **on by default**. Untick it for questions that should only appear in the small FAQ sections on the service pages (Services Hub, Shopify Theme Development, Marketing), not on the main FAQ page.
   - **Sort Order** (sidebar): order within its category on the FAQ page; lower numbers first. The first **Pricing & Contracts** question opens by default, so it should be the direct pricing answer.
 - **Reorder within a category:** change **Sort Order** and **Publish**.
-- **Choosing which FAQs appear on a service page** is done on that page's FAQ section, not here. That section is built later and will be described under the page.
+- **Choosing which FAQs appear on a service page** is done on that page's FAQ accordion section (**Variant** = **Mini**; its **Source** picks a category or hand-picked questions), not here. How **Source** works is described under [11. FAQ](#question-groups-faq-accordion-group).
 
 **Forms & leads:** n/a.
 
@@ -309,7 +323,7 @@ Every client quote, video testimonial and public review (Google, LinkedIn) lives
 
 Every ordinary page of the site is a **Page**: Homepage, About, Services pages, FAQ, Contact, Book a Call, Thank You, the legal pages, the 404 ("page not found") page, campaign landing pages, Link-in-Bio and so on. Case studies, articles and newsletter issues, and lead magnets are **not** Pages; they have their own collections ([case studies](#case-studies-the-collection), [posts](#posts-articles-and-newsletter-issues), [lead magnets](#lead-magnets-the-collection)).
 
-**Sections:** a page's content is made of **blocks** (sections such as a hero or a testimonial row), shown in the admin as **Sections** on the **Content** tab. Each block is described under its page. Pages 7 to 12 are documented so far; the rest follow as they are built.
+**Sections:** a page's content is made of **blocks** (sections such as a hero or a testimonial row), shown in the admin as **Sections** on the **Content** tab. Each block is described under its page. Pages 7 to 21 are documented; pages 1 to 6 follow as they are built.
 
 **SEO**
 - A page's **Title** now sits in a **Content** tab (the first tab); the **SEO tab** is the last tab. Search-engine title, description and share image are set in the SEO tab; see [SEO tab](#seo-tab-pages-case-studies-articles-free-downloads). Leave them empty and the site uses the [SEO defaults](#seo-defaults).
@@ -346,7 +360,7 @@ Every ordinary page of the site is a **Page**: Homepage, About, Services pages, 
 
 Every form on the website (Contact, the pre-call homework, newsletter sign-ups, lead-magnet downloads) is set up and stored in two places in the admin, described below. A **lead** is a person who has filled in one of these forms.
 
-**Live status:** the Contact form (and the Book a Call and Thank You homework forms) are built, with spam protection. The Contact form announces each lead; newsletter and lead-magnet sign-up announcements are still being built, so those forms save submissions but do not yet show a delivery status.
+**Live status:** the form submission route, the spam check (Turnstile) and all the notifications are built and have passed testing on a development machine: the Contact form announcement, the newsletter sign-up (with email confirmation, see below), the lead-magnet download email and announcement, and the site-error alert. They start working once the site is running on the server (the server setup is still pending); until then nothing is sent. The Book a Call and Thank You homework forms save submissions but announce nothing, by design.
 
 ### Forms and form submissions
 
@@ -378,7 +392,7 @@ Every form on the website (Contact, the pre-call homework, newsletter sign-ups, 
 - **Make your own saved filter:** open **Admin → Form submissions**, set the filter you want (for example Form is `contact`), then save it as a preset using the saved-views control at the top of the list and choose who can use it (just you, or shared with everyone). Saved filters are personal conveniences and never change any data.
 - **Re-send button:** open a submission → right-hand sidebar → **Re-send to secretary**. It resends the announcement with the same message ID, so the same lead is never announced twice. Full steps: [Contact form: what happens to a submission](#contact-form-what-happens-to-a-submission).
 
-**Forms & leads:** see above. What gets announced to the human, and what "failed" means in practice, will be confirmed here when the lead-notification release is live (nothing is announced today).
+**Forms & leads:** see above. What gets announced and what "failed" means is described under [Contact form: what happens to a submission](#contact-form-what-happens-to-a-submission). Announcements only start once the site is running on the server; until then nothing is sent.
 
 **Social share:** n/a.
 
@@ -393,7 +407,7 @@ Every form on the website (Contact, the pre-call homework, newsletter sign-ups, 
 
 ## 2. Case Study template
 
-Each case study is its own long-form page on the site, at `duhamedia.com/work/(web address)`. You write a study once in the admin, and the site uses it in two ways: as its full page, and as a card (headline metric, short summary, image) wherever studies are pulled in (Homepage, Work, the service pages, About, campaign pages, Link-in-Bio, Review Hub). The page design that displays a study is built later; this entry covers where the content is written.
+Each case study is its own long-form page on the site, at `duhamedia.com/work/(web address)`. You write a study once in the admin, and the site uses it in two ways: as its full page, and as a card (headline metric, short summary, image) wherever studies are pulled in (Homepage, Work, the service pages, About, campaign pages, Link-in-Bio, Review Hub). This entry covers where the content is written.
 
 ### Case studies (the collection)
 
@@ -472,7 +486,7 @@ The edit screen has five **tabs** (the headings across the top of the form: Summ
 - **Never invent figures or present a demonstration study as a real result.** Placeholder studies stay drafts.
 - A testimonial can point back to a study through its **Case Study** field; that "Read the full case study" link only appears once the study is published.
 - Changes appear on the site as soon as they are published; no rebuild or developer is needed.
-- The reading-progress bar on the study page will be part of the page design (built later); there is no field for it.
+- The reading-progress bar on the study page is part of the page design; there is no field for it.
 
 ## 3. Work hub
 
@@ -517,7 +531,7 @@ Page order: heading banner (with the average rating) → the testimonial feed �
 **SEO:** n/a here. Video testimonials use the poster image's **Alt** text from the [Media library](#media-library-images). The site does not publish star ratings to Google, on purpose (Google ignores ratings a business publishes about itself).
 
 **Editable by marketing**
-- Open **Admin → Collections → Pages → Testimonials → Content tab → Sections → Review wall** and keep **Layout** on **Feed**.
+- Open **Admin → Collections → Pages → Testimonials → Content tab → Sections → Review wall** and keep **Variant** on **Feed**.
 - **Which testimonials appear**:
   - **All published testimonials (in their "Order" number)**: the feed fills itself from [Testimonials and reviews](#testimonials-and-reviews), ordered by each one's **Sort Order**. **Only these kinds** then lets you tick Direct client quotes, Google reviews and/or LinkedIn; leave all unticked for everything.
   - **Pick testimonials by hand**: choose them one by one under **Testimonials**; drag to reorder, use the row's menu to remove. A testimonial that is still a draft is skipped on the site until it is published.
@@ -536,7 +550,7 @@ Page order: heading banner (with the average rating) → the testimonial feed �
 **Other**
 - A video testimonial only plays when its **YouTube URL** is valid; otherwise it shows as a text card.
 - Changes to testimonials appear on the site straight after you publish them; the page itself does not need re-publishing.
-- The extra option **Layout → Wall** and **Tiles between the cards** belong to the Review Hub page ([19](#19-review-hub)).
+- The extra option **Variant → Wall** and **Tiles between the cards** belong to the Review Hub page ([19](#19-review-hub)).
 
 ## 8. About
 
@@ -547,7 +561,7 @@ Page order: heading banner → article text → company facts → founder → cl
 **SEO:** the headline is the page's main heading; keep it one clear statement. The lead image takes its **Alt** text from the [Media library](#media-library-images). Title, description and share image: the page's [SEO tab](#seo-tab-pages-case-studies-articles-free-downloads).
 
 **Editable by marketing**
-- Open **Sections → Hero**, with **Layout** set to the article style.
+- Open **Sections → Hero**, with **Variant** set to **Article (case study / article header)**.
 - **Key figures** (up to 5 rows, labelled "Figure"): short facts such as a place, a scope or a capacity, each a **Value** and a **Label**. **Add:** click **Add Figure**; **reorder:** drag by the handle; **remove:** the row's menu. Results or counts only, **never a price**.
 - **Lead image** and **Image frame** (None, Browser window frame, or Full width edge to edge): the picture under the header.
 
@@ -560,7 +574,7 @@ Page order: heading banner → article text → company facts → founder → cl
 **SEO:** n/a.
 
 **Editable by marketing**
-- **Sections → Metrics**, **Layout** = **Company facts (label and value rows)**.
+- **Sections → Metrics**, **Variant** = **Company facts (label and value rows)**.
 - **Eyebrow**: the caption above the list, for example "The company, in numbers". **Heading**: optional.
 - **Rows**: one fact per row (**Value** and **Label**, optional **Sub** line, and an **Accent** tick to colour the number). **Add:** **Add Row**; **reorder:** drag; **remove:** the row's menu. A row missing its label or value is skipped.
 - **Note / method**: a quiet line under the list.
@@ -621,11 +635,11 @@ Page order: compact banner → booking section → pre-call homework form → "w
 **SEO:** n/a.
 
 **Editable by marketing**
-- **Sections → Form**, **Layout** = **Standard (heading and the form on the page)**.
+- **Sections → Form**, **Variant** = **Standard (heading and the form on the page)**.
 - **Form**: pick the form to show (the homework form). Its **questions, order, send-button label and "after sending" message are edited on the form itself**, and only an Admin can change a form (see [Forms and form submissions](#forms-and-form-submissions)). If the chosen form is deleted, the whole section is hidden.
 - **Eyebrow** (optional), **Heading** and **Accent phrase**, **Body** (a line such as "Five fields, five minutes."), **Send button text** (empty = the form's own label).
 - **Background**: **White, roomy (Book a Call)** or **Grey band, tighter (Contact)**.
-- **Layout on phones**: **Stacked** or **Stepped**; see [Contact](#12-contact).
+- **Mobile Layout** (how the form looks on phones): **Stacked** or **Stepped**; see [Contact](#12-contact).
 - Two fields sit side by side on tablets and desktops when each has a width under 100: an Admin sets this on the form's field (**Width**, e.g. 50).
 
 **Forms & leads**
@@ -641,7 +655,7 @@ Page order: compact banner → booking section → pre-call homework form → "w
 **SEO:** the link is a normal link search engines can follow.
 
 **Editable by marketing**
-- **Sections → Mini CTA strip**, **Layout** = **Inline (quiet one-line question with an underlined link)**.
+- **Sections → Mini CTA strip**, **Variant** = **Inline (quiet one-line question with an underlined link)**.
 - **Text**: the sentence before the link, shown exactly as written, for example "Have a quick question first?".
 - **Button** (the link): **Link text** and where it goes (**Page on this site** or **Custom address**), for example "Contact us". If the link cannot be resolved (page unpublished), only the sentence shows.
 
@@ -656,7 +670,7 @@ Page order: confirmation banner (no buttons) → homework reminder (only if need
 **SEO:** n/a (the page is kept out of Google).
 
 **Editable by marketing**
-- **Sections → Form**, **Layout** = **Homework reminder (form in a card, hidden once the homework is sent)**.
+- **Sections → Form**, **Variant** = **Homework reminder (form in a card, hidden once the homework is sent)**.
 - **Form**: pick the homework form (edited only by an Admin).
 - **Heading**, **Accent phrase**, **Body**, **Send button text**.
 - **Done heading** (starts "Homework received.") and **Done body**: shown **instead of the form** when the visitor has already sent the homework (their address ends `?homework=done`, or they just sent it here). The two are joined on one line.
@@ -692,7 +706,7 @@ An **accordion** is a list of questions where clicking one opens its answer.
 **SEO:** every published question on the page is also given to Google as FAQ data (called **FAQPage structured data**, hidden code that can let Google show the questions in results). It is built once for the whole page automatically; there is nothing to set.
 
 **Editable by marketing**
-- **Sections → FAQ accordion**, **Layout** = **Group (one category section of the FAQ page)**. Use **one group block per category**.
+- **Sections → FAQ accordion**, **Variant** = **Group (one category section of the FAQ page)**. Use **one group block per category**.
 - **Anchor ID**: the jump-link name the tab points to. Rules, which the admin checks when you **Publish**: **lowercase letters, numbers and single hyphens** only (for example `pricing`, `builds`, `marketing`, `process`); **it cannot be `main`** (or begin with `main-`), and a few other names the site uses itself (`__next`, `dc-water`); and it must be **unique on the page**: two groups cannot share one.
 - **Spacing**: **Middle**, **First group (extra space above)**, **Last group (extra space below)** or **Only group**. Set the first group to **First** and the last to **Last** so the page ends have the right gap.
 - **Heading** (required), **Eyebrow** (optional).
@@ -713,9 +727,9 @@ Page order: compact banner (routing line) → contact form → direct details an
 **SEO:** the banner headline is the page's main heading. Google details come from Site settings; see above.
 
 **Editable by marketing**
-- **Sections → Form**, **Layout** = **Standard**, **Background** = **Grey band, tighter (Contact)**.
+- **Sections → Form**, **Variant** = **Standard**, **Background** = **Grey band, tighter (Contact)**.
 - **Form**: pick the contact form. Its questions (name, email, reason, message) are edited by an Admin on the form.
-- **Layout on phones** = **Stepped (one question at a time)** gives phone visitors the card with a progress bar and Back / Next buttons. Tablets and desktops always see the whole form.
+- **Mobile Layout** (phones) = **Stepped (one question at a time)** gives phone visitors the card with a progress bar and Back / Next buttons. Tablets and desktops always see the whole form.
 - **Steps** (appears when Stepped is chosen; up to 10 rows): group the questions into steps and give each its own heading. Each row has **Form fields in this step** (type the form fields' exact **Name**, such as `name` or `email`, and press Enter), **Heading**, **Accent phrase** and **Hint** (quiet line). **Add:** **Add Step**; **reorder:** drag; **remove:** the row's menu. Leave **Steps** empty for one question per step, headed by the question's label. A form question no step lists is added to the last step, so a required question can never be skipped.
 - **Stepped layout: buttons and progress:**
   - **Progress label** (starts "Question {n} of {m}": `{n}` becomes the step number and `{m}` the total).
@@ -762,7 +776,9 @@ This is the full path of a message from the Contact form (the homework form is t
 7. **To re-send:** open the failed submission and, in the **right-hand sidebar**, click **Re-send to secretary**. The button is active only when the status is **Failed** (or **Delivered**) and greyed out while **Pending**. A message confirms it is queued and the status goes back to Pending; the next attempt starts within about a minute. Re-sending uses the same message ID, so if the secretary already had it, it is **not announced twice**. If it fails again, tell an Admin (the secretary or its address setting may be down).
 8. Marketing can read submissions and use Re-send, but cannot edit or delete them.
 
-Footer newsletter box: the sign-up box in the standard footer sends through the **Newsletter form** chosen at **Admin → Globals → Site settings → Newsletter & closers tab → Newsletter form**; its words are in **Navigation → Footers tab → Standard footer → Newsletter sign-up**. Its sign-ups are saved in **Form submissions** like any other. The announcement and email-list sync for newsletter sign-ups are not live yet (still being built), so a newsletter sign-up currently shows no delivery status.
+Footer newsletter box: the sign-up box in the standard footer sends through the **Newsletter form** chosen at **Admin → Globals → Site settings → Newsletter & closers tab → Newsletter form**; its words are in **Navigation → Footers tab → Standard footer → Newsletter sign-up**. Its sign-ups are saved in **Form submissions** like any other.
+
+*Newsletter sign-ups use double opt-in* (built and tested on a development machine; it works once the site is running on the server, and until then nothing is sent): the visitor gets a confirmation email and is added to the newsletter list only after clicking its link (valid 72 hours). Each newsletter submission shows a read-only **Newsletter sync** group with **Opt-in status** (pending confirmation / confirmed / expired), **Confirmation email** and **Resend sync** (the email-list sign-up in Resend). Only after the link is clicked and the Resend sync succeeds is the sign-up announced to the human, so **Delivery status** stays empty until then. If a sign-up is stuck, open the submission and use **Re-send confirmation email** (the old link stops working) or **Re-run Resend sync** (available once the visitor has confirmed). To find stuck sign-ups, filter **Form submissions** by **Newsletter sync › Confirmation email** or **› Resend sync** equals **Failed**. Unsubscribing is handled by Resend's own unsubscribe link in each email.
 
 ### Template labels (case study pages, article pages)
 
@@ -776,7 +792,7 @@ Footer newsletter box: the sign-up box in the standard footer sends through the 
 
 ## 13. DEV-SEO template
 
-Long-form articles aimed at search, at `duhamedia.com/insights/(web address)`. The page design that displays an article is built later; this entry covers where the content is written. Articles, MKT-SEO articles ([14](#14-mkt-seo-template)) and newsletter issues ([16](#16-newsletter)) all live in one list called **Posts**.
+Long-form articles aimed at search, at `duhamedia.com/insights/(web address)`. This entry covers where the content is written. Articles, MKT-SEO articles ([14](#14-mkt-seo-template)) and newsletter issues ([16](#16-newsletter)) all live in one list called **Posts**.
 
 ### Posts (articles and newsletter issues)
 
@@ -843,26 +859,185 @@ Open **Admin → Collections → Posts** and click **Create New**, or open an ex
 - Never invent client results. Proof only shows published case studies, with a designed fallback otherwise.
 - Changes appear on the site as soon as they are published; no developer is needed.
 - The reading-progress bar on article pages is part of the page design; there is no field for it.
+- The small fixed words on an article page (the "By …" line, "Published …", "Updated …", the questions label, the "How we do it" label) are edited once for all articles: see [Template labels](#template-labels-case-study-pages-article-pages) (the **Article and newsletter pages** group).
+
+### Article text, bands and closing box (Rich content)
+
+The **Rich content** block is the block that sets text on the page. An article page uses it for its long text, and for the grey "band" sections (the DIY vs done-for-you bridge, "How we do it", the educational block). On an article those parts are written in the post itself (**Sections** tab, described under [Posts](#posts-articles-and-newsletter-issues) above); you do not add this block by hand. You add and edit it by hand on a normal **Page**, which is how the Legal pages ([20](#20-legal-template)) are built.
+
+**SEO:** headings in the text matter to search engines. The article **Title** is the page's one main heading; inside the text use **Heading 2** for section titles and **Heading 3 / 4** for sub-points. On Legal pages the block's own **Heading** is the page's main heading (see [20](#20-legal-template)). Keep headings short and descriptive. Images in the text take their **Alt** text from the [Media library](#media-library-images).
+
+**Editable by marketing**
+- Open **Admin → Collections → Pages → (page) → Content tab → Sections → Rich content**. The **Variant** picker (first field) offers three settings:
+  - **Article (long-form text with numbered sections and figures)**:
+    - **Eyebrow** (small line above), **Heading** (optional), **Accent phrase** (a word or phrase copied from the heading, shown in the accent colour; anything not found in the heading is refused).
+    - **Number the section headings** (tick box, on by default): puts 01, 02, 03 … above every big (Heading 2) heading, in order. Untick where numbers would be wrong.
+    - **Body** (required): the text. Toolbar at the top for Heading 2/3/4, bold, italic, lists, quotes, divider and links; select text for the floating bar; type `/` to insert an image from Media. **Image caption:** click the image's **pencil (Edit Relationship)** button and fill in **Caption**.
+    - **Closing box** (optional): a black-outlined box at the end of the text (for example "How we do it"): **Eyebrow**, **Body** (a few sentences, no prices) and an optional **Button** (link). Leave all three empty for no box.
+  - **Band (eyebrow, heading, short text, up to three facts and a link)**: a short section on a grey or white background.
+    - **Eyebrow**, **Heading**, **Accent phrase**, **Body** as above.
+    - **Facts** (up to 3 big numbers in a strip under the text; counts, timelines or results, never a price): **Add:** click **Add Fact**, fill **Value** (e.g. "4–6"), **Label** (e.g. "Weeks"), optional **Sub-line**, and tick **Accent colour** to show the number in the accent colour. **Reorder:** drag by the handle. **Remove:** the row's menu. Leave empty for no strip.
+    - **Pricing note** (up to 80 characters): optional quiet line, e.g. "Builds start at $5K". The only place a price may appear in a band.
+    - **Link**: optional button under the text.
+    - **Background**: **Grey band** or **White**. **Draw a box around the content** (tick box): the black-outlined "How we do it" look, normally with White.
+  - **Legal document**: see [20](#20-legal-template).
+- Only the fields for the chosen layout are shown; switching layout hides (but does not delete) the others.
+- Nothing reaches visitors until **Publish changes** on the page.
+
+**Forms & leads:** n/a.
+
+**Social share:** n/a (set per page in the SEO tab).
+
+**Other**
+- Never put a price in a heading, fact or metric; use the **Pricing note**.
+- Never invent figures in **Facts**.
+
+### Article header: Standfirst (Hero, "Article" layout)
+
+The **Hero** block's **Article** layout gained one field, **Standfirst**: the one- or two-sentence introduction between the headline and the thin line under it. Open **Admin → Collections → Pages → (page) → Content tab → Sections → Hero**, set **Variant** to **Article**, and fill **Standfirst**; leave it empty to skip it. On articles, case studies and newsletter issues the header is built from the post itself, so the standfirst there is the post's own **Standfirst** field (**Posts → (post) → Article tab**), not this one. The other Article-layout fields are described under [8](#hero-article-style-key-figures-strip).
 
 ## 14. MKT-SEO template
 
-MKT-SEO articles are written in the same place as DEV-SEO articles: **Admin → Collections → Posts**, with **Track** set to **MKT-SEO article**. The full guide is under [Posts (articles and newsletter issues)](#posts-articles-and-newsletter-issues). The article page design itself is built later.
+MKT-SEO articles are written in the same place as DEV-SEO articles: **Admin → Collections → Posts**, with **Track** set to **MKT-SEO article**. The full guide is under [Posts (articles and newsletter issues)](#posts-articles-and-newsletter-issues); the text and band layouts used for "the teach", the DIY vs done-for-you bridge and "How Duha does it" are under [Article text, bands and closing box](#article-text-bands-and-closing-box-rich-content), and the standfirst under [Article header: Standfirst](#article-header-standfirst-hero-article-layout). The tab **Sections** in a post holds the DIY vs done-for-you bridge, "How we do it" and the Proof choice; the FAQ tab holds the questions.
 
 ## 15. Campaign LP template
 
-*Not built yet.*
+A campaign landing page is a stripped-down page built for one offer: one message, one button. It is an ordinary **Page** (see [Pages](#pages-site-pages)); the seeded example has the web address `lp/sample-campaign`. Page order: video or text headline → proof strip → "ready when you are" strip → the offer → case study (or numbers) → button strip → testimonial → footer.
 
+**Zero leakage** is the rule for these pages: nothing on the page may lead visitors away from the offer. In the page's right-hand sidebar, tick **Zero leakage**; this forces the Logo-only header and Legal-only footer and blocks the newsletter band (see [Pages](#pages-site-pages)). The example page is also set to **Hide from search engines** (right-hand sidebar). Keep that ticked for campaign pages so they do not compete with the main site in Google.
+
+### Hero, "Video" layout (headline, video, one button)
+
+**SEO:** the headline is the page's main heading (the "h1"). Browser title, description and share image: the page's **SEO tab** ([SEO tab](#seo-tab-pages-case-studies-articles-free-downloads)).
+
+**Editable by marketing**
+- Open **Admin → Collections → Pages → (page) → Content tab → Sections → Hero** and set **Variant** to **Video (campaign landing page: headline, video, one button)**.
+- **Eyebrow**, **Heading** and **Body** work as on every Hero. This layout has no accent-phrase field.
+- **Buttons**: the Video layout shows only the first button (e.g. Book a Call); a second is ignored.
+- **Show the wine logo shape** (tick box): the large decorative logo outline behind the headline.
+- **Video** group: **YouTube link** (required; unlisted YouTube videos work) and **Poster image** (required; the still frame shown before play, 16:9 works best; choose it from the [Media library](#media-library-images)). The video only loads when a visitor presses play. If the link is missing, the video tile is simply left out.
+
+**Forms & leads:** n/a.
+
+**Social share:** n/a (page SEO tab).
+
+**Other:** the poster's **Alt** text comes from the Media library.
+
+### Proof strip, "Metrics" layout
+
+A thin band of up to three proof numbers, an optional capacity line and an optional client logo row.
+
+**SEO:** n/a.
+
+**Editable by marketing**
+- Open **Admin → Collections → Pages → (page) → Content tab → Sections → Proof strip** and set **Variant** to **Metrics (up to three metrics + capacity + client logos, Campaign LP)**. (The other layout, **Scarcity**, is the capacity-statements strip for the Homepage.)
+- **Metrics** (up to 3): **Add:** **Add Metric**, then **Value** (e.g. "+212%"), **Label** (what it measures, e.g. "Revenue, 12 months"), optional **Sub-line**, and **Accent colour** to show the number in the accent colour. **Reorder:** drag by the handle. **Remove:** the row's menu. Results or counts only, never a price.
+- **Capacity statement**: pick which statement from [Capacity & scarcity](#capacity--scarcity) to show beside the metrics (the big line with its reason quietly underneath), or **None (hide)**. You cannot type the number here; edit it in Capacity & scarcity.
+- **Pricing note** (up to 80 characters): optional small inline note, e.g. "Builds start at $5K".
+- **Client logos** group: **Show the logo row** (tick box), **Eyebrow** (small line above), and **Source**: **Clients marked "show in logo strip"** (automatic; see [Clients](#clients-logo-strips)) or **Pick clients by hand** (then choose **Clients** in display order). Unpublished clients are skipped; with none left the row is hidden.
+
+**Forms & leads:** n/a. **Social share:** n/a.
+
+**Other:** in the seeded example the logo row is switched off.
+
+### The offer (OfferBlock)
+
+One section stating the campaign's promise: small line, headline, a few lines on what the visitor gets, one button and the capacity line.
+
+**SEO:** the headline is a section heading, not the page's main heading. Write it as a plain statement of scope.
+
+**Editable by marketing**
+- Open **Admin → Collections → Pages → (page) → Content tab → Sections → Offer**.
+- **Eyebrow** (and **Show the diamond marker** tick), **Heading** (required) and **Accent phrase** (a word or phrase copied from the heading, shown in the accent colour).
+- **Body**: paragraphs, bold, italic, bulleted and numbered lists, links. State what the visitor gets in deliverable terms, number first. No countdown timers or fake deadlines, and no prices (use a small inline note elsewhere).
+- **Button** (required): link text and where it goes (a page on the site or a custom address, with a new-tab option). The only call to action in the block.
+- **Capacity line**: a statement from [Capacity & scarcity](#capacity--scarcity), shown beside the button (big line, reason beneath). It starts on **Offer line (Campaign LP offer)**. Choose **None (hide)** to remove it. To change its wording or numbers edit it in Capacity & scarcity, not here.
+
+**Forms & leads:** n/a (the button just links, for example to Book a Call). **Social share:** n/a.
+
+**Other:** capacity is the only urgency the site uses, and it always comes with its reason.
+
+### Testimonial row: lead figure and "Button style"
+
+The **Testimonial row** block gained two options (the rest of the block is under [the Homepage](#1-homepage) when it is documented). Open **Admin → Collections → Pages → (page) → Content tab → Sections → Testimonial row** with **Variant** on **Row**:
+- **Button style**: **Underlined text link** (default) or **Primary button, below the row (campaign pages)**. It restyles the optional **Link under the cards**; fill that link in too, or nothing shows. Campaign pages use the button.
+- **Lead figure beside the quote** (group; **Value**, **Label**, optional **Sub-line**, **Accent colour**): a big number tile placed beside the testimonial(s), for example a subscriber count. It needs both a value and a label, otherwise it is not shown. **When it is filled in, the "A study in full" card is not shown.** Only enter a real, approved figure.
+- On a zero-leakage page, switch the **"A study in full" card** off (untick **Show this card**), because it links away from the page.
+- Testimonials are picked (1 to 3, in order) from [Testimonials and reviews](#testimonials-and-reviews); drafts are skipped.
 ## 16. Newsletter
 
-Newsletter issues (the archive shown on this page) are written in **Admin → Collections → Posts** with **Track** set to **Newsletter issue**. See [Posts (articles and newsletter issues)](#posts-articles-and-newsletter-issues), including the issue-only fields. The Newsletter page itself is built later.
+Page order: hero with the sign-up card → recent issues → social proof. It is an ordinary **Page** with the web address `newsletter`; see [Pages](#pages-site-pages). Newsletter issues themselves (the archive shown on this page) are written in **Admin → Collections → Posts** with **Track** set to **Newsletter issue**; see [Posts (articles and newsletter issues)](#posts-articles-and-newsletter-issues), including the issue-only fields.
+
+### Hero with a sign-up form (Hero, "Show a signup form in the hero")
+
+**SEO:** the headline is the page's main heading. Title, description and share image: the page's **SEO tab**.
+
+**Editable by marketing**
+- Open **Admin → Collections → Pages → Newsletter → Content tab → Sections → Hero** (**Variant** **Typographic**).
+- Tick **Show a signup form in the hero**. Then these appear:
+  - **Form**: the form to show. Leave empty to use the newsletter form chosen in **Admin → Globals → Site settings → Newsletter & closers tab → Newsletter form**.
+  - **Form style**: **Card** (grey box beside the headline on desktop, with its own heading; the key figures move under the paragraph) or **Inline** (an email row straight under the paragraph).
+  - **Card heading** (e.g. "Join the list") and **Card text** (quiet line, e.g. "Unsubscribe anytime."): Card style only.
+  - **Button text** (e.g. "Join"): leave empty to use the button text set on the form itself.
+  - **Note under the form**: small grey line.
+- **Key figures** (up to 5 value + label pairs, e.g. "Monthly" / "Cadence"): **Add Figure**, drag to reorder, row menu to remove. Results or counts only, never a price.
+- If the chosen form is deleted, the hero shows without it.
+
+**Forms & leads:** sign-ups are saved in **Admin → Form submissions**, as described in [Forms and form submissions](#forms-and-form-submissions). Newsletter sign-ups use double opt-in (confirmation email, then the Resend email-list sync, then the announcement to the secretary); see the footer newsletter note under [Contact form: what happens to a submission](#contact-form-what-happens-to-a-submission). This is built and tested locally; it works once the site is running on the server, and until then nothing is sent.
+
+**Social share:** page **SEO tab → Share image**.
+
+### Recent issues (PostList)
+
+A list of the newest **published** posts of one kind: the latest as a large card with a "New" badge, the rest under "Previously", plus an optional archive link. Nothing in it is typed here; it fills itself from the posts.
+
+**SEO:** each row links to the real issue page.
+
+**Editable by marketing**
+- Open **Admin → Collections → Pages → Newsletter → Content tab → Sections → Post list (recent issues)**.
+- **Eyebrow** (e.g. "Recent issues").
+- **Track** (required): **Newsletter issues**, **Dev SEO articles** or **Marketing SEO articles**. Only published posts ever appear.
+- **Feature the latest** (tick box): newest post as the large card; the rest under "Previously".
+- **Limit**: most posts shown, including the featured one (1 to 12, starts at 3).
+- **Archive link**: optional (e.g. "Full archive →"); leave empty to hide.
+- **Wording** group (the small fixed words, defaults match the design): **Latest label**, **New badge**, **Previously label**, **Count suffix** ("issues"), **Count suffix singular** ("issue"), **Read label** ("Read issue"; the number is added), **Issue word** ("Issue").
+- **Empty heading** (required) and **Empty body**: shown while no post of that kind is published. They should say what readers get, never "coming soon".
+
+**Forms & leads:** n/a. **Social share:** n/a.
+
+**Other:** to add an issue, create a post; see [Posts](#posts-articles-and-newsletter-issues). New issues appear after **Publish changes** on the post; the page does not need re-publishing.
+
+### Social proof (Testimonial row, lead figure)
+
+The last section is a **Testimonial row** with a **Lead figure beside the quote** (for example a subscriber count). See [15. Campaign LP template](#testimonial-row-lead-figure-and-button-style). The seeded example uses a placeholder figure marked non-final; replace it with the real count or clear the figure.
 
 ## 17. Link-in-Bio
 
-*Not built yet.*
+The page behind the link in social media profiles. It is an ordinary **Page** with the web address `links`, with **Header** set to **None**, **Footer** set to **Legal only**, and **Hide from search engines** ticked (see [Pages](#pages-site-pages)). The whole page is one block.
+
+### Link stack (link in bio)
+
+**SEO:** the page is hidden from search on purpose. Title, description and share image: the page's **SEO tab**.
+
+**Editable by marketing**: open **Admin → Collections → Pages → Links → Content tab → Sections → Link stack (link in bio)**. Top to bottom:
+- **Identity strip (top)**:
+  - **Show the latest case study result** (tick box): the big number comes from the newest **published** case study and is never typed here.
+  - **Fallback line** (required, up to 90 characters): shown instead while no case study is published, or when the box is unticked. A short positioning line, never an invented number.
+- **Main button (Book a call)**: **Button** (link text and destination; required) and **Capacity line** (a statement from [Capacity & scarcity](#capacity--scarcity), starting on **Slots line (Link-in-Bio)**; **None (hide)** removes it).
+- **Show social profiles** (tick box) and **Social section label** (e.g. "Follow"): the profiles come from **Admin → Globals → Site settings → Brand & contact tab → Social profiles**, in that order. To change them edit them there.
+- **Site links section label** (e.g. "On the site") and **Site links** (up to 8):
+  - **Add:** **Add Link**, choose an **Icon** (Chart, Quote marks, Envelope, Document or Arrow) and the **Link**.
+  - **Reorder:** drag the row by its handle. **Remove:** the row's menu.
+- **Add a link to the latest case study** (tick box) and **Case study link text**: links to the newest published case study after the links above; hidden while none is published.
+- **Current push (optional)**: **Show the current push** (tick box), **Icon**, **Link**. One extra link for whatever you are promoting now (a guide, a campaign), shown last.
+
+**Forms & leads:** n/a. **Social share:** page **SEO tab → Share image**.
+
+**Other:** no numbers are typed in this block; the result, the capacity line and the profiles all come from elsewhere in the admin.
 
 ## 18. Lead Magnet template
 
-Each **lead magnet** (a free download offered in exchange for an email address) is its own landing page at `duhamedia.com/resources/(web address)`. You write one once in the admin: the pitch, what is inside, the file to deliver, the delivery email, and the "check your inbox" message. The page design that displays it is built later; this entry covers where the content is written. Upload the file itself first, in [Downloads](#downloads-lead-magnet-files).
+Each **lead magnet** (a free download offered in exchange for an email address) is its own landing page at `duhamedia.com/resources/(web address)`. You write one once in the admin: the pitch, what is inside, the file to deliver, the delivery email, and the "check your inbox" message. This entry covers where the content is written. Upload the file itself first, in [Downloads](#downloads-lead-magnet-files).
 
 ### Lead magnets (the collection)
 
@@ -878,7 +1053,7 @@ Open **Admin → Collections → Lead magnets** and click **Create New**, or ope
 - **Accent phrase** (optional): a word or phrase to show in the accent colour. It must be copied from the title (capital letters do not matter); anything not found in the title is rejected.
 - **Pitch** (required): one paragraph on what it is, who it is for and the problem it solves. Lead with the number.
 - **Form note** (optional): a small line under the sign-up form.
-- **Capture form**: the form that collects the visitor's details for this download. Pick it from the list of forms (forms are set up by an Admin; see [Forms and form submissions](#forms-and-form-submissions)). Public forms are not live yet, so nothing is collected until they are.
+- **Capture form**: the form that collects the visitor's details for this download. Pick it from the list of forms (forms are set up by an Admin; see [Forms and form submissions](#forms-and-form-submissions)). The public form works once the site is running on the server; until then nothing is collected or sent.
 
 *What's inside tab*
 - **Value bullets** (required, **3 to 6**): the concrete things the reader gets. Each row is one line of text, and the collapsed row shows that text.
@@ -913,26 +1088,86 @@ Open **Admin → Collections → Lead magnets** and click **Create New**, or ope
 *Removing a lead magnet*
 - **Marketing can delete drafts only.** To take a published lead magnet off the site, open it, use the **⋯ (three dots) menu → Unpublish**; it returns to being a draft, which you can then delete if you wish. Or ask an Admin.
 
-**Forms & leads:** submissions will land in **Admin → Form submissions** once the public forms are live; see [Forms and form submissions](#forms-and-form-submissions). The public form and the re-send button are not built yet.
+**Forms & leads:** submissions land in **Admin → Form submissions** (the form is the lead magnet's **Capture form**); see [Forms and form submissions](#forms-and-form-submissions). Each sign-up sends **one delivery email** (subject and intro from the **Asset & email** tab) with the file attached, or a "Get (title)" button for an external link, and announces the lead to the human. If the email fails, open the submission → **Asset email** group → **Re-send asset email** (this sends a genuinely new email); filter by **Asset email › Asset email status** equals **Failed** to find them. A ticked newsletter opt-in box starts the newsletter double opt-in described under [Contact form: what happens to a submission](#contact-form-what-happens-to-a-submission). Built and tested locally; it works once the site is running on the server, and until then nothing is sent.
 
 **Social share:** set in the **SEO tab → Share image**; lead magnets have no main image of their own, so "Auto-generate" uses the default share image. See [SEO tab](#seo-tab-pages-case-studies-articles-free-downloads).
 
 **Other**
-- **Treat files as shareable.** The download link is not yet hidden behind the sign-up form: anyone who gets the link to the file (or the external link) can use it without signing up. Do not upload anything you would not want passed around.
+- **Treat files as shareable.** An uploaded file is never linked on the page; it only goes out as an email attachment (10 MB or smaller). An **external link** is different: anyone who gets that link can use it without signing up, and the recipient can forward the email. Do not upload or link anything you would not want passed around.
+- Keep lead magnets as **drafts** until the delivery email has been checked end to end on the staging site.
 - Changes appear on the site as soon as they are published; no developer is needed.
 - Never invent figures in the pitch or bullets.
 
+### Page sections on a lead magnet page (hero form, "What's inside", cross-sell)
+
+The lead magnet page is assembled from the lead magnet itself, so you normally edit the content above, not page sections. Three blocks have layouts built for it; their settings are listed here in case one is used on a normal Page.
+- **Hero with a signup form** (email row under the paragraph): **Admin → Collections → Pages → (page) → Content tab → Sections → Hero**, tick **Show a signup form in the hero**, set **Form style** to **Inline**; fields are described under [16](#hero-with-a-sign-up-form-hero-show-a-signup-form-in-the-hero). On a lead magnet page the form is the lead magnet's **Capture form**.
+- **Spec ledger, "Check list" layout** (the "What's inside" column of ticked bullets): **Sections → Spec ledger**, **Variant** = **Check list (a short column of ticked bullets, e.g. "What's inside")**. Fields: optional **Eyebrow**, **Background** (Automatic, White or Light grey) and **Items** (up to 10): **Add Item**, then the **Title** is the bullet sentence, shown as written (other item fields are not used). Drag to reorder; row menu to remove. On a lead magnet page the bullets are filled from its **Value bullets** (3 to 6).
+- **Newsletter band, "Cross-sell" layout** (the confirmation plus a newsletter box): **Sections → Newsletter band**, **Variant** = **Cross-sell (delivered message + newsletter box, lead magnet page)**. Fields: **Heading** and **Line** (empty = defaults from Site settings), **Button label** (starts on "Join"), **Background** (Grey band or White with a thin line) and **Spacing** (Standard or Roomier). Cross-sell only: the **Delivered message** group (**Eyebrow** starts on "Sent", **Heading**, **Accent phrase**, **Body**, **Lead-in to the newsletter box**) and **Newsletter link** (where the dark button goes; empty uses the published Newsletter page). On a lead magnet page the delivered message is filled from the lead magnet's **Delivered state** tab. A newsletter band cannot be added to a zero-leakage page.
+
 ## 19. Review Hub
 
-*Not built yet.*
+An ordinary **Page** with the web address `reviews`; see [Pages](#pages-site-pages). Page order: heading banner (with the average rating) → review wall → case study cross-links → closing "book a call" section → footer. The compact heading banner is described under [7](#hero-compact-heading-banner-average-rating).
+
+### Review wall, "Wall" layout
+
+A staggered, multi-column wall of written review cards (3 columns on desktop, 2 on tablets, 1 on phones), with optional extra tiles dropped between the cards. No "Load more".
+
+**SEO:** n/a. The site does not publish star ratings to Google (see [7](#testimonial-feed-reviewwall)).
+
+**Editable by marketing**
+- Open **Admin → Collections → Pages → Reviews → Content tab → Sections → Review wall** and set **Variant** to **Wall (staggered columns of review cards, with optional metric / client / capacity tiles)**. (**Feed** is the Testimonials page layout, [7](#testimonial-feed-reviewwall).)
+- **Which testimonials appear**, **Only these kinds**, **Testimonials** (hand-pick), **Card labels**, **Eyebrow** and **Heading**: as for the feed. The wall shows written cards only; stars and the source tag come from each review in [Testimonials and reviews](#testimonials-and-reviews). **Cards per load**, **Load more** and the case study links are feed-only and hidden here.
+- **Tiles between the cards** (up to 6): **Add:** **Add Tile**. **Reorder:** drag by the handle. **Remove:** the row's menu. Each tile has:
+  - **Tile type**: **Headline number (metric)**, **Client name / logo** or **Capacity statement (from Capacity & scarcity)**.
+  - For a metric: **Number** group (**Value**, **Label**, optional **Sub-line**, **Accent colour**). A result or count, never a price.
+  - For a client: **Client** (shows the logo, or the name if it has none; skipped while the client is a draft).
+  - For a capacity statement: **Statement**, which appears **only on Capacity statement tiles**; pick which statement from [Capacity & scarcity](#capacity--scarcity) (starts on "capacity"). The number and its reason always show together; edit them there, not here.
+  - **Place after card number**: 0 puts the tile first, 2 puts it after the second review card; a number past the last card puts it at the end.
+- **Small note under the wall**: optional quiet line, e.g. where the reviews come from.
+- **Note when there is nothing to show**: shown when no published review matches; empty hides the whole section.
+
+**Forms & leads:** n/a. **Social share:** n/a.
+
+**Other:** reviews are quoted word for word from where they were posted; copy a Google review exactly (see [Testimonials and reviews](#testimonials-and-reviews)). The case study cross-links section is a **Case study cards** block that shows a designed note while no study is published.
 
 ## 20. Legal template
 
-*Not built yet.*
+The legal pages (Privacy Policy, Terms, Cookie Policy, GDPR) are ordinary **Pages** with the web addresses `privacy`, `terms`, `cookies` and `gdpr`; see [Pages](#pages-site-pages). Each is a single **Rich content** block with its **Variant** set to **Legal document**, with a jump-link list ("On this page") beside the text on desktop. The seeded pages hold section headings only; **the real legal wording is not written yet** and must come from the policy generator or legal counsel. Never write policy terms yourself.
+
+**SEO: these four pages are hidden from search engines and stay hidden until real legal text replaces the placeholder.** They are set to **Hide from search engines** (right-hand sidebar) so a placeholder is never indexed. When the real text is in and approved: open the page → untick **Hide from search engines** → **Publish changes**. Browser-tab title, description and share image are in the page's **SEO tab**.
+
+**Editable by marketing**
+- Open **Admin → Collections → Pages → (Privacy Policy, Terms, Cookie Policy or GDPR) → Content tab → Sections → Rich content**, **Variant** = **Legal document (title, last-updated date, "On this page" links)**.
+- **Heading** (required for this layout): the document title, e.g. "Privacy Policy". It is the page's main heading, because these pages have no hero.
+- **Last updated** (date picker): shown under the title; leave empty to hide the line. **Date line text** (starts on "Last updated") and **Section links title** (starts on "On this page") are the two fixed phrases.
+- **Body** (required): paste the real text. Each **Heading 2** becomes a section and a link under "On this page", so keep section headings short. You can also use Heading 3/4, bold, italic, lists, quotes, links and dividers.
+- **Add / reorder / remove sections:** a section is just a Heading 2 and the text under it in the Body; move or delete them in the editor. There is no separate list.
+- **Create another legal page:** **Admin → Collections → Pages → Create New**, add a **Rich content** block and set **Variant** to **Legal document**.
+
+**Forms & leads:** n/a. **Social share:** page **SEO tab → Share image**.
+
+**Other:** record the date of each real update in **Last updated**.
 
 ## 21. 404
 
-*Not built yet.*
+The "page not found" screen. It is the **Page** with the web address `404` (reserved for this), which is shown automatically whenever a visitor opens an address that does not exist. It is set to **Hide from search engines**; leave that ticked.
+
+### 404 error state (Error404)
+
+**SEO:** the **Heading** is the page's main heading (the big "404" number is decoration and is hidden from screen readers). The screen is not meant to be indexed.
+
+**Editable by marketing**
+- Open **Admin → Collections → Pages → Page not found → Content tab → Sections → 404 error state**.
+- **Code**: the huge number (starts on "404"); leave empty to hide it.
+- **Heading** (required): the first sentence (starts on "This page leaked.").
+- **Body**: the sentence that follows on the same line.
+- **Buttons** (1 to 3): the first is the dark main button, the others are outlined. **Add:** **Add Button**, then the link text and destination (a page on the site or a custom address). **Reorder:** drag by the handle. **Remove:** the row's menu. They start as Book a Call, Home and Work.
+- **Publish changes** to make an edit live. If the 404 page does not exist at all, the site falls back to the standard wording listed above.
+
+**Forms & leads:** n/a. **Social share:** n/a.
+
+**Other:** do not delete the `404` page and do not change its web address.
 
 ---
 
@@ -946,7 +1181,7 @@ A **global** is a single settings screen that exists once for the whole site (un
 
 Facts the whole site shares: the company name in the footer, contact email, social profiles, location, booking link, Google rating and newsletter defaults. You change each one here once and every page that uses it updates.
 
-**Where:** **Admin → Globals → Site settings** (address `duhamedia.com/admin/globals/site-settings`). The screen has five **tabs** (the headings across the top of the form): **Brand & contact**, **Location**, **Booking**, **Reviews**, **Newsletter & closers**. Click **Save** at the bottom/top right when you are done.
+**Where:** **Admin → Globals → Site settings** (address `duhamedia.com/admin/globals/site-settings`). The screen has six **tabs** (the headings across the top of the form): **Brand & contact**, **Location**, **Booking**, **Reviews**, **Newsletter & closers**, **Template labels** (see [Template labels](#template-labels-case-study-pages-article-pages)). Click **Save** at the bottom/top right when you are done.
 
 **There is no draft stage here.** Unlike pages, a save is live straight away: **changes appear on the site right away**, with no Publish step and no developer needed. Check spelling and links before you click Save. Both Admins and Marketing can edit this screen.
 
@@ -1010,7 +1245,7 @@ How busy we are, kept in one place. The site uses these numbers in several spots
 
 **Where:** **Admin → Globals → Capacity & scarcity** (address `duhamedia.com/admin/globals/scarcity`). Click **Save** when done. Both Admins and Marketing can edit it.
 
-**There is no draft stage here.** A save is live straight away, with no Publish step and no developer needed. The page sections that display these numbers are still being built, so for now nothing on the public site shows them; what you save is ready for when they land.
+**There is no draft stage here.** A save is live straight away, with no Publish step and no developer needed. The numbers appear wherever a section picks a statement (see "Where each type is used" below); the Campaign LP offer, the Link-in-Bio slots line and the Review Hub capacity tile are covered under [15](#the-offer-offerblock), [17](#link-stack-link-in-bio) and [19](#review-wall-wall-layout). The statements carry their real reason lines.
 
 **SEO:** n/a. Nothing here is a search-result title or description.
 
@@ -1166,7 +1401,7 @@ Every **page**, **case study**, **article / newsletter issue (post)** and **lead
 
 **Where:** open the item (**Admin → Collections → Pages / Case studies / Posts / Lead magnets → (item)**) and click the **SEO** tab. It is the **last tab**. On Pages the page **Title** now sits in the first tab, called **Content**.
 
-**Not on the public site yet:** these settings are saved and ready, but the public page routes that print them arrive in a later release.
+**On the public site:** the page, case study, article and free-download routes read these settings and print them as the page's browser title, description and share-card tags.
 
 **SEO**
 - **Checklist:** at the top of the tab, a short checklist shows whether the title, description and image are filled in and a good length. It is guidance only.
@@ -1205,7 +1440,7 @@ There are two kinds, chosen with **Redirect type**:
 - **301 — Permanent.** "This page has moved for good." Use this almost every time (renamed page, merged pages, retired page).
 - **302 — Temporary.** "This page is away for now but will come back." Use it only for short-term cases, for example sending an address to a promotion for a few weeks.
 
-**Not live on the public site yet:** the part of the website that carries out redirects ships with the site's page routing, later. You can create, edit and delete redirects now and they are saved; they take effect once the site's pages go live.
+**When they take effect:** the site's page routing carries out redirects. When no published page, case study, article or free download exists at an address, the site looks the address up in the redirect list and forwards the visitor (a 301 is sent as a permanent redirect, a 302 as a temporary one). They apply on the live site once it is running on the server.
 
 **SEO**
 - Google ranks addresses, not pages. If you rename a page without a redirect, the old address stops working: visitors see the 404 ("page not found") page, and the ranking and incoming links the old address earned are lost.
@@ -1246,5 +1481,5 @@ Both Admins and Marketing can add, edit and delete redirects.
 **Other**
 - **A redirect never hides a live page.** If a published page already exists at the old address, visitors see that page, not the redirect. To send an existing page's visitors elsewhere, first unpublish or change the address of that page, then the redirect takes over.
 - **If the destination page is deleted**, the redirect stops working and visitors see the 404 page. Edit the redirect to point somewhere else, or delete it. A redirect to a page that is only unpublished waits quietly and resumes when the page is published again.
-- **Changes apply immediately** once you click Save; no rebuild or developer is needed (once the site's pages are live, as noted above).
+- **Changes apply immediately** once you click Save; no rebuild or developer is needed (on the live site, as noted above).
 - No redirects are pre-loaded: the old site's addresses are not carried over, so the list starts empty.
