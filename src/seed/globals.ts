@@ -59,7 +59,7 @@ export async function seedGlobals(ctx: SeedCtx, ids: LibraryIds) {
   )
 
   // SCHEMA §7.2 seed rows (F52, F120: slots-line uses {open}). Counts are the design's demonstrative
-  // values (Homepage/Link-in-Bio designs: 3 in progress, cap 7) — the human enters real counts.
+  // values were the design's; real counts + reasons confirmed by the human 2026-10-27 (3 active, each runs build + engine).
   await ensureGlobal(ctx, 'scarcity', () =>
     payload.updateGlobal({
       slug: 'scarcity',
@@ -70,19 +70,19 @@ export async function seedGlobals(ctx: SeedCtx, ids: LibraryIds) {
         enginesRunning: 3,
         statements: [
           { key: 'ongoing', statistic: '{active}', label: 'Projects ongoing', reason: 'Current load, shown transparently.' },
-          { key: 'capacity', statistic: '{capacity}', label: 'Max client capacity', reason: 'The cap is our quality gate, not a countdown.' },
+          { key: 'capacity', statistic: '{capacity}', label: 'Max client capacity', reason: 'Each build gets about 55 hands-on hours: design, build, revision. No templates.' },
           {
             key: 'builds-line',
             statistic: '{builds} builds in progress. We cap at {capacity}.',
-            reason: "The cap keeps every build senior-staffed — that's the whole reason.",
+            reason: 'Each build gets about 55 hands-on hours: design, build, revision. No templates.',
           },
           {
             key: 'engines-line',
             statistic: '{engines} engines running. We cap at {capacity}.',
-            reason: 'The same cap covers every engine, so each one keeps a senior operator.',
+            reason: 'Every client runs a build and an engine together, under the same cap.',
           },
-          { key: 'slots-line', statistic: 'Slots open {open}/{capacity}', reason: 'The cap is our quality gate, not a countdown.' },
-          { key: 'offer-line', statistic: '{active} of {capacity} slots filled', reason: 'Capacity is the quality gate, not a countdown.' },
+          { key: 'slots-line', statistic: 'Slots open {open}/{capacity}', reason: 'Each build gets about 55 hands-on hours: design, build, revision. No templates.' },
+          { key: 'offer-line', statistic: '{active} of {capacity} slots filled', reason: 'Each build gets about 55 hands-on hours: design, build, revision. No templates.' },
         ],
       },
       ...opts,
