@@ -1,7 +1,9 @@
 import sharp from 'sharp'
 
 /**
- * Seed assets, generated at run time (no binaries committed): simple
+ * Seed assets, generated at run time (no binaries committed, with ONE exception:
+ * src/seed/files/founder-avatar.jpg is committed because it is a human-supplied
+ * fact, the founder's real avatar, decided 2026-10-27): simple
  * brand-coloured PNGs rendered from SVG with `sharp` (already a dependency for
  * Payload's image sizes) and a placeholder CSV for the lead-magnet download.
  * Colours are the Tailwind theme tokens (src/app/(frontend)/styles.css @theme:
@@ -60,4 +62,11 @@ export const placeholderWorksheet = (): Upload => {
     'utf8',
   )
   return { data, mimetype: 'text/csv', name: 'seed-placeholder-worksheet.csv', size: data.length }
+}
+
+/** The founder's real avatar (committed, optimised JPEG; see header). */
+export const founderAvatar = async (): Promise<Upload> => {
+  const { readFile } = await import('node:fs/promises')
+  const data = await readFile(new URL('./files/founder-avatar.jpg', import.meta.url))
+  return { data, mimetype: 'image/jpeg', name: 'founder-avatar.jpg', size: data.length }
 }

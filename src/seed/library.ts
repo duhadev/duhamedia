@@ -2,7 +2,7 @@ import type { RequiredDataFromCollectionSlug } from 'payload'
 
 import { h, p, quote, root, ul } from '@/showcase/lexical'
 
-import { ogImage, placeholderImage, placeholderWorksheet } from './assets'
+import { founderAvatar, ogImage, placeholderImage, placeholderWorksheet } from './assets'
 import { SEED_CONTEXT, ensure, link, ph, phSub, type SeedCtx } from './lib'
 
 /**
@@ -230,10 +230,19 @@ export async function seedLibrary(ctx: SeedCtx) {
   /* ---------------- team member (SCHEMA §6.6: real name; bio stays a placeholder until he writes it) ---------------- */
 
   const FOUNDER = 'Abdur-Rahman Ch'
+  const AVATAR_ALT = "Founder's avatar: a low-poly desert river at sunset"
+  const avatar = await ensure(ctx, 'media', AVATAR_ALT, { alt: { equals: AVATAR_ALT } }, async () =>
+    payload.create({
+      collection: 'media',
+      data: { alt: AVATAR_ALT, focalX: 72, focalY: 30 },
+      file: await founderAvatar(),
+      ...opts,
+    }),
+  )
   const founder = await ensure(ctx, 'team-members', FOUNDER, { name: { equals: FOUNDER } }, () =>
     payload.create({
       collection: 'team-members',
-      data: { name: FOUNDER, role: 'Founder', bio: '[One-sentence bio, founder-authored — final copy TBD]', _status: 'published' },
+      data: { name: FOUNDER, role: 'Founder', photo: avatar, bio: '[One-sentence bio, founder-authored — final copy TBD]', _status: 'published' },
       ...opts,
     }),
   )
