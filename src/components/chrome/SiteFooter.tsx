@@ -78,7 +78,7 @@ export async function SiteFooter({ variant = 'standard' }: { variant?: FooterVar
 function ReducedZone({ links }: { links: NavItem[] }) {
   return (
     <div className={cx(EDGE, 'flex flex-col gap-4 py-6.5 md:flex-row md:items-center md:justify-between md:gap-6 md:py-10')}>
-      <SiteLogo size="footer" />
+      <SiteLogo size="footer" onDark />
       {links.length > 0 ? (
         <nav aria-label="Footer" className="flex flex-wrap gap-x-4.5 text-[15px] md:gap-x-6 md:text-small">
           {links.map((item) => (
@@ -115,7 +115,7 @@ async function StandardZones({
     >
       {/* Brand */}
       <div className="flex flex-col gap-3.5 text-small md:gap-2.5">
-        <SiteLogo size="footer" />
+        <SiteLogo size="footer" onDark />
         {tagline ? <span className="hidden max-w-[28ch] opacity-75 md:block">{tagline}</span> : null}
       </div>
 

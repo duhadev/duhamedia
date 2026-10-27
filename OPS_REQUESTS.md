@@ -61,7 +61,7 @@ Requests from the duhamedia.com build to the server agent, relayed by the human.
 - `MEDIA_DIR` — absolute path of the media directory in the container.
 - `SITE_URL` — canonical origin (replaces the old `NEXT_PUBLIC_SITE_URL`; read at runtime, never inlined at build).
 
-## #8 — Form notification fallback address · 2026-10-21 · Open
+## #8 — Form notification fallback address · 2026-10-21 · Open (address re-confirmed by human 2026-10-27)
 - **Need:** set env `FORMS_DEFAULT_TO_EMAIL=hello@duhamedia.com` in the staging and production `.env` files (not a secret).
 - **Why:** form-builder sends each new-submission notice to the form's own "Email to"; when a form has none, it falls back to this variable, and without it to the from-address (`no-reply@…`), which nobody reads. Human decision F16 (2026-10-21).
 - **Done when:** both env files carry the variable and the containers were restarted to pick it up.

@@ -4,13 +4,14 @@ import React from 'react'
 
 import { cx } from '@/lib/cx'
 
+import { LOGO_MASK } from '@/blocks/Hero/logoMask'
+
 import { HIT_AREA } from './hit'
 
 /**
  * Logo mark + "DUHA MEDIA" wordmark (SiteHeader / SiteFooter / LP header).
  * `size` = the design's per-context sizes: header 28/34 (mobile/desktop),
- * footer 28/30, LP 30. The mark is `public/logo-duha.png` (design asset
- * `logo-duha-01.png`); served unoptimised because next.config `localPatterns`
+ * footer 28/30, LP 30. The mark is `public/logo-duha.png` (single-colour wine, brand-mark swap 2026-10-27); served unoptimised because next.config `localPatterns`
  * only whitelists `/api/media/file/**`.
  * `href` null → not a link (logo-only header: zero leakage; footer brand).
  * The mark's alt is always empty (the wordmark text already names the brand), so
@@ -27,24 +28,24 @@ export function SiteLogo({
   href = null,
   label,
   className,
+  onDark = false,
 }: {
   size: keyof typeof SIZES
   href?: string | null
   /** Accessible name of the link (site name + "home"). Only used when `href` is set. */
   label?: string
   className?: string
+  /** Dark ground (footer): render the mark in cream (solid wine is only ~2.7:1 on ink). */
+  onDark?: boolean
 }) {
   const s = SIZES[size]
   const inner = (
     <>
-      <Image
-        src="/logo-duha.png"
-        alt=""
-        width={s.px[1]}
-        height={s.px[1]}
-        unoptimized
-        className={s.img}
-      />
+      {onDark ? (
+        <span aria-hidden="true" style={LOGO_MASK} className={cx('inline-block shrink-0 bg-cream', s.img)} />
+      ) : (
+        <Image src="/logo-duha.png" alt="" width={s.px[1]} height={s.px[1]} unoptimized className={s.img} />
+      )}
       <span className={cx('font-display font-normal tracking-headline', s.text)}>DUHA MEDIA</span>
     </>
   )
