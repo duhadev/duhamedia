@@ -329,6 +329,7 @@ Decisions deferred to the human; each has a safe default applied so work continu
 | 2026-10-27 | Form notification recipient = hello@duhamedia.com (re-confirms F16; via env `FORMS_DEFAULT_TO_EMAIL`, OPS #8) | Human 2026-10-27 |
 | 2026-10-27 | Brand mark = single-colour wine (#C20E59) four-band disc (human file logo-silhouette.svg), replacing the design's four-colour mark EVERYWHERE (chrome, tab icon, all blocks, Google org logo). Overrides /design-reference/ by human order | Human 2026-10-27 "logo for the whole site" → "Everywhere". Rework dispatched |
 | 2026-10-27 | Socials: Instagram @duhamediaofficial (human corrected spelling), LinkedIn company/duha-media, X @duhamedia_. Facebook = page name "Duha Media" (no username; handle validator now accepts a page name for facebook, no migration) | Human 2026-10-27. Seed + dev DB |
+| 2026-10-27 | Contact map stays STATIC (image + Directions link to GBP); live Google Maps iframe rejected (tracking cookies, weight) | Human 2026-10-27 |
 
 ## Session handoff
 - **Last session ended:** 2026-10-27 — /clear point. All autonomous work done; waiting on the human + server agent. Detailed log of 2026-10-22→27 archived in `.claude/handoff/session-log-2026-10-22-to-27.md` (per-unit results, F-flags, seed notes).
