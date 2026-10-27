@@ -332,7 +332,7 @@ Decisions deferred to the human; each has a safe default applied so work continu
 
 ## Session handoff
 - **Last session ended:** 2026-10-27 — /clear point. All autonomous work done; waiting on the human + server agent. Detailed log of 2026-10-22→27 archived in `.claude/handoff/session-log-2026-10-22-to-27.md` (per-unit results, F-flags, seed notes).
-- **State:** Phases 3 (all 23 blocks + templates), integrations A1–A4 (local Gate A), seed script, page-scope SEO and Phase 4 page QA on dev are DONE. All flags F36–F200 decided (2026-10-25 "accept defaults"). Gate S delta approved 2026-10-25 (SCHEMA.md "Delta S5" binding). Pushed to main; CI green on 6a79567 (`ghcr.io/duhadev/duhamedia:sha-6a79567` / `:main`).
+- **State:** Phases 3 (all 23 blocks + templates), integrations A1–A4 (local Gate A), seed script, page-scope SEO and Phase 4 page QA on dev are DONE; S6 documented 2026-10-27; marketing.md covers all 21 pages. Facts done 2026-10-27: postal address, scarcity, notify recipient, logo (wine mark site-wide), socials, GBP. CI green on 9aa0aab (`:main`).
 - **Next up (needs the human):**
   1. ~~S6 admin pass~~ DONE 2026-10-27 (2 admin fixes, re-verified, 0edb73e); S6 marketing-docs DONE + docs sweep + pages 1/3–6 docs filled (04b78d5+). S6 units `documented`. Page 4 seeded order = approved Gate S delta (SCHEMA §9 p4), not a deviation.
   2. Facts: ~~postal address~~ DONE 2026-10-27; real copy for every `[bracketed]` placeholder (Gate 3 blocks them, F61); counsel legal text (then clear `noindex` on privacy/terms/cookies/gdpr, F190); org logo + socials + GBP URL (F193); founder photo.
