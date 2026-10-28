@@ -141,7 +141,7 @@ Requests from the duhamedia.com build to the server agent, relayed by the human.
 - **After upgrading, PM does:** restore per-minute crons in `vercel.json` (`* * * * *` per queue `events` / `newsletter`), keep the `after()` immediate run, redeploy, update DECISIONS §R + docs/dev.md.
 - **Done when:** team plan shows Pro (`vercel api /v2/teams/<teamId>` → `billing.plan: pro`) and the per-minute crons deploy.
 
-## #19 — Previews show production data (Neon branching) · 2026-10-28 · Open (after go-live)
+## #19 — Previews show production data (Neon branching) · 2026-10-28 · Deferred (human, 2026-10-28: keep the separate preview DB for now)
 - **Now:** two separate Neon databases (production; preview) with their own credentials. Previews are NOT synced with production; the preview DB is seeded on its own.
 - **Human wants:** Previews to mirror production read-only. Plan: replace the separate preview DB with **Neon preview branching** off the production DB (copy-on-write snapshot per Preview; Preview writes never reach production). A truly read-only live connection is rejected: Preview builds run `payload migrate`.
 - **Steps (after production is live and has content):** disconnect the preview Neon DB from the project; on the production Neon integration enable "Create database branch for each Preview deployment" (Preview only); PM verifies on one Preview that the branch `DATABASE_URL` / `DATABASE_URL_UNPOOLED` are present at BUILD time, and whether branches can reset from production on each deploy.

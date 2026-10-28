@@ -4,7 +4,7 @@
 **Phase:** 3 complete + Phase 4 dev seed done; **hosting migrated to Vercel + Neon + Blob in code (2026-10-28)**, waiting on Vercel/Neon/Blob dashboard setup (OPS #16) + secretary hostname (OPS #17). Gate S delta approved 2026-10-25
 **Local dev:** `docker compose up -d` (Postgres 127.0.0.1:5433) + `pnpm dev` → http://localhost:3000, admin at /admin (test admin `test+gate@duhamedia.com`, creds in local `.env` `DEV_ADMIN_*`)
 **Installed versions:** payload@3.91.0 (all @payloadcms/* 3.91.0 lockstep, incl. storage-vercel-blob), next@16.3.8, react 19.2.6, pnpm 11.28.3, Vercel Node 24.x
-**Staging:** Vercel Preview of `main` (not set up yet, OPS #16). Docker/GHCR pipeline retired 2026-10-28
+**Staging:** Vercel Preview of `main` — first green build `9d19fd9` 2026-10-28 (unseeded). Docker/GHCR pipeline retired 2026-10-28
 **Production:** duhamedia.com DOWN (500) since ~2026-10-17 — Vercel auto-deployed the DB-less Payload build; old-site deployment is inactive. Fix = OPS #16 then first production deploy
 **Last session ended:** 2026-10-27 — /clear point; see Session handoff
 
@@ -341,6 +341,7 @@ Decisions deferred to the human; each has a safe default applied so work continu
 | 2026-10-28 | First Preview build (2f147c2) rejected by Vercel before build: team `duhadevs-projects` is on **Hobby**, which refuses `* * * * *` crons. Waiting on human Pro upgrade; then redeploy same commit via CLI. Vercel CLI 65.5.0 (`~/.local/bin`) logged in as duhadev; Vercel plugin + MCP installed (MCP needs team-scope approval). | Found via `vercel api /v13/deployments`. |
 | 2026-10-28 | Run on Vercel **Hobby** until Pro (human). Daily cron + immediate `after()` job run. **Pro upgrade required before go-live** (Hobby = non-commercial licence; retries wait up to a day) — OPS #18; PM reminds at Gate 3 and on any release order. | Human: "run on hobby until then". |
 | 2026-10-28 | Hobby job model landed (fa8ea81): every queued job runs ~1 s after its response via `after()` (`runJobAfterResponse`, Vercel only); one daily cron `allQueues=true&limit=50` at 09:00 UTC. **Trade-off on Hobby:** retries 2–6 run at the next daily cron, so an outage ends `failed` after ~5 days instead of ~15 h. Pro restores the schedule by re-adding per-minute crons (OPS #18). | Accepted as part of "run on hobby until then". |
+| 2026-10-28 | Human: stay on **Hobby** with the after()+daily-cron workaround for now (Pro benefits reviewed, declined for now; reminder stands, OPS #18). Keep the **separate preview Neon DB**; Neon branching (OPS #19) deferred. First Preview `9d19fd9` green: all migrations ran, `/api/health` `/` `/admin` 200. | Human decision. |
 
 ## Session handoff
 - **Last session ended:** 2026-10-28 — Vercel migration done in code; nothing pushed yet (push to `main` deploys PRODUCTION until the Vercel production branch is switched to `production`).
