@@ -78,6 +78,7 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 ## Migrations log
 | Date | Migration file | What it changes | Applied in dev / staging / prod |
 |---|---|---|---|
+| 2026-10-28 | `src/migrations/20261028_190000_seed_placeholder_content.ts` | data only, no SQL: one-time create-only placeholder seed, images off (57 created, 6 omitted) | no / Preview 7ffe13e (57 created) / pending release |
 | 2026-10-28 | `src/migrations/20261028_121301_vercel_blob_fields.ts` | additive: `prefix` (default media/downloads) + `_objectkey` varchar on `media` and `downloads` (storage-vercel-blob `alwaysInsertFields`) | dev via push / no / no |
 | 2026-10-22 | `src/migrations/20261022_014336_s3_friendly_errors.ts` | **no-op (expand step)**: autosave off would drop `autosave` col+index on 8 `_v` tables; kept for deploy overlap. **Contract migration owed later** (F31) | scratch proofs; dev push dropped cols / no / no |
 | 2026-10-22 | `src/migrations/20261022_001520_p3_seo.ts` | nullable meta_title, meta_description, meta_image_id (FK media set null, indexed) on pages, case_studies, posts, lead_magnets + `_v` (version_meta_*) | scratch proofs; dev via push / no / no |
@@ -344,6 +345,7 @@ Decisions deferred to the human; each has a safe default applied so work continu
 | 2026-10-28 | Human: stay on **Hobby** with the after()+daily-cron workaround for now (Pro benefits reviewed, declined for now; reminder stands, OPS #18). Keep the **separate preview Neon DB**; Neon branching (OPS #19) deferred. First Preview `9d19fd9` green: all migrations ran, `/api/health` `/` `/admin` 200. | Human decision. |
 | 2026-10-28 | Both Vercel Blob stores are **private**; adapter 3.91.0 is public-only, so uploads fail. Human chose a text-only initial seed (seed-remote.sh without Blob token); public stores later (OPS #20). `ship it` push of `production` + tag v1.0.0 blocked by the permission guard — human runs it. Staging domain `staging.duhamedia.com` attached to branch `main` (DNS CNAME pending, human). | Seed dry run error relayed by human. |
 | 2026-10-28 | **Seed via one-time data migration** (human: "do it via code"). The seed core runs inside `payload migrate` (Vercel build), once per DB, create-only, images skipped while Blob stores are private (OPS #20). Overrides CLAUDE.md "seed never runs on deploy" for this one-time initial seed. Laptop script stays for re-seeding. | Human decision; replaces laptop/text-only seed path. |
+| 2026-10-28 | Seed migration written by human (PM write was blocked by the permission guard), pushed 7ffe13e. Preview build ran it: 57 created, 6 omitted; all checked routes 200, health 200, unknown 404. Ready for release on human's push of `production` + v1.0.0. | Human ran the provided block. |
 
 ## Session handoff
 - **Last session ended:** 2026-10-28 — Vercel migration done in code; nothing pushed yet (push to `main` deploys PRODUCTION until the Vercel production branch is switched to `production`).
