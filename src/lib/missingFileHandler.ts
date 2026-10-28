@@ -1,6 +1,6 @@
 import fsPromises from 'fs/promises'
 import path from 'path'
-import type { CollectionConfig, PayloadRequest } from 'payload'
+import type { CollectionConfig, CollectionSlug, PayloadRequest } from 'payload'
 import { headersWithCors } from 'payload'
 
 /**
@@ -36,6 +36,11 @@ const respondIfMissing = async (
 ): Promise<Response | undefined> => {
   const method = (req.method ?? 'GET').toUpperCase()
   if (method !== 'GET' && method !== 'HEAD') return undefined
+  // Cloud storage (Vercel Blob, src/plugins/storage.ts) sets `disableLocalStorage`
+  // and appends its own handler AFTER this one (plugin-cloud-storage@3.91.0
+  // plugin.js); nothing is on disk then, so never answer 404 from here.
+  const upload = req.payload.collections[params.collection as CollectionSlug]?.config.upload
+  if (typeof upload === 'object' && upload.disableLocalStorage) return undefined
   const filename = params.filename
   if (typeof filename !== 'string' || !filename) return undefined
 
@@ -57,7 +62,7 @@ const respondIfMissing = async (
   }
 }
 
-/** `upload.handlers` entry for a local-disk collection whose files live in `staticDir`. */
+/** `upload.handlers` entry for a local-disk collection whose files live in `staticDir` (inert under cloud storage). */
 export const missingFileHandler =
   (staticDir: string): UploadHandler =>
   (req, { params }) =>

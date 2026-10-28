@@ -21,8 +21,10 @@ import { Navigation } from './globals/Navigation'
 import { Scarcity } from './globals/Scarcity'
 import { SeoDefaults } from './globals/SeoDefaults'
 import { SiteSettings } from './globals/SiteSettings'
-import { migrations } from './migrations'
 import { isAdmin, staffOnly } from './access'
+import { isCronRequest } from './lib/cronAuth'
+import { databaseUrl } from './lib/databaseUrl'
+import { getAppEnv } from './lib/siteUrl'
 import { EVENTS_QUEUE, deliverSiteEventTask } from './integrations/events/deliveryTask'
 import { sendLeadMagnetAssetTask } from './integrations/leadMagnet/tasks'
 import {
@@ -35,11 +37,14 @@ import { deliverSiteErrorTask } from './integrations/siteError/task'
 import { formBuilder } from './plugins/formBuilder'
 import { redirects } from './plugins/redirects'
 import { seo } from './plugins/seo'
+import { storage } from './plugins/storage'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-// All config comes from env at RUNTIME (one image for staging + production).
+// All config comes from env at RUNTIME (Vercel Production / Preview, and local dev).
+const onVercel = Boolean(process.env.VERCEL)
+
 export default buildConfig({
   admin: {
     user: Users.slug,
@@ -55,13 +60,22 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
+  // Neon (Vercel) or local docker-compose Postgres, through node-postgres
+  // (src/lib/databaseUrl.ts: pooled at runtime, direct for `payload migrate`/seed).
+  // Migrations are NOT run on boot any more (no `prodMigrations`): the Vercel
+  // build runs `payload migrate` before `next build` (package.json `vercel-build`),
+  // so a failed migration fails the deploy and the old deployment keeps serving.
   db: postgresAdapter({
     pool: {
-      connectionString: process.env.DATABASE_URI || '',
+      connectionString: databaseUrl(),
+      // Fluid compute shares one pool per instance; PgBouncer (Neon `-pooler`) does
+      // the real pooling, so keep few, short-lived client connections
+      // (https://vercel.com/kb/guide/connection-pooling-with-functions: short idle timeout).
+      ...(onVercel ? { max: 5, idleTimeoutMillis: 5_000 } : {}),
     },
-    // Run pending committed migrations during Payload init when NODE_ENV=production
-    // (DECISIONS.md §E). Dev uses Drizzle push against the local DB only.
-    prodMigrations: migrations,
+    // Drizzle dev push ONLY against a development database, never when a laptop
+    // has a pulled Vercel env (APP_ENV staging/production) loaded.
+    push: getAppEnv() === 'development' && !onVercel,
   }),
   // Resend only when a key is configured; otherwise Payload's default
   // console transport (logs emails, never crashes).
@@ -80,10 +94,15 @@ export default buildConfig({
     // Built-in constraints only (Only me / Everyone / Specific users).
     constraints: {},
   },
-  // Jobs queue, in-process (DECISIONS §J; payload@3.91.0 queues/config/types/index.d.ts).
-  // The cron starts on the first getPayload({ cron: true }) (any /api/* or admin
-  // request, and /api/health, which the deploy script polls on start).
-  // Never during `next build` (payload index.js `_initializeCrons`: !isNextBuild()).
+  // Jobs queue (DECISIONS §J; payload@3.91.0 queues/config/types/index.d.ts).
+  // - Vercel: no in-process cron (autoRun "should not be used on serverless
+  //   platforms like Vercel", same file). Vercel Cron calls GET
+  //   /api/payload-jobs/run?queue=<q>&limit=10 every minute per queue (vercel.json),
+  //   authorised by `Authorization: Bearer $CRON_SECRET` (access.run below).
+  //   Vercel Cron runs on Production deployments only, and every-minute
+  //   schedules need a paid plan (Hobby = once a day).
+  // - Local dev: in-process autoRun as before, started by the first
+  //   getPayload({ cron: true }) (never during `next build`: index.js `!isNextBuild()`).
   jobs: {
     tasks: [
       deliverSiteEventTask,
@@ -93,17 +112,20 @@ export default buildConfig({
       // A4: site_error events (job-only; queue `events`).
       deliverSiteErrorTask,
     ],
-    autoRun: [
-      { cron: '* * * * *', queue: EVENTS_QUEUE, limit: 10 },
-      // A2: double opt-in email + Resend contact sync; A3: lead-magnet asset email (all Resend-bound;
-      // Resend limit 10 req/s; ≤ 10 jobs/min).
-      { cron: '* * * * *', queue: NEWSLETTER_QUEUE, limit: 10 },
-    ],
+    autoRun: onVercel
+      ? undefined
+      : [
+          { cron: '* * * * *', queue: EVENTS_QUEUE, limit: 10 },
+          // A2: double opt-in email + Resend contact sync; A3: lead-magnet asset email (all Resend-bound;
+          // Resend limit 10 req/s; ≤ 10 jobs/min).
+          { cron: '* * * * *', queue: NEWSLETTER_QUEUE, limit: 10 },
+        ],
     // Payload's default is "any logged-in user" (incl. the pipeline) for
     // GET /api/payload-jobs/run etc. Our own code uses the Local API (overrideAccess).
+    // `run` also accepts the Vercel Cron bearer (src/lib/cronAuth.ts).
     access: {
       queue: ({ req }) => isAdmin(req.user),
-      run: ({ req }) => isAdmin(req.user),
+      run: ({ req }) => isAdmin(req.user) || isCronRequest(req.headers),
       cancel: ({ req }) => isAdmin(req.user),
     },
   },
@@ -118,5 +140,6 @@ export default buildConfig({
   sharp,
   telemetry: false,
   // seo is order-independent (touches only pages/case-studies/posts/lead-magnets).
-  plugins: [formBuilder, redirects, seo],
+  // storage (Vercel Blob for media + downloads, local disk without a token) last.
+  plugins: [formBuilder, redirects, seo, storage],
 })

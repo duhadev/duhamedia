@@ -28,6 +28,7 @@ import * as migration_20261023_204052_a1_event_delivery from './20261023_204052_
 import * as migration_20261024_030205_a2_newsletter from './20261024_030205_a2_newsletter';
 import * as migration_20261024_034121_a3_lead_magnet from './20261024_034121_a3_lead_magnet';
 import * as migration_20261024_165445_a4_site_error from './20261024_165445_a4_site_error';
+import * as migration_20261028_121301_vercel_blob_fields from './20261028_121301_vercel_blob_fields';
 
 export const migrations = [
   {
@@ -178,6 +179,11 @@ export const migrations = [
   {
     up: migration_20261024_165445_a4_site_error.up,
     down: migration_20261024_165445_a4_site_error.down,
-    name: '20261024_165445_a4_site_error'
+    name: '20261024_165445_a4_site_error',
+  },
+  {
+    up: migration_20261028_121301_vercel_blob_fields.up,
+    down: migration_20261028_121301_vercel_blob_fields.down,
+    name: '20261028_121301_vercel_blob_fields'
   },
 ];

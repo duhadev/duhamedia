@@ -1,10 +1,8 @@
 import { createHash } from 'node:crypto'
-import { readFile, stat } from 'node:fs/promises'
-import path from 'node:path'
 
 import type { PayloadRequest } from 'payload'
 
-import { DOWNLOADS_STATIC_DIR } from '../../collections/Downloads'
+import { readUpload } from '../../lib/readUpload'
 import { getAppEnv } from '../../lib/siteUrl'
 import type { Download, LeadMagnet } from '../../payload-types'
 
@@ -14,7 +12,8 @@ import type { Download, LeadMagnet } from '../../payload-types'
  * its staff-only `asset` (mini Gate S 2026-10-18 / 2026-10-21):
  *
  * - `asset.file` (→ `downloads`, staff-only read, no public URL): the file is
- *   read from disk HERE, server-side, and sent as an email ATTACHMENT
+ *   read HERE, server-side (local disk in dev, Vercel Blob when configured:
+ *   src/lib/readUpload.ts), and sent as an email ATTACHMENT
  *   (base64 `content`). Its URL is never put in the email or anywhere public.
  * - `asset.externalUrl`: linked in the email body.
  *
@@ -38,9 +37,10 @@ import type { Download, LeadMagnet } from '../../payload-types'
  * (Outlook ≈ 20 MB, Gmail 25 MB), and it bounds memory in a ≤ 0.5 GB container.
  * Bigger → `failed` (not retried) with a note telling staff what to do.
  *
- * Memory: Payload autoRun runs a batch of jobs in parallel
+ * Memory: a jobs run (autoRun in dev, the Vercel Cron call to
+ * /api/payload-jobs/run in the cloud) runs a batch in parallel
  * (payload@3.91.0 queues/operations/runJobs/index.js: `Promise.all` unless
- * `sequential`, which autoRun cannot set), so attachment sends are serialised
+ * `sequential`), so attachment sends are serialised
  * in-process by `serial()`: at most one file buffer + its base64 + the JSON
  * body are held at once.
  *
@@ -233,27 +233,18 @@ export async function deliverAsset(
   const label = file.title?.trim() || doc.title
 
   return serial(async (): Promise<AssetEmailOutcome> => {
-    // Never trust a stored name as a path: basename only, and it must stay inside the downloads dir.
-    const dir = path.resolve(DOWNLOADS_STATIC_DIR)
-    const full = path.join(dir, path.basename(filename))
-    if (path.dirname(full) !== dir || path.basename(filename) !== filename) {
-      return { kind: 'final', reason: 'invalid stored filename; not retried' }
-    }
-    let bytes: Buffer
-    try {
-      const st = await stat(full)
-      if (st.size > MAX_ATTACHMENT_BYTES) {
-        return {
-          kind: 'final',
-          reason: `the file is ${mb(st.size)}; attachments are limited to ${mb(MAX_ATTACHMENT_BYTES)}. Upload a smaller file or use a link, then re-send`,
-        }
+    // Disk in dev, Vercel Blob when configured (src/lib/readUpload.ts); size-capped before buffering.
+    const read = await readUpload(req, 'downloads', file, MAX_ATTACHMENT_BYTES)
+    if (read.kind === 'invalid-name') return { kind: 'final', reason: 'invalid stored filename; not retried' }
+    if (read.kind === 'too-big') {
+      return {
+        kind: 'final',
+        reason: `the file is ${mb(read.size)}; attachments are limited to ${mb(MAX_ATTACHMENT_BYTES)}. Upload a smaller file or use a link, then re-send`,
       }
-      bytes = await readFile(full)
-    } catch (error) {
-      const code = (error as { code?: string })?.code
-      if (code === 'ENOENT') return { kind: 'final', reason: 'the file is missing on disk; re-upload it in Downloads, then re-send' }
-      return { kind: 'retry', reason: `file read error ${code ?? (error as Error)?.name ?? ''}`.trim() }
     }
+    if (read.kind === 'missing') return { kind: 'final', reason: 'the file is missing from storage; re-upload it in Downloads, then re-send' }
+    if (read.kind === 'error') return { kind: 'retry', reason: read.reason }
+    const bytes = read.bytes
 
     const content = buildAssetEmail({ subject, intro }, { kind: 'file', label, filename })
     const hash = createHash('sha256').update(bytes).digest('hex').slice(0, 16)

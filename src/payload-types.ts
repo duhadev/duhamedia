@@ -879,6 +879,8 @@ export interface Media {
    * Optional default caption when this image is used as a figure in an article.
    */
   caption?: string | null;
+  prefix?: string | null;
+  _objectKey?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -1607,6 +1609,8 @@ export interface Download {
    * Shown in the admin. Used as the attachment name/label in the delivery email (no longer link text).
    */
   title: string;
+  prefix?: string | null;
+  _objectKey?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -5307,6 +5311,8 @@ export interface SeoMetaSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   caption?: T;
+  prefix?: T;
+  _objectKey?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -5379,6 +5385,8 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface DownloadsSelect<T extends boolean = true> {
   title?: T;
+  prefix?: T;
+  _objectKey?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;

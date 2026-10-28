@@ -41,6 +41,7 @@ import { ScarcityRowLabel as ScarcityRowLabel_35d13a473df2c08662ceec0d42c3b278 }
 import { NavLinkRowLabel as NavLinkRowLabel_4df5bd70e145115dc037f3c88cff1519 } from '../../../components/admin/NavRowLabels'
 import { FooterColumnRowLabel as FooterColumnRowLabel_4df5bd70e145115dc037f3c88cff1519 } from '../../../components/admin/NavRowLabels'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
+import { VercelBlobClientUploadHandler as VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e } from '@payloadcms/storage-vercel-blob/client'
 
 /** @type import('payload').ImportMap */
 export const importMap = {
@@ -86,5 +87,6 @@ export const importMap = {
   "/components/admin/ScarcityRowLabel#ScarcityRowLabel": ScarcityRowLabel_35d13a473df2c08662ceec0d42c3b278,
   "/components/admin/NavRowLabels#NavLinkRowLabel": NavLinkRowLabel_4df5bd70e145115dc037f3c88cff1519,
   "/components/admin/NavRowLabels#FooterColumnRowLabel": FooterColumnRowLabel_4df5bd70e145115dc037f3c88cff1519,
-  "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
+  "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1,
+  "@payloadcms/storage-vercel-blob/client#VercelBlobClientUploadHandler": VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e
 }

@@ -1,5 +1,7 @@
 import { randomUUID } from 'node:crypto'
 
+import { ownOrigins } from '../lib/siteUrl'
+
 /**
  * Cloudflare Turnstile server-side verification (DECISIONS.md §L, CLAUDE.md
  * lead flow step 1). Runs BEFORE anything is stored.
@@ -67,14 +69,12 @@ export const getTurnstileSiteKey = (): string | null => {
   return appEnv() === 'development' ? TURNSTILE_TEST_SITE_KEY : null
 }
 
-/** Host part of SITE_URL, for the hostname check outside development. */
-const expectedHostname = (): string | null => {
-  try {
-    return process.env.SITE_URL ? new URL(process.env.SITE_URL).hostname : null
-  } catch {
-    return null
-  }
-}
+/**
+ * Hostnames of SITE_URL (plus, on Vercel Preview only, the branch/deployment
+ * hosts: src/lib/siteUrl.ts `ownOrigins`), for the hostname check outside
+ * development. Empty = no expectation configured (check skipped, as before).
+ */
+const expectedHostnames = (): Set<string> => new Set(ownOrigins().map((o) => new URL(o).hostname))
 
 const fail = (codes: string[]): TurnstileResult => {
   console.error(`[turnstile] verification failed: ${codes.join(', ') || 'unknown'}`)
@@ -124,8 +124,8 @@ export async function verifyTurnstile(token: unknown, remoteIp?: string | null):
   // Cloudflare recommends checking the hostname. Test keys report a dummy
   // hostname, so development skips it.
   if (appEnv() !== 'development') {
-    const expected = expectedHostname()
-    if (expected && typeof reply.hostname === 'string' && reply.hostname !== expected) {
+    const expected = expectedHostnames()
+    if (expected.size > 0 && typeof reply.hostname === 'string' && !expected.has(reply.hostname)) {
       return fail(['hostname-mismatch'])
     }
   }

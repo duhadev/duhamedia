@@ -19,8 +19,8 @@ export function getAppEnv(): AppEnv {
 /** Only `next dev` / local work may run without a SITE_URL. */
 const DEV_FALLBACK = 'http://localhost:3000'
 
-/** The http(s) origin of `SITE_URL` (no path, no trailing slash), or '' when unset/invalid. */
-export const siteOrigin = (): string => {
+/** The http(s) origin of `SITE_URL` alone (no path, no trailing slash), or '' when unset/invalid. */
+const configuredOrigin = (): string => {
   const raw = (process.env.SITE_URL ?? '').trim()
   if (!raw) return ''
   try {
@@ -32,9 +32,40 @@ export const siteOrigin = (): string => {
 }
 
 /**
+ * Vercel PREVIEW deployments only: the deployment's own https origins, branch
+ * URL first (stable per git branch), then the per-deployment URL. Read from
+ * Vercel's system env vars (VERCEL_ENV / VERCEL_BRANCH_URL / VERCEL_URL, both
+ * hosts without scheme, available at build and runtime:
+ * https://vercel.com/docs/environment-variables/system-environment-variables).
+ * Always [] on Vercel Production, off Vercel, and whenever APP_ENV=production,
+ * so production can never fall back to a *.vercel.app origin.
+ */
+export const vercelPreviewOrigins = (): string[] => {
+  if (process.env.VERCEL_ENV !== 'preview' || process.env.APP_ENV === 'production') return []
+  const hosts = [process.env.VERCEL_BRANCH_URL, process.env.VERCEL_URL]
+    .map((h) => (h ?? '').trim())
+    .filter((h) => h && /^[a-z0-9.-]+$/i.test(h))
+  return [...new Set(hosts.map((h) => `https://${h}`))]
+}
+
+/**
+ * The http(s) origin of `SITE_URL` (no path, no trailing slash); on a Vercel
+ * Preview deployment with no SITE_URL, the branch/deployment origin; else ''.
+ */
+export const siteOrigin = (): string => configuredOrigin() || vercelPreviewOrigins()[0] || ''
+
+/**
+ * Every origin that means "this site" for same-origin / Turnstile hostname
+ * checks: SITE_URL plus, on Vercel Preview only, the branch and deployment
+ * origins (a visitor may open either).
+ */
+export const ownOrigins = (): string[] => [...new Set([configuredOrigin(), ...vercelPreviewOrigins()].filter(Boolean))]
+
+/**
  * The canonical site origin for absolute URLs (canonicals, sitemap, robots,
- * JSON-LD, Open Graph). Falls back to localhost ONLY when APP_ENV is
- * development; on staging/production an unset or invalid SITE_URL throws, so a
+ * JSON-LD, Open Graph). Falls back to the Vercel Preview origin on Preview
+ * deployments (see `vercelPreviewOrigins`) and to localhost ONLY when APP_ENV
+ * is development; otherwise an unset or invalid SITE_URL throws, so a
  * misconfigured container fails loudly (and /api/health reports 503) instead
  * of publishing localhost canonicals.
  */

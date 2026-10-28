@@ -13,6 +13,7 @@ import { staffOnly } from '../access'
 import { LINK_TARGETS } from '../fields'
 import { revalidateLiveCollectionHooks } from '../hooks/revalidateTag'
 import { docPath, type RoutableDoc } from '../lib/docPath'
+import { ownOrigins } from '../lib/siteUrl'
 
 /**
  * P2: `@payloadcms/plugin-redirects@3.91.0` with the Gate S overrides
@@ -54,11 +55,8 @@ import { docPath, type RoutableDoc } from '../lib/docPath'
 /** Hosts that mean "this site" (a pasted full URL on them is reduced to its path). */
 const ownHosts = (): Set<string> => {
   const hosts = new Set(['duhamedia.com', 'www.duhamedia.com'])
-  try {
-    if (process.env.SITE_URL) hosts.add(new URL(process.env.SITE_URL).host)
-  } catch {
-    // An invalid SITE_URL is reported elsewhere; ignore it here.
-  }
+  // SITE_URL (+ Vercel Preview hosts); an invalid SITE_URL is reported elsewhere.
+  for (const origin of ownOrigins()) hosts.add(new URL(origin).host)
   return hosts
 }
 

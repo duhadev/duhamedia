@@ -22,8 +22,20 @@
  *
  * Everything runs in ONE database transaction (payload `initTransaction` /
  * `commitTransaction` / `killTransaction`), so a failure leaves the database as
- * it was. Uploaded files are written to MEDIA_DIR before the commit, so a
- * failed or dry run can leave an orphan file there (never a DB row).
+ * it was. Uploads go through Payload's Local API (`payload.create({ file })`),
+ * so they land wherever the config stores them: local disk (MEDIA_DIR) in dev,
+ * Vercel Blob when BLOB_READ_WRITE_TOKEN is set (src/plugins/storage.ts). Files
+ * are written before the commit, so a failed or dry run can leave an orphan
+ * file/blob (never a DB row).
+ *
+ * Against Neon from a laptop (human-approved, logged): put the target
+ * environment's variables in a file Next/Payload do NOT auto-load, e.g.
+ *   vercel env pull .env.vercel-production --environment=production
+ *   set -a && . ./.env.vercel-production && set +a && SEED_DRY_RUN=1 pnpm seed
+ * Exported variables win over `.env` (@next/env never overrides process.env).
+ * The script sets PAYLOAD_DB_DIRECT=true, so it uses DATABASE_URL_UNPOOLED
+ * (src/lib/databaseUrl.ts). Run `pnpm migrate:deploy` the same way first only if
+ * the deploy has not already migrated that database.
  *
  * Output: one line per document (create / skip) and a summary. No secrets are
  * printed (the only env read here is APP_ENV and SEED_DRY_RUN). Exit code 1 on any error.

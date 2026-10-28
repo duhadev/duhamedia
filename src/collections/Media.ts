@@ -9,7 +9,7 @@ import { missingFileHandler } from '../lib/missingFileHandler'
 /**
  * `media` (SCHEMA.md §6.9, §4.3, §10 — Gate S approved 2026-10-17; DECISIONS §G).
  *
- * Image-only uploads on local disk. Non-image assets (lead-magnet PDFs etc.)
+ * Image-only uploads: local disk in dev, Vercel Blob when configured (src/plugins/storage.ts). Non-image assets (lead-magnet PDFs etc.)
  * live in `downloads` (§6.10), so every media doc is an image with a real alt.
  * No drafts: uploads have no publish lifecycle.
  *
@@ -24,7 +24,8 @@ import { missingFileHandler } from '../lib/missingFileHandler'
  */
 
 /**
- * Absolute root of all uploads. `MEDIA_DIR` on the server; `./media` in local dev.
+ * Absolute root of all LOCAL uploads (local dev; unused when Vercel Blob is on,
+ * src/plugins/storage.ts). `MEDIA_DIR`, else `./media`.
  * Each upload collection gets its own SIBLING subdirectory (`media/`, `downloads/`)
  * so no collection's `staticDir` contains another's: Payload's file route serves
  * any path under a collection's `staticDir`, so nesting would let

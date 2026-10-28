@@ -3,6 +3,7 @@ import { getPayload } from 'payload'
 
 import { handleFormSubmission, parseSubmissionFormData } from '@/integrations/forms/handleSubmission'
 import { MAX_BODY_BYTES, SOURCE_PATH_KEY, type FormSubmitResponse } from '@/integrations/forms/shared'
+import { ownOrigins } from '@/lib/siteUrl'
 
 /**
  * POST /api/form-submit — the ONE public form submission path (S4-7).
@@ -33,12 +34,8 @@ const json = (body: FormSubmitResponse, status: number) => Response.json(body, {
 const reject = (status: number, message: string) => json({ ok: false, message }, status)
 
 const allowedOrigins = (request: Request): Set<string> => {
-  const origins = new Set<string>()
-  try {
-    if (process.env.SITE_URL) origins.add(new URL(process.env.SITE_URL).origin)
-  } catch {
-    /* malformed SITE_URL: only the dev fallback below can match */
-  }
+  // SITE_URL, plus the branch/deployment origins on Vercel Preview only (src/lib/siteUrl.ts).
+  const origins = new Set<string>(ownOrigins())
   if (process.env.APP_ENV !== 'production' && process.env.APP_ENV !== 'staging') {
     const host = request.headers.get('host')
     if (host) origins.add(`http://${host}`)
