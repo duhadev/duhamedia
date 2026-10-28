@@ -90,28 +90,49 @@ const cut = (s: string, max: number) => {
   return chars.length > max ? `${chars.slice(0, max).join('')}…` : s
 }
 
+/** Receiver limits on `fields` (secretary contract, 2026-10-28): ≤ 50 keys, each value ≤ 5000 chars. */
+export const MAX_FIELD_VALUE_CHARS = 5000
+export const MAX_FIELD_KEYS = 50
+
 /**
- * Serialise to the exact body that is signed and sent, ≤ 32 KB.
- * Deterministic: if the full body is too big, every `fields` value longer than
- * the cap is cut to the cap, trying caps 8192 → 64 characters; the first cap
- * that fits wins, and `fields._truncated` names the cut fields and the cap.
- * Same input → same output, so a retry signs the same body.
+ * Serialise to the exact body that is signed and sent. Deterministic (same
+ * input → same output, so a retry signs the same body), two stages:
+ *
+ * 1. ALWAYS: every `fields` value is capped at 5000 characters and `fields` at
+ *    50 keys (first 49 kept, in order, when more). Anything cut or dropped is
+ *    named in `fields._truncated`. This is the receiver's hard limit.
+ * 2. Only if the body is still over 32 KB: values are cut further, caps
+ *    4096 → 64, first that fits wins; if none does, all fields are omitted.
+ *
  * `name` / `company` are already ≤ 500 characters (form validation) and are never cut.
  */
 export function serializeEvent(event: SiteEventV1): string {
-  const full = JSON.stringify(event)
-  if (bytes(full) <= MAX_BODY_BYTES) return full
-
-  for (const cap of [8192, 4096, 2048, 1024, 512, 256, 128, 64]) {
+  const build = (cap: number, reason: string): string => {
+    const entries = Object.entries(event.fields).filter(([key]) => key !== TRUNCATION_KEY)
     const cutKeys: string[] = []
     const fields: Record<string, string> = {}
-    for (const [key, value] of Object.entries(event.fields)) {
+    for (const [key, value] of entries) {
       const next = cut(value, cap)
       if (next !== value) cutKeys.push(key)
       fields[key] = next
     }
-    fields[TRUNCATION_KEY] = `${cutKeys.join(', ')} cut to ${cap} characters (body limit 32 KB)`
-    const body = JSON.stringify({ ...event, fields })
+    const dropped = entries.slice(MAX_FIELD_KEYS - 1).map(([key]) => key)
+    const overflow = entries.length > MAX_FIELD_KEYS
+    if (overflow) for (const key of dropped) delete fields[key]
+    if (!cutKeys.length && !overflow && !reason) return JSON.stringify({ ...event, fields })
+    const notes: string[] = []
+    const keptCut = cutKeys.filter((k) => !overflow || !dropped.includes(k))
+    if (keptCut.length) notes.push(`${keptCut.join(', ')} cut to ${cap} characters${reason}`)
+    if (overflow) notes.push(`${dropped.join(', ')} omitted (max ${MAX_FIELD_KEYS} fields)`)
+    if (!notes.length) notes.push(`body limit 32 KB`)
+    fields[TRUNCATION_KEY] = notes.join('; ')
+    return JSON.stringify({ ...event, fields })
+  }
+
+  const first = build(MAX_FIELD_VALUE_CHARS, '')
+  if (bytes(first) <= MAX_BODY_BYTES) return first
+  for (const cap of [4096, 2048, 1024, 512, 256, 128, 64]) {
+    const body = build(cap, ' (body limit 32 KB)')
     if (bytes(body) <= MAX_BODY_BYTES) return body
   }
   // Pathological (thousands of fields): drop them all, say so.

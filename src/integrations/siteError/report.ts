@@ -219,7 +219,7 @@ function buildSample(error: unknown, ctx: SiteErrorContext, now: number): Sample
 
   return {
     fingerprint,
-    message: cut(scrub(rawMessage), MAX_MESSAGE),
+    message: cut(scrub(rawMessage), MAX_MESSAGE) || name, // receiver requires a non-empty message
     stack: lines.join('\n'),
     url: cleanPath(ctx.path) || route,
     fields,

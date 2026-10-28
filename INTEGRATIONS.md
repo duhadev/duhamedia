@@ -55,6 +55,7 @@ Sources: `CLAUDE.md` → "Integration architecture" (locked, Oct 2026); `DECISIO
 - `name`, `email` and `company` (when the form has them) are **always top-level**, not only inside `fields`.
 - `error` is present only for `site_error`.
 - The body is **≤ 32 KB**. Long fields are truncated deterministically and the truncation is noted in `fields`.
+- `fields` is a flat object of strings, **≤ 50 keys, each value ≤ 5000 characters** (receiver limits, 2026-10-28), enforced on every event, not only over 32 KB. `eventId` is a UUID (8–100 chars `[A-Za-z0-9_-]` is accepted). `site_error` always carries a non-empty `error.fingerprint` (16 hex) and `error.message` (falls back to the error name when the message is empty).
 - `eventId` is generated once per submission and reused on every retry and re-send. It is the idempotency key.
 - `env` comes from `APP_ENV`. Staging events are prefixed `[staging]` on Matrix and never create CRM proposals (the secretary's job), but the site always sends the correct `env`.
 
@@ -77,8 +78,8 @@ Sources: `CLAUDE.md` → "Integration architecture" (locked, Oct 2026); `DECISIO
 3. An `afterChange` hook **enqueues a Payload job** (never sends inline) and stamps `deliveryStatus: pending`. The visitor's request returns immediately.
 4. The job sends the signed event:
    - `200` (including `{"duplicate": true}`) → `delivered`.
-   - `4xx` → `failed` immediately, response noted in `deliveryNote` (bad signature or schema; retrying won't help).
-   - `5xx` or timeout → retry per the schedule below, then `failed`.
+   - `4xx` (400/401/403/413 and any other 4xx except 429) and `3xx` → `failed` immediately, response noted in `deliveryNote` (bad signature, schema or size; retrying won't help).
+   - `429` (receiver rate limit, temporary), `5xx` or timeout → retry per the schedule below, then `failed`.
 5. Each submission carries `deliveryStatus` (pending / delivered / failed), `deliveryNote`, `deliveryAttempts` and `eventId`.
 6. Payload's notification email (via Resend) fires from form-builder config in parallel and is **not** gated on the event.
 7. Newsletter signups additionally sync the Resend Contact / Segment / Topic (see below), with the same job + retry + status pattern, tracked separately from event delivery.
@@ -125,7 +126,7 @@ Every public form (contact, pre-call homework, newsletter, lead-magnet capture, 
 | — | then `failed` |
 
 - Payload Jobs queue. **Vercel (since 2026-10-28):** no in-process cron (Payload: autoRun "should not be used on serverless platforms like Vercel"). Vercel Cron calls `GET /api/payload-jobs/run?queue=events&limit=10` and `GET /api/payload-jobs/run?queue=newsletter&limit=10` every minute (`vercel.json`), authorised by `Authorization: Bearer $CRON_SECRET`. Vercel Cron runs on **Production deployments only** and every-minute schedules need a **paid plan** (Hobby = once a day): Preview deployments therefore never deliver queued jobs on their own (an admin can hit the run URL while logged in). **Local dev:** in-process `jobs.autoRun` with the same two per-minute entries, as before.
-- Payload's native backoff is only `fixed` / `exponential`, so the locked schedule is implemented by hand: the task has `retries: 0` and carries `attempt` in its input; on 5xx/timeout it re-queues itself with `payload.jobs.queue({ task, input: { ...input, attempt: n + 1 }, queue, waitUntil: now + SCHEDULE[n] })`; on 4xx it marks `failed` immediately.
+- Payload's native backoff is only `fixed` / `exponential`, so the locked schedule is implemented by hand: the task has `retries: 0` and carries `attempt` in its input; on 5xx/429/timeout it re-queues itself with `payload.jobs.queue({ task, input: { ...input, attempt: n + 1 }, queue, waitUntil: now + SCHEDULE[n] })`; on 4xx it marks `failed` immediately.
 - `eventId` is fixed at first enqueue and never regenerated.
 
 **Implementation (A1, verified against the installed payload@3.91.0):**
@@ -163,7 +164,7 @@ Every public form (contact, pre-call homework, newsletter, lead-magnet capture, 
 - **Per attempt:** the job re-reads the submission and skips unless it is `pending`. That makes a stray or duplicate job harmless. It then builds the body, signs it with a fresh timestamp, POSTs it with a **10 s timeout**, and stamps `deliveryStatus`, `deliveryNote`, `deliveryAttempts` (+1, a lifetime total across re-sends) and `lastAttemptAt`. Status writes are column-targeted adapter updates (never creates), so they never re-trigger the enqueue or the notification email.
 - **Classification:**
   - `2xx` → `delivered`. The note says `already received (duplicate)` when the body is `{"duplicate": true}`.
-  - `5xx`, timeout or network error (e.g. `ECONNREFUSED`) → the next attempt is queued with `waitUntil`, and the status stays `pending`.
+  - `5xx`, `429`, timeout or network error (e.g. `ECONNREFUSED`) → the next attempt is queued with `waitUntil`, and the status stays `pending`.
   - `4xx` and `3xx` → `failed` immediately, with the status and a ≤ 200-char sanitised excerpt of the response.
   - `SITE_EVENT_URL` / `SITE_EVENT_SECRET` unset or invalid → `failed` immediately ("not sent: … not retried"). Fix the env, then re-send.
   - An internal error on our side (e.g. a DB blip while reading) is treated like a 5xx.
@@ -229,8 +230,9 @@ Every public form (contact, pre-call homework, newsletter, lead-magnet capture, 
 
 - `env`: `production` only when `APP_ENV=production`; staging **and development** send `staging`, so a non-production server can never post a lead as real.
 - `timestamp`: the submission's `createdAt` (when the lead happened). It is identical on every retry and re-send, so the body bytes for a given submission are stable. Freshness is carried by the signed `X-Duha-Timestamp` header, which is computed at each send.
-- **Truncation (≤ 32 KB):**
-  - If the compact body exceeds 32,768 bytes, every `fields` value longer than a cap is cut to that cap plus `…`. Caps are tried in order 8192 → 4096 → 2048 → 1024 → 512 → 256 → 128 → 64 characters, and the first that fits wins.
+- **Truncation (two stages):**
+  - Stage 1, always: every `fields` value longer than 5000 characters is cut to 5000 plus `…`; if `fields` would have more than 50 keys, the first 49 (submission order) are kept and the rest omitted. Cut or omitted keys are named in `fields._truncated`, e.g. `"message cut to 5000 characters"`.
+  - Stage 2, only if the stage-1 body still exceeds 32,768 bytes: every `fields` value longer than a cap is cut to that cap plus `…`. Caps are tried in order 4096 → 2048 → 1024 → 512 → 256 → 128 → 64 characters, and the first that fits wins.
   - Cuts are by code point, so no split emoji.
   - `fields._truncated` records what happened, e.g. `"message, notes, notes2, notes3 cut to 2048 characters (body limit 32 KB)"`.
   - If even 64 fails, `fields` is replaced by `{ "_truncated": "all fields omitted (body limit 32 KB)" }`.

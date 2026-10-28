@@ -21,7 +21,7 @@ export type SendOutcome =
   | { kind: 'delivered'; status: number; duplicate: boolean }
   /** 4xx or other non-retryable answer: failed now, no retry. */
   | { kind: 'rejected'; status: number; excerpt: string }
-  /** 5xx, timeout or network error: retry on the schedule. */
+  /** 5xx, 429 (receiver rate limit, temporary), timeout or network error: retry on the schedule. */
   | { kind: 'retry'; reason: string }
   /** SITE_EVENT_URL / SITE_EVENT_SECRET missing or invalid: failed now. */
   | { kind: 'unconfigured'; reason: string }
@@ -103,7 +103,7 @@ export async function sendSignedEvent(body: string): Promise<SendOutcome> {
     }
     return { kind: 'delivered', status: res.status, duplicate }
   }
-  if (res.status >= 500) return { kind: 'retry', reason: `HTTP ${res.status}` }
-  // 4xx (bad signature / schema / stale timestamp) and anything else (3xx = misconfigured URL): no retry.
+  if (res.status >= 500 || res.status === 429) return { kind: 'retry', reason: `HTTP ${res.status}` }
+  // 400/401/403/413 (bad schema / signature / stale timestamp / too large), other 4xx, and anything else (3xx = misconfigured URL): no retry.
   return { kind: 'rejected', status: res.status, excerpt: excerpt(text) }
 }
