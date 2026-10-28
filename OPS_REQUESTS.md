@@ -124,8 +124,9 @@ Requests from the duhamedia.com build to the server agent, relayed by the human.
 - **Backups (#7):** confirm Neon's point-in-time restore window on the plan, and test one restore to a branch before launch.
 - **Done when:** a Preview build of `main` goes green and `/api/health` returns 200 on it.
 
-## #17 — Secretary event endpoint reachable from Vercel (server agent) · 2026-10-28 · Open
+## #17 — Secretary event endpoint reachable from Vercel (server agent) · 2026-10-28 · Resolved 2026-10-28
 - **Need:** expose the secretary's `/site-event` receiver on a public HTTPS hostname via the Cloudflare tunnel, behind a Cloudflare Access application with a **Service Auth** policy (service token, so failures return 401/403, not a login redirect). Give the human `SITE_EVENT_URL` (the full https URL), `SITE_EVENT_ACCESS_CLIENT_ID`, `SITE_EVENT_ACCESS_CLIENT_SECRET` for Vercel env. HMAC signing (`SITE_EVENT_SECRET`) unchanged; the secretary still checks it.
 - **Retire:** staging container, deploy timers, GHCR pulls, site media bind mounts, `duha_site_staging` (after nothing needs it).
 - **Keep:** the secretary polls `https://duhamedia.com/api/health` every 5 min; Nextcloud booking (#4).
 - **Done when:** a signed test POST from outside the server with the service token reaches the secretary, and one without the token gets 401/403.
+- **Answer (2026-10-28):** live at `https://events.duhamedia.com/site-event` behind Cloudflare Access (service token; 401 without it, no redirect). Server-side hosting plan retired, nothing was built. Receiver rules: `eventId` 8–100 `[A-Za-z0-9_-]`; `email` required except `site_error`; `fields` flat, ≤ 50 keys, scalar, each ≤ 5000 chars; 429 = retry. Errors are deduped by fingerprint on their side (max 1/h). Their doc names the token vars `CF_ACCESS_CLIENT_*`; the site reads `SITE_EVENT_ACCESS_CLIENT_ID/SECRET` — human uses the site's names in Vercel. Nextcloud → secretary booking webhook not wired yet; no uptime check on their side (use Vercel monitoring). Copy: `~/secretary-infra/docs/SITE_EVENTS_HANDOFF.md`.
