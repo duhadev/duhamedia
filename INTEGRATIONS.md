@@ -165,7 +165,7 @@ Every public form (contact, pre-call homework, newsletter, lead-magnet capture, 
 - **Classification:**
   - `2xx` → `delivered`. The note says `already received (duplicate)` when the body is `{"duplicate": true}`.
   - `5xx`, `429`, timeout or network error (e.g. `ECONNREFUSED`) → the next attempt is queued with `waitUntil`, and the status stays `pending`.
-  - `4xx` and `3xx` → `failed` immediately, with the status and a ≤ 200-char sanitised excerpt of the response.
+  - `4xx` (except `429`, which is retried) and `3xx` → `failed` immediately, with the status and a ≤ 200-char sanitised excerpt of the response.
   - `SITE_EVENT_URL` / `SITE_EVENT_SECRET` unset or invalid → `failed` immediately ("not sent: … not retried"). Fix the env, then re-send.
   - An internal error on our side (e.g. a DB blip while reading) is treated like a 5xx.
 - **Timing:** the cron (Vercel Cron in the cloud, autoRun locally) ticks every minute, so each delay is "at least" its value plus up to 60 s. The locked schedule therefore still holds on Vercel.
