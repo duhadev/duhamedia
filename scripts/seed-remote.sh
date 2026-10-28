@@ -25,9 +25,10 @@ export DATABASE_URL="$db" DATABASE_URL_UNPOOLED="$db" \
 if [[ -n "$blob" ]]; then
   export BLOB_READ_WRITE_TOKEN="$blob"
 else
-  # No token: Payload writes the seed's files to local disk (./media), so the
-  # media rows exist but their images 404 on Vercel until re-uploaded in the admin.
+  # No token: images-off seed (SEED_MEDIA=0) creates no media rows at all, so
+  # nothing points at a missing file; add images later in the admin.
   unset BLOB_READ_WRITE_TOKEN
+  export SEED_MEDIA=0
   echo "No Blob token: seeding text only; seeded images will not display on $1."
 fi
 unset db blob secret
