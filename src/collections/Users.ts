@@ -68,7 +68,9 @@ const apiKeyFieldAccess: FieldAccess = ({ data, doc, req }) =>
 const firstUserIsAdmin: CollectionBeforeChangeHook = async ({ data, operation, req }) => {
   if (operation !== 'create') return data
   const { totalDocs } = await req.payload.count({ collection: 'users', overrideAccess: true, req })
-  if (totalDocs === 0) return { ...data, role: 'admin' }
+  // The first-user form also renders the API-key fields; an admin never holds a
+  // key, so drop them here instead of letting apiKeyOnlyForPipeline reject the signup.
+  if (totalDocs === 0) return { ...data, role: 'admin', enableAPIKey: false, apiKey: null, apiKeyIndex: null }
   return data
 }
 
