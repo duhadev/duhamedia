@@ -461,7 +461,7 @@ Sitewide helpers added while building pages 2 to 6. Several blocks depend on the
 
 **Wiring**
 - `getSiteUrl()` returns the origin of `SITE_URL` (no path, no trailing slash). With `SITE_URL` unset or not an http(s) URL it falls back to `http://localhost:3000` ONLY when `APP_ENV` resolves to `development`; on `staging` and `production` it throws. All reads are lazy (request time, never module load), so `next build` in CI with no `SITE_URL` and no database still passes.
-- `GET /api/health` calls `getSiteUrl()` first: a throw is logged server-side and the endpoint returns 503 (`{"status":"unavailable"}`), so the deploy script's health poll rolls back a container with a missing or invalid `SITE_URL`.
+- `GET /api/health` calls `getSiteUrl()` first: a throw is logged server-side and the endpoint returns 503 (`{"status":"unavailable"}`) for a missing or invalid `SITE_URL`. On Vercel it also returns 503 when `BLOB_READ_WRITE_TOKEN` is unset. On a Vercel Preview with no `SITE_URL`, `getSiteUrl()` falls back to the branch/deployment origin (see [Deploy](#deploy)).
 - `absoluteUrl('/')` and `absoluteUrl('')` return the bare origin (the form Next prints for the home canonical). `siteOrigin()` (empty string when unset) is used by `src/plugins/seo.ts` for admin preview URLs.
 - This supersedes the earlier B2 behaviour (silent localhost fallback in `env.ts`, flag F65 B1). OPS_REQUESTS #12.
 
@@ -2404,19 +2404,25 @@ Access:
 
 **Wiring**
 - Registration: `src/payload.config.ts` → `collections: [Users, Media, Downloads]`.
-- Storage: `MEDIA_DIR = process.env.MEDIA_DIR || path.resolve(process.cwd(), 'media')`.
-  - `media` `staticDir`: `${MEDIA_DIR}/media`.
-  - `downloads` `staticDir`: `${MEDIA_DIR}/downloads`.
-  - Payload creates the directories on first upload.
+- Storage (changed 2026-10-28, `src/plugins/storage.ts`, `@payloadcms/storage-vercel-blob@3.91.0`):
+  - Token set (`BLOB_READ_WRITE_TOKEN`): `vercelBlobStorage` is enabled; `media` (prefix `media`) and `downloads` (prefix `downloads`) go to Vercel Blob in one store per environment (Preview uses a separate store).
+  - Token unset (local dev): the adapter is skipped and Payload local disk is used: `MEDIA_DIR = process.env.MEDIA_DIR || path.resolve(process.cwd(), 'media')`; `media` `staticDir` `${MEDIA_DIR}/media`, `downloads` `staticDir` `${MEDIA_DIR}/downloads`; Payload creates the directories on first upload.
+  - `alwaysInsertFields: true`: the hidden `prefix` and `_objectKey` columns exist on both collections whether or not a token is set, so the schema is identical everywhere (migration `20261028_121301_vercel_blob_fields`).
+  - `clientUploads` is on, with `access: ({ req }) => isStaff(req.user)`: admin uploads go browser to Blob directly (Vercel's 4.5 MB server-upload limit); only staff can obtain an upload token, so the pipeline user cannot. Client uploads land under `<prefix>/<random uuid>/<filename>` (the `_objectKey`). Server-side uploads (the seed) have no `_objectKey` and land at `<prefix>/<filename>`.
+  - The adapter supports `access: 'public'` stores only (3.91.0).
+  - Files are not served from the public Blob URLs by Payload: without `disablePayloadAccessControl` the doc `url` stays `/api/<slug>/file/<name>`, and that route checks the collection `read` access, then streams the blob.
+  - `downloads` response headers: `modifyResponseHeaders` sets `Cache-Control: private, no-store` (the Blob adapter's own header is `public, max-age=31536000`).
+  - Residual exposure for `downloads`: the bytes also exist at an unauthenticated `https://<storeId>.public.blob.vercel-storage.com/<key>` URL. Client-upload keys are unguessable without the doc's `_objectKey` (staff-readable only); seed-created keys (`downloads/<name>`) are guessable by someone who also knows the store id.
 - Serving: `/api/media/file/<filename>` is public read. `/api/downloads` and `/api/downloads/file/<filename>` are staff-only since S1 (the collection `read` access also governs the static file route); anonymous requests return 403 (verified 2026-10-21). Paths containing `../` are rejected with 403.
 - Pages using it: `media` is referenced by any unit that renders imagery; `downloads` by `lead-magnets` (page 18). Linked from those entries as they land.
 - Revalidation: n/a in this unit. Pages that render media revalidate through their own collection/global hooks.
-- Migration: `20261017_195538_c2_media_downloads`. Additive only.
+- Migration: `20261017_195538_c2_media_downloads`. Additive only. Later: `20261028_121301_vercel_blob_fields` (adds `prefix` and `_objectKey` to both tables, additive).
   - Up: creates `downloads` table (+ `updated_at`, `created_at` indexes, unique `filename` index); adds `media.caption` and the `sizes_browser_*` and `sizes_og_*` columns (+ filename indexes); adds `payload_locked_documents_rels.downloads_id` with FK `payload_locked_documents_rels_downloads_fk` (ON DELETE cascade) and index.
   - Down: hand-reordered to drop the FK before `DROP TABLE "downloads" CASCADE` (the generated order failed because CASCADE had already removed the FK); then drops the added indexes and columns.
 
 **Notes**
-- `media/` and `downloads/` are siblings under `MEDIA_DIR` on purpose: Payload's file route serves any path under a collection's `staticDir`, so nesting one inside the other would let `/api/media/file/downloads%2F<name>` serve a download.
+- On Blob, downloads are read server-side by the lead-magnet asset email through `readUpload` (see [Integrations](#integrations)); `Cache-Control: private, no-store` applies to the access-checked `/api/downloads/file/*` route.
+- Local disk only: `media/` and `downloads/` are siblings under `MEDIA_DIR` on purpose: Payload's file route serves any path under a collection's `staticDir`, so nesting one inside the other would let `/api/media/file/downloads%2F<name>` serve a download.
 - `mimeTypes` is enforced server-side by content sniffing (`uploads/checkFileRestrictions.js`), not only in the file picker.
 - PDF uploads are validated by Payload 3.91.0 (`payload/dist/utilities/validatePDF.js`): the file must start with `%PDF-` and contain both `xref` and `%%EOF` in its last 1024 bytes. Seed fixtures must be real PDFs.
 - A request for a missing file returns **500** "Something went wrong." (stock 3.91.0 behaviour, not 404). The `site_error` reporter must ignore or rate-limit these.
@@ -3560,51 +3566,92 @@ Implemented in [B0](#frontend-foundation-unit-b0).
 
 ## Deploy
 
-Source: `DECISIONS.md` §D, §E, §F and `OPS_REQUESTS.md` #3. Items marked **TBD** are not yet confirmed or built.
+Hosting (owner-approved 2026-10-28): Vercel + Neon Postgres + Vercel Blob. This replaced the self-hosted Docker image / GHCR / server Postgres / local-disk media setup (see [Restructure log](#restructure-log)). Source: `vercel.json`, `package.json` scripts, `.env.example`, `src/lib/databaseUrl.ts`, `src/lib/siteUrl.ts`, `src/lib/cronAuth.ts`, `src/plugins/storage.ts`, `src/payload.config.ts`, `.github/workflows/build.yml`.
 
-### Push → staging
-1. A unit clears its gates and is committed and pushed to `main`.
-2. GitHub Actions builds one Docker image per commit **with no database access** (the `(frontend)` layout is `force-dynamic`; no DB-querying `generateStaticParams`; no `NEXT_PUBLIC_*` variables). It runs typecheck and lint, then pushes to the private GHCR repository `ghcr.io/duhadev/duhamedia`, tagged `sha-<commit>` and `main`.
-3. The server's staging timer (owned by the server agent) pulls `:main` every few minutes and deploys it to `staging.duhamedia.com` (behind Cloudflare Access, always noindexed). Noindex is behaviour from env, not a build flag: with `APP_ENV` not `production`, `src/proxy.ts` adds `X-Robots-Tag: noindex, nofollow` to every proxied response and `robots.txt` serves `Disallow: /` (see [Request path header and proxy](#request-path-header-and-proxy-f75-f78-b1)). No Cloudflare rule may strip that header (OPS_REQUESTS #11).
-4. On container start, Payload's `prodMigrations` runs any pending committed migrations before the server serves. The deploy script then polls `GET /api/health` (200 = DB reachable, 503 otherwise); on failure it rolls back to the previous image and alerts the human through the secretary.
+### Environments
+
+| | Production | Preview |
+|---|---|---|
+| Git source | `main` | every other branch |
+| URL | `duhamedia.com` | the deployment's Vercel URL |
+| `APP_ENV` | `production` | `staging` |
+| Database | Neon main branch | Neon preview branch per deployment (Neon integration) |
+| Blob store | production store | separate preview store |
+| `SITE_URL` | required | optional; falls back to `VERCEL_BRANCH_URL`, then `VERCEL_URL` (`https://` added), only when `VERCEL_ENV=preview` and `APP_ENV` is not `production` (`src/lib/siteUrl.ts`) |
+| Vercel Cron | runs | does not run (Cron runs on Production deployments only) |
+
+- Noindex is behaviour from env, not a build flag: with `APP_ENV` not `production`, `src/proxy.ts` adds `X-Robots-Tag: noindex, nofollow` to every proxied response and `robots.txt` serves `Disallow: /` (see [Request path header and proxy](#request-path-header-and-proxy-f75-f78-b1)). No Cloudflare rule may strip that header (OPS_REQUESTS #11).
+- The same build serves both environments; behaviour differs only by env.
+
+### Push → deploy
+1. A unit clears its gates and is committed and pushed to `main` (or another branch for a Preview).
+2. Vercel builds with `buildCommand: "pnpm run vercel-build"` (`vercel.json`). `vercel-build` = `pnpm run migrate:deploy && pnpm run build`.
+   - `migrate:deploy` = `payload migrate` with `PAYLOAD_DB_DIRECT=true`: `src/lib/databaseUrl.ts` then returns the direct (unpooled) Neon string (`DATABASE_URL_UNPOOLED`, else `DATABASE_URI_UNPOOLED`, else the pooled string).
+   - A failed migration fails the build, so the deploy fails and the previous deployment keeps serving. Migrations are not run on boot (no `prodMigrations`).
+   - `build` = `next build`, which needs no database (the `(frontend)` layout is `force-dynamic`; no DB-querying `generateStaticParams`; no `NEXT_PUBLIC_*` variables).
+3. Runtime connections use the pooled string: `DATABASE_URL` (injected by the Neon integration; wins over `DATABASE_URI`), else `DATABASE_URI`. On Vercel the pg pool is `max: 5`, `idleTimeoutMillis: 5000`. Drizzle dev push runs only when `APP_ENV=development` and not on Vercel.
+4. Migrations must stay backward-compatible with the previous deployment for the overlap while it still serves; never drop content-holding columns/tables without a human-approved data step.
 
 ### Release → production
-1. **Only when the human explicitly orders it** ("ship it", "deploy to production"), the PM creates and pushes a git tag `vX.Y.Z`.
-2. CI **re-tags the already-built image** of that commit as `vX.Y.Z` and `production`. Production never gets a rebuild; it always runs an image that already ran on staging.
-3. The server's production timer pulls `:production`; migrations run on start (as above); health is polled; failure rolls back automatically.
+- Production is the Vercel Production environment (`duhamedia.com`), fed by `main`. There is no tag-triggered workflow any more: `.github/workflows/release.yml` was removed.
+- Release flow (DECISIONS §R): Vercel's Production Branch is `production`, so a push to `main` builds a Preview only. A release = fast-forward `production` to the approved `main` commit and push a `vX.Y.Z` tag, only on the human's explicit order. Production is rebuilt from that commit (not re-tagged). Until the dashboard setting is switched (OPS #16), a push to `main` deploys Production.
+
+### CI (`.github/workflows/build.yml`)
+- Check only, on push to `main` and on pull requests: `pnpm install --frozen-lockfile`, `pnpm typecheck`, `pnpm lint`, `pnpm build` (DB-less, no secrets). It builds and pushes no image. Migrations run in the Vercel build, not in CI.
+
+### Vercel Cron and jobs
+- `vercel.json` declares two crons, each `* * * * *`: `GET /api/payload-jobs/run?queue=events&limit=10` and `GET /api/payload-jobs/run?queue=newsletter&limit=10`.
+- Auth: Vercel sends `Authorization: Bearer <CRON_SECRET>`. `jobs.access.run` is `isAdmin(req.user) || isCronRequest(req.headers)` (`src/lib/cronAuth.ts`: secret must be set and at least 16 characters; SHA-256 digests compared with `timingSafeEqual`). No secret configured means always denied.
+- Cron runs on Production deployments only, and every-minute schedules need the Vercel Pro plan (Hobby = once a day).
+- `jobs.autoRun` is `undefined` on Vercel and set (both queues, `* * * * *`, `limit: 10`) only off Vercel, i.e. local dev. See [Integrations](#integrations).
 
 ### Rollback
-- Automatic: the deploy script rolls back if `/api/health` does not go green after a deploy (a failed migration aborts startup, so health never passes).
-- Manual (human-triggered): point `production` back at the previous `vX.Y.Z` — via a CI job or a documented manual retag. **TBD:** the exact job/command, written when the workflow lands in Phase 1.
-- Migrations must stay backward-compatible with the previous image for the seconds of deploy overlap; never drop content-holding columns/tables without a human-approved data step.
+- Vercel Instant Rollback (dashboard) to a previous Production deployment.
+- Database migrations are not rolled back by this; keep migrations additive and backward-compatible with the previous deployment.
 
-### Image and runtime
-- Multi-stage Dockerfile, `output: 'standalone'`, non-root user, port 3000, Node 24 (`node:24-alpine`), no secrets baked in, all config from env at runtime.
-- Memory target ≤ ~0.5 GB (`NODE_OPTIONS=--max-old-space-size=384`). **TBD:** measured figure (Phase 1).
-- CI build minutes per run: **TBD** (measured in Phase 1; GitHub Free = 2,000 min/month).
-- GHCR read token for server pulls: provided by the server agent (name **TBD**).
+### Seeding Preview or Production from a laptop
+Running the seed against Vercel-hosted databases is a human-approved action, logged in PROGRESS.md. It never runs on deploy.
+1. `vercel env pull .env.vercel-production --environment=production`. Never pull into `.env.local` or `.env.production*`: Next and the Payload CLI auto-load those.
+2. Source the file into the shell.
+3. `SEED_DRY_RUN=1 pnpm seed` (rolls back), then `pnpm seed`. `seed` sets `PAYLOAD_DB_DIRECT=true` and `PAYLOAD_MIGRATING=true` (see [Seed](#seed-pnpm-seed)).
+- With pulled `APP_ENV` of `staging` or `production`, Drizzle push is off (`push` only when `APP_ENV=development`).
+
+### Health
+- `GET /api/health`: 200 `{"status":"ok"}` when `SITE_URL` resolves, Payload initialises and `select 1` answers within 3 s; otherwise 503 `{"status":"unavailable"}`. On Vercel it is also 503 when `BLOB_READ_WRITE_TOKEN` is unset. The reason is logged server-side only. `Cache-Control: no-store, max-age=0`.
+
+### Local Docker
+- `docker-compose.yml` remains for local-dev Postgres only (see [Local development](#local-development)). There is no Dockerfile, image or registry.
 
 ### Environment variables (names only)
 
+Production and Preview values are set in the Vercel project's Environment Variables (Production / Preview / Development scopes). Local values live in the untracked `.env`. Vercel-injected names are marked.
+
 | Name | Purpose |
 |---|---|
-| `DATABASE_URI` | Postgres connection string (`duha_site_staging` on staging) |
-| `PAYLOAD_SECRET` | Payload signing secret |
+| `DATABASE_URI` | Local-dev Postgres connection string (docker-compose); fallback when `DATABASE_URL` is unset |
+| `DATABASE_URI_UNPOOLED` | Optional direct string for `migrate:deploy` / `seed`; unset = `DATABASE_URI` |
+| `DATABASE_URL`, `DATABASE_URL_UNPOOLED` | Injected by the Neon integration (pooled / direct; per-branch on Preview). Win over the `DATABASE_URI*` names. Not set locally |
+| `PAYLOAD_DB_DIRECT` | Set to `true` by the `migrate:deploy` and `seed` scripts to select the direct string. Not set by hand |
+| `PAYLOAD_SECRET` | Payload signing secret; unique per environment |
 | `APP_ENV` | `production` \| `staging` \| `development`; drives event `env`, the non-production `X-Robots-Tag: noindex, nofollow` header (`src/proxy.ts`), `robots.txt`, `/_showcase` visibility and whether `SITE_URL` is mandatory. Unset or any other value counts as `development` |
-| `SITE_URL` | Canonical origin, read at runtime (replaces the old `NEXT_PUBLIC_SITE_URL`). **Mandatory when `APP_ENV` is `staging` or `production`**: unset or not an http(s) URL makes `getSiteUrl()` throw and `GET /api/health` return 503 (the deploy poll rolls back); only `APP_ENV=development` falls back to `http://localhost:3000`. It must equal the public origin: canonicals, sitemap, Open Graph, live preview, the form route's same-origin check and the Turnstile hostname check all use it (OPS_REQUESTS #12; see [SITE_URL and APP_ENV handling](#site_url-and-app_env-handling-f65-b1)) |
-| `MEDIA_DIR` | Absolute path of the media directory in the container (bind-mounted; separate for staging/production) |
-| `SITE_EVENT_URL` | Internal address of the OpenClaw secretary's site-event endpoint |
+| `SITE_URL` | Canonical origin, read at runtime (replaces the old `NEXT_PUBLIC_SITE_URL`). **Mandatory when `APP_ENV` is `staging` or `production`**: unset or not an http(s) URL makes `getSiteUrl()` throw and `GET /api/health` return 503; only `APP_ENV=development` falls back to `http://localhost:3000`. On Vercel Preview it is optional (falls back to `VERCEL_BRANCH_URL` / `VERCEL_URL`). Required on Production. It must equal the public origin: canonicals, sitemap, Open Graph, live preview, the form route's same-origin check and the Turnstile hostname check all use it (OPS_REQUESTS #12; see [SITE_URL and APP_ENV handling](#site_url-and-app_env-handling-f65-b1)) |
+| `VERCEL_ENV`, `VERCEL_BRANCH_URL`, `VERCEL_URL` | Vercel system variables, read by `src/lib/siteUrl.ts` for the Preview `SITE_URL` fallback. Not set by hand |
+| `BLOB_READ_WRITE_TOKEN` | Vercel Blob token, injected when a Blob store is connected (Production and Preview use separate stores). Set = media and downloads go to Blob; unset = local disk. `GET /api/health` returns 503 on Vercel when it is unset |
+| `MEDIA_DIR` | Local dev only: absolute path of the local upload directory (default `./media`). Ignored when `BLOB_READ_WRITE_TOKEN` is set |
+| `CRON_SECRET` | Bearer secret (at least 16 characters) Vercel Cron sends to `/api/payload-jobs/run`. Not needed locally |
+| `SITE_EVENT_URL` | Site-event receiver URL: public https hostname on the secretary's Cloudflare tunnel (a local stub URL in dev) |
 | `SITE_EVENT_SECRET` | HMAC key for signing site events |
+| `SITE_EVENT_ACCESS_CLIENT_ID`, `SITE_EVENT_ACCESS_CLIENT_SECRET` | Cloudflare Access service token for `SITE_EVENT_URL`, sent as `CF-Access-Client-Id` / `CF-Access-Client-Secret`. Both or neither; unset = no Access headers |
 | `RESEND_API_KEY` | Resend full-access key (email transport + contacts) |
 | `RESEND_NEWSLETTER_SEGMENT_ID` | Resend newsletter Segment |
 | `RESEND_NEWSLETTER_TOPIC_ID` | Resend newsletter Topic (replaces the retired `RESEND_AUDIENCE_ID`) |
 | `FORMS_DEFAULT_TO_EMAIL` | Optional. Notification inbox when a form's "Email to" is empty (form-builder `defaultToEmail`). Unset: falls back to the Resend from-address. Open flag F16 |
-| `SITE_EVENT_RETRY_DELAYS_S` | Development only (ignored unless `APP_ENV=development`): compresses the event/newsletter retry schedule for local proofs. Never set on the server |
-| `SITE_ERROR_WINDOW_S` | Development only (ignored unless `APP_ENV=development`): shortens the 10-minute `site_error` rate-limit window. Never set on the server |
+| `SITE_EVENT_RETRY_DELAYS_S` | Development only (ignored unless `APP_ENV=development`): compresses the event/newsletter retry schedule for local proofs. Never set on Vercel |
+| `SITE_ERROR_WINDOW_S` | Development only (ignored unless `APP_ENV=development`): shortens the 10-minute `site_error` rate-limit window. Never set on Vercel |
 | `TURNSTILE_SITE_KEY` | Cloudflare Turnstile site key (passed to client components as a prop) |
 | `TURNSTILE_SECRET_KEY` | Cloudflare Turnstile secret for server-side verification |
 
-Local dev: values live only in the untracked `.env`, created from the committed `.env.example` (names and comments only). Local Postgres via `docker-compose.yml` (major version **TBD**, OPS_REQUESTS #6).
+Local dev: values live only in the untracked `.env`, created from the committed `.env.example` (names and comments only). Local Postgres via `docker-compose.yml` (see [Local development](#local-development)). Never pull Vercel env into `.env.local` or `.env.production*`.
 
 ---
 
@@ -3632,7 +3679,8 @@ The submit-side data model (forms, submissions, delivery fields) is documented i
 - Route: `src/app/(frontend)/newsletter/confirm/page.tsx` (`/newsletter/confirm?token=…`, GET). The posts slug `confirm` is shadowed by this route (F168).
 
 **A3: lead-magnet asset email (`src/integrations/leadMagnet/`)**
-- `assetEmail.ts`: reads the attachment from `${MEDIA_DIR}/downloads` server-side (link for an external URL), direct Resend `POST /emails` with an Idempotency-Key, 10 MB cap.
+- `assetEmail.ts`: reads the attachment server-side through `readUpload(req, 'downloads', file, MAX_ATTACHMENT_BYTES)` (`src/lib/readUpload.ts`; link for an external URL), direct Resend `POST /emails` with an Idempotency-Key, 10 MB cap.
+  - `readUpload`: local disk (no Blob token) reads `<staticDir>/<filename>` with a basename-only containment check. Cloud storage (`upload.disableLocalStorage`, set by the Blob plugin) calls the collection's `upload.handlers` the way Payload's file route does, so the adapter resolves the blob key from `prefix` / `_objectKey` (the doc passed must be the full upload doc). The size cap is checked before buffering when the size is known (stat / Content-Length), and again on the bytes. Returns `ok | missing | too-big | invalid-name | error`; never throws.
 - `tasks.ts`: task `sendLeadMagnetAsset` on the `newsletter` queue (one Resend rate bucket), tracked in the submission's `assetEmail` group (`status` pending / sent / failed, `note`, `attempts`), separately from event delivery. The `lead_magnet` event itself is the A1 task.
 - `resendEndpoint.ts`: `POST /api/form-submissions/:id/asset-email/resend`, staff only; a new chain id gives a new Idempotency-Key.
 
@@ -3642,8 +3690,9 @@ The submit-side data model (forms, submissions, delivery fields) is documented i
 - `src/instrumentation.ts`: `onRequestError`, Node runtime only, dynamic import of the reporter. `/api/form-submit` also reports store failures.
 
 **Jobs config (`src/payload.config.ts`)**
-- `jobs.tasks`: the five tasks above. `jobs.autoRun`: `* * * * *` on queue `events` and on queue `newsletter`, `limit: 10` each. `jobs.access`: `queue`, `run`, `cancel` are admin only (`isAdmin`); our code queues through the Local API with `overrideAccess`.
-- The cron starts on the first `getPayload({ config, cron: true })`: called in `GET /api/health` (polled by the deploy script on start) and in `POST /api/form-submit`. Payload does not start it during `next build`. Finished jobs are deleted (`deleteJobOnComplete`, Payload default).
+- `jobs.tasks`: the five tasks above. `jobs.autoRun`: `undefined` on Vercel; off Vercel (local dev) `* * * * *` on queue `events` and on queue `newsletter`, `limit: 10` each. `jobs.access`: `queue` and `cancel` are admin only (`isAdmin`); `run` is `isAdmin` or the Vercel Cron bearer (`isCronRequest`, `src/lib/cronAuth.ts`); our code queues through the Local API with `overrideAccess`.
+- On Vercel the jobs run from Vercel Cron: `vercel.json` calls `/api/payload-jobs/run?queue=events&limit=10` and `?queue=newsletter&limit=10` every minute with `Authorization: Bearer <CRON_SECRET>` (Production only; see [Deploy](#deploy)).
+- Local dev: the in-process cron starts on the first `getPayload({ config, cron: true })`, called in `GET /api/health` and in `POST /api/form-submit`. Payload does not start it during `next build`. Finished jobs are deleted (`deleteJobOnComplete`, Payload default).
 - `hooks.afterError: [reportPayloadError]`, `onInit: registerSiteErrorPayload`.
 
 **Admin buttons (`src/components/admin/`, registered as `admin.components.Field` on `form-submissions` fields in `src/plugins/formBuilder.ts`)**
@@ -3677,7 +3726,7 @@ The submit-side data model (forms, submissions, delivery fields) is documented i
 - `pnpm seed` fills an empty database with the placeholder site; see [Seed](#seed-pnpm-seed).
 - Browser-based proofs (anything needing the human's admin session) are run by the PM or `qa-reviewer`, not by the integrator or schema agents.
 - Script safety: throwaway users created by scripts or tests must use a unique `test+gate-<purpose>@duhamedia.com` address and be deleted by the returned id only.
-- Local image test: `docker build .` then `docker run --network host --env-file .env …`.
+- No local image test: there is no Dockerfile. `docker-compose.yml` is for local Postgres only.
 - `next.config.ts` sets `agentRules: false`: Next 16.3 otherwise appends an agent-rules block to `CLAUDE.md` on `next dev`.
 
 ## Seed (`pnpm seed`)
@@ -3685,7 +3734,7 @@ The submit-side data model (forms, submissions, delivery fields) is documented i
 **Files**: `src/seed/index.ts` (runner), `lib.ts` (`ensure`, `ensureGlobal`, `findId`, `globalIsSaved`, `SEED_CONTEXT`, `PH` / `ph` / `phSub` placeholder helpers), `assets.ts`, `library.ts`, `globals.ts`, `pages.ts`.
 
 **Command**
-- `pnpm seed` = `cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_MIGRATING=true payload run src/seed/index.ts`. `payload run` imports the file with the project's `.env` and tsconfig paths. `PAYLOAD_MIGRATING=true` makes `@payloadcms/db-postgres@3.91.0` skip the dev-mode schema push on connect, so the seed writes data only; apply migrations (or run `pnpm dev` for push) first.
+- `pnpm seed` = `cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_MIGRATING=true PAYLOAD_DB_DIRECT=true payload run src/seed/index.ts`. `payload run` imports the file with the project's `.env` and tsconfig paths. `PAYLOAD_MIGRATING=true` makes `@payloadcms/db-postgres@3.91.0` skip the dev-mode schema push on connect, so the seed writes data only; apply migrations (or run `pnpm dev` for push) first.
 - `SEED_DRY_RUN=1 pnpm seed`: runs everything inside the transaction, then rolls back. `SEED_DRY_RUN=fresh pnpm seed`: same, and also writes every global as if it had never been saved (exercises the global path). `0` / `false` / empty = a real run.
 - Output: one line per document (`create` / `skip`, with id), then created and skipped counts by kind. No secrets are printed. Exit code 1 on any error.
 
@@ -3693,7 +3742,7 @@ The submit-side data model (forms, submissions, delivery fields) is documented i
 - Create-only and idempotent. `ensure()` looks a document up by a stable key (slug, `formKey`, alt text, filename/title, a unique text field; drafts included) and creates it only when absent; it never updates or deletes. `ensureGlobal()` writes a global only when it has no saved row, so a saved global is never touched even when some fields are empty.
 - One database transaction for the whole run (`initTransaction` / `commitTransaction` / `killTransaction`); a failure rolls everything back. If the adapter does not open a transaction the run aborts.
 - Every write passes `context: { disableRevalidate: true, seed: true }` and `overrideAccess: true` (the seed runs outside Next, so there is nothing to revalidate).
-- Never runs on deploy. Running it against staging or production is a human-approved action, logged in PROGRESS.md. Staging method is pending OPS_REQUESTS #15: the standalone image has no `src/` or Payload CLI (F180; the option under discussion is a one-off container from the builder stage). TBD.
+- Never runs on deploy. Running it against staging or production is a human-approved action, logged in PROGRESS.md. Against Vercel-hosted databases the seed runs from a laptop with pulled env; see [Deploy](#deploy) "Seeding Preview or Production from a laptop". `pnpm seed` also sets `PAYLOAD_DB_DIRECT=true` (direct Neon string).
 - Assets are generated at run time (no binaries committed): `sharp` renders SVG to PNG for the share image and a placeholder image, plus a placeholder CSV worksheet.
 
 **What it creates** (58 documents on the dev run, plus up to four globals):
@@ -3720,7 +3769,7 @@ The submit-side data model (forms, submissions, delivery fields) is documented i
 
 **Notes**
 - `payload run` re-parses argv and forwards positional arguments only, so a CLI flag such as `--dry-run` is silently dropped; use env vars. Two earlier "dry runs" were real runs for this reason (dev only).
-- Uploaded files are written to `MEDIA_DIR` before the commit, so a failed or dry run can leave orphan files there (never a database row).
+- Uploaded files are written to storage before the commit (`MEDIA_DIR` locally; Vercel Blob when `BLOB_READ_WRITE_TOKEN` is set), so a failed or dry run can leave orphan files there (never a database row).
 - Dev globals created before the seed are left as they are (create-only), so a dev database can lack seeded scarcity rows (F181).
 - Seeded copy is placeholder; flags F182 to F188 in PROGRESS.md list the content decisions still open (scarcity counts, hidden clients, ratings, homework fields, notification recipient, hero label placement, meta descriptions).
 
@@ -3739,4 +3788,25 @@ Phase 1, 2026-10-17. The old site had no traffic (human, Gate 0), so it was remo
 
 **Added**
 - Payload 3.91.0 in place: `src/payload.config.ts`, `src/app/(payload)/**` (verbatim from `templates/blank` at v3.91.0), `src/app/(frontend)/**` placeholder, boot-scaffolding `users` + `media` collections (revised at Gate S), `src/access/roles.ts`, `src/lib/env.ts`, `src/app/api/health/route.ts`, `src/migrations/`.
-- `Dockerfile`, `.dockerignore`, `docker-compose.yml` (local Postgres only), `.env.example`, `.github/workflows/{build,release}.yml`.
+- `Dockerfile`, `.dockerignore`, `docker-compose.yml` (local Postgres only), `.env.example`, `.github/workflows/{build,release}.yml`. (Docker image, release workflow and `.dockerignore` later removed; see the 2026-10-28 entry below.)
+
+### 2026-10-28: hosting migration to Vercel + Neon + Vercel Blob (owner-approved)
+
+Commits `25dcb07`, `ec3a47c`.
+
+**Removed**
+- `Dockerfile`, `.dockerignore`, `.github/workflows/release.yml` (GHCR image build/retag).
+- `output: 'standalone'` (Next config).
+- Payload `prodMigrations` on container start (migrations now run in the Vercel build).
+- Self-hosted deploy path: GHCR images, server deploy timers, bind-mounted `MEDIA_DIR` media on the server.
+
+**Added**
+- `vercel.json` (`buildCommand` `pnpm run vercel-build`; two every-minute crons to `/api/payload-jobs/run`).
+- `@payloadcms/storage-vercel-blob@3.91.0` (`src/plugins/storage.ts`).
+- `src/lib/databaseUrl.ts`, `src/lib/cronAuth.ts`, `src/lib/readUpload.ts`; Vercel Preview origin fallback in `src/lib/siteUrl.ts`.
+- Package scripts `migrate:deploy`, `vercel-build`; `seed` gained `PAYLOAD_DB_DIRECT=true`.
+- Migration `20261028_121301_vercel_blob_fields`: adds `prefix` and `_objectKey` to `media` and `downloads` (additive).
+- `.github/workflows/build.yml` reduced to checks only.
+- Cloudflare Access service-token headers for `SITE_EVENT_URL` (`SITE_EVENT_ACCESS_CLIENT_ID`, `SITE_EVENT_ACCESS_CLIENT_SECRET`).
+
+**Kept**: `docker-compose.yml` (local-dev Postgres).
