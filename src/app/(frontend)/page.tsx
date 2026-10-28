@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 import { PageShell } from '@/components/chrome'
+import { IntroAnimation } from '@/components/IntroAnimation'
 import { PageView } from '@/components/PageView'
 import { homeFallbackMetadata, pageMetadata } from '@/lib/metadata'
 import { HOME_SLUG } from '@/lib/pagePath'
@@ -32,5 +33,13 @@ export default async function HomePage() {
     )
   }
 
-  return <PageView page={page} />
+  // Intro overlay: `/` only, every full load; staff draft preview skips it so
+  // live-preview refreshes never replay it.
+  const preview = Boolean(await getPreviewUser())
+  return (
+    <>
+      {preview ? null : <IntroAnimation />}
+      <PageView page={page} />
+    </>
+  )
 }
