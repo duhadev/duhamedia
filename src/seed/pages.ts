@@ -34,6 +34,9 @@ type PageSpec = {
 }
 
 const L = link
+
+/** Testimonial ids for a relationship list, dropping any omitted in this run (images off: t3 video). */
+const picks = (...ids: (number | null)[]): number[] => ids.filter((id): id is number => id !== null)
 const bookACall = () => L('Book a Call', '/book-a-call')
 
 /** Ledger fallback rows (F61 proposal: capacity numbers only; prices only in the small pricing note). */
@@ -251,7 +254,7 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
           variant: 'row',
           eyebrow: 'What clients say',
           heading: 'Proof, in their words.',
-          testimonials: [t.video, t.linkedin],
+          testimonials: picks(t.video, t.linkedin),
           studyCard: { show: false },
         },
         {
@@ -632,7 +635,7 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
           blockType: 'reviewWall',
           variant: 'feed',
           source: 'manual',
-          testimonials: [t.video, t.google, t.quote, t.linkedin, t.handover, t.short],
+          testimonials: picks(t.video, t.google, t.quote, t.linkedin, t.handover, t.short),
           pageSize: 24,
           showStudyLinks: true,
           studyLinkLabel: 'Read the full case study',
@@ -1082,7 +1085,7 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
           blockType: 'reviewWall',
           variant: 'wall',
           source: 'manual',
-          testimonials: [t.google, t.linkedin, t.quote, t.video, t.handover, t.short],
+          testimonials: picks(t.google, t.linkedin, t.quote, t.video, t.handover, t.short),
           wallNote: '[Demonstrative wall: reviews import verbatim at launch]',
           inserts: [
             { kind: 'metric', position: 2, metric: { value: '[N]', label: '[What it measures]', sub: '[Quiet sub-line]', accent: true } },

@@ -5,6 +5,10 @@
  *   SEED_DRY_RUN=1 pnpm seed           do everything inside the transaction, then ROLL BACK
  *   SEED_DRY_RUN=fresh pnpm seed       dry run that also writes every global as if it were
  *                                      never saved (proves the global path; rolled back)
+ *   SEED_MEDIA=0 pnpm seed             images off: no media/downloads uploads (references left
+ *                                      empty, docs that require a file omitted and listed)
+ *
+ * The core lives in ./run.ts (`seedContent`), importable by other runners.
  *
  * (An env var, not a CLI flag: `payload run` re-parses argv with minimist and
  * forwards positional arguments only, so `--dry-run` would be silently dropped.)
@@ -38,27 +42,28 @@
  * the deploy has not already migrated that database.
  *
  * Output: one line per document (create / skip) and a summary. No secrets are
- * printed (the only env read here is APP_ENV and SEED_DRY_RUN). Exit code 1 on any error.
+ * printed (the only env read here is APP_ENV, SEED_DRY_RUN and SEED_MEDIA). Exit code 1 on any error.
  */
 import { commitTransaction, createLocalReq, getPayload, initTransaction, killTransaction } from 'payload'
 import config from '@payload-config'
 
-import { seedGlobals } from './globals'
-import { seedLibrary } from './library'
-import { SEED_CONTEXT, type SeedCtx, type SeedLog } from './lib'
-import { seedPages } from './pages'
+import { SEED_CONTEXT, type SeedLog } from './lib'
+import { seedContent, summarize } from './run'
 
-const dryRunEnv = (process.env.SEED_DRY_RUN ?? '').trim().toLowerCase()
+const flag = (name: string) => (process.env[name] ?? '').trim().toLowerCase()
+const dryRunEnv = flag('SEED_DRY_RUN')
 const dryRun = dryRunEnv !== '' && dryRunEnv !== '0' && dryRunEnv !== 'false'
 const fresh = dryRunEnv === 'fresh'
+// Images ON unless SEED_MEDIA is 0/false/off (then: no uploads, see SeedCtx.withMedia).
+const withMedia = !['0', 'false', 'off'].includes(flag('SEED_MEDIA'))
 
 const main = async (): Promise<number> => {
   const payload = await getPayload({ config })
-  const log: SeedLog = { created: [], skipped: [] }
   const req = await createLocalReq({ context: { ...SEED_CONTEXT } }, payload)
-  const ctx: SeedCtx = { payload, req, log, pretendGlobalsEmpty: dryRun && fresh }
 
-  console.log(`\nSeed — APP_ENV=${process.env.APP_ENV ?? '(unset)'}${dryRun ? ` — DRY RUN${fresh ? ' (fresh globals)' : ''}, rolled back at the end` : ''}\n`)
+  console.log(
+    `\nSeed — APP_ENV=${process.env.APP_ENV ?? '(unset)'}${withMedia ? '' : ' — images OFF'}${dryRun ? ` — DRY RUN${fresh ? ' (fresh globals)' : ''}, rolled back at the end` : ''}\n`,
+  )
 
   const inTransaction = await initTransaction(req)
   if (!inTransaction) {
@@ -66,13 +71,9 @@ const main = async (): Promise<number> => {
     return 1
   }
 
+  let log: SeedLog
   try {
-    console.log('Library')
-    const ids = await seedLibrary(ctx)
-    console.log('Globals')
-    await seedGlobals(ctx, ids)
-    console.log('Pages')
-    await seedPages(ctx, ids)
+    log = await seedContent(payload, req, { withMedia, pretendGlobalsEmpty: dryRun && fresh })
 
     if (dryRun) {
       await killTransaction(req)
@@ -89,12 +90,7 @@ const main = async (): Promise<number> => {
     return 1
   }
 
-  const byKind = (list: SeedLog['created']) =>
-    Object.entries(list.reduce<Record<string, number>>((acc, d) => ({ ...acc, [d.kind]: (acc[d.kind] ?? 0) + 1 }), {}))
-      .map(([k, n]) => `${k} ${n}`)
-      .join(', ') || 'none'
-  console.log(`\n${dryRun ? 'Would create' : 'Created'}: ${log.created.length} (${byKind(log.created)})`)
-  console.log(`Skipped (already existed): ${log.skipped.length} (${byKind(log.skipped)})`)
+  console.log(`\n${summarize(log, dryRun ? 'Would create' : 'Created')}`)
   return 0
 }
 

@@ -3732,12 +3732,13 @@ The submit-side data model (forms, submissions, delivery fields) is documented i
 
 ## Seed (`pnpm seed`)
 
-**Files**: `src/seed/index.ts` (runner), `lib.ts` (`ensure`, `ensureGlobal`, `findId`, `globalIsSaved`, `SEED_CONTEXT`, `PH` / `ph` / `phSub` placeholder helpers), `assets.ts`, `library.ts`, `globals.ts`, `pages.ts`.
+**Files**: `src/seed/index.ts` (CLI runner: env flags, transaction, summary), `run.ts` (`seedContent(payload, req, { withMedia })`, the importable core; it writes on the caller's `req` and never opens, commits or rolls back a transaction; `summarize(log)`), `lib.ts` (`ensure`, `ensureUpload`, `ensureGlobal`, `omit`, `findId`, `globalIsSaved`, `SEED_CONTEXT`, `PH` / `ph` / `phSub` placeholder helpers), `assets.ts`, `library.ts`, `globals.ts`, `pages.ts`.
 
 **Command**
 - `pnpm seed` = `cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_MIGRATING=true PAYLOAD_DB_DIRECT=true payload run src/seed/index.ts`. `payload run` imports the file with the project's `.env` and tsconfig paths. `PAYLOAD_MIGRATING=true` makes `@payloadcms/db-postgres@3.91.0` skip the dev-mode schema push on connect, so the seed writes data only; apply migrations (or run `pnpm dev` for push) first.
 - `SEED_DRY_RUN=1 pnpm seed`: runs everything inside the transaction, then rolls back. `SEED_DRY_RUN=fresh pnpm seed`: same, and also writes every global as if it had never been saved (exercises the global path). `0` / `false` / empty = a real run.
-- Output: one line per document (`create` / `skip`, with id), then created and skipped counts by kind. No secrets are printed. Exit code 1 on any error.
+- `SEED_MEDIA=0 pnpm seed` (`0` / `false` / `off`): images off. Nothing is uploaded to `media` or `downloads`; every upload or relationship that would point at a seeded file is left empty, and a document whose schema requires one is omitted and listed (see "Images off" below). Unset = images on (the default, unchanged). Combine with `SEED_DRY_RUN`.
+- Output: one line per document (`create` / `skip` / `omit`, with id or reason), then created, skipped and omitted counts by kind. No secrets are printed. Exit code 1 on any error.
 
 **Rules**
 - Create-only and idempotent. `ensure()` looks a document up by a stable key (slug, `formKey`, alt text, filename/title, a unique text field; drafts included) and creates it only when absent; it never updates or deletes. `ensureGlobal()` writes a global only when it has no saved row, so a saved global is never touched even when some fields are empty.
@@ -3767,6 +3768,11 @@ The submit-side data model (forms, submissions, delivery fields) is documented i
 - Drafts: case studies, posts and the lead magnet are created with `draft: true` and `_status: 'draft'` (Launch-state rule; lead magnets stay draft until the `lead_magnet` delivery exists, F149). Public queries return published only, so they never render publicly.
 - Forms: `contact` (event type `contact`, Send event on), `precall-homework` (Send event off at launch, Gate 0), `newsletter` (event `newsletter`, newsletter sync on), `lead-magnet` (event `lead_magnet`, newsletter sync on, opt-in field `newsletter`). Notification "Email to" is left empty, so mail goes to `FORMS_DEFAULT_TO_EMAIL` when set (F186).
 - Pages: locked section order per SCHEMA §9. Hero headlines and subheads carry the literal `[STRATEGIC PLACEHOLDER — final copy TBD]` label (`ph()` / `phSub()`). Page SEO: explicit `meta.title` per page (F191; stored absolute, `buildMetadata` does not apply the template again) and a plain `meta.description`. `noindex` is set on `thank-you`, `lp/sample-campaign`, `links`, `404`, and on `privacy`, `terms`, `cookies`, `gdpr` until counsel content exists (F190; clearing it is a Gate 3 step). The `bookingEmbed` block on `book-a-call` gets `thankYouPage` set to the `thank-you` page created earlier in the same run.
+
+**Images off (`SEED_MEDIA=0`)**, for Vercel while the Blob stores are private (`@payloadcms/storage-vercel-blob@3.91.0` uploads public-only, OPS #20):
+- Omitted: `media` share image, placeholder image and founder avatar; `downloads` worksheet; testimonial `t3 video` (a published video testimonial requires a poster, `Testimonials.ts` `validatePoster`); global `seo-defaults` (`defaultOgImage` is required). 57 documents/globals are created instead of 63.
+- Left empty: founder `photo`; `specLedger` card and hub images on the Shopify and Marketing pages; case-study `heroMedia` and Client Voice testimonial (drafts, required only to publish); lead-magnet `asset.file` (draft). `t3 video` is dropped from the `testimonialRow` (home) and both `reviewWall` lists (testimonials, reviews).
+- With `seo-defaults` unsaved, pages render with no default share image (no `og:image`). A later run with images on creates only what is still missing (the media, the worksheet, `t3 video`, `seo-defaults`); it never fills the empty fields of documents that already exist (create-only), so those images are added in the admin.
 
 **Notes**
 - `payload run` re-parses argv and forwards positional arguments only, so a CLI flag such as `--dry-run` is silently dropped; use env vars. Two earlier "dry runs" were real runs for this reason (dev only).

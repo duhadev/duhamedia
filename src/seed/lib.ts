@@ -19,7 +19,11 @@ export type Ref = { id: number }
 export type SeedLog = {
   created: { kind: string; key: string; id: number | string }[]
   skipped: { kind: string; key: string; id: number | string }[]
+  /** Not created on purpose in this run (e.g. images off), with the reason. */
+  omitted: { kind: string; key: string; reason: string }[]
 }
+
+export const emptyLog = (): SeedLog => ({ created: [], skipped: [], omitted: [] })
 
 export type SeedCtx = {
   payload: Payload
@@ -27,6 +31,13 @@ export type SeedCtx = {
   log: SeedLog
   /** Dry-run "fresh" mode: treat every global as never saved (the write is rolled back anyway). */
   pretendGlobalsEmpty: boolean
+  /**
+   * false = upload nothing (media + downloads): every upload/relationship that
+   * would point at a seeded file is left empty, and a document whose schema
+   * REQUIRES such a file (published) is omitted and logged (`omitted`).
+   * Used by the deploy-time seed migration (private Blob stores, OPS #20).
+   */
+  withMedia: boolean
 }
 
 export const SEED_CONTEXT = { disableRevalidate: true, seed: true } as const
@@ -76,6 +87,22 @@ export const ensure = async (
   line('create', kind, key, id)
   return id
 }
+
+/** Log a document deliberately not created in this run. Returns `null` for the caller's id slot. */
+export const omit = (ctx: SeedCtx, kind: string, key: string, reason: string): null => {
+  ctx.log.omitted.push({ kind, key, reason })
+  console.log(`  ${'omit'.padEnd(7)} ${kind.padEnd(18)} ${key}  (${reason})`)
+  return null
+}
+
+/** `ensure` for an upload document: omitted (null) when the run has images off. */
+export const ensureUpload = async (
+  ctx: SeedCtx,
+  kind: 'media' | 'downloads',
+  key: string,
+  where: Where,
+  create: () => Promise<{ id: number | string }>,
+): Promise<number | null> => (ctx.withMedia ? ensure(ctx, kind, key, where, create) : omit(ctx, kind, key, 'images off: no file uploads'))
 
 /**
  * True when the global has a saved row. payload@3.91.0 globals/operations/findOne.js:61-68:

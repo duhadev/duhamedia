@@ -3,7 +3,7 @@ import type { RequiredDataFromCollectionSlug } from 'payload'
 import { h, p, quote, root, ul } from '@/showcase/lexical'
 
 import { founderAvatar, ogImage, placeholderImage, placeholderWorksheet } from './assets'
-import { SEED_CONTEXT, ensure, link, ph, phSub, type SeedCtx } from './lib'
+import { SEED_CONTEXT, ensure, ensureUpload, link, omit, ph, phSub, type SeedCtx } from './lib'
 
 /**
  * Library documents the pages point at: media, downloads, forms, the "Failed
@@ -30,17 +30,17 @@ export async function seedLibrary(ctx: SeedCtx) {
   /* ---------------- media + downloads (keyed by alt / title) ---------------- */
 
   const OG_ALT = 'Duha Media placeholder share image (replace before launch)'
-  const ogMedia = await ensure(ctx, 'media', OG_ALT, { alt: { equals: OG_ALT } }, async () =>
+  const ogMedia = await ensureUpload(ctx, 'media', OG_ALT, { alt: { equals: OG_ALT } }, async () =>
     payload.create({ collection: 'media', data: { alt: OG_ALT }, file: await ogImage(), ...opts }),
   )
 
   const PLACEHOLDER_ALT = 'Placeholder image (replace with a real photo before launch)'
-  const image = await ensure(ctx, 'media', PLACEHOLDER_ALT, { alt: { equals: PLACEHOLDER_ALT } }, async () =>
+  const image = await ensureUpload(ctx, 'media', PLACEHOLDER_ALT, { alt: { equals: PLACEHOLDER_ALT } }, async () =>
     payload.create({ collection: 'media', data: { alt: PLACEHOLDER_ALT }, file: await placeholderImage(), ...opts }),
   )
 
   const WORKSHEET_TITLE = '[Placeholder worksheet]'
-  const worksheet = await ensure(ctx, 'downloads', WORKSHEET_TITLE, { title: { equals: WORKSHEET_TITLE } }, async () =>
+  const worksheet = await ensureUpload(ctx, 'downloads', WORKSHEET_TITLE, { title: { equals: WORKSHEET_TITLE } }, async () =>
     payload.create({ collection: 'downloads', data: { title: WORKSHEET_TITLE }, file: placeholderWorksheet(), ...opts }),
   )
 
@@ -231,7 +231,7 @@ export async function seedLibrary(ctx: SeedCtx) {
 
   const FOUNDER = 'Abdur-Rahman Ch'
   const AVATAR_ALT = "Founder's avatar: a low-poly desert river at sunset"
-  const avatar = await ensure(ctx, 'media', AVATAR_ALT, { alt: { equals: AVATAR_ALT } }, async () =>
+  const avatar = await ensureUpload(ctx, 'media', AVATAR_ALT, { alt: { equals: AVATAR_ALT } }, async () =>
     payload.create({
       collection: 'media',
       data: { alt: AVATAR_ALT, focalX: 72, focalY: 30 },
@@ -273,7 +273,9 @@ export async function seedLibrary(ctx: SeedCtx) {
     metric: { value: '[N]%', label: '[Metric label]' },
     sortOrder: 2,
   })
-  const tVideo = await testimonial('t3 video', {
+  // A published video testimonial must have a poster (Testimonials.ts validatePoster):
+  // with images off it is omitted, and the case studies' Client Voice stays empty.
+  const tVideo = image === null ? omit(ctx, 'testimonials', 't3 video', 'video testimonial requires a poster image (images off)') : await testimonial('t3 video', {
     quote: '[Placeholder pull quote from the video — what changed, in the client’s words.]',
     authorName: '[Client name]',
     authorRole: '[Business type, Chicago]',
@@ -396,7 +398,8 @@ export async function seedLibrary(ctx: SeedCtx) {
           headlineMetric: { value: '[+N%]', label: '[Metric label, N months]' },
           cardSummary: '[Placeholder summary: what was leaking, what we changed.]',
           inShort: '[Placeholder summary of the situation, the order of work and the outcome, in two or three sentences.]',
-          heroMedia: image,
+          // Required to publish only; the studies are drafts, so images-off leaves it empty.
+          heroMedia: image ?? undefined,
           narrative: {
             before: { title: 'What we found', body: root(p('[Placeholder] What the audit found, in two or three sentences.'), ul('[Placeholder finding]', '[Placeholder finding]')) },
             strategy: { title: 'The order of work, and why', body: root(p('[Placeholder] Tracking first, then the store, then acquisition — and why that order.'), quote('[Placeholder pull quote.]')) },

@@ -1,5 +1,5 @@
 import type { LibraryIds } from './library'
-import { SEED_CONTEXT, ensureGlobal, link, type SeedCtx } from './lib'
+import { SEED_CONTEXT, ensureGlobal, link, omit, type SeedCtx } from './lib'
 
 /**
  * The four globals, each written ONLY when it has never been saved
@@ -161,6 +161,14 @@ export async function seedGlobals(ctx: SeedCtx, ids: LibraryIds) {
     }),
   )
 
+  // `defaultOgImage` is required (SeoDefaults.ts): with images off the global is
+  // left unsaved (the site falls back to no default share image) and a later
+  // run with images on writes it, since an unsaved global still counts as missing.
+  const og = ids.media.og
+  if (og === null) {
+    omit(ctx, 'global:seo-defaults', 'seo-defaults', 'defaultOgImage (required) needs the share image (images off)')
+    return
+  }
   await ensureGlobal(ctx, 'seo-defaults', () =>
     payload.updateGlobal({
       slug: 'seo-defaults',
@@ -168,7 +176,7 @@ export async function seedGlobals(ctx: SeedCtx, ids: LibraryIds) {
         titleTemplate: '%s — Duha Media',
         defaultDescription:
           '[Placeholder] One team builds your Shopify store, runs the growth engine, then trains your team to take over. Chicago.',
-        defaultOgImage: ids.media.og,
+        defaultOgImage: og,
         organization: { name: 'Duha Media' },
         localBusiness: { areaServed: 'Chicago metropolitan area' },
       },
