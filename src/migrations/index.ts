@@ -30,6 +30,8 @@ import * as migration_20261024_034121_a3_lead_magnet from './20261024_034121_a3_
 import * as migration_20261024_165445_a4_site_error from './20261024_165445_a4_site_error';
 import * as migration_20261028_121301_vercel_blob_fields from './20261028_121301_vercel_blob_fields';
 
+import * as migration_20261028_190000_seed_placeholder_content from './20261028_190000_seed_placeholder_content';
+
 export const migrations = [
   {
     up: migration_20261017_181819_initial.up,
@@ -185,5 +187,10 @@ export const migrations = [
     up: migration_20261028_121301_vercel_blob_fields.up,
     down: migration_20261028_121301_vercel_blob_fields.down,
     name: '20261028_121301_vercel_blob_fields'
+  },
+  {
+    up: migration_20261028_190000_seed_placeholder_content.up,
+    down: migration_20261028_190000_seed_placeholder_content.down,
+    name: '20261028_190000_seed_placeholder_content'
   },
 ];
