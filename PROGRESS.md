@@ -5,7 +5,7 @@
 **Local dev:** `docker compose up -d` (Postgres 127.0.0.1:5433) + `pnpm dev` → http://localhost:3000, admin at /admin (test admin `test+gate@duhamedia.com`, creds in local `.env` `DEV_ADMIN_*`)
 **Installed versions:** payload@3.91.0 (all @payloadcms/* 3.91.0 lockstep, incl. storage-vercel-blob), next@16.3.8, react 19.2.6, pnpm 11.28.3, Vercel Node 24.x
 **Staging:** Vercel Preview of `main` — first green build `9d19fd9` 2026-10-28 (unseeded). Docker/GHCR pipeline retired 2026-10-28
-**Production:** duhamedia.com DOWN (500) since ~2026-10-17 — Vercel auto-deployed the DB-less Payload build; old-site deployment is inactive. Fix = OPS #16 then first production deploy
+**Production:** v1.0.1 (bbcf25b) LIVE on duhamedia.com since 2026-10-28 (Vercel Hobby). Placeholder content seeded, images off until OPS #20
 **Last session ended:** 2026-10-27 — /clear point; see Session handoff
 
 ## Build unit status
@@ -78,7 +78,8 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 ## Migrations log
 | Date | Migration file | What it changes | Applied in dev / staging / prod |
 |---|---|---|---|
-| 2026-10-28 | `src/migrations/20261028_190000_seed_placeholder_content.ts` | data only, no SQL: one-time create-only placeholder seed, images off (57 created, 6 omitted) | no / Preview 7ffe13e (57 created) / pending release |
+| 2026-10-28 | `src/migrations/20261017_200000_move_legacy_tables.ts` | guarded (old site only): moves 8 old-site tables to schema `legacy`, nothing dropped | no-op in dev / no-op Preview / prod v1.0.1 moved 8 |
+| 2026-10-28 | `src/migrations/20261028_190000_seed_placeholder_content.ts` | data only, no SQL: one-time create-only placeholder seed, images off (57 created, 6 omitted) | no / Preview 7ffe13e (57 created) / prod v1.0.1 (57 created) |
 | 2026-10-28 | `src/migrations/20261028_121301_vercel_blob_fields.ts` | additive: `prefix` (default media/downloads) + `_objectkey` varchar on `media` and `downloads` (storage-vercel-blob `alwaysInsertFields`) | dev via push / no / no |
 | 2026-10-22 | `src/migrations/20261022_014336_s3_friendly_errors.ts` | **no-op (expand step)**: autosave off would drop `autosave` col+index on 8 `_v` tables; kept for deploy overlap. **Contract migration owed later** (F31) | scratch proofs; dev push dropped cols / no / no |
 | 2026-10-22 | `src/migrations/20261022_001520_p3_seo.ts` | nullable meta_title, meta_description, meta_image_id (FK media set null, indexed) on pages, case_studies, posts, lead_magnets + `_v` (version_meta_*) | scratch proofs; dev via push / no / no |
@@ -114,7 +115,8 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 ## Releases
 | Date | Tag | Ordered by human | Notes |
 |---|---|---|---|
-| 2026-10-28 | v1.0.0 (7ffe13e) | yes ("yes to all 3"; human pushed) | first build failed on old-site tables in prod DB; redeploy pending |
+| 2026-10-28 | v1.0.0 (7ffe13e) | yes ("yes to all 3"; human pushed) | build FAILED: old-site tables in prod DB |
+| 2026-10-28 | v1.0.1 (bbcf25b) | yes ("do it yourself … get my stuff online") | **LIVE.** Old-site tables moved to schema `legacy` (not dropped); seed 57 created / 6 omitted; all checked routes 200, `/_showcase` 404, no X-Robots-Tag. Hobby plan (OPS #18) |
 
 ## Decision log
 Append-only. New sessions: read this before asking the human anything.
@@ -348,6 +350,7 @@ Decisions deferred to the human; each has a safe default applied so work continu
 | 2026-10-28 | **Seed via one-time data migration** (human: "do it via code"). The seed core runs inside `payload migrate` (Vercel build), once per DB, create-only, images skipped while Blob stores are private (OPS #20). Overrides CLAUDE.md "seed never runs on deploy" for this one-time initial seed. Laptop script stays for re-seeding. | Human decision; replaces laptop/text-only seed path. |
 | 2026-10-28 | Seed migration written by human (PM write was blocked by the permission guard), pushed 7ffe13e. Preview build ran it: 57 created, 6 omitted; all checked routes 200, health 200, unknown 404. Ready for release on human's push of `production` + v1.0.0. | Human ran the provided block. |
 | 2026-10-28 | Release v1.0.0 (human pushed `production`=7ffe13e + tag). Production build FAILED at migration `20261017_202453_c3_c6…`: `relation "clients" already exists` — production Neon DB still holds the old site's tables (clients, posts, form_submissions, …). First 3 migrations committed; failing one rolled back; live site unchanged. Fix = human drops the old-site tables in the Neon SQL editor, then redeploys. | Build log via Vercel CLI. |
+| 2026-10-28 | duhamedia.com LIVE on v1.0.1. Old-site tables kept in schema `legacy` (droppable later only by the human). Admin: human creates first user at /admin. | Production check by PM. |
 
 ## Session handoff
 - **Last session ended:** 2026-10-28 — Vercel migration done in code; nothing pushed yet (push to `main` deploys PRODUCTION until the Vercel production branch is switched to `production`).
