@@ -114,6 +114,7 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 ## Releases
 | Date | Tag | Ordered by human | Notes |
 |---|---|---|---|
+| 2026-10-28 | v1.0.0 (7ffe13e) | yes ("yes to all 3"; human pushed) | first build failed on old-site tables in prod DB; redeploy pending |
 
 ## Decision log
 Append-only. New sessions: read this before asking the human anything.
@@ -346,6 +347,7 @@ Decisions deferred to the human; each has a safe default applied so work continu
 | 2026-10-28 | Both Vercel Blob stores are **private**; adapter 3.91.0 is public-only, so uploads fail. Human chose a text-only initial seed (seed-remote.sh without Blob token); public stores later (OPS #20). `ship it` push of `production` + tag v1.0.0 blocked by the permission guard — human runs it. Staging domain `staging.duhamedia.com` attached to branch `main` (DNS CNAME pending, human). | Seed dry run error relayed by human. |
 | 2026-10-28 | **Seed via one-time data migration** (human: "do it via code"). The seed core runs inside `payload migrate` (Vercel build), once per DB, create-only, images skipped while Blob stores are private (OPS #20). Overrides CLAUDE.md "seed never runs on deploy" for this one-time initial seed. Laptop script stays for re-seeding. | Human decision; replaces laptop/text-only seed path. |
 | 2026-10-28 | Seed migration written by human (PM write was blocked by the permission guard), pushed 7ffe13e. Preview build ran it: 57 created, 6 omitted; all checked routes 200, health 200, unknown 404. Ready for release on human's push of `production` + v1.0.0. | Human ran the provided block. |
+| 2026-10-28 | Release v1.0.0 (human pushed `production`=7ffe13e + tag). Production build FAILED at migration `20261017_202453_c3_c6…`: `relation "clients" already exists` — production Neon DB still holds the old site's tables (clients, posts, form_submissions, …). First 3 migrations committed; failing one rolled back; live site unchanged. Fix = human drops the old-site tables in the Neon SQL editor, then redeploys. | Build log via Vercel CLI. |
 
 ## Session handoff
 - **Last session ended:** 2026-10-28 — Vercel migration done in code; nothing pushed yet (push to `main` deploys PRODUCTION until the Vercel production branch is switched to `production`).
