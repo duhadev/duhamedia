@@ -8,8 +8,8 @@ This file was written on 2026-10-17 after a long design review with the human (A
 
 - **Site:** duhamedia.com, the marketing site for Duha Media, Integrated Ecommerce Growth Partner, Chicago. Business model: one accountable team that builds the store (from $5K), operates the growth engine (from $1K/mo), and trains the client toward independence. Three-phase narrative: 01 Build the Foundation → 02 Operate the Engine → 03 Build Independence. ICP: established businesses netting $500K–$5M/yr, successful offline, under-scaled online, previously burned by agencies or fragmented freelancers. Tone: direct, evidenced, operator-confident, unsentimental. Metrics are typographic events.
 - **This is an existing repository.** It holds the old duhamedia.com website, currently live on Vercel. Its stack is unknown to the author of this file. You will **inventory it first** (Phase 0), then **restructure it in place**: reuse whatever is worth keeping (assets, copy, components, config, URL structure), and implement the architecture below inside it. Do not start a fresh repo, and do not delete old work without logging what was removed and why.
-- **Stack (locked):** Payload CMS **3.x stable** (never 4.0 beta; see Phase 0), Next.js App Router, TypeScript, Tailwind CSS, PostgreSQL via `@payloadcms/db-postgres`. Self-hosted on the human's Red Hat Enterprise Linux server in Docker, served through a Cloudflare tunnel. Media on **local disk** (a bind-mounted volume on the server's `/home` disk). No Payload Cloud, no Vercel Blob, no Neon, no S3 adapter, no MinIO, no vendor lock-in. If a doc page or template assumes any of those, translate it to the self-hosted equivalent or flag it. Never adopt it as-is.
-- **Builds happen in GitHub Actions, never on the server** (locked; see Deployment model). The server only pulls and runs finished images.
+- **Stack (locked; hosting changed 2026-10-28):** Payload CMS **3.x stable** (never 4.0 beta; see Phase 0), Next.js App Router, TypeScript, Tailwind CSS, PostgreSQL via `@payloadcms/db-postgres`. **Hosted on Vercel (Pro), database on Neon Postgres (Vercel Marketplace integration, preview branches), uploads on Vercel Blob via `@payloadcms/storage-vercel-blob`.** The human reversed the original self-hosted Docker plan on 2026-10-28; see the Decision log and DECISIONS.md §R. Local dev stays docker-compose Postgres + local disk. No Payload Cloud, no S3 adapter, no MinIO.
+- **Builds happen on Vercel** (see Deployment model). GitHub Actions runs checks only. The server no longer hosts the site; it keeps the OpenClaw secretary, which the site reaches over a public tunnel hostname protected by a Cloudflare Access service token.
 - **External systems (already running, owned by others):**
   - The **OpenClaw AI secretary** on the same server. It talks to the human over Matrix and is the single hub every site event is sent to (see Integration architecture). A separate **server agent** owns the server, OpenClaw, Postgres provisioning, the tunnel, backups and the deploy script. You never administer any of it.
   - **Resend**: the only programmatic email sender for the site (transactional mail and newsletter broadcasts).
@@ -221,45 +221,31 @@ Full-site pass, run against **staging** (`staging.duhamedia.com`, which is produ
 
 Present the full report at **Gate 3**. Then follow the **Cutover plan**. The human orders the first production release.
 
-### Phase 6 — Cutover from Vercel (human-driven, you prepare)
+### Phase 6 — Go-live on Vercel (human-driven, you prepare)
 
-Order (locked):
-1. Staging fully passes Gate 3.
-2. Lower the DNS TTL in advance (human / Cloudflare).
-3. The human says "ship it" → you create the release tag → production pulls the image → the server agent's deploy script migrates and starts production on the tunnel route.
-4. Seed production once (human-approved), then the human enters any real content.
-5. Switch the apex DNS from Vercel to the tunnel (human).
-6. Verify: all redirect-map URLs, every form end to end with `env: "production"`, health, sitemap.
-7. Keep the old Vercel deployment **untouched for 2 weeks** as the rollback. Then the human retires it.
+Order:
+1. Preview (`main`) fully passes Gate 3.
+2. The human says "ship it" → you fast-forward the `production` branch to the approved `main` commit and push a `vX.Y.Z` tag → Vercel builds Production (migrations run in the build).
+3. Seed production once (human-approved, from the laptop; see `docs/dev.md` Deploy), then the human enters real content.
+4. Verify: every form end to end with `env: "production"`, health, sitemap, redirects.
+5. Rollback = Vercel Instant Rollback to the previous production deployment (human).
 
-## Deployment model (locked)
+## Deployment model (Vercel, from 2026-10-28)
+
+Replaces the original self-hosted Docker/GHCR model (human decision 2026-10-28, DECISIONS.md §R).
 
 **Flow:**
-1. You commit and push to `main` after units clear their gates.
-2. **GitHub Actions** builds one Docker image per commit (with no database access; see Phase 0 B.3). It runs typecheck and lint, then pushes the image to a **private GHCR** repository tagged `sha-<commit>` and `main`.
-3. The server's timer (owned by the server agent) pulls `:main` every few minutes and deploys it to **staging**.
-4. Production releases: when, and only when, the human says so, you create and push a git tag `vX.Y.Z`. CI then re-tags that already-built commit's image as `vX.Y.Z` and `production`. The server's production timer pulls `:production`. **Production always runs an image that already ran on staging.** Never rebuild for production.
-5. Rollback = point `production` back at the previous `vX.Y.Z` (CI job or a documented manual retag), which the human triggers.
+1. You commit and push to `main` after units clear their gates. `main` builds a Vercel **Preview** deployment (staging): `APP_ENV=staging`, its own Neon preview branch, its own Blob store, noindex.
+2. Vercel's **production branch is `production`**. Production deploys only when the human says so: you fast-forward `production` to the approved `main` commit and push a `vX.Y.Z` tag. Never push `production` on your own initiative.
+3. Build command `pnpm run vercel-build` = `payload migrate` over the direct (unpooled) Neon connection, then `next build`. A failed migration fails the deploy; the previous deployment keeps serving.
+4. Jobs: Vercel Cron every minute calls `/api/payload-jobs/run?queue=events|newsletter`, authorised by `CRON_SECRET`. Cron runs on Production only (Pro plan required).
+5. Rollback = Vercel Instant Rollback (human).
 
-**What the server agent's deploy script does** (theirs to build; you provide what it needs):
-- Pull image → **run migrations first** → swap the container → poll `/api/health` → on failure, roll back to the previous image and alert the human through the secretary. Logs are short.
-- Migrations run before new code serves traffic. Whether that is `prodMigrations` on startup or an explicit migrate command in the image is decided at Phase 0 (B.2) and recorded in `OPS_REQUESTS.md` so the server agent's script matches.
-- Old images are pruned after each deploy.
+**Your deliverables for deploy:** `vercel.json`, the check-only CI workflow, `/api/health` (DB ping, 200/503, `no-store`), `.env.example` names, and `docs/dev.md` → **Deploy**.
 
-**Your deliverables for deploy:**
-- `Dockerfile`: multi-stage, `output: 'standalone'`, non-root user, minimal runtime image, no secrets baked in, all config from env at runtime.
-- `.github/workflows/`: build-and-push on `main`; retag on `v*` tags. Uses `GITHUB_TOKEN` for GHCR. No other secrets needed in CI.
-- `/api/health`: a cheap DB ping, returning 200 or 503 with no sensitive detail. The secretary polls it every 5 minutes.
-- `APP_ENV` (`production` | `staging` | `development`) drives environment behavior: the event `env` field, noindex on staging, showcase visibility.
-- `docs/dev.md` → **Deploy** section: how a push reaches staging, how a release reaches production, how to roll back, what env vars exist (names only).
+`APP_ENV` (`production` | `staging` | `development`) still drives environment behavior: the event `env` field, noindex outside production, showcase visibility.
 
-**Staging (locked):**
-- `staging.duhamedia.com`, behind Cloudflare Access so only the human can see it, and `noindex` regardless.
-- Its own database (`duha_site_staging`) inside the **same Postgres container** as production (saves RAM), its own media directory, its own `.env`.
-- It is for previewing code and design. It gets content from the seed script. **Real content is edited in the production admin.** Content edits on staging do not carry over, and that's expected.
-- The server agent may stop staging when it isn't being previewed, to save RAM.
-
-**Vercel fallback** is not a toggle. It would require exposing Postgres or moving the database. Never plan for it. It is a separate decision with its own plan if it ever comes up.
+**Neon scoping is the dangerous part:** a Preview build migrates whatever database its env points at. Production connection vars must never be scoped to Preview.
 
 ## Plugin research mandate (Phase 0, item B.7)
 
@@ -282,7 +268,7 @@ Research the official plugin set for the pinned version. For each plugin you rec
 
 **Rejected (locked; do not re-litigate):**
 - `plugin-search` and `plugin-nested-docs` (the site map is flat, with no search anywhere).
-- `storage-s3` (media is local disk) and `plugin-sentry` (errors go to the secretary).
+- `storage-s3` (media is on Vercel Blob via `@payloadcms/storage-vercel-blob`, approved 2026-10-28) and `plugin-sentry` (errors go to the secretary).
 - All payment and ecommerce plugins.
 - All in-editor AI writing plugins (e.g. `payload-ai`).
 - Community booking/appointment plugins (they add public customer accounts or payment gates, both banned, and none reads Nextcloud).
@@ -467,12 +453,14 @@ Every section of every page must map to exactly one block, and every block must 
    - All config is via env vars documented valueless in `.env.example`.
    - Real values live only in the server's owner-only `.env` files (managed by the server agent) and your local untracked `.env`.
    - No credential ever appears in committed files, CI logs, reports, `PROGRESS.md` or `OPS_REQUESTS.md`. Refer to secrets **by name only**.
-   - Expected names: `DATABASE_URI`, `PAYLOAD_SECRET`, `APP_ENV`, `SITE_EVENT_URL`, `SITE_EVENT_SECRET`, `RESEND_API_KEY`, `RESEND_NEWSLETTER_SEGMENT_ID`, `RESEND_NEWSLETTER_TOPIC_ID`, `TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`, the media path variable, plus anything Phase 0 adds.
+   - Expected names: `DATABASE_URI`, `PAYLOAD_SECRET`, `APP_ENV`, `SITE_EVENT_URL`, `SITE_EVENT_SECRET`, `RESEND_API_KEY`, `RESEND_NEWSLETTER_SEGMENT_ID`, `RESEND_NEWSLETTER_TOPIC_ID`, `TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`, plus the Vercel-era names `DATABASE_URL`, `DATABASE_URL_UNPOOLED`, `BLOB_READ_WRITE_TOKEN`, `CRON_SECRET`, `SITE_EVENT_ACCESS_CLIENT_ID`, `SITE_EVENT_ACCESS_CLIENT_SECRET`, `FORMS_DEFAULT_TO_EMAIL` (`MEDIA_DIR` and `DATABASE_URI` are local dev only).
    - The server agent's earlier draft used `RESEND_AUDIENCE_ID`. That is replaced by the segment and topic IDs; note the rename in `OPS_REQUESTS.md`.
 4. **PII.** Lead data stays in Postgres, Resend and the secretary. Gate reports reference submissions by ID, and end-to-end tests use fake identities (`test+gate@duhamedia.com` pattern).
 5. **Caching.** Set cache headers so Cloudflare can cache `/_next/static/*` and media long-term, while `/admin*`, `/api/*`, form posts and draft/preview responses are never cached. Document the intended Cloudflare cache rules in `OPS_REQUESTS.md` for the human.
 
 ## Coordination with the server agent
+
+**Since 2026-10-28 the server hosts only the secretary (and Nextcloud) for this site.** Staging, deploy timers, GHCR pulls, site Postgres and media bind mounts are retired. What remains: the secretary's public event hostname + Access service token, Nextcloud, and the secretary polling `https://duhamedia.com/api/health`. The list below is historical.
 
 A separate agent (on another device, via the human) owns the server: the Postgres container and databases, the media directories on `/home`, the `.env` files, the Docker network and firewall rule to the secretary, the secretary plugin, the deploy timers and script, backups (nightly `age`-encrypted dumps + media to Cloudflare R2, 14 daily / 8 weekly, with a tested restore), and Nextcloud.
 

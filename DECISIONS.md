@@ -300,3 +300,25 @@ Non-plugin dependencies proposed: `@payloadcms/richtext-lexical`, `@payloadcms/e
 8. **Pin `payload@3.91.0`** (2 days old) — *recommended*, vs `3.90.2` (Sep 23; its Next.js peer range not yet checked). With 3.91.0, Next.js must move to ≥ 16.3.3.
 9. **Switch npm → pnpm?** *Recommended: yes* (Payload's preferred manager).
 10. **Prerequisites before Phase 2** (not answers, actions): import the Claude Design handoff into `/design-reference/`; add the Playwright MCP (O).
+
+## R. Hosting migration to Vercel + Neon + Vercel Blob (human, 2026-10-28)
+
+Supersedes the hosting parts of §D (runtime shape), §E (migration method), §F (DB-less build as the deploy path), §G (local-disk media), §I (storage plugin rejection) and §J (in-process cron). Everything else stands.
+
+| Topic | Decision | Rationale | Source |
+|---|---|---|---|
+| Host | Vercel **Pro** (production branch `production`; `main` → Preview = staging) | Hobby is non-commercial and limits cron to daily | https://vercel.com/docs/cron-jobs/usage-and-pricing |
+| DB adapter | Keep `@payloadcms/db-postgres@3.91.0` over TCP to Neon; runtime `DATABASE_URL` (pooled), migrations `DATABASE_URL_UNPOOLED` via `PAYLOAD_DB_DIRECT=true`; pool `max 5`, idle 5 s on Vercel | `db-vercel-postgres` wraps the legacy `@vercel/postgres` client; Neon says migrate over a direct connection | https://neon.com/docs/connect/connection-pooling · https://neon.com/docs/guides/vercel-managed-integration |
+| Migrations | `prodMigrations` removed; `vercel-build` = `payload migrate` then `next build`; failed migration fails the deploy | Template pattern (`with-vercel-website` @ v3.91.0 `"ci"` script) | payload repo `templates/with-vercel-website/package.json` |
+| Dev push | Only when `APP_ENV=development` and not on Vercel | A laptop with pulled cloud env can never push-sync Neon | — |
+| Uploads | `@payloadcms/storage-vercel-blob@3.91.0` (approved plugin), enabled only with `BLOB_READ_WRITE_TOKEN`; `alwaysInsertFields: true`; `clientUploads` (staff-only token) because Vercel caps server uploads at 4.5 MB | Official adapter; same schema with and without Blob | https://payloadcms.com/docs/upload/storage-adapters |
+| Downloads privacy | Adapter is public-only in 3.91.0; files are served only via access-checked `/api/downloads/file/*` with `Cache-Control: private, no-store`. Residual: bytes also exist at an unguessable public blob URL (`downloads/<uuid>/<file>` for admin uploads) | No private-blob support in the adapter yet | `storage-vercel-blob/dist/index.d.ts`, `getFile.js` |
+| Jobs | `autoRun` local only; Vercel Cron `* * * * *` → `/api/payload-jobs/run?queue=events|newsletter&limit=10`, `jobs.access.run` = admin OR `Authorization: Bearer $CRON_SECRET` (constant-time) | Serverless has no long-lived process | https://payloadcms.com/docs/jobs-queue/queues · https://vercel.com/docs/cron-jobs/manage-cron-jobs |
+| Secretary | `SITE_EVENT_URL` = public tunnel hostname behind Cloudflare Access **service token**; optional headers from `SITE_EVENT_ACCESS_CLIENT_ID/SECRET`; HMAC unchanged | Vercel cannot reach the server's internal network | https://developers.cloudflare.com/cloudflare-one/identity/service-tokens/ |
+| site_error dedupe | Stays in-memory → per instance on Vercel | Simplicity; flood risk bounded per instance | INTEGRATIONS.md |
+| Preview origin | On `VERCEL_ENV=preview` without `SITE_URL`, use `https://$VERCEL_BRANCH_URL`; production still requires `SITE_URL` | Form same-origin + Turnstile hostname checks | https://vercel.com/docs/environment-variables/system-environment-variables |
+| CI | GitHub Actions = typecheck + lint + DB-less build; no GHCR; Docker image + release workflow deleted | Vercel builds | — |
+| Seed | From the laptop: `vercel env pull .env.vercel-<env>`, source it, `SEED_DRY_RUN=1 pnpm seed`, then `pnpm seed` | Replaces OPS #15 | `src/seed/index.ts` header |
+| Schema delta | Migration `20261028_121301_vercel_blob_fields` adds `prefix` + `_objectkey` to `media` and `downloads` (additive) | Storage plugin fields | `src/migrations/` |
+
+**Open for the human (Cloudflare features now need a decision):** Cloudflare Access on `/admin*` and the WAF rate-limit rule (OPS #5, #10) only work if Cloudflare proxies traffic in front of Vercel (orange cloud), which Vercel discourages. Recommended instead: DNS-only to Vercel; admin protected by Payload login + lockout; rate limiting via a **Vercel Firewall** rate-limit rule on `/api/form-submit` (plan availability to verify in the dashboard); Preview protected by Vercel Deployment Protection. See OPS #16.

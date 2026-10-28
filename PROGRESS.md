@@ -1,11 +1,11 @@
 # Build Progress — Duha Media (duhamedia.com)
 
 ## Current state
-**Phase:** 3 complete + Phase 4 dev seed done; waiting on staging (OPS #1–#15) and human facts. Gate S delta approved 2026-10-25
+**Phase:** 3 complete + Phase 4 dev seed done; **hosting migrated to Vercel + Neon + Blob in code (2026-10-28)**, waiting on Vercel/Neon/Blob dashboard setup (OPS #16) + secretary hostname (OPS #17). Gate S delta approved 2026-10-25
 **Local dev:** `docker compose up -d` (Postgres 127.0.0.1:5433) + `pnpm dev` → http://localhost:3000, admin at /admin (test admin `test+gate@duhamedia.com`, creds in local `.env` `DEV_ADMIN_*`)
-**Installed versions:** payload@3.91.0 (all @payloadcms/* 3.91.0 lockstep), next@16.3.8, react 19.2.6, pnpm 11.28.3, image node:24-alpine
-**Staging:** none yet (OPS_REQUESTS #1). Latest CI image: `sha-6a79567` / `:main` (2026-10-26, check + image green, ~5.5 min). Image `ghcr.io/duhadev/duhamedia:sha-e061dd8…` / `:main` built + pushed by CI 2026-10-17
-**Production:** old site on Vercel
+**Installed versions:** payload@3.91.0 (all @payloadcms/* 3.91.0 lockstep, incl. storage-vercel-blob), next@16.3.8, react 19.2.6, pnpm 11.28.3, Vercel Node 24.x
+**Staging:** Vercel Preview of `main` (not set up yet, OPS #16). Docker/GHCR pipeline retired 2026-10-28
+**Production:** duhamedia.com DOWN (500) since ~2026-10-17 — Vercel auto-deployed the DB-less Payload build; old-site deployment is inactive. Fix = OPS #16 then first production deploy
 **Last session ended:** 2026-10-27 — /clear point; see Session handoff
 
 ## Build unit status
@@ -78,6 +78,7 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 ## Migrations log
 | Date | Migration file | What it changes | Applied in dev / staging / prod |
 |---|---|---|---|
+| 2026-10-28 | `src/migrations/20261028_121301_vercel_blob_fields.ts` | additive: `prefix` (default media/downloads) + `_objectkey` varchar on `media` and `downloads` (storage-vercel-blob `alwaysInsertFields`) | dev via push / no / no |
 | 2026-10-22 | `src/migrations/20261022_014336_s3_friendly_errors.ts` | **no-op (expand step)**: autosave off would drop `autosave` col+index on 8 `_v` tables; kept for deploy overlap. **Contract migration owed later** (F31) | scratch proofs; dev push dropped cols / no / no |
 | 2026-10-22 | `src/migrations/20261022_001520_p3_seo.ts` | nullable meta_title, meta_description, meta_image_id (FK media set null, indexed) on pages, case_studies, posts, lead_magnets + `_v` (version_meta_*) | scratch proofs; dev via push / no / no |
 | 2026-10-22 | `src/migrations/20261022_000002_s2_scarcity_seo_delta.ts` | data step MarketingAgency→ProfessionalService; enum_seo_defaults_local_business_type = (ProfessionalService) default; scarcity.capacity default 7 | scratch proofs; dev via push / no / no |
@@ -333,12 +334,14 @@ Decisions deferred to the human; each has a safe default applied so work continu
 | 2026-10-27 | Founder photo = human's low-poly landscape avatar (no portrait exists); committed as src/seed/files/founder-avatar.jpg (first committed seed binary), focal 72/30; dev media 17 on team-member 6. Note for OPS #15: seed reads this file, so the seed runtime must include src/seed/files | Human 2026-10-27 |
 | 2026-10-28 | **Hosting reversed: migrate fully to Vercel + Neon Postgres + Vercel Blob** (human). Overrides CLAUDE.md Deployment model + storage/self-host locks. Secretary stays on the server, exposed to Vercel via tunnel + Access service token. Migration agent commits locally, no push until human pauses Vercel auto-prod. | Human ordered "migrate fully to vercel" after PM listed costs (Pro plan needed: commercial use + per-minute cron). |
 | 2026-10-28 | **Incident: duhamedia.com serving 500 since ~2026-10-17.** Vercel git integration still deploys every push to `main` to Production; new Payload build has no DB there. Last old-site commit `de85e93` (2026-04-24). Fix = human Instant Rollback in Vercel to that deployment. | Found by PM via `gh api deployments` + curl (500 on `/`, 503 on `/api/health`). |
+| 2026-10-28 | Vercel migration landed (commits 25dcb07, ec3a47c): Blob storage (`clientUploads`, staff-only token; downloads via access-checked route, residual public-blob URL accepted), Neon via db-postgres (pooled runtime / direct migrations), `vercel-build` = migrate + build, Vercel Cron → payload-jobs/run with `CRON_SECRET`, secretary via Access service-token headers, Dockerfile + release workflow deleted, CI check-only. Full table DECISIONS §R. | Agent verified against 3.91.0 dist + docs; typecheck/lint/DB-less build/local smoke green. Not testable without cloud creds: Blob, Neon, Cron. |
+| 2026-10-28 | Release flow on Vercel: production branch `production`; `main` → Preview (staging). "Ship it" = PM fast-forwards `production` + pushes `vX.Y.Z` tag. Production is rebuilt (not re-tagged) — accepted deviation. Cloudflare Access on /admin + CF rate limit dropped (needs CF proxy); Payload login+lockout, Vercel Deployment Protection on Preview, Vercel Firewall rate limit instead. | PM recommendation, pending human confirm in OPS #16. |
 
 ## Session handoff
-- **Last session ended:** 2026-10-27 (2nd) — /clear point. Facts round done; repo clean, CI green on 5997eba.
-- **Done this session:** S6 admin pass + 2 admin fixes → S6 `documented`; marketing.md covers all 21 pages (+ accuracy sweep); facts: postal address, scarcity (cap 7 / 3 / 3 / 3, reason A), notify → hello@duhamedia.com, wine logo site-wide, socials (IG/LinkedIn/X/FB "Duha Media"), GBP link, static map, founder avatar. All in Decision log 2026-10-27.
-- **Next session (human's plan):** walk OPS_REQUESTS.md ONE ITEM AT A TIME with the human, who relays each to the server agent / does the dashboard step. Order: #6 Postgres version → #1/#3/#12 staging + deploy contract + SITE_URL → #2/#8/#14 env names + Resend → #4 Nextcloud → #15 seed method → (later) #13 staging Gate A, #7 backup/restore. Human dashboard items in parallel: #5 Turnstile/Access/cache, #9 preview bypass, #10 rate limit, #11 X-Robots-Tag, #14 Resend dashboard. For each answer: mark entry **Resolved (date)** + answer, Decision log if a decision, commit.
-- **Content:** human does placeholder copy in the admin. Unanswered: option A (edit in PRODUCTION admin after first deploy — recommended; dev edits never reach prod) vs B (edit dev, PM ports to seed). Ask once. Legal texts coming from a policy generator (then clear noindex on privacy/terms/cookies/gdpr, F190).
-- **Once staging exists:** staging Gate A A1–A4; F150 check; seed staging (dry run, human-approved); Gate K; Phase 5 / Gate 3; cutover.
-- **Local dev:** `docker compose up -d` (Postgres 127.0.0.1:5433, `duha_site_dev`, push mode) + `npx -y pnpm@11.28.3 dev` → http://localhost:3000. psql: `docker exec duhamedia-postgres psql -U "$(docker exec duhamedia-postgres printenv POSTGRES_USER)" -d duha_site_dev`.
-- **How this human works (binding):** autonomous, batch decisions; present flags/facts ONE BY ONE when asked; SEO → apply recommended; RAM max 2–3 browser agents; agents never git stash/checkout/reset or restart dev server; production release only on explicit order.
+- **Last session ended:** 2026-10-28 — Vercel migration done in code; nothing pushed yet (push to `main` deploys PRODUCTION until the Vercel production branch is switched to `production`).
+- **Blockers (human):** OPS #16 Vercel Pro + Neon + Blob + env + production branch `production`; OPS #17 server agent: secretary public hostname + service token. Site is down (500) until #16 is done and production deploys.
+- **Next up:** after #16 → push `main` (Preview build: confirm migrate + health 200 on preview) → human "ship it" → create `production` branch at that commit + tag `v1.0.0` → seed production from laptop (human-approved) → OPS #13/#14 Gate A on Preview → Gate K → Gate 3.
+- **Content:** unchanged — option A (edit in production admin) vs B still unasked; legal texts pending.
+- **Local dev:** unchanged (`docker compose up -d` + `npx -y pnpm@11.28.3 dev`, no Blob token → local disk).
+- **psql:** `docker exec duhamedia-postgres psql -U "$(docker exec duhamedia-postgres printenv POSTGRES_USER)" -d duha_site_dev`.
+- **How this human works (binding):** autonomous, batch decisions; flags one by one when asked; SEO → apply recommended; RAM max 2–3 browser agents; agents never git stash/checkout/reset or restart dev server; production release only on explicit order.
