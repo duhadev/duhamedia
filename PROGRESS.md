@@ -339,10 +339,12 @@ Decisions deferred to the human; each has a safe default applied so work continu
 | 2026-10-28 | Human: keep Vercel + Payload defaults, nothing that breaks them. Confirms: no Cloudflare proxy / Access on /admin (Payload login + lockout), Vercel protections only. Human fills env values himself from PM-supplied name lists. | Answer to the §R open item. |
 | 2026-10-28 | OPS #17 resolved: secretary at `https://events.duhamedia.com/site-event` (Access service token). Sender reworked to match receiver: 429 retried, per-field 5000-char cap. Env names stay `SITE_EVENT_ACCESS_CLIENT_*`. | Server agent handoff relayed by human. |
 | 2026-10-28 | First Preview build (2f147c2) rejected by Vercel before build: team `duhadevs-projects` is on **Hobby**, which refuses `* * * * *` crons. Waiting on human Pro upgrade; then redeploy same commit via CLI. Vercel CLI 65.5.0 (`~/.local/bin`) logged in as duhadev; Vercel plugin + MCP installed (MCP needs team-scope approval). | Found via `vercel api /v13/deployments`. |
+| 2026-10-28 | Run on Vercel **Hobby** until Pro (human). Daily cron + immediate `after()` job run. **Pro upgrade required before go-live** (Hobby = non-commercial licence; retries wait up to a day) — OPS #18; PM reminds at Gate 3 and on any release order. | Human: "run on hobby until then". |
 
 ## Session handoff
 - **Last session ended:** 2026-10-28 — Vercel migration done in code; nothing pushed yet (push to `main` deploys PRODUCTION until the Vercel production branch is switched to `production`).
 - **Blockers (human):** OPS #16 Vercel Pro + Neon + Blob + env + production branch `production`; Site is down (500) until #16 is done and production deploys.
+- **REMINDER — OPS #18:** upgrade Vercel to Pro before "ship it" (Hobby is non-commercial). Raise at Gate 3 and on any release order.
 - **Next up:** after #16 → push `main` (Preview build: confirm migrate + health 200 on preview) → human "ship it" → create `production` branch at that commit + tag `v1.0.0` → seed production from laptop (human-approved) → OPS #13/#14 Gate A on Preview → Gate K → Gate 3.
 - **Content:** unchanged — option A (edit in production admin) vs B still unasked; legal texts pending.
 - **Local dev:** unchanged (`docker compose up -d` + `npx -y pnpm@11.28.3 dev`, no Blob token → local disk).

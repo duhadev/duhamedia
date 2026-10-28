@@ -130,3 +130,13 @@ Requests from the duhamedia.com build to the server agent, relayed by the human.
 - **Keep:** the secretary polls `https://duhamedia.com/api/health` every 5 min; Nextcloud booking (#4).
 - **Done when:** a signed test POST from outside the server with the service token reaches the secretary, and one without the token gets 401/403.
 - **Answer (2026-10-28):** live at `https://events.duhamedia.com/site-event` behind Cloudflare Access (service token; 401 without it, no redirect). Server-side hosting plan retired, nothing was built. Receiver rules: `eventId` 8–100 `[A-Za-z0-9_-]`; `email` required except `site_error`; `fields` flat, ≤ 50 keys, scalar, each ≤ 5000 chars; 429 = retry. Errors are deduped by fingerprint on their side (max 1/h). Their doc names the token vars `CF_ACCESS_CLIENT_*`; the site reads `SITE_EVENT_ACCESS_CLIENT_ID/SECRET` — human uses the site's names in Vercel. Nextcloud → secretary booking webhook not wired yet; no uptime check on their side (use Vercel monitoring). Copy: `~/secretary-infra/docs/SITE_EVENTS_HANDOFF.md`.
+
+## #18 — Upgrade Vercel team to Pro (human, billing) · 2026-10-28 · Open — REMIND AT GO-LIVE
+- **State now:** team `duhadevs-projects` is on **Hobby**. The site runs on Hobby as a stopgap (human, 2026-10-28): jobs run right after each form submit via `after()`, and the cron drains all queues **once a day**.
+- **Why upgrade:**
+  - **Licensing:** Vercel Hobby is for personal, non-commercial use. duhamedia.com is a business site, so Pro is required before it serves real visitors.
+  - **Retries:** on Hobby a failed event/email send waits up to ~24 h for the daily cron instead of ~1–5 min.
+  - Firewall rate-limit rule on `/api/form-submit` and other Pro limits (confirm in dashboard).
+- **When:** before the first production release ("ship it"), at the latest. PM must raise this at Gate 3 and again when the human orders a release.
+- **After upgrading, PM does:** restore per-minute crons in `vercel.json` (`* * * * *` per queue `events` / `newsletter`), keep the `after()` immediate run, redeploy, update DECISIONS §R + docs/dev.md.
+- **Done when:** team plan shows Pro (`vercel api /v2/teams/<teamId>` → `billing.plan: pro`) and the per-minute crons deploy.
