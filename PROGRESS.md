@@ -351,6 +351,7 @@ Decisions deferred to the human; each has a safe default applied so work continu
 | 2026-10-28 | Seed migration written by human (PM write was blocked by the permission guard), pushed 7ffe13e. Preview build ran it: 57 created, 6 omitted; all checked routes 200, health 200, unknown 404. Ready for release on human's push of `production` + v1.0.0. | Human ran the provided block. |
 | 2026-10-28 | Release v1.0.0 (human pushed `production`=7ffe13e + tag). Production build FAILED at migration `20261017_202453_c3_c6…`: `relation "clients" already exists` — production Neon DB still holds the old site's tables (clients, posts, form_submissions, …). First 3 migrations committed; failing one rolled back; live site unchanged. Fix = human drops the old-site tables in the Neon SQL editor, then redeploys. | Build log via Vercel CLI. |
 | 2026-10-28 | duhamedia.com LIVE on v1.0.1. Old-site tables kept in schema `legacy` (droppable later only by the human). Admin: human creates first user at /admin. | Production check by PM. |
+| 2026-10-28 | **Intro animation** (`Intro Animation.dc.html`, Conflict 11, parked at Gate 0) ordered by human: homepage only, plays on **every full load incl. refresh** (overrides design's once-per-session flag), not on in-app navigation; reduced-motion honoured. Dispatched to block-coder. | Human request after go-live. |
 
 ## Session handoff
 - **Last session ended:** 2026-10-28 — Vercel migration done in code; nothing pushed yet (push to `main` deploys PRODUCTION until the Vercel production branch is switched to `production`).
