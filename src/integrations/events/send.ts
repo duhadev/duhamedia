@@ -1,7 +1,8 @@
 import { createHmac } from 'node:crypto'
 
 /**
- * Signed POST of one v1 event body to the secretary (`SITE_EVENT_URL`).
+ * Signed POST of one v1 event body to the secretary (`SITE_EVENT_URL`, an
+ * https URL behind Cloudflare Access in the cloud; see `accessHeaders`).
  *
  * Signing (CLAUDE.md, locked): `X-Duha-Timestamp: <unix seconds>` and
  * `X-Duha-Signature: sha256=<hex HMAC-SHA256(SITE_EVENT_SECRET, timestamp + "." + rawBody)>`.
@@ -34,6 +35,22 @@ const excerpt = (text: string) =>
     .trim()
     .slice(0, 200)
 
+/**
+ * Cloudflare Access service-token headers (Vercel migration, 2026-10-28):
+ * `SITE_EVENT_URL` is now a public HTTPS hostname on the secretary's Cloudflare
+ * tunnel, gated by an Access application with a Service Auth policy. Access
+ * reads `CF-Access-Client-Id` / `CF-Access-Client-Secret` on each request
+ * (https://developers.cloudflare.com/cloudflare-one/identity/service-tokens/).
+ * Sent only when BOTH env vars are set (none = the old internal-address
+ * behaviour, e.g. a local stub receiver). Transport auth only: the HMAC above
+ * still covers the body and is unchanged; these headers are not signed.
+ */
+const accessHeaders = (): Record<string, string> => {
+  const id = process.env.SITE_EVENT_ACCESS_CLIENT_ID?.trim()
+  const secret = process.env.SITE_EVENT_ACCESS_CLIENT_SECRET?.trim()
+  return id && secret ? { 'CF-Access-Client-Id': id, 'CF-Access-Client-Secret': secret } : {}
+}
+
 export async function sendSignedEvent(body: string): Promise<SendOutcome> {
   const url = process.env.SITE_EVENT_URL
   const secret = process.env.SITE_EVENT_SECRET
@@ -57,6 +74,7 @@ export async function sendSignedEvent(body: string): Promise<SendOutcome> {
         'Content-Type': 'application/json',
         'X-Duha-Timestamp': timestamp,
         'X-Duha-Signature': signBody(secret, timestamp, raw),
+        ...accessHeaders(),
       },
       body: raw,
       redirect: 'manual',
