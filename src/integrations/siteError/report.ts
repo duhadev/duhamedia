@@ -2,6 +2,7 @@ import { createHash, randomUUID } from 'node:crypto'
 import type { AfterErrorHook, Payload } from 'payload'
 
 import { MAX_BODY_BYTES, TRUNCATION_KEY, eventEnv } from '../events/contract'
+import { runJobAfterResponse } from '../jobs/runAfterResponse'
 
 /**
  * A4 `site_error` reporter (CLAUDE.md "site_error rules", INTEGRATIONS.md).
@@ -269,7 +270,11 @@ function enqueue(sample: Sample, count: number, firstSeen: number): void {
         queue: 'events',
       } as Parameters<Payload['jobs']['queue']>[0])
       .then(
-        () => log('info', { fingerprint: sample.fingerprint, eventId: event.eventId, count }, 'queued'),
+        (job) => {
+          log('info', { fingerprint: sample.fingerprint, eventId: event.eventId, count }, 'queued')
+          // On Vercel: send right after the response when still in a request scope (else the cron does).
+          runJobAfterResponse(payload, job)
+        },
         (err: unknown) => log('error', { fingerprint: sample.fingerprint, err: (err as Error)?.name ?? 'error' }, 'not queued: queue failed'),
       )
   } catch (err) {

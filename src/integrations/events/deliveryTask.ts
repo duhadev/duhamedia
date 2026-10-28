@@ -4,6 +4,7 @@ import type { FormSubmission } from '../../payload-types'
 
 import { DELIVERABLE_EVENT_TYPES, buildSubmissionEvent, leadMagnetEventFields, serializeEvent } from './contract'
 import { sendSignedEvent, type SendOutcome } from './send'
+import { runJobAfterResponse } from '../jobs/runAfterResponse'
 
 /**
  * Payload Jobs task that delivers ONE submission's v1 event (DECISIONS §J).
@@ -47,18 +48,24 @@ export function retryDelaysMs(): number[] {
 
 type DeliverIO = { input: { submissionId: number; attempt: number }; output: { result: string } }
 
-/** Queue an attempt. Pass the caller's `req` so it joins the caller's transaction. */
-export const queueDelivery = (
+/**
+ * Queue an attempt. Pass the caller's `req` so it joins the caller's transaction.
+ * On Vercel an immediate attempt also runs right after the response (../jobs/runAfterResponse.ts).
+ */
+export const queueDelivery = async (
   payload: Payload,
   args: { submissionId: number; attempt?: number; waitUntil?: Date; req?: PayloadRequest },
-) =>
-  payload.jobs.queue({
+) => {
+  const job = await payload.jobs.queue({
     task: DELIVERY_TASK,
     input: { submissionId: args.submissionId, attempt: args.attempt ?? 1 },
     queue: EVENTS_QUEUE,
     waitUntil: args.waitUntil,
     req: args.req,
   } as Parameters<Payload['jobs']['queue']>[0])
+  runJobAfterResponse(payload, job, args.waitUntil)
+  return job
+}
 
 /** Context flag on our own status writes, so submission hooks never react to them. */
 export const DELIVERY_WRITE = 'siteEventDeliveryWrite'

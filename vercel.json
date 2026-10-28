@@ -2,8 +2,5 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
   "buildCommand": "pnpm run vercel-build",
-  "crons": [
-    { "path": "/api/payload-jobs/run?queue=events&limit=10", "schedule": "* * * * *" },
-    { "path": "/api/payload-jobs/run?queue=newsletter&limit=10", "schedule": "* * * * *" }
-  ]
+  "crons": [{ "path": "/api/payload-jobs/run?allQueues=true&limit=50", "schedule": "0 9 * * *" }]
 }

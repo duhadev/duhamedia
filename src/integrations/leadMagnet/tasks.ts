@@ -4,6 +4,7 @@ import type { Payload, PayloadRequest, TaskConfig } from 'payload'
 
 import type { FormSubmission } from '../../payload-types'
 import { retryDelaysMs, stampSubmission } from '../events/deliveryTask'
+import { runJobAfterResponse } from '../jobs/runAfterResponse'
 import { NEWSLETTER_QUEUE, submittedEmail } from '../newsletter/tasks'
 
 import { deliverAsset } from './assetEmail'
@@ -34,17 +35,21 @@ export const ASSET_EMAIL_TASK = 'sendLeadMagnetAsset'
 
 type IO = { input: { submissionId: number; attempt: number; chain: string }; output: { result: string } }
 
-export const queueAssetEmail = (
+export const queueAssetEmail = async (
   payload: Payload,
   args: { submissionId: number; attempt?: number; chain?: string; waitUntil?: Date; req?: PayloadRequest },
-) =>
-  payload.jobs.queue({
+) => {
+  const job = await payload.jobs.queue({
     task: ASSET_EMAIL_TASK,
     input: { submissionId: args.submissionId, attempt: args.attempt ?? 1, chain: args.chain ?? randomUUID() },
     queue: NEWSLETTER_QUEUE,
     waitUntil: args.waitUntil,
     req: args.req,
   } as Parameters<Payload['jobs']['queue']>[0])
+  // On Vercel, attempt 1 runs right after the response.
+  runJobAfterResponse(payload, job, args.waitUntil)
+  return job
+}
 
 type AssetEmail = NonNullable<FormSubmission['assetEmail']>
 

@@ -96,11 +96,13 @@ export default buildConfig({
   },
   // Jobs queue (DECISIONS §J; payload@3.91.0 queues/config/types/index.d.ts).
   // - Vercel: no in-process cron (autoRun "should not be used on serverless
-  //   platforms like Vercel", same file). Vercel Cron calls GET
-  //   /api/payload-jobs/run?queue=<q>&limit=10 every minute per queue (vercel.json),
-  //   authorised by `Authorization: Bearer $CRON_SECRET` (access.run below).
-  //   Vercel Cron runs on Production deployments only, and every-minute
-  //   schedules need a paid plan (Hobby = once a day).
+  //   platforms like Vercel", same file). Each immediate job runs right after
+  //   the response that queued it (src/integrations/jobs/runAfterResponse.ts,
+  //   Next `after()`). Vercel Cron is the backstop and the retry driver:
+  //   Hobby plan (2026-10-28) = one daily call to
+  //   /api/payload-jobs/run?allQueues=true&limit=50 (vercel.json); on Pro it
+  //   returns to `* * * * *` per queue. Authorised by
+  //   `Authorization: Bearer $CRON_SECRET` (access.run below); Production only.
   // - Local dev: in-process autoRun as before, started by the first
   //   getPayload({ cron: true }) (never during `next build`: index.js `!isNextBuild()`).
   jobs: {

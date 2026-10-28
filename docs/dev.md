@@ -3578,7 +3578,7 @@ Hosting (owner-approved 2026-10-28): Vercel + Neon Postgres + Vercel Blob. This 
 | Database | Neon main branch | Neon preview branch per deployment (Neon integration) |
 | Blob store | production store | separate preview store |
 | `SITE_URL` | required | optional; falls back to `VERCEL_BRANCH_URL`, then `VERCEL_URL` (`https://` added), only when `VERCEL_ENV=preview` and `APP_ENV` is not `production` (`src/lib/siteUrl.ts`) |
-| Vercel Cron | runs | does not run (Cron runs on Production deployments only) |
+| Vercel Cron | runs (Hobby: once a day) | does not run (Cron runs on Production deployments only); immediate jobs still run after the response |
 
 - Noindex is behaviour from env, not a build flag: with `APP_ENV` not `production`, `src/proxy.ts` adds `X-Robots-Tag: noindex, nofollow` to every proxied response and `robots.txt` serves `Disallow: /` (see [Request path header and proxy](#request-path-header-and-proxy-f75-f78-b1)). No Cloudflare rule may strip that header (OPS_REQUESTS #11).
 - The same build serves both environments; behaviour differs only by env.
@@ -3600,9 +3600,10 @@ Hosting (owner-approved 2026-10-28): Vercel + Neon Postgres + Vercel Blob. This 
 - Check only, on push to `main` and on pull requests: `pnpm install --frozen-lockfile`, `pnpm typecheck`, `pnpm lint`, `pnpm build` (DB-less, no secrets). It builds and pushes no image. Migrations run in the Vercel build, not in CI.
 
 ### Vercel Cron and jobs
-- `vercel.json` declares two crons, each `* * * * *`: `GET /api/payload-jobs/run?queue=events&limit=10` and `GET /api/payload-jobs/run?queue=newsletter&limit=10`.
+- Immediate jobs run right after the response that queued them: every queue helper calls `runJobAfterResponse()` (`src/integrations/jobs/runAfterResponse.ts`), which schedules `payload.jobs.run({ allQueues: true, limit: 1, where: { id: { equals: <jobId> } } })` with Next `after()` (Vercel `waitUntil`). Only when `VERCEL` is set; skipped for a job with a future `waitUntil` (retries); errors are logged and never reach the response.
+- `vercel.json` declares one cron for the **Hobby** plan (once a day): `GET /api/payload-jobs/run?allQueues=true&limit=50` at `0 9 * * *`. It runs retries whose time has come and anything the after-response run missed. On Hobby, retries therefore wait for the daily call. **On Pro, return to two `* * * * *` crons:** `/api/payload-jobs/run?queue=events&limit=10` and `/api/payload-jobs/run?queue=newsletter&limit=10`.
 - Auth: Vercel sends `Authorization: Bearer <CRON_SECRET>`. `jobs.access.run` is `isAdmin(req.user) || isCronRequest(req.headers)` (`src/lib/cronAuth.ts`: secret must be set and at least 16 characters; SHA-256 digests compared with `timingSafeEqual`). No secret configured means always denied.
-- Cron runs on Production deployments only, and every-minute schedules need the Vercel Pro plan (Hobby = once a day).
+- Cron runs on Production deployments only, and every-minute schedules need the Vercel Pro plan (Hobby = once a day; a Hobby deploy with an every-minute cron fails).
 - `jobs.autoRun` is `undefined` on Vercel and set (both queues, `* * * * *`, `limit: 10`) only off Vercel, i.e. local dev. See [Integrations](#integrations).
 
 ### Rollback
@@ -3691,7 +3692,7 @@ The submit-side data model (forms, submissions, delivery fields) is documented i
 
 **Jobs config (`src/payload.config.ts`)**
 - `jobs.tasks`: the five tasks above. `jobs.autoRun`: `undefined` on Vercel; off Vercel (local dev) `* * * * *` on queue `events` and on queue `newsletter`, `limit: 10` each. `jobs.access`: `queue` and `cancel` are admin only (`isAdmin`); `run` is `isAdmin` or the Vercel Cron bearer (`isCronRequest`, `src/lib/cronAuth.ts`); our code queues through the Local API with `overrideAccess`.
-- On Vercel the jobs run from Vercel Cron: `vercel.json` calls `/api/payload-jobs/run?queue=events&limit=10` and `?queue=newsletter&limit=10` every minute with `Authorization: Bearer <CRON_SECRET>` (Production only; see [Deploy](#deploy)).
+- On Vercel, each immediate job runs right after the response that queued it (`src/integrations/jobs/runAfterResponse.ts`, Next `after()`); retries and anything missed run from Vercel Cron, `vercel.json` calling `/api/payload-jobs/run?allQueues=true&limit=50` once a day on Hobby (every minute per queue on Pro) with `Authorization: Bearer <CRON_SECRET>` (Production only; see [Deploy](#deploy)).
 - Local dev: the in-process cron starts on the first `getPayload({ config, cron: true })`, called in `GET /api/health` and in `POST /api/form-submit`. Payload does not start it during `next build`. Finished jobs are deleted (`deleteJobOnComplete`, Payload default).
 - `hooks.afterError: [reportPayloadError]`, `onInit: registerSiteErrorPayload`.
 
@@ -3801,7 +3802,7 @@ Commits `25dcb07`, `ec3a47c`.
 - Self-hosted deploy path: GHCR images, server deploy timers, bind-mounted `MEDIA_DIR` media on the server.
 
 **Added**
-- `vercel.json` (`buildCommand` `pnpm run vercel-build`; two every-minute crons to `/api/payload-jobs/run`).
+- `vercel.json` (`buildCommand` `pnpm run vercel-build`; crons to `/api/payload-jobs/run`: two every-minute crons at first, one daily all-queues cron since the Hobby plan, 2026-10-28).
 - `@payloadcms/storage-vercel-blob@3.91.0` (`src/plugins/storage.ts`).
 - `src/lib/databaseUrl.ts`, `src/lib/cronAuth.ts`, `src/lib/readUpload.ts`; Vercel Preview origin fallback in `src/lib/siteUrl.ts`.
 - Package scripts `migrate:deploy`, `vercel-build`; `seed` gained `PAYLOAD_DB_DIRECT=true`.

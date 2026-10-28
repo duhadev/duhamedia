@@ -3,6 +3,7 @@ import type { Payload, PayloadRequest, TaskConfig } from 'payload'
 import { absoluteUrl, getAppEnv } from '../../lib/siteUrl'
 import type { FormSubmission } from '../../payload-types'
 import { queueDelivery, retryDelaysMs, stampSubmission } from '../events/deliveryTask'
+import { runJobAfterResponse } from '../jobs/runAfterResponse'
 
 import { confirmationEmail } from './email'
 import { syncNewsletterContact, type SyncOutcome } from './resendContacts'
@@ -41,14 +42,18 @@ type IO = { input: { submissionId: number; attempt: number }; output: { result: 
 
 const queueStep =
   (task: string) =>
-  (payload: Payload, args: { submissionId: number; attempt?: number; waitUntil?: Date; req?: PayloadRequest }) =>
-    payload.jobs.queue({
+  async (payload: Payload, args: { submissionId: number; attempt?: number; waitUntil?: Date; req?: PayloadRequest }) => {
+    const job = await payload.jobs.queue({
       task,
       input: { submissionId: args.submissionId, attempt: args.attempt ?? 1 },
       queue: NEWSLETTER_QUEUE,
       waitUntil: args.waitUntil,
       req: args.req,
     } as Parameters<Payload['jobs']['queue']>[0])
+    // On Vercel, an immediate step runs right after the response.
+    runJobAfterResponse(payload, job, args.waitUntil)
+    return job
+  }
 
 export const queueConfirmationEmail = queueStep(CONFIRM_EMAIL_TASK)
 export const queueContactSync = queueStep(CONTACT_SYNC_TASK)
