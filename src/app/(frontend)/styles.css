@@ -66,7 +66,7 @@
   --text-h1: 4.5rem;
   --text-h1--line-height: 1;
   --text-h1--letter-spacing: -0.01em;
-  --text-h1-mobile: 2.5rem;
+  --text-h1-mobile: clamp(2rem, 8.7vw, 2.5rem); /* fluid on phones: 40px fixed broke short heroes into 5 lines at 390 (human, 2026-10-29) */
   --text-h1-mobile--line-height: 1;
   --text-h1-mobile--letter-spacing: -0.01em;
   --text-h2: 3rem;
