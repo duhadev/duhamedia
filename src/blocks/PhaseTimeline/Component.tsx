@@ -100,7 +100,7 @@ function Accordion({ eyebrow, eyebrowTick, heading, accentPhrase, intro, phases,
     }))
 
   return (
-    <Section tone="grey" className="overflow-hidden">
+    <Section tone="grey" className="overflow-clip">
       <Container>
         {stepRows.length ? <AccordionSteps header={header} groups={trackGroups} /> : header}
 
