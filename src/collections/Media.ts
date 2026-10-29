@@ -79,7 +79,18 @@ export const Media: CollectionConfig = {
     staticDir: MEDIA_STATIC_DIR,
     // S3-3: a file missing on disk → 404 "File not found." (not a 500).
     handlers: [missingFileHandler(MEDIA_STATIC_DIR)],
-    mimeTypes: ['image/*'],
+    // Exactly what sharp (0.35, prebuilt libvips) can decode. `image/*` let HEIC/BMP/JPEG XL
+    // through to sharp, which failed with a vague "There was a problem while uploading the
+    // file."; listed types make Payload reject them up front as an invalid file type.
+    mimeTypes: [
+      'image/jpeg',
+      'image/png',
+      'image/webp',
+      'image/gif',
+      'image/avif',
+      'image/tiff',
+      'image/svg+xml',
+    ],
     focalPoint: true,
     adminThumbnail: 'thumbnail',
     imageSizes: [
