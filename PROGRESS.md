@@ -112,6 +112,7 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 | 2026-10-24 | src/migrations/20261024_034121_a3_lead_magnet.ts | A3: form_submissions asset_email_* (3 cols) + enum + index; job task value sendLeadMagnetAsset. Additive; down deletes queued A3 jobs + F88 guard | scratch proofs; dev push / no / no |
 | 2026-10-24 | src/migrations/20261024_165445_a4_site_error.ts | A4: job task enum value deliverSiteError. Additive; down deletes queued A4 jobs + F88 guard | scratch proofs; dev push / no / no |
 | 2026-10-29 | 20261029_143150_teamintro_pull_quote | adds nullable `pull_quote` varchar to `pages_blocks_team_intro` + `_pages_v_blocks_team_intro` | dev (push) / preview + prod via vercel-build |
+| 2026-10-29 | 20261029_145749_proofstrip_numbers_on_block | ProofStrip statements: add number/label, copy from scarcity global (ongoing→active_clients, capacity→capacity, captions), delete `none` rows, drop key + enums (live + _v tables) | dev (SQL applied) / preview + prod via vercel-build |
 
 
 ## Releases
@@ -384,6 +385,7 @@ Decisions deferred to the human; each has a safe default applied so work continu
 | 2026-10-29 | ProofStrip `scarcity` variant: human chose numbers edited ON THE BLOCK (number + big text per item, add/remove/reorder; no longer reads the scarcity global) and DROP the reason line for this strip only — explicit override of the locked loud/quiet rule for this strip; all other scarcity consumers keep their reason. Dispatched (schema + data-preserving migration). |  Human. |
 | 2026-10-29 | Hero: below lg the logo shape moved to the top-right cap (`-right-27.5 -top-37.5 size-55`, as the capture hero) — it sat under the headline/body on phones (ef2df36). | Human. |
 | 2026-10-29 | Accent fields: hide (admin-only, no schema change) every accent phrase/toggle whose rendered accent is invisible (same colour as neighbours, e.g. hero H1 accent = accent-primary #111). Dispatched audit. | Human. |
+| 2026-10-29 | ProofStrip numbers-on-block shipped to Preview (c146937). Accent cleanup committed 38d0e6b (~20 no-effect accent fields hidden via admin.condition; label of TwoTrack doors `accentTitle` is misleading — open). Incident: PM's `git commit -a` (c010dd1) swept an agent's half-done ProofStrip config into main → 2 Preview builds failed (prod untouched); fixed by committing the full unit. Dev push wedged :3000 on drizzle's interactive rename prompt (stdin /dev/null) — agent applied the migration SQL to duha_site_dev; PM restarted :3000. **OPEN:** migrate-from-zero fails — `20261028_190000_seed_placeholder_content` seeds with today's config before later migrations add columns (pull_quote, number). Prod/preview unaffected (already ran it); breaks a fresh DB and the Gate 3 proof. Needs a fix (e.g. move seeding out of the migration chain). | PM. |
 
 ## Session handoff
 - **Last session ended:** 2026-10-29 — /clear point. Site LIVE on Vercel Hobby as v1.0.8 (35e0dfa); `main` = production.
