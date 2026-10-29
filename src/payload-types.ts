@@ -1867,18 +1867,22 @@ export interface OfferBlockBlock {
  */
 export interface ProofStripBlock {
   /**
-   * The strip layout. Scarcity is the homepage strip; Metrics is the compact Campaign LP strip.
+   * The strip layout. Numbers is the homepage strip; Metrics is the compact Campaign LP strip.
    */
   variant: 'scarcity' | 'metrics';
   /**
-   * Up to two capacity statements, shown side by side. Each shows a big line with its reason quietly underneath; both come from "Capacity & scarcity".
+   * The big numbers, side by side (two fit best; up to four). Each is a big number with its big text underneath. Add, remove or drag to reorder. The first number is shown in the accent colour.
    */
   statements?:
     | {
         /**
-         * Pick which statement from "Capacity & scarcity" to show. Edit the numbers and wording there, not here.
+         * The big number. Text, so you can write "3", "7", "55h" or "$1K".
          */
-        key?: ('none' | 'ongoing' | 'capacity' | 'builds-line' | 'engines-line' | 'slots-line' | 'offer-line') | null;
+        number: string;
+        /**
+         * Big text under the number, e.g. "Projects ongoing".
+         */
+        label: string;
         id?: string | null;
       }[]
     | null;
@@ -1916,7 +1920,7 @@ export interface ProofStripBlock {
    */
   pricingNote?: string | null;
   /**
-   * The row of client names / monochrome logos under the statements.
+   * The row of client names / monochrome logos under the numbers.
    */
   logos?: {
     show?: boolean | null;
@@ -4547,7 +4551,8 @@ export interface ProofStripBlockSelect<T extends boolean = true> {
   statements?:
     | T
     | {
-        key?: T;
+        number?: T;
+        label?: T;
         id?: T;
       };
   metrics?:

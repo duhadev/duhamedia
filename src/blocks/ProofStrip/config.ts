@@ -4,9 +4,10 @@ import { metricFields, pricingNote, scarcityRef } from '../../fields'
 import { rowLabel } from '../../components/admin/rowLabel'
 
 /**
- * ProofStrip block (SCHEMA §8.2 item 5). `scarcity` (homepage) and `metrics` (p15 Campaign LP,
- * S6-4): up to three metrics + an optional capacity statement + the logo row, left-aligned in the
- * 820 column.
+ * ProofStrip block (SCHEMA §8.2 item 5). `scarcity` (stored value; admin label "Numbers", homepage):
+ * 1-4 big number + big text items typed on the block, then the logo row. `metrics` (p15 Campaign LP,
+ * S6-4): up to three metrics + an optional capacity statement (from the scarcity global, with its
+ * reason) + the logo row, left-aligned in the 820 column.
  */
 export const ProofStrip: Block = {
   slug: 'proofStrip',
@@ -19,24 +20,52 @@ export const ProofStrip: Block = {
       required: true,
       defaultValue: 'scarcity',
       options: [
-        { label: 'Scarcity (capacity statements + client logos)', value: 'scarcity' },
+        { label: 'Numbers (big number + label, plus client logos)', value: 'scarcity' },
         { label: 'Metrics (up to three metrics + capacity + client logos, Campaign LP)', value: 'metrics' },
       ],
-      admin: { description: 'The strip layout. Scarcity is the homepage strip; Metrics is the compact Campaign LP strip.' },
+      admin: { description: 'The strip layout. Numbers is the homepage strip; Metrics is the compact Campaign LP strip.' },
     },
     {
+      // Stored name stays `statements` (table `pages_blocks_proof_strip_statements`); since
+      // 2026-10-29 each row holds its own number + label, typed on the block (human decision,
+      // overriding the loud/quiet scarcity rule for THIS strip only: no reason line).
       name: 'statements',
       type: 'array',
-      maxRows: 2,
-      labels: { singular: 'Statement', plural: 'Statements' },
+      minRows: 1,
+      maxRows: 4,
+      labels: { singular: 'Number', plural: 'Numbers' },
       admin: {
         condition: (_data, siblingData) => siblingData?.variant !== 'metrics',
-        components: { RowLabel: rowLabel(['key'], 'Statement', { scarcityKeys: true }) },
+        components: { RowLabel: rowLabel(['number', 'label'], 'Number') },
         description:
-          'Up to two capacity statements, shown side by side. Each shows a big line with its reason quietly underneath; both come from "Capacity & scarcity".',
+          'The big numbers, side by side (two fit best; up to four). Each is a big number with its big text underneath. Add, remove or drag to reorder. The first number is shown in the accent colour.',
         initCollapsed: false,
       },
-      fields: [scarcityRef()],
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'number',
+              type: 'text',
+              required: true,
+              maxLength: 12,
+              label: 'Number',
+              admin: {
+                width: '30%',
+                description: 'The big number. Text, so you can write "3", "7", "55h" or "$1K".',
+              },
+            },
+            {
+              name: 'label',
+              type: 'text',
+              required: true,
+              label: 'Big text',
+              admin: { width: '70%', description: 'Big text under the number, e.g. "Projects ongoing".' },
+            },
+          ],
+        },
+      ],
     },
     {
       name: 'metrics',
@@ -66,7 +95,7 @@ export const ProofStrip: Block = {
       name: 'logos',
       type: 'group',
       label: 'Client logos',
-      admin: { description: 'The row of client names / monochrome logos under the statements.' },
+      admin: { description: 'The row of client names / monochrome logos under the numbers.' },
       fields: [
         { name: 'show', type: 'checkbox', label: 'Show the logo row', defaultValue: true },
         {
