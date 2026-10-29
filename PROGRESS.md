@@ -5,7 +5,7 @@
 **Local dev:** `docker compose up -d` (Postgres 127.0.0.1:5433) + `pnpm dev` → http://localhost:3000, admin at /admin (test admin `test+gate@duhamedia.com`, creds in local `.env` `DEV_ADMIN_*`)
 **Installed versions:** payload@3.91.0 (all @payloadcms/* 3.91.0 lockstep, incl. storage-vercel-blob), next@16.3.8, react 19.2.6, pnpm 11.28.3, Vercel Node 24.x
 **Staging:** Vercel Preview of `main` — first green build `9d19fd9` 2026-10-28 (unseeded). Docker/GHCR pipeline retired 2026-10-28
-**Production:** v1.0.4 (118fb9b) LIVE on duhamedia.com since 2026-10-28 (Vercel Hobby). Placeholder content seeded, images off until OPS #20
+**Production:** v1.0.5 (4a2b7e7) LIVE on duhamedia.com since 2026-10-28 (Vercel Hobby). Placeholder content seeded, images off until OPS #20
 **Last session ended:** 2026-10-27 — /clear point; see Session handoff
 
 ## Build unit status
@@ -120,6 +120,7 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 | 2026-10-28 | v1.0.2 (d2767a0) | yes ("get that in production") | Homepage intro animation live; `/`, `/about`, health 200; overlay present in homepage HTML |
 | 2026-10-29 | v1.0.3 (e8e7948) | yes ("go ahead and push") | Admin theme + first-signup API-key fix live; `/`, `/admin`, health 200 |
 | 2026-10-29 | v1.0.4 (118fb9b) | yes ("push" + "I give you permission") | Admin success green / error red; two-track titles+links on own lines; `/`, `/admin`, health 200 |
+| 2026-10-29 | v1.0.5 (4a2b7e7) | yes ("go ahead and push") | Line breaks kept in plain-text fields; two-track link directly under body; `/`, `/admin`, health 200 |
 
 ## Decision log
 Append-only. New sessions: read this before asking the human anything.
