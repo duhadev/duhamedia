@@ -48,6 +48,19 @@ const onVercel = Boolean(process.env.VERCEL)
 export default buildConfig({
   admin: {
     user: Users.slug,
+    // On-brand admin chrome: logo/icon components + stylesheet src/app/(payload)/custom.scss.
+    components: {
+      graphics: {
+        Logo: '/components/admin/Logo#default',
+        Icon: '/components/admin/Icon#default',
+      },
+    },
+    meta: {
+      titleSuffix: ' — Duha Media',
+      // No static OG asset exists and admin is noindex; turn off Payload's dynamic /api/og image.
+      defaultOGImageType: 'off',
+      icons: [{ rel: 'icon', type: 'image/png', url: '/logo-512.png' }],
+    },
     importMap: {
       baseDir: path.resolve(dirname),
     },

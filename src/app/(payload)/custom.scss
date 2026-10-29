@@ -1,0 +1,504 @@
+/*
+ * Duha Media admin theme (admin chrome only; the public site is untouched).
+ *
+ * Payload 3.91 ships its defaults inside `@layer payload-default`, so these
+ * un-layered rules win without !important. Strategy:
+ *   1. Re-point Payload's own colour variables (neutrals -> warm ink/cream ramp,
+ *      the `success` scale -> brand wine: Payload uses `success` as its ACCENT
+ *      for focus rings, links, pills, checkboxes, selected states).
+ *   2. A handful of component overrides where Payload hard-wires ink/elevation
+ *      fills instead of an accent (primary buttons, active nav, tabs, toggles).
+ * Tokens come from the site (src/app/(frontend)/styles.css): ink #111, wine
+ * #c20e59, gray-light #f5f5f4, success #1e8e5a. Contrast (WCAG): wine on white
+ * 6.00:1, white on wine 6.00:1, wine-bright #ff6b9a on #0e0e0d 7.5:1.
+ */
+
+/* ---------- Brand fonts (same self-hosted files the site uses) ---------- */
+@font-face {
+  font-family: 'Duha DM Sans';
+  src: url('../(frontend)/fonts/DMSans-Variable-latin.woff2') format('woff2');
+  font-weight: 100 1000;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Duha Archivo Black';
+  src: url('../(frontend)/fonts/ArchivoBlack-Regular-latin.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --duha-ink: #111111;
+  --duha-wine: #c20e59;
+  --duha-wine-hover: #a30b49;
+  --duha-on-wine: #ffffff;
+  --duha-display: 'Duha Archivo Black', 'Arial Black', sans-serif;
+  --duha-green: #1e8e5a;
+
+  --font-body: 'Duha DM Sans', 'Helvetica Neue', Arial, sans-serif;
+  --style-radius-s: 4px;
+  --style-radius-m: 6px;
+  --style-radius-l: 10px;
+
+  /* Neutrals: warm ink -> cream ramp (light), also feeds dark via Payload's inversion. */
+  --color-base-0: #ffffff;
+  --color-base-50: #f5f5f4;
+  --color-base-100: #e6e6e4;
+  --color-base-150: #d8d7d5;
+  --color-base-200: #c9c8c5;
+  --color-base-250: #bab9b5;
+  --color-base-300: #aca9a6;
+  --color-base-350: #9d9a96;
+  --color-base-400: #8e8b86;
+  --color-base-450: #807c77;
+  --color-base-500: #716d67;
+  --color-base-550: #635f5a;
+  --color-base-600: #55524d;
+  --color-base-650: #464440;
+  --color-base-700: #383634;
+  --color-base-750: #2a2927;
+  --color-base-800: #1c1b1a;
+  --color-base-850: #151514;
+  --color-base-900: #0e0e0d;
+  --color-base-950: #080807;
+  --color-base-1000: #000000;
+
+  /* Accent scale (Payload calls it "success"): wine. */
+  --color-success-50: #fdf2f6;
+  --color-success-100: #fbe3ec;
+  --color-success-150: #f7cddd;
+  --color-success-200: #f2b0c8;
+  --color-success-250: #ec92b3;
+  --color-success-300: #e4739e;
+  --color-success-350: #d9528a;
+  --color-success-400: #cf3a78;
+  --color-success-450: #c8216a;
+  --color-success-500: #c20e59;
+  --color-success-550: #b00d52;
+  --color-success-600: #9d0b4a;
+  --color-success-650: #8a0a42;
+  --color-success-700: #770939;
+  --color-success-750: #650830;
+  --color-success-800: #530727;
+  --color-success-850: #42061f;
+  --color-success-900: #310417;
+  --color-success-950: #22030f;
+
+  /* Errors: keep a clearly orange-red so they never read as the wine accent. */
+  --color-error-50: #fdf0ec;
+  --color-error-100: #fbe0d8;
+  --color-error-150: #f8c8bb;
+  --color-error-500: #d6331a;
+  --color-error-550: #c22b14;
+  --color-error-600: #ab2410;
+  --color-error-700: #8c1d0d;
+
+  --theme-text: var(--duha-ink);
+  --theme-overlay: rgba(17, 17, 17, 0.45);
+}
+
+html[data-theme='dark'] {
+  --theme-text: #faf7f2;
+  --theme-overlay: rgba(0, 0, 0, 0.7);
+  --theme-input-bg: var(--theme-elevation-50);
+  /* Wine is too dark for small text/rings on ink: lift the accent steps. */
+  --theme-success-400: #cf3a78;
+  --theme-success-500: #ec5b8f;
+  --theme-success-550: #f0719f;
+  --theme-success-600: #f58aaf;
+  --theme-success-700: #fbb2cb;
+  --duha-wine: #ec5b8f;
+  --duha-wine-hover: #f0719f;
+  --duha-on-wine: #111111;
+}
+
+/* ---------- Type ---------- */
+body {
+  font-family: var(--font-body);
+  letter-spacing: 0;
+}
+
+.doc-header__title,
+.list-header__title,
+.login__form h1,
+.template-minimal h1,
+.collection-list h1,
+.gutter--left h1 {
+  font-family: var(--duha-display);
+  font-weight: 400;
+  letter-spacing: -0.005em;
+}
+
+.doc-header__title,
+.list-header__title {
+  font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.25rem);
+  line-height: 1.1;
+}
+
+/* ---------- Login / create-first-user ---------- */
+.template-minimal {
+  background: var(--theme-bg);
+
+  .template-minimal__wrap {
+    background: transparent;
+  }
+}
+
+html[data-theme='light'] .template-minimal {
+  background: #ffffff;
+}
+
+.duha-admin-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin: 0 auto;
+  color: var(--theme-text);
+
+  img {
+    width: 56px;
+    height: 56px;
+  }
+
+  &__word {
+    font-family: var(--duha-display);
+    font-size: 22px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+}
+
+.login__brand {
+  margin-bottom: 28px;
+}
+
+.login__form,
+.create-first-user form {
+  .form-submit .btn {
+    width: 100%;
+  }
+}
+
+.duha-admin-icon {
+  display: block;
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.nav__brand .graphic-icon,
+.nav__brand img {
+  width: 24px;
+  height: 24px;
+}
+
+html[data-theme='dark'] .duha-admin-icon,
+html[data-theme='dark'] .duha-admin-logo img {
+  /* single-colour wine mark -> lifted wine on ink (solid #c20e59 is only ~3.3:1) */
+  filter: brightness(1.2);
+}
+
+/* ---------- Primary buttons: wine ---------- */
+.btn--style-primary {
+  --bg-color: var(--duha-wine);
+  --color: var(--duha-on-wine);
+  --hover-bg: var(--duha-wine-hover);
+  --hover-color: var(--duha-on-wine);
+  --box-shadow-color: transparent;
+  background: var(--duha-wine);
+  color: var(--duha-on-wine);
+  border-color: var(--duha-wine);
+
+  &:hover:not(:disabled),
+  &:focus-visible {
+    background: var(--duha-wine-hover);
+    border-color: var(--duha-wine-hover);
+    color: var(--duha-on-wine);
+  }
+
+  .btn__content,
+  .btn__label,
+  svg {
+    color: inherit;
+  }
+
+  svg .stroke,
+  svg path {
+    stroke: currentColor;
+  }
+}
+
+.btn--style-secondary {
+  border-color: var(--theme-elevation-250);
+
+  &:hover:not(:disabled) {
+    border-color: var(--duha-wine);
+  }
+}
+
+/* ---------- Focus ---------- */
+:focus-visible {
+  outline: 2px solid var(--duha-wine);
+  outline-offset: 2px;
+}
+
+/* ---------- Links ---------- */
+.rich-text-lexical a,
+.field-description a,
+.login__form a,
+.dashboard a:not(.btn):not(.card) {
+  color: var(--theme-success-600);
+}
+
+/* ---------- Nav ---------- */
+.nav__link {
+  border-radius: var(--style-radius-m);
+
+  &:hover {
+    background: var(--theme-elevation-50);
+  }
+
+  &.active,
+  &[aria-current='page'],
+  &:has(.nav__link-indicator) {
+    background: var(--theme-success-50);
+    color: var(--theme-success-700);
+
+    .nav__link-label {
+      font-weight: 700;
+    }
+  }
+}
+
+.nav-group__toggle:hover,
+.nav-group__label {
+  color: var(--theme-elevation-600);
+}
+
+/* ---------- Tabs, toggles, selects ---------- */
+.doc-tab--active,
+.doc-tab.doc-tab--active {
+  .doc-tab__link {
+    color: var(--theme-text);
+    box-shadow: inset 0 -2px 0 var(--duha-wine);
+  }
+}
+
+.tabs-field__tab-button--active,
+.tabs-field__tab-button.tabs-field__tab-button--active {
+  color: var(--theme-success-700);
+  box-shadow: inset 0 -2px 0 var(--duha-wine);
+}
+
+.checkbox-input__input.checkbox-input__input--checked,
+.checkbox-input input:checked + .checkbox-input__icon {
+  background: var(--duha-wine);
+  border-color: var(--duha-wine);
+}
+
+.switch-input--checked .switch-input__track,
+.switch-input__input:checked + .switch-input__track {
+  background: var(--duha-wine);
+}
+
+.radio-input--is-selected .radio-input__styled-radio::before,
+.radio-input__styled-radio--selected {
+  background: var(--duha-wine);
+}
+
+.react-select .rs__option--is-selected {
+  background: var(--theme-success-100);
+  color: var(--theme-success-800);
+}
+
+.react-select .rs__option--is-focused {
+  background: var(--theme-elevation-50);
+}
+
+.react-select .rs__multi-value {
+  background: var(--theme-success-100);
+  color: var(--theme-success-800);
+}
+
+/* ---------- Form fields ---------- */
+.field-type {
+  input,
+  textarea,
+  .rs__control {
+    border-radius: var(--style-radius-m);
+    transition:
+      border-color 120ms ease,
+      box-shadow 120ms ease;
+  }
+
+  input:hover,
+  textarea:hover,
+  .rs__control:hover {
+    border-color: var(--theme-elevation-300);
+  }
+
+  input:focus,
+  textarea:focus,
+  .rs__control--is-focused {
+    border-color: var(--duha-wine);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--duha-wine) 22%, transparent);
+    outline: none;
+  }
+
+  &.error input,
+  &.error textarea,
+  &.error .rs__control {
+    border-color: var(--theme-error-500);
+  }
+}
+
+.field-label {
+  font-weight: 600;
+  color: var(--theme-text);
+}
+
+.field-description {
+  color: var(--theme-elevation-600);
+}
+
+/* Array / blocks rows: quiet accent on the open row. */
+.collapsible,
+.array-field__row,
+.blocks-field__row {
+  border-radius: var(--style-radius-l);
+}
+
+.collapsible--style-default,
+.collapsible--style-default:has(.collapsible__toggle:focus-visible) {
+  border-color: var(--theme-elevation-150);
+}
+
+.collapsible--style-default:hover {
+  border-color: var(--theme-elevation-250);
+}
+
+.array-actions__button:hover,
+.btn--icon-style-without-border:hover {
+  color: var(--duha-wine);
+}
+
+/* ---------- Pills / status ---------- */
+.pill {
+  border-radius: 999px;
+}
+
+.pill--style-success {
+  background: var(--theme-success-100);
+  color: var(--theme-success-800);
+}
+
+.pill--style-light-gray {
+  background: var(--theme-elevation-100);
+  color: var(--theme-elevation-700);
+}
+
+.pill--style-warning {
+  background: var(--theme-warning-100);
+  color: var(--theme-warning-800);
+}
+
+.pill--style-error {
+  background: var(--theme-error-100);
+  color: var(--theme-error-700);
+}
+
+/* ---------- Lists / tables ---------- */
+.table {
+  th {
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--theme-elevation-600);
+    font-weight: 700;
+  }
+
+  tbody tr:hover td {
+    background: var(--theme-elevation-50);
+  }
+}
+
+.table a:hover,
+.cell-link:hover {
+  color: var(--duha-wine);
+}
+
+.where-builder,
+.list-controls__wrap {
+  border-radius: var(--style-radius-l);
+}
+
+.paginator__page.paginator__page--is-current,
+.paginator__page--is-current {
+  background: var(--duha-wine);
+  color: var(--duha-on-wine);
+}
+
+/* ---------- Dashboard cards ---------- */
+.card {
+  border-radius: var(--style-radius-l);
+  border: 1px solid var(--theme-elevation-150);
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+
+  &:hover {
+    border-color: var(--duha-wine);
+    box-shadow: 0 6px 18px -10px color-mix(in srgb, var(--duha-ink) 35%, transparent);
+  }
+}
+
+/* ---------- Banners / toasts: real success stays green ---------- */
+.banner--type-success {
+  background: #eaf4ee;
+  color: #0f4d2f;
+}
+
+html[data-theme='dark'] .banner--type-success {
+  background: #12281d;
+  color: #8fd6b0;
+}
+
+.payload-toast-item.toast-success,
+.Toastify__toast--success {
+  --duha-toast-accent: var(--duha-green);
+}
+
+.payload-toast-item.toast-success svg,
+.Toastify__toast--success svg {
+  color: var(--duha-green);
+}
+
+/* ---------- Doc controls / status bar ---------- */
+.doc-controls__status .status__value {
+  font-weight: 700;
+}
+
+.doc-controls {
+  border-bottom: 1px solid var(--theme-elevation-100);
+}
+
+/* ---------- Scrollbar + selection ---------- */
+::selection {
+  background: color-mix(in srgb, var(--duha-wine) 28%, transparent);
+  color: inherit;
+}
+
+.dashboard h2,
+.dashboard h3 {
+  font-family: var(--duha-display);
+  font-weight: 400;
+  letter-spacing: -0.005em;
+}
+
+.nav__link-indicator {
+  background: var(--duha-wine);
+}
