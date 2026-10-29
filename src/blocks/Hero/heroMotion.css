@@ -71,8 +71,10 @@
 /* Pulse (ambient #3): the spec's heavier dot (1.35px -> 1.7px) in the
    silhouette colour, on DotMatrix's 22px grid and origin so it overlays the
    grey dots, shown only inside a ring that radiates from the logo core,
-   intersected with the spec's own (wider) pulse fade. Same 7s cycle as the fan:
-   the ring leaves as the bands click back together (~t0+4340ms).
+   intersected with the spec's own (wider) pulse fade. Human (2026-10-29): a
+   slow pulse every 3s, so the ring travels the whole 3s cycle at an even
+   speed and fades as it goes; the next one leaves as it dies. Starts once the
+   load-in has settled.
    --hm-cx/--hm-cy: the silhouette centre, measured by HeroMotion.tsx; the
    defaults are the spec's desktop position. */
 @property --pulse { syntax: '<length>'; inherits: false; initial-value: 0px; }
@@ -90,8 +92,8 @@
     linear-gradient(225deg, #000 0%, rgba(0, 0, 0, .7) 35%, transparent 76%);
   -webkit-mask-composite: source-in;
   mask-composite: intersect;
-  animation: hmPulse 7000ms cubic-bezier(.22, .61, .36, 1) infinite;
-  animation-delay: calc(var(--t0) + 4400ms);
+  animation: hmPulse 3000ms linear infinite;
+  animation-delay: calc(var(--t0) + 1500ms);
 }
 .hm-hero[data-offscreen] .hm-pulse { animation-play-state: paused; }
 
@@ -176,10 +178,9 @@
 }
 @keyframes hmPulse {
   0% { --pulse: 0px; opacity: 0 }
-  5% { opacity: 1 }
-  22% { opacity: 1 }
-  50% { --pulse: 1200px; opacity: 0 }
-  100% { --pulse: 1200px; opacity: 0 }
+  15% { opacity: 1 }
+  45% { opacity: 1 }
+  100% { --pulse: 1100px; opacity: 0 }
 }
 @keyframes hmCarry { from { transform: translateY(72px) } }
 @keyframes hmFloat { from { transform: none } to { transform: translateY(-10px) } }
