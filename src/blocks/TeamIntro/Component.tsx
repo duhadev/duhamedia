@@ -65,6 +65,39 @@ function IntroLink({ link, className }: { link: TeamIntroData['link']; className
  *   name. No photo: the card renders without it. No member, or a member that is
  *   not published/populated: the whole block renders nothing (console.error).
  */
+const STORY_P = 'max-w-[68ch] whitespace-pre-line text-body-mobile leading-[1.7] text-[#3A3630] md:text-[1.0625rem] md:leading-[1.65]'
+
+/**
+ * Founder story with "Read more" (human, 2026-10-29): the first paragraph always shows, the rest
+ * sits in a native <details> (no JS, keyboard + screen-reader friendly, all text in the DOM).
+ * One paragraph only: plain text, no toggle. Paragraphs = blank-line separated.
+ */
+function FounderStory({ body }: { body: string }) {
+  const [first, ...rest] = body.split(/\n[ \t]*\n/).map((p) => p.trim()).filter(Boolean)
+  if (!rest.length) return <p className={STORY_P}>{first}</p>
+  return (
+    <>
+      <p className={STORY_P}>{first}</p>
+      <details className="tm-story group">
+        <summary className="mt-3 inline-flex min-h-target cursor-pointer list-none items-center gap-2 font-bold text-ink [&::-webkit-details-marker]:hidden">
+          <span className="ix-rule py-1 group-open:hidden">Read more</span>
+          <span className="ix-rule hidden py-1 group-open:inline">Show less</span>
+          <svg aria-hidden="true" viewBox="0 0 24 24" className="size-4 transition-transform duration-180 ease-out group-open:rotate-180" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </summary>
+        <div className="flex flex-col gap-4 pt-2">
+          {rest.map((p, i) => (
+            <p key={i} className={STORY_P}>
+              {p}
+            </p>
+          ))}
+        </div>
+      </details>
+    </>
+  )
+}
+
 export function TeamIntroBlock({
   variant,
   eyebrow,
@@ -101,7 +134,7 @@ export function TeamIntroBlock({
               </Eyebrow>
             ) : null}
             <AccentHeadline text={heading} accent={accentPhrase} level={2} accentColor="ground" className="mb-5 md:mb-4.5" />
-            {body ? <p className="max-w-[68ch] whitespace-pre-line text-body-mobile leading-[1.7] text-[#3A3630] md:text-[1.0625rem] md:leading-[1.65]">{body}</p> : null}
+            {body ? <FounderStory body={body} /> : null}
             {/* Pull quote: RichContent's quote grammar (4px accent rule, display caps) in the
                 accent colour at the h3 size. A <p>, not <blockquote>: it is the section's own
                 line, not a quotation from a source. */}
