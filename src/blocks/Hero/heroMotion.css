@@ -59,13 +59,9 @@
 .hm-b3 { --fx: -8px; --fy: 4px; --fr: -1.5deg; animation-delay: calc(var(--t0) + 150ms), calc(var(--t0) + 1460ms); }
 .hm-b2 { --fx: 8px; --fy: -4px; --fr: 1.5deg; animation-delay: calc(var(--t0) + 220ms), calc(var(--t0) + 1520ms); }
 .hm-b1 { --fx: -10px; --fy: -13px; --fr: -2deg; animation-delay: calc(var(--t0) + 290ms), calc(var(--t0) + 1580ms); }
-/* the mark hovers */
-.hm-sun-core {
-  animation: hmFloat 9000ms ease-in-out infinite alternate;
-  animation-delay: calc(var(--t0) + 1500ms);
-}
+/* No float: the spec's 10px/9s hover stepped a pixel at a time and read as
+   the mark creeping; human (2026-10-29) wants it seated. */
 /* ambient loops pause while the hero is off screen (HeroMotion.tsx) */
-.hm-hero[data-offscreen] .hm-sun-core { animation-play-state: paused; }
 .hm-hero[data-offscreen] .hm-band { animation-play-state: running, paused; }
 
 /* Pulse (ambient #3): the spec's heavier dot (1.35px -> 1.7px) in the
@@ -186,7 +182,6 @@
   100% { --pulse: 1400px; opacity: 0 }
 }
 @keyframes hmCarry { from { transform: translateY(72px) } }
-@keyframes hmFloat { from { transform: none } to { transform: translateY(-10px) } }
 @keyframes hmFan {
   0% { transform: none }
   22% { transform: translate(var(--fx), var(--fy)) rotate(var(--fr)) }

@@ -19,7 +19,7 @@ const INTRO_ID = 'intro-overlay'
  *    re-time running animations, so on mount we copy that fact onto this
  *    element as `data-intro` (never removed).
  * 2. Ambient pause. An IntersectionObserver sets `data-offscreen` while the
- *    hero is out of view, which pauses the infinite float/fan/pulse loops.
+ *    hero is out of view, which pauses the infinite fan/pulse loops.
  * 3. Pulse origin. A ResizeObserver keeps the pulse ring centred on the
  *    silhouette (`--hm-cx/--hm-cy`) at every breakpoint and layout.
  */
@@ -48,7 +48,7 @@ export function HeroMotion({ children }: { children: React.ReactNode }) {
 
     // Pulse origin = silhouette centre, in the pulse layer's own px (both are
     // absolutely positioned in the same section). Layout values only
-    // (offset* + the `translate` property), so the running sunrise / float
+    // (offset* + the `translate` property), so the running sunrise / fan
     // transforms never skew it.
     const sun = el.querySelector<HTMLElement>('.hm-sun')
     const pulse = el.querySelector<HTMLElement>('.hm-pulse')
