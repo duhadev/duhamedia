@@ -111,6 +111,8 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 | 2026-10-24 | src/migrations/20261024_030205_a2_newsletter.ts | A2: form_submissions newsletter email status/note/attempts/contactId + indexes; job task enum values (sendNewsletterConfirmation, syncNewsletterContact). Additive; down deletes queued newsletter jobs first + F88 guard | scratch proofs; dev push / no / no |
 | 2026-10-24 | src/migrations/20261024_034121_a3_lead_magnet.ts | A3: form_submissions asset_email_* (3 cols) + enum + index; job task value sendLeadMagnetAsset. Additive; down deletes queued A3 jobs + F88 guard | scratch proofs; dev push / no / no |
 | 2026-10-24 | src/migrations/20261024_165445_a4_site_error.ts | A4: job task enum value deliverSiteError. Additive; down deletes queued A4 jobs + F88 guard | scratch proofs; dev push / no / no |
+| 2026-10-29 | 20261029_143150_teamintro_pull_quote | adds nullable `pull_quote` varchar to `pages_blocks_team_intro` + `_pages_v_blocks_team_intro` | dev (push) / preview + prod via vercel-build |
+
 
 ## Releases
 | Date | Tag | Ordered by human | Notes |
@@ -377,6 +379,7 @@ Decisions deferred to the human; each has a safe default applied so work continu
 | 2026-10-29 | Hover system built (shared `ix-*` utilities in styles.css + Button/CMSLink/NavLink/ArrowText; ~25 files). Choices: lift shadow = 2px ground gap + 2px ink ledge (plain ink shadow merged with ink buttons); text links keep their 2px rule and redraw it L→R on hover; RichContent wine hover dropped (final designs hover ink); nav gets `aria-current` solid rule for current page/section; FAQ plus not rotated on hover (it rotates on open); play discs fill wine, no scale; BookingEmbed docked bar can't lift (overflow frame) → arrow + press only; trailing arrows aria-hidden. On Preview for human review. | Human-approved plan. |
 | 2026-10-29 | Media upload failure in production (13:26, `/api/media` 500: sharp "Input file contains unsupported image format" on the human's profile photo). `image/*` let formats sharp can't decode through. Media `mimeTypes` now explicit: jpeg, png, webp, gif, avif, tiff, svg+xml (all verified decodable) → others rejected up front as invalid type. HEIC support would need a new dependency (not approved). No schema change. | Human report. |
 | 2026-10-29 | FinalCTA buttons: first = new Button variant `wine` (ground-accent fill, lifts), others = full cream outline (was cream/50). On ink grounds lifted buttons now stand on a cream ledge (`--ix-ledge` set by `.bg-ink`). Human: "Book a call needs to be wine, the right one white outlined". Applies to every page's FinalCTA. | Human. |
+| 2026-10-29 | TeamIntro founder-card restyled to human's mockup (option 2 + ASCII layout): lg+ two columns — story, new optional `pullQuote` (accent, RichContent quote grammar), CTA as wine ButtonLink — beside a boxed person card (square photo from the team member, name, role, `bio` as one-liner, socials); below lg stacked with round 80px avatar. No photo → card without image; no member → nothing. Showcase gained long-story + no-portrait entries. | Human. |
 
 ## Session handoff
 - **Last session ended:** 2026-10-29 — /clear point. Site LIVE on Vercel Hobby as v1.0.7 (e962197); `main` = production.

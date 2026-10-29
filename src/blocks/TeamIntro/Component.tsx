@@ -1,7 +1,7 @@
 import React from 'react'
 
 import type { BlockData } from '@/blocks/types'
-import { AccentHeadline, CMSLink, Container, Eyebrow, Media, Section } from '@/components/ui'
+import { AccentHeadline, ButtonLink, CMSLink, Container, Eyebrow, Media, Section } from '@/components/ui'
 import { resolveLinkHref } from '@/components/ui/CMSLink'
 import type { Media as MediaDoc, TeamMember } from '@/payload-types'
 
@@ -56,9 +56,14 @@ function IntroLink({ link, className }: { link: TeamIntroData['link']; className
  * Server component: no interactivity.
  * - `intro`: text column + 4:5 photo (full-bleed under the text on mobile).
  *   No photo: text only, the layout stays single-column.
- * - `founder-card`: headline, body, then the member card. No member, or a
- *   member that is not published/populated: the whole block renders nothing
- *   (console.error), never a half card.
+ * - `founder-card` (human layout, 2026-10-29): text column (headline, body,
+ *   optional pull quote, the link as a primary button) and a boxed person card
+ *   (DS card grammar: 2px ink border, shadow-card). Card = photo, name, role,
+ *   the member's one-line bio, socials. From `lg` the card sits in a 380px right
+ *   column (the `intro` variant's column grammar) with a large square photo;
+ *   below `lg` it stacks after the button with the round 80px avatar beside the
+ *   name. No photo: the card renders without it. No member, or a member that is
+ *   not published/populated: the whole block renders nothing (console.error).
  */
 export function TeamIntroBlock({
   variant,
@@ -67,6 +72,7 @@ export function TeamIntroBlock({
   heading,
   accentPhrase,
   body,
+  pullQuote,
   photo,
   member,
   link,
@@ -81,48 +87,69 @@ export function TeamIntroBlock({
     }
     const socials = (person.socials ?? []).filter((s) => s.url && SOCIAL[s.platform])
     const portrait = person.photo && typeof person.photo === 'object' ? person.photo : null
+    const bio = person.bio?.trim()
+    const quote = pullQuote?.trim()
 
+    // lg, not md, for two columns: at md a 300px card leaves the text ~45ch; at lg it is ~62ch.
     return (
       <Section tone="light" pad="none" divider="top" className="pt-10 pb-11 md:py-18">
-        <Container>
-          {eyebrow ? (
-            <Eyebrow muted tick={eyebrowTick === true} className="mb-3.5">
-              {eyebrow}
-            </Eyebrow>
-          ) : null}
-          <AccentHeadline text={heading} accent={accentPhrase} level={2} accentColor="ground" className="mb-5 md:mb-4.5" />
-          {body ? <p className="max-w-[68ch] whitespace-pre-line text-body-mobile leading-[1.7] text-[#3A3630] md:text-[1.0625rem] md:leading-[1.65]">{body}</p> : null}
-          <IntroLink link={link} className="mt-1.5" />
-          <div className="mt-7 flex items-center gap-4 border-t border-divider pt-6">
+        <Container className="lg:grid lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start lg:gap-16">
+          <div>
+            {eyebrow ? (
+              <Eyebrow muted tick={eyebrowTick === true} className="mb-3.5">
+                {eyebrow}
+              </Eyebrow>
+            ) : null}
+            <AccentHeadline text={heading} accent={accentPhrase} level={2} accentColor="ground" className="mb-5 md:mb-4.5" />
+            {body ? <p className="max-w-[68ch] whitespace-pre-line text-body-mobile leading-[1.7] text-[#3A3630] md:text-[1.0625rem] md:leading-[1.65]">{body}</p> : null}
+            {/* Pull quote: RichContent's quote grammar (4px accent rule, display caps) in the
+                accent colour at the h3 size. A <p>, not <blockquote>: it is the section's own
+                line, not a quotation from a source. */}
+            {quote ? (
+              <p className="mt-7 max-w-[34ch] border-l-4 border-ground-accent py-1 pl-4 font-display text-h3-mobile font-normal whitespace-pre-line text-ground-accent uppercase md:mt-8 md:pl-5 md:text-h3">
+                {quote}
+              </p>
+            ) : null}
+            <ButtonLink link={link} variant="wine" className="mt-7 md:mt-8" />
+          </div>
+          <div className="mt-9 border-2 border-ink bg-cream p-5 shadow-card md:p-6 lg:mt-0">
             {portrait ? (
-              <div className="relative size-19 flex-none overflow-hidden rounded-full border-2 border-ink md:size-20">
-                <Media resource={portrait} fill sizes="80px" alt="" className="object-cover" />
+              <div className="relative mb-5 hidden aspect-square overflow-hidden border-2 border-ink bg-gray-light lg:block">
+                <Media resource={portrait} fill sizes="(min-width: 1024px) 330px, 1px" alt="" className="object-cover" />
               </div>
             ) : null}
-            <div className="flex flex-col gap-1 md:gap-0.75">
-              <span className="font-display text-[1.25rem] leading-[1.05] uppercase md:text-[1.375rem]">{person.name}</span>
-              <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-gray-warm">{person.role}</span>
-              {socials.length ? (
-                <ul className="-mt-1 flex flex-wrap gap-x-4 md:mt-0">
-                  {socials.map((s, i) => (
-                    <li key={s.id ?? i}>
-                      <a
-                        href={s.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={`${person.name} on ${SOCIAL[s.platform].label} (opens in a new tab)`}
-                        className="inline-flex min-h-target items-center gap-1.5 text-[13px] font-bold text-ink no-underline md:gap-2 md:text-sm"
-                      >
-                        <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" className="size-4 md:size-4.5">
-                          <path d={SOCIAL[s.platform].path} />
-                        </svg>
-                        {SOCIAL[s.platform].label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
+            <div className="flex items-center gap-4">
+              {portrait ? (
+                <div className="relative size-19 flex-none overflow-hidden rounded-full border-2 border-ink md:size-20 lg:hidden">
+                  <Media resource={portrait} fill sizes="80px" alt="" className="object-cover" />
+                </div>
               ) : null}
+              <div className="flex flex-col gap-1 md:gap-0.75">
+                <span className="font-display text-[1.25rem] leading-[1.05] uppercase md:text-[1.375rem]">{person.name}</span>
+                <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-gray-warm">{person.role}</span>
+              </div>
             </div>
+            {bio ? <p className="mt-3.5 whitespace-pre-line text-small-mobile text-[#3A3630] md:text-small">{bio}</p> : null}
+            {socials.length ? (
+              <ul className="mt-2 -mb-2 flex flex-wrap gap-x-4">
+                {socials.map((s, i) => (
+                  <li key={s.id ?? i}>
+                    <a
+                      href={s.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${person.name} on ${SOCIAL[s.platform].label} (opens in a new tab)`}
+                      className="inline-flex min-h-target items-center gap-1.5 text-[13px] font-bold text-ink no-underline md:gap-2 md:text-sm"
+                    >
+                      <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" className="size-4 md:size-4.5">
+                        <path d={SOCIAL[s.platform].path} />
+                      </svg>
+                      {SOCIAL[s.platform].label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
           </div>
         </Container>
       </Section>

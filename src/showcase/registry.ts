@@ -964,7 +964,7 @@ export const showcaseEntries: ShowcaseEntry[] = [
   {
     block: 'teamIntro',
     variant: 'founder-card',
-    label: 'homepage founder #2: headline, body, published placeholder member card with socials',
+    label: 'homepage founder #2: short body, no pull quote, no button; published placeholder member card (photo, bio, socials)',
     data: {
       variant: 'founder-card',
       heading: 'One founder, no layers.',
@@ -972,6 +972,40 @@ export const showcaseEntries: ShowcaseEntry[] = [
       body: 'The person who scopes the work is the person who does it. [One-sentence bio, founder-authored.]',
       member: fixtureMember,
       link: { type: 'custom' },
+    },
+  },
+  {
+    block: 'teamIntro',
+    variant: 'founder-card — long story',
+    label: 'four-paragraph story + pull quote + button; from lg, text left and the boxed person card (large photo, name, role, bio, socials) right; below lg, the card stacks after the button',
+    data: {
+      variant: 'founder-card',
+      eyebrow: 'Who you would work with',
+      heading: 'One founder, no layers.',
+      accentPhrase: 'no layers.',
+      body: [
+        'The person who scopes the work is the person who does it. You will not be introduced to a team after you sign, and you will not repeat yourself to a new contact in month four. [STRATEGIC PLACEHOLDER — final copy TBD]',
+        '[Paragraph two, founder-authored: background before Duha. Which stores, which channels, what was learned the hard way. No invented facts.]',
+        '[Paragraph three: why the build and the engine sit under one roof here, and what that changes for a business that has been passed between freelancers.]',
+        '[Paragraph four: what independence means in practice — the handover date, the dashboard your team keeps, and the training that makes us unnecessary.]',
+      ].join('\n\n'),
+      pullQuote: '[Pull quote: one line from the story — placeholder]',
+      member: fixtureMember,
+      link: { type: 'custom', url: '/book-a-call', label: 'Book a call with me →' },
+    },
+  },
+  {
+    block: 'teamIntro',
+    variant: 'founder-card — no portrait',
+    label: 'fallback: member without a photo → the card renders without it (name, role, bio, socials); short body + pull quote + button',
+    data: {
+      variant: 'founder-card',
+      heading: 'One founder, no layers.',
+      accentPhrase: 'no layers.',
+      body: 'The person who scopes the work is the person who does it. [One-sentence bio, founder-authored.]',
+      pullQuote: '[Pull quote: one line from the story — placeholder]',
+      member: { ...fixtureMember, photo: null },
+      link: { type: 'custom', url: '/book-a-call', label: 'Book a call with me →' },
     },
   },
   {

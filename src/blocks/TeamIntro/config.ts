@@ -6,7 +6,8 @@ import { eyebrowField, headlineFields, linkField } from '../../fields'
  * TeamIntro block (SCHEMA §8.3 item 12). Homepage ships two variants:
  * - `intro`        p1 §Founder #1 "Who you'd work with": heading, body, photo, link.
  * - `founder-card` p1 §Founder #2 "One founder, no layers.": heading, body,
- *   then the team member's card (photo, name, role, socials). R12: no
+ *   optional pull quote, link as a button, then the team member's card
+ *   (photo, name, role, bio, socials). R12: no
  *   "Latest posts". R17: copy is single-founder.
  * Later pages (About) reuse these variants or append new options.
  */
@@ -43,6 +44,14 @@ export const TeamIntro: Block = {
       admin: { description: 'The paragraph under the headline.' },
     },
     {
+      name: 'pullQuote',
+      type: 'textarea',
+      admin: {
+        condition: isFounderCard,
+        description: 'Optional. One line from your story, shown large in the accent colour.',
+      },
+    },
+    {
       name: 'photo',
       type: 'upload',
       relationTo: 'media',
@@ -67,7 +76,8 @@ export const TeamIntro: Block = {
     linkField({
       name: 'link',
       label: 'Link',
-      description: 'Optional link under the text, e.g. "More about us →". Leave empty for none.',
+      description:
+        'Optional link under the text, e.g. "More about us →". On the founder card it shows as a button, e.g. "Book a call with me →". Leave empty for none.',
     }),
   ],
 }

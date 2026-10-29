@@ -30,8 +30,8 @@ import * as migration_20261024_030205_a2_newsletter from './20261024_030205_a2_n
 import * as migration_20261024_034121_a3_lead_magnet from './20261024_034121_a3_lead_magnet';
 import * as migration_20261024_165445_a4_site_error from './20261024_165445_a4_site_error';
 import * as migration_20261028_121301_vercel_blob_fields from './20261028_121301_vercel_blob_fields';
-
 import * as migration_20261028_190000_seed_placeholder_content from './20261028_190000_seed_placeholder_content';
+import * as migration_20261029_143150_teamintro_pull_quote from './20261029_143150_teamintro_pull_quote';
 
 export const migrations = [
   {
@@ -192,11 +192,16 @@ export const migrations = [
   {
     up: migration_20261028_121301_vercel_blob_fields.up,
     down: migration_20261028_121301_vercel_blob_fields.down,
-    name: '20261028_121301_vercel_blob_fields'
+    name: '20261028_121301_vercel_blob_fields',
   },
   {
     up: migration_20261028_190000_seed_placeholder_content.up,
     down: migration_20261028_190000_seed_placeholder_content.down,
-    name: '20261028_190000_seed_placeholder_content'
+    name: '20261028_190000_seed_placeholder_content',
+  },
+  {
+    up: migration_20261029_143150_teamintro_pull_quote.up,
+    down: migration_20261029_143150_teamintro_pull_quote.down,
+    name: '20261029_143150_teamintro_pull_quote'
   },
 ];

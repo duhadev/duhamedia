@@ -2798,6 +2798,10 @@ export interface TeamIntroBlock {
    */
   body?: string | null;
   /**
+   * Optional. One line from your story, shown large in the accent colour.
+   */
+  pullQuote?: string | null;
+  /**
    * Portrait shown beside (desktop) or under (mobile) the text. Portrait 4:5 works best. Leave empty to show the text only.
    */
   photo?: (number | null) | Media;
@@ -2806,7 +2810,7 @@ export interface TeamIntroBlock {
    */
   member?: (number | null) | TeamMember;
   /**
-   * Optional link under the text, e.g. "More about us →". Leave empty for none.
+   * Optional link under the text, e.g. "More about us →". On the founder card it shows as a button, e.g. "Book a call with me →". Leave empty for none.
    */
   link: {
     type: 'internal' | 'custom';
@@ -4893,6 +4897,7 @@ export interface TeamIntroBlockSelect<T extends boolean = true> {
   heading?: T;
   accentPhrase?: T;
   body?: T;
+  pullQuote?: T;
   photo?: T;
   member?: T;
   link?:
