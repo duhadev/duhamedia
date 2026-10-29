@@ -44,15 +44,13 @@ const MONEY = /\$\d+(?:[.,]\d+)*[kKmM]?(?:\/[a-zA-Z]+)?/
 function PriceTag({ note, accent }: { note: string; accent: boolean }) {
   const m = MONEY.exec(note)
   return (
-    <span
-      className={`inline-flex items-baseline px-3 py-1.5 text-small-mobile md:text-small ${
-        accent ? 'bg-ground-accent text-on-accent' : 'bg-ink text-cream'
-      }`}
-    >
+    // No filled box (human 2026-10-29: "remove the black box"): plain note, amount enlarged;
+    // the accent track's amount is wine.
+    <span className="inline-flex items-baseline text-small-mobile text-ink md:text-small">
       {m ? (
         <span>
           {note.slice(0, m.index)}
-          <strong className="text-body-mobile leading-none font-bold md:text-body md:leading-none">{m[0]}</strong>
+          <strong className={`text-body-mobile leading-none font-bold md:text-body md:leading-none ${accent ? 'text-ground-accent' : ''}`}>{m[0]}</strong>
           {note.slice(m.index + m[0].length)}
         </span>
       ) : (
@@ -68,7 +66,7 @@ function PriceTag({ note, accent }: { note: string; accent: boolean }) {
  * number tag 01/02 from position, title, body paragraphs (blank line = new
  * paragraph, `**bold**`), optional service chips, then a footer row with the
  * price tag and the text link. The accent track (`accentTitle`) also gets the
- * 6px wine left edge and the wine price tag. Two equal-height columns from
+ * 6px wine left edge and a wine price amount. Two equal-height columns from
  * `lg` (at `md` a column would hold ~35ch of body); stacked below.
  *
  * PRICING: the price tag (amount enlarged + bold) overrides the locked

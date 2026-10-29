@@ -62,7 +62,7 @@ export function AccentHeadline({
 }) {
   const parts = splitAccentPhrase(text, accent)
   return (
-    <Tag id={id} className={cx('font-display font-normal uppercase tracking-headline text-balance', LEVELS[level], className)}>
+    <Tag id={id} className={cx('font-display font-normal uppercase tracking-headline text-pretty md:text-balance', LEVELS[level], className)}>
       {words ? (
         splitWords(text, parts, ACCENTS[accentColor])
       ) : parts ? (
