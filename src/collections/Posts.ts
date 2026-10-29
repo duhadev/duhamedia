@@ -23,7 +23,7 @@ import { number } from 'payload/shared'
 
 import { adminOrMarketingUnpublished, postsRead, staffOnly, staffOnlyField, staffOrPipeline, staffOrPipelineDrafts } from '../access'
 import { forbidPipelineOnPublished, forbidPipelinePublish, pipelineNeverPublishes } from '../access/pipeline'
-import { accentPhraseAdminField, contentVersions, linkField, metricFields, pricingNote, richTextLinkFeature, validateAccentPhrase } from '../fields'
+import { accentPhraseAdminField, contentVersions, linkField, metricFields, neverShown, pricingNote, richTextLinkFeature, validateAccentPhrase } from '../fields'
 import { blockDeleteIfReferenced } from '../hooks/blockDeleteIfReferenced'
 import { setPublishedAtOnPublish } from '../hooks/publishedAt'
 import { revalidateTagHooks } from '../hooks/revalidateTag'
@@ -342,7 +342,8 @@ export const Posts: CollectionConfig = {
                   type: 'text',
                   label: 'Accent phrase',
                   validate: validateAccentPhrase('heading'),
-                  admin: { components: { Field: accentPhraseAdminField('heading') }, description: 'Optional: one word or phrase from the heading to show in the accent colour.' },
+                  // Hidden: the grey band renders it in --accent-primary = ink, same as the heading.
+                  admin: { condition: neverShown, components: { Field: accentPhraseAdminField('heading') }, description: 'Optional: one word or phrase from the heading to show in the accent colour.' },
                 },
                 { name: 'body', type: 'richText', editor: shortEditor },
                 {

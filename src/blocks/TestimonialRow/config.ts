@@ -47,7 +47,11 @@ export const TestimonialRow: Block = {
         description: 'Small uppercase line above the testimonial cards, e.g. "What clients say".',
       }),
     ),
-    ...headlineFields({ required: false, description: 'The section headline, e.g. "Proof, in their words."' }).map(rowOnly),
+    ...headlineFields({
+      required: false,
+      description: 'The section headline, e.g. "Proof, in their words."',
+      accent: false, // rendered in --accent-primary = ink, same as the headline
+    }).map(rowOnly),
     {
       name: 'testimonials',
       type: 'relationship',
@@ -120,7 +124,8 @@ export const TestimonialRow: Block = {
               'Optional. Shown in the card slot until a case study is published. Leave empty to show testimonials only. Only enter a real, approved figure.',
             condition: (_d, s) => s?.show !== false,
           },
-          fields: metricFields({ required: false }),
+          // The figure is always wine here; an accent toggle would do nothing.
+          fields: metricFields({ required: false, accent: false }),
         },
       ],
     },
@@ -151,7 +156,8 @@ export const TestimonialRow: Block = {
           'Optional. A big figure tile (e.g. subscriber count) placed beside the testimonial(s). When set, the "A study in full" card is not shown. Needs both a number and a label. Only enter a real, approved figure.',
         condition: isRow,
       },
-      fields: metricFields({ required: false }),
+      // The figure is always wine here; an accent toggle would do nothing.
+      fields: metricFields({ required: false, accent: false }),
     },
     // ---- client-voice variant (p2 case-study template). `clientVoice` mirrors `case-studies.clientVoice`
     // field-for-field so the template can pass the study's group straight through.

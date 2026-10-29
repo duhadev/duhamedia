@@ -38,6 +38,7 @@ export const MetricEvent: Block = {
     ...headlineFields({
       required: false,
       description: 'Optional heading above the table. Leave empty for the eyebrow alone.',
+      accent: false, // rendered in --accent-primary = ink, same as the headline
     }),
     {
       name: 'columns',

@@ -62,6 +62,7 @@ export const ReviewWall: Block = {
     ...headlineFields({
       required: false,
       description: 'Optional headline above the feed. Leave empty on the Testimonials page.',
+      accent: false, // rendered in --accent-primary = ink, same as the headline
     }),
     {
       name: 'source',

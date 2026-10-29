@@ -37,7 +37,8 @@ export const TeamIntro: Block = {
       defaultTick: false,
       description: 'Small grey uppercase line above the headline, e.g. "Who you\'d work with". Optional.',
     }),
-    ...headlineFields({ description: 'The section headline.' }),
+    // Accent shows only on the founder card (wine); the intro renders it ink on ink.
+    ...headlineFields({ description: 'The section headline.', accent: isFounderCard }),
     {
       name: 'body',
       type: 'textarea',

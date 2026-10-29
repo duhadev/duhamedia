@@ -22,7 +22,10 @@ export const OfferBlock: Block = {
   labels: { singular: 'Offer', plural: 'Offers' },
   fields: [
     eyebrowField({ defaultTick: false, description: 'Small uppercase line above the headline, e.g. "The offer".' }),
-    ...headlineFields({ description: 'The promise, stated as scope (what the prospect gets), not hype.' }),
+    ...headlineFields({
+      description: 'The promise, stated as scope (what the prospect gets), not hype.',
+      accent: false, // rendered in --accent-primary = ink, same as the headline
+    }),
     {
       name: 'body',
       type: 'richText',

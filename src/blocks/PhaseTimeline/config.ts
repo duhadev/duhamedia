@@ -66,7 +66,11 @@ export const PhaseTimeline: Block = {
       }),
       admin: { condition: onlyFor('accordion', 'build-run', 'engine-rollout') },
     },
-    ...headlineFields({ description: 'The section headline, e.g. "Three phases. The last one is the point."' }),
+    // Accent shows in wine on every layout except Accordion (ink on ink there).
+    ...headlineFields({
+      description: 'The section headline, e.g. "Three phases. The last one is the point."',
+      accent: onlyFor('arc', 'steps', 'build-run', 'engine-rollout'),
+    }),
     {
       name: 'intro',
       type: 'textarea',

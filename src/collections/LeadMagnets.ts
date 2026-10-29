@@ -8,7 +8,7 @@ import {
 import { text, upload } from 'payload/shared'
 
 import { staffContentAccessDraftDelete, staffOnlyField } from '../access'
-import { accentPhraseAdminField, contentVersions, validateAccentPhrase } from '../fields'
+import { accentPhraseAdminField, contentVersions, neverShown, validateAccentPhrase } from '../fields'
 import { blockDeleteIfReferenced, leadMagnetSubmissionsSentence } from '../hooks/blockDeleteIfReferenced'
 import { setPublishedAtOnPublish } from '../hooks/publishedAt'
 import { revalidateTagHooks } from '../hooks/revalidateTag'
@@ -173,6 +173,8 @@ export const LeadMagnets: CollectionConfig = {
               label: 'Accent phrase',
               validate: validateAccentPhrase('title'),
               admin: {
+                // Hidden: the typographic hero renders it in --accent-primary = ink, same as the headline.
+                condition: neverShown,
                 components: { Field: accentPhraseAdminField('title') },
                 description: 'Optional: one word or phrase from the headline to show in the accent colour.',
               },
@@ -326,6 +328,8 @@ export const LeadMagnets: CollectionConfig = {
                   label: 'Accent phrase',
                   validate: validateAccentPhrase('heading'),
                   admin: {
+                    // Hidden: the delivered message renders it in --accent-primary = ink, same as the heading.
+                    condition: neverShown,
                     components: { Field: accentPhraseAdminField('heading') },
                     description: 'Optional: one word or phrase from the heading to show in the accent colour.',
                   },

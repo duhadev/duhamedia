@@ -6,6 +6,7 @@ import {
   headlineFields,
   linkField,
   metricFields,
+  neverShown,
   pricingNote,
   validateAccentPhrase,
 } from '../../fields'
@@ -81,6 +82,7 @@ export const CaseStudyCards: Block = {
     ...headlineFields({
       required: false,
       description: 'Headline shown above the study cards, e.g. "The work, in numbers." Shown only when studies are live.',
+      accent: false, // rendered in --accent-primary = ink, same as the headline
     }),
     {
       name: 'source',
@@ -302,7 +304,8 @@ export const CaseStudyCards: Block = {
       defaultValue: 'anyway.',
       validate: validateAccentPhrase('fallbackHeading'),
       admin: {
-        condition: notNextLink,
+        // Hidden: every fallback renders it in --accent-primary = ink, same as the headline.
+        condition: neverShown,
         components: { Field: accentPhraseAdminField('fallbackHeading') },
         description: 'Optional: one word or phrase copied from the fallback headline to show in the accent colour.',
       },

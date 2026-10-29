@@ -118,7 +118,19 @@ export const validateYouTubeUrl: TextFieldSingleValidation = (value, options) =>
  * makes `value` and `label` optional for a metric that is optional as a whole;
  * the field shapes (and so the DB columns) are identical either way.
  */
-export const metricFields = ({ required = true }: { required?: boolean } = {}): Field[] => [
+export const metricFields = ({
+  required = true,
+  accent = true,
+}: {
+  required?: boolean
+  /**
+   * `false` hides the "Accent colour" checkbox in the admin, for a component
+   * whose number renders the same colour either way. Admin-only: the column
+   * stays (no migration) and a hidden (condition-false) field is never
+   * validated (payload@3.91.0 fields/hooks/beforeChange/promise.js:44).
+   */
+  accent?: boolean
+} = {}): Field[] => [
   {
     type: 'row',
     fields: [
@@ -147,9 +159,15 @@ export const metricFields = ({ required = true }: { required?: boolean } = {}): 
     type: 'checkbox',
     label: 'Accent colour',
     defaultValue: false,
-    admin: { description: 'Show the number in the accent colour.' },
+    admin: { description: 'Show the number in the accent colour.', ...(accent ? {} : { condition: neverShown }) },
   },
 ]
+
+/**
+ * Admin condition that never passes: hides a field everywhere while keeping
+ * its column. Used for accent options a component renders invisibly.
+ */
+export const neverShown: Condition = () => false
 
 /**
  * `accentPhrase` must be a substring (case-insensitive) of the sibling heading
@@ -386,7 +404,22 @@ export const eyebrowField = ({
 export const headlineFields = ({
   required = true,
   description = 'The section headline.',
-}: { required?: boolean; description?: string } = {}): Field[] => [
+  accent = true,
+}: {
+  required?: boolean
+  description?: string
+  /**
+   * Where the accent phrase shows in the admin. `true` (default): always.
+   * `false`: never, for a component that renders the accent in the same colour
+   * as the rest of the headline (DS default `accent-primary` = ink). A
+   * Condition: only where it passes (e.g. the variants that recolour it).
+   * Admin-only: the column stays (no migration), and a condition-false field
+   * is skipped by validation on the server (payload@3.91.0
+   * fields/hooks/beforeChange/promise.js:44) and in the form
+   * (@payloadcms/ui addFieldStatePromise.js:109), so stale data never blocks a save.
+   */
+  accent?: boolean | Condition
+} = {}): Field[] => [
   {
     name: 'heading',
     type: 'text',
@@ -401,6 +434,7 @@ export const headlineFields = ({
     admin: {
       components: { Field: accentPhraseAdminField('heading') },
       description: 'Optional: one word or phrase copied from the headline to show in the accent colour.',
+      ...(accent === true ? {} : { condition: accent === false ? neverShown : accent }),
     },
   },
 ]

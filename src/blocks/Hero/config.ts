@@ -1,4 +1,4 @@
-import type { Block, Condition, Field, TextFieldSingleValidation } from 'payload'
+import type { Block, Condition, TextFieldSingleValidation } from 'payload'
 import { text } from 'payload/shared'
 
 import { eyebrowField, headlineFields, LINK_TARGETS, linkField, metricFields, pricingNote, validateYouTubeUrl } from '../../fields'
@@ -80,12 +80,13 @@ export const Hero: Block = {
     eyebrowField({
       description: 'Small uppercase line above the headline, e.g. "Integrated ecommerce growth partner — Chicago".',
     }),
-    // The video layout shows its headline without an accent (Campaign LP.dc.html "Hero variant A — VSL").
-    ...headlineFields({ description: 'The page headline (the only h1 on the page). Shown in capitals.' }).map((field) =>
-      'name' in field && field.name === 'accentPhrase'
-        ? ({ ...field, admin: { ...field.admin, condition: (_data, siblingData) => siblingData?.variant !== 'vsl' } } as Field)
-        : field,
-    ),
+    // Accent phrase only where it shows: service + article recolour it wine.
+    // Typographic (incl. compact / form card) renders it in --accent-primary =
+    // ink on ink, and the video layout has none (Campaign LP.dc.html "Hero variant A — VSL").
+    ...headlineFields({
+      description: 'The page headline (the only h1 on the page). Shown in capitals.',
+      accent: forVariants('service', 'article'),
+    }),
     {
       name: 'badge',
       type: 'group',

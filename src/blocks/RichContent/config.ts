@@ -90,6 +90,9 @@ const headingFields = (): Field[] =>
     required: false,
     description:
       'Article and grey band: optional heading above the text. Legal document: the document title (required; it is the page title, e.g. "Privacy Policy").',
+    // Article and band render the accent in --accent-primary = ink (same as the
+    // heading); legal ignores it. Hidden on every variant.
+    accent: false,
   }).map((f): Field => {
     if (!('name' in f) || f.name !== 'heading' || f.type !== 'text') return f
     const validate: TextFieldSingleValidation = (value, options) => {

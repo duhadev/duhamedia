@@ -70,6 +70,7 @@ export const FormEmbed: Block = {
     ...headlineFields({
       required: false,
       description: 'The heading above the form. Optional (the Contact page has none, its hero says it all).',
+      accent: false, // rendered in --accent-primary = ink, same as the headline
     }),
     {
       name: 'body',
@@ -171,7 +172,11 @@ export const FormEmbed: Block = {
               'The "Name" of each form field shown in this step (as set on the form, e.g. name, email, reason, message). Type a name and press Enter.',
           },
         },
-        ...headlineFields({ required: false, description: 'Step heading, e.g. "Who’s reaching out?". Optional: a one-question step uses the field’s label.' }),
+        ...headlineFields({
+          required: false,
+          description: 'Step heading, e.g. "Who’s reaching out?". Optional: a one-question step uses the field’s label.',
+          accent: false, // rendered in --accent-primary = ink, same as the step heading
+        }),
         {
           name: 'hint',
           type: 'text',

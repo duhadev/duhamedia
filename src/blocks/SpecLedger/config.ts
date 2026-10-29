@@ -85,6 +85,7 @@ export const SpecLedger: Block = {
     ...headlineFields({
       required: false,
       description: 'Optional headline above the caption. The designs use only the small caption, so leave this empty unless you need a full headline.',
+      accent: false, // rendered in --accent-primary = ink, same as the headline
     }),
     {
       name: 'note',

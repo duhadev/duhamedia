@@ -28,6 +28,7 @@ export const BookingEmbed: Block = {
     ...headlineFields({
       description:
         'The headline on the booking panel, e.g. "Pick a time that works." Shown in capitals. Also names the booking calendar for screen readers.',
+      accent: false, // rendered in --accent-primary = ink, same as the headline
     }),
     {
       name: 'body',

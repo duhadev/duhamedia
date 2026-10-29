@@ -35,7 +35,11 @@ export const TwoTrackPanels: Block = {
       admin: { description: 'The panel layout. Equal = two paragraphs; Contrast = two "sold to you as" cards; Primary / secondary = a lead option plus a quieter alternative.' },
     },
     eyebrowField({ description: 'Optional small uppercase line above the headline.', defaultTick: false }),
-    ...headlineFields({ description: 'The section headline, e.g. "What we actually do".' }),
+    // Accent shows only in Contrast (wine); the other layouts render it ink on ink.
+    ...headlineFields({
+      description: 'The section headline, e.g. "What we actually do".',
+      accent: (_data, siblingData) => siblingData?.variant === 'contrast',
+    }),
     {
       name: 'panels',
       type: 'array',

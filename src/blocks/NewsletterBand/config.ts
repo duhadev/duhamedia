@@ -1,6 +1,6 @@
 import type { Block } from 'payload'
 
-import { headlineFields, linkField } from '../../fields'
+import { headlineFields, linkField, neverShown } from '../../fields'
 
 /**
  * NewsletterBand block (SCHEMA §8.4 item 15), `band` variant only: the grey
@@ -28,6 +28,7 @@ export const NewsletterBand: Block = {
     },
     ...headlineFields({
       required: false,
+      accent: false, // rendered in --accent-primary = ink, same as the heading
       description:
         'The short heading. Leave empty to use the default from Site settings > Newsletter & closers (and its default line).',
     }),
@@ -56,7 +57,8 @@ export const NewsletterBand: Block = {
       fields: [
         { name: 'eyebrow', type: 'text', defaultValue: 'Sent', admin: { description: 'Small line above the heading.' } },
         { name: 'heading', type: 'text', admin: { description: 'e.g. "Check your inbox. It\'s on the way."' } },
-        { name: 'accentPhrase', type: 'text', label: 'Accent phrase', admin: { description: 'Optional: one word or phrase from the heading to show in the accent colour.' } },
+        // Hidden: CrossSell renders it in --accent-primary = ink, same as the heading.
+        { name: 'accentPhrase', type: 'text', label: 'Accent phrase', admin: { condition: neverShown, description: 'Optional: one word or phrase from the heading to show in the accent colour.' } },
         { name: 'body', type: 'textarea', admin: { description: 'e.g. "If it\'s not there in five minutes, check spam, then email us."' } },
         { name: 'crossSellLine', type: 'text', label: 'Lead-in to the newsletter box', admin: { description: 'e.g. "While you\'re here:". Optional.' } },
       ],
