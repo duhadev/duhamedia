@@ -52,9 +52,13 @@
   clip-path: inset(var(--top) 0 var(--bot) 0);
   animation:
     hmBand 600ms var(--hm-out) both,
-    hmFan 7000ms var(--hm-acc) infinite;
+    hmFan 14000ms var(--hm-acc) infinite;
 }
-/* bands grow up 4 -> 1; the fan wave starts once the load-in has settled */
+/* bands grow up 4 -> 1; the fan wave starts once the load-in has settled.
+   Two breaks per 14s cycle, 7s apart, alternating: the spec's break, then its
+   mirror image (x and rotation negated). Each keeps the spec's 7s-cycle
+   timing (out 22%, hold 32%, snap 42% of 7s), so the 7s pulse still leaves on
+   every snap. Human 2026-10-29: "create a right break and make them alternate". */
 .hm-b4 { --fx: 10px; --fy: 13px; --fr: 2deg; animation-delay: calc(var(--t0) + 80ms), calc(var(--t0) + 1400ms); }
 .hm-b3 { --fx: -8px; --fy: 4px; --fr: -1.5deg; animation-delay: calc(var(--t0) + 150ms), calc(var(--t0) + 1460ms); }
 .hm-b2 { --fx: 8px; --fy: -4px; --fr: 1.5deg; animation-delay: calc(var(--t0) + 220ms), calc(var(--t0) + 1520ms); }
@@ -184,8 +188,12 @@
 @keyframes hmCarry { from { transform: translateY(72px) } }
 @keyframes hmFan {
   0% { transform: none }
-  22% { transform: translate(var(--fx), var(--fy)) rotate(var(--fr)) }
-  32% { transform: translate(var(--fx), var(--fy)) rotate(var(--fr)); animation-timing-function: cubic-bezier(.5, 0, .2, 1.35) }
-  42% { transform: none }
+  11% { transform: translate(var(--fx), var(--fy)) rotate(var(--fr)) }
+  16% { transform: translate(var(--fx), var(--fy)) rotate(var(--fr)); animation-timing-function: cubic-bezier(.5, 0, .2, 1.35) }
+  21% { transform: none }
+  50% { transform: none }
+  61% { transform: translate(calc(-1 * var(--fx)), var(--fy)) rotate(calc(-1 * var(--fr))) }
+  66% { transform: translate(calc(-1 * var(--fx)), var(--fy)) rotate(calc(-1 * var(--fr))); animation-timing-function: cubic-bezier(.5, 0, .2, 1.35) }
+  71% { transform: none }
   100% { transform: none }
 }
