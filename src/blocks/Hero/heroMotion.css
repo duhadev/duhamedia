@@ -75,7 +75,8 @@
    slow pulse every 3s, in sync with the band fan: the fan runs the same 3s
    cycle and the ring leaves as the last band (b1) clicks back together
    (b1 fan start 1580ms + 62% of 3000ms = 3440ms), then travels the whole
-   cycle at an even speed, fading as it goes.
+   cycle at an even speed, fading as it goes. Wall ~260px (solid ~126px) per
+   human: "thicker wall going out".
    --hm-cx/--hm-cy: the silhouette centre, measured by HeroMotion.tsx; the
    defaults are the spec's desktop position. */
 @property --pulse { syntax: '<length>'; inherits: false; initial-value: 0px; }
@@ -86,10 +87,10 @@
   background-image: radial-gradient(var(--color-ground-accent) 1.35px, transparent 1.7px);
   background-size: 22px 22px;
   -webkit-mask-image:
-    radial-gradient(circle at var(--hm-cx) var(--hm-cy), transparent calc(var(--pulse) - 130px), #000 calc(var(--pulse) - 22px), transparent var(--pulse)),
+    radial-gradient(circle at var(--hm-cx) var(--hm-cy), transparent calc(var(--pulse) - 260px), #000 calc(var(--pulse) - 170px), #000 calc(var(--pulse) - 44px), transparent var(--pulse)),
     linear-gradient(225deg, #000 0%, rgba(0, 0, 0, .7) 35%, transparent 76%);
   mask-image:
-    radial-gradient(circle at var(--hm-cx) var(--hm-cy), transparent calc(var(--pulse) - 130px), #000 calc(var(--pulse) - 22px), transparent var(--pulse)),
+    radial-gradient(circle at var(--hm-cx) var(--hm-cy), transparent calc(var(--pulse) - 260px), #000 calc(var(--pulse) - 170px), #000 calc(var(--pulse) - 44px), transparent var(--pulse)),
     linear-gradient(225deg, #000 0%, rgba(0, 0, 0, .7) 35%, transparent 76%);
   -webkit-mask-composite: source-in;
   mask-composite: intersect;
@@ -181,7 +182,7 @@
   0% { --pulse: 0px; opacity: 0 }
   15% { opacity: 1 }
   45% { opacity: 1 }
-  100% { --pulse: 1100px; opacity: 0 }
+  100% { --pulse: 1300px; opacity: 0 }
 }
 @keyframes hmCarry { from { transform: translateY(72px) } }
 @keyframes hmFloat { from { transform: none } to { transform: translateY(-10px) } }
