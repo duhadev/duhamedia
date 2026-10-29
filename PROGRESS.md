@@ -125,6 +125,7 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 | 2026-10-29 | v1.0.5 (4a2b7e7) | yes ("go ahead and push") | Line breaks kept in plain-text fields; two-track link directly under body; `/`, `/admin`, health 200 |
 | 2026-10-29 | v1.0.6 (c246c88) | yes ("push", "you have approval") | Hero load-in + dot pulse + alternating logo breaks, intro rescaled, PhaseTimeline motion rework, MiniCTA square button; `/`, `/admin`, `/api/health` 200; `hm-pulse` in homepage HTML |
 | 2026-10-29 | v1.0.7 (e962197) | yes ("push all. approved") | Brand hover/press system, TwoTrack track links (own line, rule, space fix), Media mimeTypes explicit (clear error for HEIC/BMP/JXL); `/`, `/admin`, `/api/health` 200; `ix-lift` in homepage HTML |
+| 2026-10-29 | v1.0.8 (35e0dfa) | yes ("push to prod") | Founder card two-column + pullQuote (migration 20261029_143150 ran in prod build), FinalCTA wine + cream-outline buttons; `/`, `/about`, `/admin`, `/api/health` 200; new founder layout in homepage HTML |
 
 
 ## Decision log
@@ -382,7 +383,7 @@ Decisions deferred to the human; each has a safe default applied so work continu
 | 2026-10-29 | TeamIntro founder-card restyled to human's mockup (option 2 + ASCII layout): lg+ two columns — story, new optional `pullQuote` (accent, RichContent quote grammar), CTA as wine ButtonLink — beside a boxed person card (square photo from the team member, name, role, `bio` as one-liner, socials); below lg stacked with round 80px avatar. No photo → card without image; no member → nothing. Showcase gained long-story + no-portrait entries. | Human. |
 
 ## Session handoff
-- **Last session ended:** 2026-10-29 — /clear point. Site LIVE on Vercel Hobby as v1.0.7 (e962197); `main` = production.
+- **Last session ended:** 2026-10-29 — /clear point. Site LIVE on Vercel Hobby as v1.0.8 (35e0dfa); `main` = production.
 - **Release recipe:** `git push origin <sha>:refs/heads/production`, tag next `v1.0.x`, verify `/`, `/admin`, `/api/health`, log in Releases. The permission guard blocks the push until the human explicitly approves in chat.
 - **Hero animation:** shipped in v1.0.6 (load-in, 7s alternating logo breaks + synced thick dot pulse, no float; intro at prototype scale with brand tracking).
 - **Map:** `brand-assets/duha-service-area-map.{png,svg}` (OSM, Google-Maps style, brand palette, Lombard pin, no Chicago label). Generator + cached data in session scratchpad (will be lost on reboot; regen needs Overpass refetch). Human uploads it to Home → TeamIntro photo.
