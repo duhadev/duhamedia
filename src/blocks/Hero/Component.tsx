@@ -8,6 +8,7 @@ import { cx } from '@/lib/cx'
 
 import { ArticleHero } from './ArticleHero'
 import { FormCardHero } from './FormCardHero'
+import { HeroMotion } from './HeroMotion'
 import { HeroInlineForm, resolveHeroForm, type HeroFormSlot } from './HeroForm'
 import { LOGO_MASK } from './logoMask'
 import { ServiceHero } from './ServiceHero'
@@ -16,7 +17,8 @@ import { VslHero } from './VslHero'
 /**
  * Hero (SCHEMA §8.1 item 1). Picks the layout by `variant`; every variant
  * renders exactly one h1. Server component; the only client islands are the
- * shared VideoFacade (`vsl`) and the shared form (`showForm`).
+ * shared VideoFacade (`vsl`), the shared form (`showForm`) and HeroMotion (the
+ * typographic load-in wrapper: intro latch + offscreen pause of the ambient loop).
  *
  * `leadMagnetId` is not a block field: the lead-magnet template (p18) passes
  * it so the capture form's submission is tied to its asset (PayloadForm).
@@ -67,7 +69,8 @@ async function loadAggregateRating(): Promise<AggregateRating | null> {
  * Hero, `typographic` variant (Homepage.dc.html "Hero", desktop + mobile
  * builds; Work.dc.html "Work hero" + "Aggregates" for `stats`). The only h1
  * of the page. `stats` and `phaseStrip` are optional: with both empty the
- * markup is exactly the homepage hero.
+ * markup is exactly the homepage hero. Load-in + ambient motion: Hero
+ * Load-in.dc.html via heroMotion.css (`hm-*` classes), on every typographic hero.
  */
 function TypographicHero({
   eyebrow,
@@ -104,14 +107,33 @@ function TypographicHero({
   const ratingText = rating ? `${rating.average} avg · ${rating.count} ${rating.count === 1 ? 'rating' : 'ratings'}` : ''
   const eyebrowText = [eyebrow?.trim(), ratingText].filter(Boolean).join(' · ')
 
+  // Load-in regiment (heroMotion.css): every item under the h1 takes the next
+  // slot by position, so a missing badge/body/CTA closes the gap.
+  let slotIndex = 0
+  const nextSlot = (): React.CSSProperties => ({ '--r': `${regimentDelay(slotIndex++)}ms` }) as React.CSSProperties
+  const badgeSlot = badgeText ? nextSlot() : undefined
+  const paragraphSlot = paragraph ? nextSlot() : undefined
+  const pairsSlot = pairs.length ? nextSlot() : undefined
+  const formSlot = slot ? nextSlot() : undefined
+  const buttonsSlot = buttons.length ? nextSlot() : undefined
+  // the mobile-only microcopy line sits right above the CTAs and moves with them
+  const microSlot = buttonsSlot ?? ({ '--r': `${regimentDelay(slotIndex)}ms` } as React.CSSProperties)
+  const subNoteSlot = subNote ? nextSlot() : undefined
+  const phasesSlot = phases.length ? nextSlot() : undefined
+
   const copy = (
     <>
-        {eyebrowText ? <Eyebrow tick={eyebrowTick !== false}>{ratingText ? eyebrowText : eyebrow}</Eyebrow> : null}
+        {eyebrowText ? (
+          <Eyebrow tick={eyebrowTick !== false} className="hm-eyebrow">
+            <span className="hm-eyebrow-t">{ratingText ? eyebrowText : eyebrow}</span>
+          </Eyebrow>
+        ) : null}
         <AccentHeadline
           text={capture ? slashBreaks(heading) : heading}
           accent={capture && accentPhrase ? slashBreaks(accentPhrase) : accentPhrase}
           level={1}
           as="h1"
+          words
           className={
             compact
               ? capture
@@ -122,7 +144,7 @@ function TypographicHero({
           }
         />
         {badgeText ? (
-          <div className="mt-4.5 md:mt-5.5">
+          <div className="hm-enter mt-4.5 md:mt-5.5" style={badgeSlot}>
             <span className="inline-flex items-center gap-2 rounded-badge border-2 border-ink bg-ink px-4 py-2 text-label uppercase tracking-eyebrow text-cream">
               {badgeText}
             </span>
@@ -130,17 +152,19 @@ function TypographicHero({
         ) : null}
         {paragraph ? (
           <p
+            style={paragraphSlot}
             className={
-              compact
+              'hm-enter ' +
+              (compact
                 ? 'mt-4 max-w-[52ch] whitespace-pre-line text-body-mobile md:mt-6 md:text-body'
-                : 'mt-4.5 max-w-[34ch] whitespace-pre-line text-body-mobile md:mt-6 md:max-w-[52ch] md:text-body'
+                : 'mt-4.5 max-w-[34ch] whitespace-pre-line text-body-mobile md:mt-6 md:max-w-[52ch] md:text-body')
             }
           >
             {paragraph}
           </p>
         ) : null}
         {pairs.length ? (
-          <div className="mt-6 flex flex-col gap-4.5 text-body-mobile md:mt-8 md:grid md:grid-cols-2 md:gap-6">
+          <div style={pairsSlot} className="hm-enter mt-6 flex flex-col gap-4.5 text-body-mobile md:mt-8 md:grid md:grid-cols-2 md:gap-6">
             {pairs.map((c, i) => (
               <div key={c.id ?? i} className="border-t-2 border-ink pt-3 md:pt-3.5">
                 <span className="font-bold">{c.label}</span> {c.text}
@@ -148,14 +172,18 @@ function TypographicHero({
             ))}
           </div>
         ) : null}
-        {slot ? <HeroInlineForm slot={slot} submitLabel={submitLabel} formNote={formNote} /> : null}
+        {slot ? (
+          <div className="hm-enter" style={formSlot}>
+            <HeroInlineForm slot={slot} submitLabel={submitLabel} formNote={formNote} />
+          </div>
+        ) : null}
         {verticalMicrocopy ? (
-          <span aria-hidden="true" className="mt-3 block text-[11px] font-bold uppercase tracking-[0.2em] text-gray-warm lg:hidden">
+          <span aria-hidden="true" style={microSlot} className="hm-enter mt-3 block text-[11px] font-bold uppercase tracking-[0.2em] text-gray-warm lg:hidden">
             {verticalMicrocopy}
           </span>
         ) : null}
         {buttons.length ? (
-          <div className="mt-7 flex gap-3 md:mt-8 md:flex-wrap md:gap-3.5">
+          <div style={buttonsSlot} className="hm-ctas mt-7 flex gap-3 md:mt-8 md:flex-wrap md:gap-3.5">
             {buttons.map((cta, i) => (
               <ButtonLink
                 key={cta.id ?? i}
@@ -167,9 +195,9 @@ function TypographicHero({
             ))}
           </div>
         ) : null}
-        {subNote ? <p className="mt-4 text-small-mobile text-gray-warm md:text-small">{subNote}</p> : null}
+        {subNote ? <p style={subNoteSlot} className="hm-enter mt-4 text-small-mobile text-gray-warm md:text-small">{subNote}</p> : null}
       {phases.length ? (
-        <ol className="mt-8 grid grid-cols-3 gap-3 md:mt-10 md:gap-6 lg:max-w-190">
+        <ol style={phasesSlot} className="hm-enter mt-8 grid grid-cols-3 gap-3 md:mt-10 md:gap-6 lg:max-w-190">
           {phases.map((phase, i) => {
             const last = i === phases.length - 1
             return (
@@ -191,29 +219,36 @@ function TypographicHero({
 
   const section = (
     <Section tone="light" pad="none" className="relative overflow-hidden">
-      <DotMatrix fade="corner" intensity="strong" />
+      <DotMatrix fade="corner" intensity="strong" className="hm-dots" />
       {geometry !== false ? (
         <div
           aria-hidden="true"
-          style={LOGO_MASK}
-          className={
+          className={cx(
+            'hm-sun',
             compact
               ? // Testimonials.dc.html: 340px, right -160 top -80 (mobile 220px, -110 / -50).
                 // Capture form (p18): lifted on phones so only the top-right cap shows, never under the heading.
                 capture
-                ? 'pointer-events-none absolute -right-27.5 -top-37.5 z-0 size-55 bg-ground-accent md:-right-40 md:-top-20 md:size-85'
-                : 'pointer-events-none absolute -right-27.5 -top-12.5 z-0 size-55 bg-ground-accent md:-right-40 md:-top-20 md:size-85'
+                ? 'pointer-events-none absolute -right-27.5 -top-37.5 z-0 size-55 md:-right-40 md:-top-20 md:size-85'
+                : 'pointer-events-none absolute -right-27.5 -top-12.5 z-0 size-55 md:-right-40 md:-top-20 md:size-85'
               : figures.length
               ? // stats sit in the right column on desktop: park the shape in the corner (Work.dc.html: 300px, right -140, top -60)
-                'pointer-events-none absolute -right-20 top-22.5 z-0 size-70 bg-ground-accent lg:-right-35 lg:-top-15 lg:size-75'
-              : 'pointer-events-none absolute -right-20 top-22.5 z-0 size-70 bg-ground-accent lg:right-[8%] lg:top-[46%] lg:size-115 lg:-translate-y-1/2'
-          }
-        />
+                'pointer-events-none absolute -right-20 top-22.5 z-0 size-70 lg:-right-35 lg:-top-15 lg:size-75'
+              : 'pointer-events-none absolute -right-20 top-22.5 z-0 size-70 lg:right-[8%] lg:top-[46%] lg:size-115 lg:-translate-y-1/2',
+          )}
+        >
+          {/* the masked mark, split into its four bands (heroMotion.css) so each can move */}
+          <div className="hm-sun-core absolute inset-0">
+            {([1, 2, 3, 4] as const).map((n) => (
+              <span key={n} style={LOGO_MASK} className={`hm-band hm-b${n} absolute inset-0 bg-ground-accent`} />
+            ))}
+          </div>
+        </div>
       ) : null}
       {verticalMicrocopy ? (
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute top-[38%] left-6 z-0 hidden origin-top-left whitespace-nowrap text-[11px] font-bold uppercase tracking-[0.2em] text-gray-warm lg:block lg:[transform:rotate(-90deg)_translateX(-50%)_translateY(-100%)]"
+          className="hm-side pointer-events-none absolute top-[38%] left-6 z-0 hidden origin-top-left whitespace-nowrap text-[11px] font-bold uppercase tracking-[0.2em] text-gray-warm lg:block lg:[transform:rotate(-90deg)_translateX(-50%)_translateY(-100%)]"
         >
           {verticalMicrocopy}
         </span>
@@ -223,7 +258,7 @@ function TypographicHero({
         {figures.length ? (
           <div className="lg:grid lg:grid-cols-[1fr_320px] lg:items-end lg:gap-14">
             <div>{copy}</div>
-            <ul className="hidden border-l-2 border-ink pl-6 lg:flex lg:flex-col lg:gap-5">
+            <ul style={{ '--r': '480ms' } as React.CSSProperties} className="hm-enter hidden border-l-2 border-ink pl-6 lg:flex lg:flex-col lg:gap-5">
               {figures.map((fig, i) => (
                 <li key={fig.id ?? i}>
                   <span className="block font-display text-h1-mobile">{fig.value}</span>
@@ -239,13 +274,13 @@ function TypographicHero({
     </Section>
   )
 
-  if (!figures.length) return section
+  if (!figures.length) return <HeroMotion>{section}</HeroMotion>
 
   // Mobile "Aggregates" strip (Work.dc.html): under the hero, below lg.
   const cols = figures.length <= 3 ? figures.length : 2
   return (
     <>
-      {section}
+      <HeroMotion>{section}</HeroMotion>
       <div className="border-b-2 border-ink lg:hidden">
         <ul className={cx('grid gap-px bg-divider', cols === 1 ? 'grid-cols-1' : cols === 2 ? 'grid-cols-2' : 'grid-cols-3')}>
           {figures.map((fig, i) => (
@@ -266,6 +301,12 @@ function TypographicHero({
   )
 }
 
+/** Load-in regiment slots (Hero Load-in.dc.html: badge/body/CTA/steps at 480/550/620/700ms); extra items continue every 70ms. */
+function regimentDelay(index: number): number {
+  const slots = [480, 550, 620, 700]
+  return index < slots.length ? slots[index] : 700 + (index - 3) * 70
+}
+
 /** Lets a long "A/B" token wrap at the slash (zero-width space) without ever splitting a word mid-letter. */
 function slashBreaks(text: string): string {
   return text.replace(/\//g, '/\u200B')
@@ -273,10 +314,11 @@ function slashBreaks(text: string): string {
 
 /** Hero content column. Default = the site Container; compact (80/56 desktop, 48/36 mobile) is the 820px column of the sub-page heroes. */
 function Wrap({ compact, capture, narrow, children }: { compact: boolean; capture: boolean; narrow: boolean; children: React.ReactNode }) {
-  if (!compact) return <Container className="relative z-10 pt-14 pb-12 md:pt-26 md:pb-24">{children}</Container>
+  if (!compact) return <Container className="hm-copy relative z-10 pt-14 pb-12 md:pt-26 md:pb-24">{children}</Container>
   return (
     <div
       className={cx(
+        'hm-copy',
         capture
           ? // Lead Magnet.dc.html capture section: 48px / 80px top and bottom
             'relative z-10 mx-auto w-full px-container-mobile pt-12 pb-12 md:px-container md:pt-20 md:pb-20'

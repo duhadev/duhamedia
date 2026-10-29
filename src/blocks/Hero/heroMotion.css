@@ -1,0 +1,156 @@
+/*
+ * Typographic Hero load-in + ambient loop, ported from
+ * design-reference/project/Hero Load-in.dc.html (durations, delays, easings and
+ * keyframes verbatim). Motion only: no colour, size or layout values. Human
+ * direction: site colours only (one-colour silhouette), no 01/02/03 step motion
+ * (rule draw, relay baton, step-03 ignite), no matrix pulse.
+ *
+ * Every initial state is transform / opacity / clip-path with fill-mode `both`,
+ * so layout never moves and the settled frame equals the static hero. Pure CSS:
+ * without JS everything still plays and settles.
+ *
+ * t0: 0 standalone; 2160ms when the homepage intro overlay (#intro-overlay,
+ * src/components/IntroAnimation) is in the document. `:has` decides it before
+ * first paint; HeroMotion.tsx latches it as [data-intro] at hydration because
+ * the overlay unmounts at ~2.9s.
+ */
+
+.hm-hero {
+  --t0: 0ms;
+  --hm-out: cubic-bezier(.16, 1, .3, 1);
+  --hm-acc: cubic-bezier(.2, .8, .2, 1);
+  --hm-rise: 48px;
+  --hm-sun-dur: 900ms;
+}
+:root:has(#intro-overlay) .hm-hero,
+.hm-hero[data-intro] {
+  --t0: 2160ms;
+  --hm-rise: 140px;
+  --hm-sun-dur: 1000ms;
+}
+
+/* Dot matrix (the existing DotMatrix layer): opens from the top-right corner. */
+.hm-dots {
+  animation: hmDots 1000ms var(--hm-out) both;
+  animation-delay: var(--t0);
+}
+
+/* Silhouette: rises as a whole; each logo band is the masked mark clipped to its slice. */
+.hm-sun {
+  animation: hmSunrise var(--hm-sun-dur) var(--hm-out) both;
+  animation-delay: var(--t0);
+}
+/* Band geometry measured from /logo-duha.png (626px box: bands at rows 32-143,
+   162-287, 306-437, 456-593); cuts sit mid-gap at rows 153, 297, 447, so the
+   four slices re-assemble the mark exactly. b1 = top band. */
+.hm-b1 { --top: 0%; --bot: 75.559%; }
+.hm-b2 { --top: 24.441%; --bot: 52.556%; }
+.hm-b3 { --top: 47.444%; --bot: 28.594%; }
+.hm-b4 { --top: 71.406%; --bot: 0%; }
+.hm-band {
+  clip-path: inset(var(--top) 0 var(--bot) 0);
+  animation:
+    hmBand 600ms var(--hm-out) both,
+    hmFan 7000ms var(--hm-acc) infinite;
+}
+/* bands grow up 4 -> 1; the fan wave starts once the load-in has settled */
+.hm-b4 { --fx: 10px; --fy: 13px; --fr: 2deg; animation-delay: calc(var(--t0) + 80ms), calc(var(--t0) + 1400ms); }
+.hm-b3 { --fx: -8px; --fy: 4px; --fr: -1.5deg; animation-delay: calc(var(--t0) + 150ms), calc(var(--t0) + 1460ms); }
+.hm-b2 { --fx: 8px; --fy: -4px; --fr: 1.5deg; animation-delay: calc(var(--t0) + 220ms), calc(var(--t0) + 1520ms); }
+.hm-b1 { --fx: -10px; --fy: -13px; --fr: -2deg; animation-delay: calc(var(--t0) + 290ms), calc(var(--t0) + 1580ms); }
+/* the mark hovers */
+.hm-sun-core {
+  animation: hmFloat 9000ms ease-in-out infinite alternate;
+  animation-delay: calc(var(--t0) + 1500ms);
+}
+/* ambient loops pause while the hero is off screen (HeroMotion.tsx) */
+.hm-hero[data-offscreen] .hm-sun-core { animation-play-state: paused; }
+.hm-hero[data-offscreen] .hm-band { animation-play-state: running, paused; }
+
+/* Vertical side label (rotated -90deg, reads bottom->top): wipes upward. */
+.hm-side {
+  animation: hmWipe 600ms var(--hm-out) both;
+  animation-delay: calc(var(--t0) + 300ms);
+}
+
+/* Eyebrow: tick pops (only when the eyebrow has one), text wipes L->R. */
+.hm-eyebrow > [aria-hidden] {
+  animation: hmTick 360ms var(--hm-acc) both;
+  animation-delay: var(--t0);
+}
+.hm-eyebrow-t {
+  animation: hmWipe 480ms var(--hm-out) both;
+  animation-delay: calc(var(--t0) + 80ms);
+}
+
+/* H1 words (AccentHeadline `words`): each rises inside its own clip. */
+.hm-hero .hm-w {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding: .06em .02em .12em;
+  margin: -.06em -.02em -.12em;
+}
+.hm-hero .hm-wi {
+  display: inline-block;
+  --d: calc(var(--t0) + 100ms + min(var(--i), 12) * 36ms);
+  animation: hmRise 720ms var(--hm-out) both;
+  animation-delay: var(--d);
+}
+/* accent text: ink -> its own accent colour */
+.hm-hero .hm-acc {
+  animation: hmIgnite 360ms var(--hm-acc) both;
+  animation-delay: calc(var(--d) + 480ms);
+}
+
+/* Regiment: badge / body / CTAs / phase strip. `--r` is the item's slot by
+   position (480/550/620/700ms, set in Component.tsx), so a missing item closes the gap. */
+.hm-enter,
+.hm-ctas > * {
+  animation: hmEnter 450ms var(--hm-out) both;
+  animation-delay: calc(var(--t0) + var(--r));
+}
+.hm-ctas > :nth-child(2) { animation-delay: calc(var(--t0) + var(--r) + 60ms); }
+
+/* Intro only: the copy column is carried up as the panel lifts. */
+:root:has(#intro-overlay) .hm-hero .hm-copy,
+.hm-hero[data-intro] .hm-copy {
+  animation: hmCarry 1000ms var(--hm-out) both;
+  animation-delay: var(--t0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hm-hero :is(.hm-dots, .hm-sun, .hm-sun-core, .hm-band, .hm-side, .hm-eyebrow > [aria-hidden], .hm-eyebrow-t, .hm-wi, .hm-acc, .hm-enter, .hm-ctas > *, .hm-copy) {
+    animation: none !important;
+  }
+  .hm-hero { animation: hmFade 200ms linear both; }
+}
+
+@keyframes hmFade { from { opacity: 0 } }
+@keyframes hmEnter { from { opacity: 0; transform: translateY(24px) } }
+@keyframes hmRise { from { transform: translateY(105%) } }
+@keyframes hmIgnite { from { color: var(--color-ink) } }
+@keyframes hmWipe { from { clip-path: inset(0 100% 0 0) } to { clip-path: inset(0 0 0 0) } }
+@keyframes hmTick { from { transform: scale(0) } to { transform: scale(1) } }
+@keyframes hmDots {
+  from { clip-path: circle(0% at 100% 0%); transform: translate(16px, -16px) }
+  to { clip-path: circle(150% at 100% 0%); transform: none }
+}
+@keyframes hmSunrise {
+  from { opacity: 0; transform: translateY(var(--hm-rise)) }
+  35% { opacity: 1 }
+  to { opacity: 1; transform: none }
+}
+@keyframes hmBand {
+  from { clip-path: inset(calc(100% - var(--bot)) 0 var(--bot) 0) }
+  to { clip-path: inset(var(--top) 0 var(--bot) 0) }
+}
+@keyframes hmCarry { from { transform: translateY(72px) } }
+@keyframes hmFloat { from { transform: none } to { transform: translateY(-10px) } }
+@keyframes hmFan {
+  0% { transform: none }
+  22% { transform: translate(var(--fx), var(--fy)) rotate(var(--fr)) }
+  32% { transform: translate(var(--fx), var(--fy)) rotate(var(--fr)); animation-timing-function: cubic-bezier(.5, 0, .2, 1.35) }
+  42% { transform: none }
+  100% { transform: none }
+}

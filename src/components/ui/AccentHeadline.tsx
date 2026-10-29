@@ -44,6 +44,7 @@ export function AccentHeadline({
   accentColor = 'primary',
   className,
   id,
+  words = false,
 }: {
   text: string
   accent?: string | null
@@ -52,11 +53,19 @@ export function AccentHeadline({
   accentColor?: keyof typeof ACCENTS
   className?: string
   id?: string
+  /**
+   * Opt-in motion hooks (typographic Hero load-in, src/blocks/Hero/heroMotion.css):
+   * each word becomes `.hm-w > .hm-wi[--i]`, accent text inside it `.hm-acc`.
+   * Same text content and colours; off everywhere else.
+   */
+  words?: boolean
 }) {
   const parts = splitAccentPhrase(text, accent)
   return (
     <Tag id={id} className={cx('font-display font-normal uppercase tracking-headline text-balance', LEVELS[level], className)}>
-      {parts ? (
+      {words ? (
+        splitWords(text, parts, ACCENTS[accentColor])
+      ) : parts ? (
         <>
           {parts[0]}
           <span className={ACCENTS[accentColor]}>{parts[1]}</span>
@@ -67,4 +76,54 @@ export function AccentHeadline({
       )}
     </Tag>
   )
+}
+
+/**
+ * Splits a headline into per-word spans for the Hero load-in. Separators
+ * (whitespace and the zero-width break that `slashBreaks` inserts) stay as
+ * plain text between the words, so wrapping and the accessible name are
+ * unchanged. The accent range is applied per word (it may start or end
+ * mid-word), in the same colour class as the unsplit render.
+ */
+function splitWords(
+  text: string,
+  parts: [string, string, string] | null,
+  accentClass: string,
+): React.ReactNode[] {
+  const start = parts ? parts[0].length : -1
+  const end = parts ? start + parts[1].length : -1
+  const nodes: React.ReactNode[] = []
+  let offset = 0
+  let i = 0
+  for (const token of text.split(/(\s+|\u200B)/)) {
+    const from = offset
+    offset += token.length
+    if (!token) continue
+    if (/^(\s+|\u200B)$/.test(token)) {
+      nodes.push(token)
+      continue
+    }
+    const to = from + token.length
+    const a = Math.min(Math.max(start, from), to)
+    const b = Math.max(Math.min(end, to), a)
+    const word =
+      parts && b > a ? (
+        <>
+          {text.slice(from, a)}
+          <span className={cx(accentClass, 'hm-acc')}>{text.slice(a, b)}</span>
+          {text.slice(b, to)}
+        </>
+      ) : (
+        token
+      )
+    nodes.push(
+      <span key={from} className="hm-w">
+        <span className="hm-wi" style={{ '--i': i } as React.CSSProperties}>
+          {word}
+        </span>
+      </span>,
+    )
+    i += 1
+  }
+  return nodes
 }
