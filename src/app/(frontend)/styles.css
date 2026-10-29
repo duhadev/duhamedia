@@ -238,10 +238,12 @@
   }
   .bg-ink {
     --ix-ground: var(--color-ink);
+    /* an ink ledge vanishes on ink: lifted controls stand on a cream ledge here */
+    --ix-ledge: var(--color-cream);
   }
   .ix-lift.ix-lift {
     --ix-ground: inherit;
-    --ix-lift-shadow: 0 2px 0 0 var(--ix-ground, var(--color-cream)), 0 4px 0 0 var(--color-ink);
+    --ix-lift-shadow: 0 2px 0 0 var(--ix-ground, var(--color-cream)), 0 4px 0 0 var(--ix-ledge, var(--color-ink));
   }
 
   .ix-wipe-ink,

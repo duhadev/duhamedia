@@ -4,7 +4,7 @@ import { cx } from '@/lib/cx'
 
 import { CMSLink, type CMSLinkData } from './CMSLink'
 
-export type ButtonVariant = 'primary' | 'ghost' | 'ghost-light' | 'dark'
+export type ButtonVariant = 'primary' | 'ghost' | 'ghost-light' | 'dark' | 'wine'
 export type ButtonSize = 'sm' | 'md' | 'lg'
 
 // DS Button.jsx: DM Sans 700, line-height 1, 2px border, square, nowrap,
@@ -31,6 +31,8 @@ const VARIANTS: Record<ButtonVariant, string> = {
   ghost: 'ix-wipe-ink border-ink bg-transparent text-ink',
   'ghost-light': 'ix-wipe-cream border-cream bg-transparent text-cream focus-visible:outline-cream',
   dark: 'ix-lift border-ink bg-ink text-cream',
+  // Wine fill: the one CTA that must read as THE action on an ink ground (FinalCTA, human 2026-10-29).
+  wine: 'ix-lift border-ground-accent bg-ground-accent text-on-accent',
 }
 
 /** Class string of a DS button, for elements that must look like one. */

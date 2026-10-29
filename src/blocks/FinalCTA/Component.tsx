@@ -104,9 +104,10 @@ export async function FinalCTABlock({ heading, accentPhrase, body, capacity, but
               <ButtonLink
                 key={b.id}
                 link={b.link}
-                variant="ghost-light"
+                // First = the action (wine fill), the rest = cream outline (human 2026-10-29).
+                variant={i === 0 ? 'wine' : 'ghost-light'}
                 size="md"
-                className={`${links.length > 1 ? 'w-55 max-w-full' : 'w-full'} justify-center md:w-auto md:min-w-55${i > 0 ? ' border-cream/50' : ''}`}
+                className={`${links.length > 1 ? 'w-55 max-w-full' : 'w-full'} justify-center md:w-auto md:min-w-55`}
               />
             ))}
           </div>
