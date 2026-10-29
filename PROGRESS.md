@@ -367,6 +367,7 @@ Decisions deferred to the human; each has a safe default applied so work continu
 | 2026-10-29 | On Preview: 625f308 PhaseTimeline accordion motion rework (grid-track resize, sequenced content, title crossfade, scroll load-in, reduced-motion; no schema change; phase labels laid out at closed width → phase-3 label may wrap 3 lines); MiniCTAStrip pill → square DS ghost-light button (human: "in line with the UI"). Map: Chicago label removed, Lombard smaller + below pin, zoomed out ~8%. | Human requests. |
 | 2026-10-29 | Hero load-in design received (`design-reference/project/Hero Load-in.dc.html`). Human: "implement properly, don't mess with our colors, no extra bits like the 1 2 3" → port motion only into Hero typographic: keep site palette (no 4-colour bands), skip step draw/relay/ignite, no dot matrix/pulse added. Dispatched to block-coder. | Human request. |
 | 2026-10-29 | staging.duhamedia.com live: human added Cloudflare CNAME `staging` → `29d4cfa82fc7b8fb.vercel-dns-017.com` (DNS only); domain tracks `main`, behind Vercel Deployment Protection (SSO). | Human. |
+| 2026-10-29 | Intro animation rescaled to the Hero Load-in prototype's scale (human: "not the animation, the scale; ours is too large"): mark 104px, wordmark 24px / .08em tracking, 22px gap, one line at every viewport. Motion unchanged. | Human. |
 
 ## Session handoff
 - **Last session ended:** 2026-10-29 — /clear point. Site LIVE on Vercel Hobby as v1.0.5 (4a2b7e7); `main` is ahead (Preview green at 37ebadc).
