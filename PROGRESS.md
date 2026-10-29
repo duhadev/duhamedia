@@ -121,6 +121,8 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 | 2026-10-29 | v1.0.3 (e8e7948) | yes ("go ahead and push") | Admin theme + first-signup API-key fix live; `/`, `/admin`, health 200 |
 | 2026-10-29 | v1.0.4 (118fb9b) | yes ("push" + "I give you permission") | Admin success green / error red; two-track titles+links on own lines; `/`, `/admin`, health 200 |
 | 2026-10-29 | v1.0.5 (4a2b7e7) | yes ("go ahead and push") | Line breaks kept in plain-text fields; two-track link directly under body; `/`, `/admin`, health 200 |
+| 2026-10-29 | v1.0.6 (c246c88) | yes ("push", "you have approval") | Hero load-in + dot pulse + alternating logo breaks, intro rescaled, PhaseTimeline motion rework, MiniCTA square button; `/`, `/admin`, `/api/health` 200; `hm-pulse` in homepage HTML |
+
 
 ## Decision log
 Append-only. New sessions: read this before asking the human anything.
@@ -372,7 +374,7 @@ Decisions deferred to the human; each has a safe default applied so work continu
 | 2026-10-29 | Hero band fan: added the mirrored break (x + rotation negated) and alternated with the original on a 14s cycle, one break every 7s; pulse stays 7s and leaves on every snap. Human: "create a right break animation and make them alternate". | Human. |
 
 ## Session handoff
-- **Last session ended:** 2026-10-29 — /clear point. Site LIVE on Vercel Hobby as v1.0.5 (4a2b7e7); `main` is ahead (Preview green at 37ebadc).
+- **Last session ended:** 2026-10-29 — /clear point. Site LIVE on Vercel Hobby as v1.0.6 (c246c88); `main` = production.
 - **Awaiting human "push" (on Preview https://duhamedia-if47m7rbw-duhadevs-projects.vercel.app):** 625f308 PhaseTimeline accordion motion rework; MiniCTAStrip square ghost-light button. Release = `git push origin <sha>:refs/heads/production` then tag next `v1.0.6`, verify `/`, `/admin`, `/api/health`, log in Releases. The permission guard sometimes blocks this push; it passes after the human explicitly approves in chat.
 - **Hero animation:** bda752d on Preview (motion only, site colours, no 1-2-3 extras; plays on every typographic hero, t0=0 off-homepage; existing dot matrix gets a load-in; h1 word split = sub-pixel AA diff only). Awaiting human review, ships with v1.0.6. Earlier: PM wrote a prompt for the human's Claude Design agent (hero load-in, hand-off from the intro at 2.16–2.72 s). When the design comes back → block-coder ports it into `src/blocks/Hero/Component.tsx` (typographic variant) + homepage only, reduced-motion, no CLS, H1 in SSR.
 - **Map:** `brand-assets/duha-service-area-map.{png,svg}` (OSM, Google-Maps style, brand palette, Lombard pin, no Chicago label). Generator + cached data in session scratchpad (will be lost on reboot; regen needs Overpass refetch). Human uploads it to Home → TeamIntro photo.
