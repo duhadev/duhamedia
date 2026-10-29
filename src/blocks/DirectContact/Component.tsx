@@ -220,7 +220,7 @@ export async function DirectContactBlock({ showEmail, showSocials, showLocation,
                 {stamp}
               </span>
             </div>
-            {caption && <figcaption className="mt-3.5 text-[0.9375rem] leading-normal text-gray-warm">{caption}</figcaption>}
+            {caption && <figcaption className="mt-3.5 whitespace-pre-line text-[0.9375rem] leading-normal text-gray-warm">{caption}</figcaption>}
           </figure>
         )}
       </Container>

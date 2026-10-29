@@ -101,7 +101,7 @@ function Detail({ label, text, className }: { label?: string | null; text?: stri
   return (
     <div className={className}>
       {hasText(label) ? <span className={cx(DETAIL_LABEL, 'block')}>{label}</span> : null}
-      <p className={cx('m-0 text-[0.9375rem] leading-[1.55] md:leading-[1.6]', hasText(label) && 'mt-2')}>{text}</p>
+      <p className={cx('m-0 whitespace-pre-line text-[0.9375rem] leading-[1.55] md:leading-[1.6]', hasText(label) && 'mt-2')}>{text}</p>
     </div>
   )
 }
@@ -216,7 +216,7 @@ function SignalFlow({ items, hub }: { items: Item[]; hub: SpecLedgerData['hub'] 
                   </h2>
                 ) : null}
                 {hasText(hub?.body) ? (
-                  <p className="m-0 mt-2.5 text-[0.9375rem] leading-[1.55] lg:mt-3.5 lg:max-w-[44ch] lg:text-base lg:leading-[1.6]">
+                  <p className="m-0 mt-2.5 whitespace-pre-line text-[0.9375rem] leading-[1.55] lg:mt-3.5 lg:max-w-[44ch] lg:text-base lg:leading-[1.6]">
                     {hub?.body}
                   </p>
                 ) : null}

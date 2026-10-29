@@ -45,18 +45,18 @@ function Equal({ eyebrow, eyebrowTick, heading, accentPhrase, panels }: Props) {
                 >
                   {p.title}
                 </h3>
-                <div className="text-body-mobile leading-[1.7] md:text-body md:leading-[1.7]">
+                <div className="text-body-mobile leading-[1.7] whitespace-pre-line md:text-body md:leading-[1.7]">
                   {p.body}
                   {p.pricingNote?.trim() ? <> {p.pricingNote.trim()}</> : null}
+                  {linkText ? (
+                    <>
+                      <br />
+                      <CMSLink link={p.link} className="font-bold">
+                        {linkText}
+                      </CMSLink>
+                    </>
+                  ) : null}
                 </div>
-                {linkText ? (
-                  <CMSLink
-                    link={p.link}
-                    className="mt-1 inline-flex min-h-target items-center text-body-mobile font-bold md:text-body"
-                  >
-                    {linkText}
-                  </CMSLink>
-                ) : null}
               </div>
             )
           })}
@@ -113,7 +113,7 @@ function Contrast({ eyebrow, eyebrowTick, heading, accentPhrase, panels, conclus
           </div>
         ) : null}
         {conclusion?.trim() ? (
-          <p className="mt-6 max-w-[60ch] border-t border-divider pt-5 text-base leading-[1.6] md:mt-9 md:pt-6 md:text-[1.0625rem]">
+          <p className="mt-6 max-w-[60ch] border-t border-divider pt-5 text-base whitespace-pre-line leading-[1.6] md:mt-9 md:pt-6 md:text-[1.0625rem]">
             {conclusion}
           </p>
         ) : null}
@@ -185,7 +185,7 @@ function PrimarySecondary({ eyebrow, eyebrowTick, heading, accentPhrase, panels,
                   >
                     {p.title}
                   </h3>
-                  <p className={primary ? 'text-body-mobile md:text-body' : 'text-small-mobile text-gray-warm md:text-small'}>
+                  <p className={primary ? 'whitespace-pre-line text-body-mobile md:text-body' : 'whitespace-pre-line text-small-mobile text-gray-warm md:text-small'}>
                     {p.body}
                   </p>
                   {p.pricingNote?.trim() ? <p className="text-small-mobile text-gray-warm md:text-small">{p.pricingNote.trim()}</p> : null}
@@ -203,7 +203,7 @@ function PrimarySecondary({ eyebrow, eyebrowTick, heading, accentPhrase, panels,
             })}
           </div>
         ) : null}
-        {conclusion?.trim() ? <p className="mt-6 max-w-[60ch] text-small-mobile text-gray-warm md:text-small">{conclusion}</p> : null}
+        {conclusion?.trim() ? <p className="mt-6 max-w-[60ch] text-small-mobile whitespace-pre-line text-gray-warm md:text-small">{conclusion}</p> : null}
       </Container>
     </Section>
   )
@@ -246,7 +246,7 @@ function Doors({ heading, accentPhrase, eyebrow, eyebrowTick, panels, conclusion
                     </span>
                   ) : null}
                 </div>
-                <span className={`text-[0.9375rem] leading-[1.55] text-ink/80 md:text-base md:leading-[1.6] ${cta ? 'md:mb-2' : ''}`}>{p.body}</span>
+                <span className={`whitespace-pre-line text-[0.9375rem] leading-[1.55] text-ink/80 md:text-base md:leading-[1.6] ${cta ? 'md:mb-2' : ''}`}>{p.body}</span>
                 {cta ? (
                   <span
                     className={`mt-0.5 inline-flex min-h-target items-center self-start text-xs font-bold uppercase tracking-[0.06em] md:mt-auto md:px-6.5 md:text-small ${
@@ -270,7 +270,7 @@ function Doors({ heading, accentPhrase, eyebrow, eyebrowTick, panels, conclusion
             )
           })}
         </div>
-        {conclusion?.trim() ? <p className="mt-6 max-w-[60ch] text-small-mobile text-gray-warm md:text-small">{conclusion}</p> : null}
+        {conclusion?.trim() ? <p className="mt-6 max-w-[60ch] text-small-mobile whitespace-pre-line text-gray-warm md:text-small">{conclusion}</p> : null}
       </Container>
     </Section>
   )

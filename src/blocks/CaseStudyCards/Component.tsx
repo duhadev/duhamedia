@@ -212,7 +212,7 @@ function StudyCard({ study, linkLabel }: { study: CaseStudy; linkLabel: string }
         {metric?.label ? (
           <span className="mt-1 block text-small font-bold uppercase tracking-[0.04em]">{metric.label}</span>
         ) : null}
-        {study.cardSummary ? <p className="mt-2.5 text-[0.9375rem] leading-normal">{study.cardSummary}</p> : null}
+        {study.cardSummary ? <p className="mt-2.5 whitespace-pre-line text-[0.9375rem] leading-normal">{study.cardSummary}</p> : null}
         {href ? (
           <span className="mt-3.5 inline-block border-b-2 border-ink text-small font-bold">{linkLabel}</span>
         ) : null}
@@ -517,7 +517,7 @@ function Fallback(props: CaseStudyCardsProps) {
               />
             ) : null}
             {fallbackBody ? (
-              <p className="mt-3.5 max-w-[44ch] text-body-mobile text-gray-warm md:mt-5 md:text-body">{fallbackBody}</p>
+              <p className="mt-3.5 max-w-[44ch] whitespace-pre-line text-body-mobile text-gray-warm md:mt-5 md:text-body">{fallbackBody}</p>
             ) : null}
             {!showLedger && note ? <p className="mt-3 text-small-mobile text-gray-warm md:text-small">{note}</p> : null}
           </div>
@@ -587,7 +587,7 @@ function TestimonialsFallback({
           />
         ) : null}
         {fallbackBody ? (
-          <p className="mb-6 max-w-[44ch] text-body-mobile text-gray-warm md:mb-10 md:text-body">{fallbackBody}</p>
+          <p className="mb-6 max-w-[44ch] whitespace-pre-line text-body-mobile text-gray-warm md:mb-10 md:text-body">{fallbackBody}</p>
         ) : null}
         <div className="flex flex-col gap-3.5 md:gap-5">
           {fallbackEyebrow ? <span className={SMALL_LABEL}>{fallbackEyebrow}</span> : null}
@@ -647,7 +647,7 @@ function QuoteCard({ t }: { t: Testimonial }) {
           {sourceLabel ? <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-gray-warm">{sourceLabel}</span> : null}
         </div>
       ) : null}
-      <blockquote className="m-0 text-[1.0625rem] leading-normal font-medium text-pretty">{t.quote}</blockquote>
+      <blockquote className="m-0 text-[1.0625rem] leading-normal font-medium text-pretty whitespace-pre-line">{t.quote}</blockquote>
       {metric ? (
         <p className="mt-3 flex items-baseline gap-2">
           <span className="font-display text-h3-mobile text-ground-accent md:text-h3">{metric.value}</span>
@@ -697,7 +697,7 @@ function MetricStripFallback({
           />
         ) : null}
         {fallbackBody ? (
-          <p className="mt-3.5 max-w-[44ch] text-body-mobile text-gray-warm md:mt-5 md:text-body">{fallbackBody}</p>
+          <p className="mt-3.5 max-w-[44ch] whitespace-pre-line text-body-mobile text-gray-warm md:mt-5 md:text-body">{fallbackBody}</p>
         ) : null}
         <ul
           className={cx(
@@ -801,7 +801,7 @@ async function LogoStripFallback({ tone, ...props }: CaseStudyCardsProps & { ton
           />
         ) : null}
         {fallbackBody ? (
-          <p className="mt-3.5 max-w-[44ch] text-body-mobile text-gray-warm md:mt-5 md:text-body">{fallbackBody}</p>
+          <p className="mt-3.5 max-w-[44ch] whitespace-pre-line text-body-mobile text-gray-warm md:mt-5 md:text-body">{fallbackBody}</p>
         ) : null}
         <ul
           className={cx(

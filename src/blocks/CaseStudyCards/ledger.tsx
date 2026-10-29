@@ -92,7 +92,7 @@ export function LedgerRow({
         {row.engagement ? <span className="mt-1 block text-[12px] text-gray-warm">{row.engagement}</span> : null}
       </span>
       <span className="font-display text-[1.25rem] leading-[1.15] uppercase lg:hidden">{row.title}</span>
-      <span className="hidden text-[0.9375rem] leading-normal lg:block">{row.summary}</span>
+      <span className="hidden whitespace-pre-line text-[0.9375rem] leading-normal lg:block">{row.summary}</span>
       {row.value ? (
         <span className="flex items-baseline gap-2 text-small-mobile text-gray-warm lg:block">
           <span

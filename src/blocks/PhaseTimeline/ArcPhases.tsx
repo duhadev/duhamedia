@@ -62,7 +62,7 @@ export function ArcPhases({ heading, accentPhrase, phases }: PhaseTimelineProps)
                   {phase.body?.trim() || linkText ? (
                     <div className="flex flex-col items-start gap-2.5 md:gap-3.5">
                       {phase.body?.trim() ? (
-                        <p className="text-[0.9375rem] leading-[1.65] md:max-w-[76ch] md:text-[1.0625rem] md:leading-[1.7]">
+                        <p className="whitespace-pre-line text-[0.9375rem] leading-[1.65] md:max-w-[76ch] md:text-[1.0625rem] md:leading-[1.7]">
                           {phase.body.trim()}
                         </p>
                       ) : null}

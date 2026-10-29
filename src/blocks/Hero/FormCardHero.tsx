@@ -64,7 +64,7 @@ export function FormCardHero({
               className="mt-4 max-md:!text-[2.25rem] max-md:!leading-[1.02] md:mt-5 lg:max-xl:!text-h2"
             />
             {paragraph ? (
-              <p className="mt-4.5 max-w-[52ch] text-[1.0625rem] leading-[1.6] md:mt-6 md:text-body">{paragraph}</p>
+              <p className="mt-4.5 max-w-[52ch] whitespace-pre-line text-[1.0625rem] leading-[1.6] md:mt-6 md:text-body">{paragraph}</p>
             ) : null}
             {buttons.length ? (
               <div className="mt-7 flex gap-3 md:mt-8 md:flex-wrap md:gap-3.5">

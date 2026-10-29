@@ -85,7 +85,7 @@ function FeaturedCard({ post, labels }: { post: PostItem; labels: typeof DEFAULT
         ) : null}
       </div>
       <h3 className="m-0 font-display text-h3-mobile font-normal uppercase md:text-h3">{post.title}</h3>
-      {post.dek ? <p className="m-0 text-body-mobile md:text-body-mobile">{post.dek}</p> : null}
+      {post.dek ? <p className="m-0 whitespace-pre-line text-body-mobile md:text-body-mobile">{post.dek}</p> : null}
       {href && labels.readLabel ? (
         <Link
           href={href}
@@ -121,7 +121,7 @@ function Row({ post, labels, first, last }: { post: PostItem; labels: typeof DEF
       ) : null}
       <span className="font-display text-base leading-[1.15] uppercase md:text-[1.0625rem]">{post.title}</span>
       {post.dek ? (
-        <p className="col-span-full m-0 mt-0.5 line-clamp-2 text-small text-gray-warm">{post.dek}</p>
+        <p className="col-span-full m-0 mt-0.5 line-clamp-2 whitespace-pre-line text-small text-gray-warm">{post.dek}</p>
       ) : null}
     </>
   )
@@ -193,7 +193,7 @@ function PostListView(
         {docs.length === 0 ? (
           <div className={cx('border-2 border-ink bg-cream p-5 shadow-card md:px-9 md:py-8.5', eyebrow && 'mt-5.5 md:mt-8')}>
             <h3 className="m-0 font-display text-h3-mobile font-normal uppercase md:text-h3">{props.emptyHeading}</h3>
-            {props.emptyBody ? <p className="m-0 mt-3 max-w-[60ch] text-body-mobile md:text-body">{props.emptyBody}</p> : null}
+            {props.emptyBody ? <p className="m-0 mt-3 max-w-[60ch] whitespace-pre-line text-body-mobile md:text-body">{props.emptyBody}</p> : null}
           </div>
         ) : (
           <div

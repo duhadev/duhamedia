@@ -129,7 +129,7 @@ function ArticleCallout({ callout }: { callout: RichContentProps['callout'] }) {
     <div className="mt-7 border-2 border-ink p-5 text-[1.0625rem] md:mt-8 md:max-w-[66ch] md:px-6 md:py-5.5">
       {eyebrow ? <Eyebrow muted>{eyebrow}</Eyebrow> : null}
       {text ? (
-        <p className={eyebrow ? 'mt-2.5 text-[0.9375rem] leading-[1.6]' : 'text-[0.9375rem] leading-[1.6]'}>{text}</p>
+        <p className={eyebrow ? 'mt-2.5 whitespace-pre-line text-[0.9375rem] leading-[1.6]' : 'whitespace-pre-line text-[0.9375rem] leading-[1.6]'}>{text}</p>
       ) : null}
       {hasLink ? (
         <div className={eyebrow || text ? 'mt-4' : undefined}>

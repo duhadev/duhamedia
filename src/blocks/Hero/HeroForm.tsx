@@ -136,7 +136,7 @@ export function HeroFormCard({
     <div className={className}>
       <div className="border-2 border-ink bg-gray-light px-5 py-5.5 shadow-card md:p-8">
         {heading ? <h2 className="font-display text-[1.25rem] font-normal uppercase md:text-[1.375rem]">{heading}</h2> : null}
-        {body ? <p className="mt-2 text-[0.9375rem] leading-[1.6] text-gray-warm md:mt-2.5">{body}</p> : null}
+        {body ? <p className="mt-2 text-[0.9375rem] leading-[1.6] whitespace-pre-line text-gray-warm md:mt-2.5">{body}</p> : null}
         <div className={heading || body ? 'mt-4.5 md:mt-5' : undefined}>
           <Form slot={slot} submitLabel={submitLabel} style="card" />
         </div>

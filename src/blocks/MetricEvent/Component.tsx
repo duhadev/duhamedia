@@ -186,7 +186,7 @@ function MetricTable({ eyebrow, eyebrowTick, heading, accentPhrase, columns, ite
           </tbody>
         </table>
         {methodNote ? (
-          <p className="mt-3.5 max-w-[80ch] text-[0.8125rem] leading-[1.6] text-gray-warm md:mt-4">{methodNote}</p>
+          <p className="mt-3.5 max-w-[80ch] whitespace-pre-line text-[0.8125rem] leading-[1.6] text-gray-warm md:mt-4">{methodNote}</p>
         ) : null}
       </Container>
     </Section>
@@ -244,7 +244,7 @@ function MetricFacts({ eyebrow, heading, accentPhrase, items, note }: MetricEven
             })}
           </tbody>
         </table>
-        {methodNote ? <p className="mt-3 text-[0.8125rem] leading-[1.6] text-gray-warm">{methodNote}</p> : null}
+        {methodNote ? <p className="mt-3 whitespace-pre-line text-[0.8125rem] leading-[1.6] text-gray-warm">{methodNote}</p> : null}
       </Container>
     </Section>
   )

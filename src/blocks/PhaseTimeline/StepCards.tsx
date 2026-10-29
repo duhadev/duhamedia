@@ -85,7 +85,7 @@ export function StepCards({ heading, accentPhrase, steps, closingLine, cta, outc
                       {step.title.trim()}
                     </h3>
                     {step.detail?.trim() ? (
-                      <p className="mt-2 text-[0.9375rem] leading-[1.6] md:mt-3 md:text-body-mobile">{step.detail.trim()}</p>
+                      <p className="mt-2 whitespace-pre-line text-[0.9375rem] leading-[1.6] md:mt-3 md:text-body-mobile">{step.detail.trim()}</p>
                     ) : null}
                   </div>
                   {outcomes.length ? (

@@ -319,7 +319,7 @@ async function Standard(props: FormEmbedData) {
         {title ? (
           <AccentHeadline text={title} accent={accentPhrase} level={2} as="h2" className={eyebrow?.trim() ? 'mt-4' : undefined} />
         ) : null}
-        {lead ? <p className="mt-4 max-w-[48ch] text-body-mobile md:text-body">{lead}</p> : null}
+        {lead ? <p className="mt-4 max-w-[48ch] whitespace-pre-line text-body-mobile md:text-body">{lead}</p> : null}
         <div className={hasHeader ? 'mt-8' : undefined}>
           <CMSForm
             form={form}
@@ -373,7 +373,7 @@ function Reminder({ form, alertLabel, heading, accentPhrase, body, reasons, subm
         {title || lead ? (
           <div className="md:px-8 md:pt-8">
             {title ? <AccentHeadline text={title} accent={accentPhrase} level={3} as="h2" /> : null}
-            {lead ? <p className={cx('text-body-mobile md:max-w-[48ch]', title && 'mt-2')}>{lead}</p> : null}
+            {lead ? <p className={cx('whitespace-pre-line text-body-mobile md:max-w-[48ch]', title && 'mt-2')}>{lead}</p> : null}
           </div>
         ) : null}
         {items.length > 0 ? (

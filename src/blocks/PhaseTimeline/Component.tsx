@@ -126,7 +126,7 @@ function Accordion({ eyebrow, eyebrowTick, heading, accentPhrase, intro, phases,
           className={cx(eyebrow && 'mt-3.5 md:mt-4')}
         />
         {intro ? (
-          <p className="mt-3.5 text-[0.9375rem] leading-[1.6] text-gray-warm md:mt-4.5 md:max-w-[64ch]">{intro}</p>
+          <p className="mt-3.5 text-[0.9375rem] leading-[1.6] whitespace-pre-line text-gray-warm md:mt-4.5 md:max-w-[64ch]">{intro}</p>
         ) : null}
 
         {stepRows.length ? (
@@ -191,7 +191,7 @@ function Accordion({ eyebrow, eyebrowTick, heading, accentPhrase, intro, phases,
                             </span>
                           </summary>
                           {step.detail?.trim() ? (
-                            <p className="-mt-1 px-4 pb-3.5 text-small text-gray-warm lg:mt-0 lg:px-5 lg:pt-3 lg:pb-4.5">
+                            <p className="-mt-1 px-4 pb-3.5 whitespace-pre-line text-small text-gray-warm lg:mt-0 lg:px-5 lg:pt-3 lg:pb-4.5">
                               {step.detail.trim()}
                             </p>
                           ) : null}

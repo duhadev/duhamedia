@@ -211,7 +211,7 @@ export async function ReviewWallMasonry(props: ReviewWallProps) {
       <Section tone="grey" pad="none" className="py-12 md:py-16">
         <Container>
           {header}
-          <p className="m-0 max-w-[62ch] border-t border-divider pt-5 text-small-mobile text-gray-warm md:text-small">{note}</p>
+          <p className="m-0 max-w-[62ch] whitespace-pre-line border-t border-divider pt-5 text-small-mobile text-gray-warm md:text-small">{note}</p>
         </Container>
       </Section>
     )

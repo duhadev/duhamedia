@@ -101,7 +101,7 @@ function TestimonialCard({ t }: { t: Testimonial }) {
           {sourceLabel ? <span className={cx(MONO, 'text-gray-warm')}>{sourceLabel}</span> : null}
         </div>
       ) : null}
-      <blockquote className="m-0 text-[1.0625rem] leading-normal font-medium text-pretty">{t.quote}</blockquote>
+      <blockquote className="m-0 text-[1.0625rem] leading-normal font-medium text-pretty whitespace-pre-line">{t.quote}</blockquote>
       {metric ? (
         <p className="mt-3 flex items-baseline gap-2">
           <span className="font-display text-h3-mobile text-ground-accent md:text-h3">{metric.value}</span>
@@ -166,7 +166,7 @@ function StudyCard({ study, readLabel }: { study: Study; readLabel: string }) {
       {kicker ? <span className={SMALL_LABEL}>{kicker}</span> : null}
       <span className={NUMBER}>{doc.headlineMetric.value}</span>
       <span className={NUMBER_LABEL}>{doc.headlineMetric.label}</span>
-      {doc.cardSummary ? <p className="m-0 text-[0.9375rem] leading-[1.6] md:text-base">{doc.cardSummary}</p> : null}
+      {doc.cardSummary ? <p className="m-0 whitespace-pre-line text-[0.9375rem] leading-[1.6] md:text-base">{doc.cardSummary}</p> : null}
       {readLabel ? (
         <span className="mt-1 inline-flex min-h-target items-center self-start text-[13px] font-bold uppercase tracking-[0.06em] md:text-small">
           <UnderlineText>{readLabel} →</UnderlineText>

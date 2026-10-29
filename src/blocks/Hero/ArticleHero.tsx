@@ -91,7 +91,7 @@ export function ArticleHero({
         />
         {dek ? (
           // DEV-SEO / MKT-SEO Article.dc.html "Article header": the dek between the h1 and the meta rule
-          <p className="mt-4 text-[1.0625rem] leading-[1.55] md:mt-5 md:max-w-[62ch] md:text-[1.1875rem]">{dek}</p>
+          <p className="mt-4 text-[1.0625rem] leading-[1.55] whitespace-pre-line md:mt-5 md:max-w-[62ch] md:text-[1.1875rem]">{dek}</p>
         ) : null}
         {metricValue ? (
           <div className="mt-6 md:mt-8">
@@ -113,7 +113,7 @@ export function ArticleHero({
             {summary?.label ? (
               <p className="text-[11px] font-bold uppercase tracking-eyebrow text-gray-warm md:text-xs">{summary.label}</p>
             ) : null}
-            <p className={cx('text-[0.9375rem] leading-[1.6]', summary?.label && 'mt-2')}>{summaryBody}</p>
+            <p className={cx('text-[0.9375rem] leading-[1.6] whitespace-pre-line', summary?.label && 'mt-2')}>{summaryBody}</p>
           </div>
         ) : null}
         {figures.length > 0 ? (

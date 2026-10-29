@@ -93,7 +93,7 @@ export async function FinalCTABlock({ heading, accentPhrase, body, capacity, but
       />
       <div className="relative z-10 mx-auto max-w-190 px-container-mobile text-center md:px-container">
         {title ? <AccentHeadline text={title} accent={accent} level={2} accentColor="ground" /> : null}
-        {body?.trim() ? <p className="mt-4.5 text-body-mobile opacity-85 md:mt-5 md:text-body">{body}</p> : null}
+        {body?.trim() ? <p className="mt-4.5 whitespace-pre-line text-body-mobile opacity-85 md:mt-5 md:text-body">{body}</p> : null}
         {statistic && reason ? (
           <Capacity statistic={statistic} reason={reason} />
         ) : null}

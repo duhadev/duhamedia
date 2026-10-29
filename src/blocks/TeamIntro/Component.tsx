@@ -91,7 +91,7 @@ export function TeamIntroBlock({
             </Eyebrow>
           ) : null}
           <AccentHeadline text={heading} accent={accentPhrase} level={2} accentColor="ground" className="mb-5 md:mb-4.5" />
-          {body ? <p className="max-w-[68ch] text-body-mobile leading-[1.7] text-[#3A3630] md:text-[1.0625rem] md:leading-[1.65]">{body}</p> : null}
+          {body ? <p className="max-w-[68ch] whitespace-pre-line text-body-mobile leading-[1.7] text-[#3A3630] md:text-[1.0625rem] md:leading-[1.65]">{body}</p> : null}
           <IntroLink link={link} className="mt-1.5" />
           <div className="mt-7 flex items-center gap-4 border-t border-divider pt-6">
             {portrait ? (
@@ -146,7 +146,7 @@ export function TeamIntroBlock({
             level="section"
             className="mt-3.5 md:mt-4"
           />
-          {body ? <p className="mt-4 max-w-[52ch] text-[1.0625rem] leading-[1.6] md:mt-5 md:text-body">{body}</p> : null}
+          {body ? <p className="mt-4 max-w-[52ch] whitespace-pre-line text-[1.0625rem] leading-[1.6] md:mt-5 md:text-body">{body}</p> : null}
           <IntroLink link={link} className="mt-1.5 md:mt-2" />
         </div>
         {hasPhoto ? (

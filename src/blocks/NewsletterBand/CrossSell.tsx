@@ -81,7 +81,7 @@ export async function NewsletterCrossSell({ delivered, heading, line, buttonLabe
           )}
         </h2>
         {delivered?.body?.trim() || lead ? (
-          <p className="mt-5 max-w-[52ch] text-[1.0625rem] leading-[1.6] md:mt-6 md:text-body">
+          <p className="mt-5 max-w-[52ch] whitespace-pre-line text-[1.0625rem] leading-[1.6] md:mt-6 md:text-body">
             {[delivered?.body?.trim(), lead].filter(Boolean).join(' ')}
           </p>
         ) : null}

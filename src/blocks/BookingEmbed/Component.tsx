@@ -145,7 +145,7 @@ function Panel({
           className="max-md:pr-14 max-md:!leading-[1.02] md:mt-4 md:max-w-[18ch]"
         />
         {paragraph ? (
-          <p className="mt-3 max-w-[52ch] text-[0.9375rem] leading-normal text-gray-warm md:mt-5 md:text-body">{paragraph}</p>
+          <p className="mt-3 max-w-[52ch] whitespace-pre-line text-[0.9375rem] leading-normal text-gray-warm md:mt-5 md:text-body">{paragraph}</p>
         ) : null}
       </div>
       {footer ? <div className="relative z-10 flex border-t-2 border-ink">{footer}</div> : null}

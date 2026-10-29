@@ -132,8 +132,8 @@ function TypographicHero({
           <p
             className={
               compact
-                ? 'mt-4 max-w-[52ch] text-body-mobile md:mt-6 md:text-body'
-                : 'mt-4.5 max-w-[34ch] text-body-mobile md:mt-6 md:max-w-[52ch] md:text-body'
+                ? 'mt-4 max-w-[52ch] whitespace-pre-line text-body-mobile md:mt-6 md:text-body'
+                : 'mt-4.5 max-w-[34ch] whitespace-pre-line text-body-mobile md:mt-6 md:max-w-[52ch] md:text-body'
             }
           >
             {paragraph}

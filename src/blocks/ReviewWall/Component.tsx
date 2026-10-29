@@ -89,7 +89,7 @@ export async function ReviewWallBlock(props: ReviewWallProps) {
       <Section tone="light" pad="none" className="pt-2 pb-8 md:pt-6 md:pb-section">
         <Container>
           {header}
-          <p className="m-0 max-w-[62ch] border-t border-divider pt-5 text-small-mobile text-gray-warm md:text-small">{note}</p>
+          <p className="m-0 max-w-[62ch] whitespace-pre-line border-t border-divider pt-5 text-small-mobile text-gray-warm md:text-small">{note}</p>
         </Container>
       </Section>
     )

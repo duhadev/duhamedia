@@ -144,10 +144,10 @@ export function StepRun({ variant, eyebrow, eyebrowTick, heading, accentPhrase, 
                         {tag}
                       </p>
                     ) : detail || tag ? (
-                      <p className={cx('mt-1.5 text-[0.9375rem] opacity-75', c.mobileOnly)}>{detail || tag}</p>
+                      <p className={cx('mt-1.5 whitespace-pre-line text-[0.9375rem] opacity-75', c.mobileOnly)}>{detail || tag}</p>
                     ) : null}
                     {/* Desktop: the short tag (falls back to the sentence). */}
-                    {tag || detail ? <p className={cx('opacity-65', c.tag)}>{tag || detail}</p> : null}
+                    {tag || detail ? <p className={cx('whitespace-pre-line opacity-65', c.tag)}>{tag || detail}</p> : null}
                   </li>
                 )
               })}

@@ -232,7 +232,7 @@ function VideoCard({ card, labels, mirrored }: { card: FeedCardData; labels: Fee
       </VideoFacade>
       <div className={cx('flex flex-col justify-center px-5 pt-4.5 pb-5 md:px-9 md:py-8', mirrored && 'lg:order-1')}>
         <TopRow card={card} labels={labels} isVideo />
-        <blockquote className="m-0 mt-3.5 text-[1.0625rem] leading-normal font-medium text-pretty md:mt-5 md:text-[1.375rem] md:leading-[1.45]">
+        <blockquote className="m-0 mt-3.5 whitespace-pre-line text-[1.0625rem] leading-normal font-medium text-pretty md:mt-5 md:text-[1.375rem] md:leading-[1.45]">
           {card.quote}
         </blockquote>
         <Caption card={card} withLogo />
@@ -249,7 +249,7 @@ export function TextCard({ card, labels, compact = false }: { card: FeedCardData
       <TopRow card={card} labels={labels} isVideo={false} />
       <blockquote
         className={cx(
-          'm-0 mt-3.5 text-[1.0625rem] leading-normal font-medium text-pretty',
+          'm-0 mt-3.5 whitespace-pre-line text-[1.0625rem] leading-normal font-medium text-pretty',
           compact ? 'md:mt-4 md:text-[1.0625rem] md:leading-[1.5]' : 'md:mt-5 md:text-[1.25rem] md:leading-[1.45]',
         )}
       >
