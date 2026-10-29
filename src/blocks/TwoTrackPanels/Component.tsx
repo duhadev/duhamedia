@@ -48,15 +48,19 @@ function Equal({ eyebrow, eyebrowTick, heading, accentPhrase, panels }: Props) {
                 <div className="text-body-mobile leading-[1.7] whitespace-pre-line md:text-body md:leading-[1.7]">
                   {p.body}
                   {p.pricingNote?.trim() ? <> {p.pricingNote.trim()}</> : null}
-                  {linkText ? (
-                    <>
-                      <br />
-                      <CMSLink link={p.link} className="font-bold">
-                        {linkText}
-                      </CMSLink>
-                    </>
-                  ) : null}
                 </div>
+                {linkText ? (
+                  // Site text-link grammar (CaseStudyCards "Read the case study"): bold, 2px ink rule, own line.
+                  <CMSLink
+                    link={p.link}
+                    className="mt-3 inline-flex min-h-target items-center border-b-2 border-ink font-bold text-ink no-underline md:mt-4"
+                  >
+                    {/* one flex child: KeepArrow's text + nowrap span would lose the space between them */}
+                    <span>
+                      <KeepArrow label={linkText} />
+                    </span>
+                  </CMSLink>
+                ) : null}
               </div>
             )
           })}
@@ -194,7 +198,9 @@ function PrimarySecondary({ eyebrow, eyebrowTick, heading, accentPhrase, panels,
                       <ButtonLink link={p.link} variant="primary" size="md" className="mt-auto self-start" />
                     ) : (
                       <CMSLink link={p.link} className="mt-auto inline-flex min-h-target items-center self-start font-bold underline underline-offset-4">
-                        <KeepArrow label={p.link?.label?.trim() ?? ''} />
+                        <span>
+                          <KeepArrow label={p.link?.label?.trim() ?? ''} />
+                        </span>
                       </CMSLink>
                     )
                   ) : null}
