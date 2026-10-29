@@ -148,8 +148,9 @@ Requests from the duhamedia.com build to the server agent, relayed by the human.
 - **Media decision needed then:** A) Previews use the production Blob token (images work; rule: never upload/delete media in a Preview admin) — PM recommends; B) keep separate stores (images broken on Previews).
 - **Done when:** a Preview of `main` shows production pages/content and a Preview edit does not appear in production.
 
-## #20 — Replace PRIVATE Blob stores with PUBLIC ones (human) · 2026-10-28 · Open
+## #20 — Replace PRIVATE Blob stores with PUBLIC ones (human) · 2026-10-28 · Resolved 2026-10-29
 - **Found:** both stores (`duhamedia-preview`, `duhamedia`) were created **private**; `@payloadcms/storage-vercel-blob@3.91.0` supports public only ("Cannot use public access on a private store"). Every upload (seed images, admin uploads) fails until fixed.
 - **Workaround now (human, 2026-10-28):** text-only seed (`scripts/seed-remote.sh`, Blob token left empty). Seeded media rows exist but their images 404 on Vercel.
 - **Fix:** per environment create a **Public** Blob store, connect it (Preview-only / Production-only, default prefix `BLOB`), disconnect + delete the private one, redeploy; then re-upload the seed images in the admin (or re-run the seed against an empty DB with the new token).
 - **Done when:** an image upload in each environment's admin succeeds and displays.
+- **Resolved 2026-10-29:** human disconnected the private stores; PM created + connected public `duhamedia-production-public` (Production, store bydbdnwpuuki5hb3) and `duhamedia-preview-pub` (Preview, store ua5kcz1t5zkmsitp), both iad1, classic `vercel_blob_rw_` tokens. Test put/delete on production store OK; production redeployed (health ok). Leftovers for the human to delete if wanted: private `duhamedia`, private `duhamedia-preview` (disconnected), and an unconnected empty public `duhamedia-preview-public`. Seed images (3 media + worksheet + t3 video + seo-defaults) still absent: add in the admin or run the seed with images.
