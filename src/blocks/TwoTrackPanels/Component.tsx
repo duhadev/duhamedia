@@ -40,21 +40,23 @@ function Equal({ eyebrow, eyebrowTick, heading, accentPhrase, panels }: Props) {
                     {p.label}
                   </Eyebrow>
                 ) : null}
+                <h3
+                  className={`mb-1 font-display text-body-mobile font-normal uppercase md:text-body ${p.accentTitle ? 'text-ground-accent' : ''}`}
+                >
+                  {p.title}
+                </h3>
                 <div className="text-body-mobile leading-[1.7] md:text-body md:leading-[1.7]">
-                  <h3 className={`inline font-display font-normal uppercase ${p.accentTitle ? 'text-ground-accent' : ''}`}>
-                    {p.title}
-                  </h3>{' '}
                   {p.body}
                   {p.pricingNote?.trim() ? <> {p.pricingNote.trim()}</> : null}
-                  {linkText ? (
-                    <>
-                      {' '}
-                      <CMSLink link={p.link} className="py-3 font-bold">
-                        {linkText}
-                      </CMSLink>
-                    </>
-                  ) : null}
                 </div>
+                {linkText ? (
+                  <CMSLink
+                    link={p.link}
+                    className="mt-1 inline-flex min-h-target items-center text-body-mobile font-bold md:text-body"
+                  >
+                    {linkText}
+                  </CMSLink>
+                ) : null}
               </div>
             )
           })}
