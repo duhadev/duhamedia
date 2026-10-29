@@ -32,6 +32,7 @@ import * as migration_20261024_165445_a4_site_error from './20261024_165445_a4_s
 import * as migration_20261028_121301_vercel_blob_fields from './20261028_121301_vercel_blob_fields';
 import * as migration_20261028_190000_seed_placeholder_content from './20261028_190000_seed_placeholder_content';
 import * as migration_20261029_143150_teamintro_pull_quote from './20261029_143150_teamintro_pull_quote';
+import * as migration_20261029_145749_proofstrip_numbers_on_block from './20261029_145749_proofstrip_numbers_on_block';
 
 export const migrations = [
   {
@@ -202,6 +203,11 @@ export const migrations = [
   {
     up: migration_20261029_143150_teamintro_pull_quote.up,
     down: migration_20261029_143150_teamintro_pull_quote.down,
-    name: '20261029_143150_teamintro_pull_quote'
+    name: '20261029_143150_teamintro_pull_quote',
+  },
+  {
+    up: migration_20261029_145749_proofstrip_numbers_on_block.up,
+    down: migration_20261029_145749_proofstrip_numbers_on_block.down,
+    name: '20261029_145749_proofstrip_numbers_on_block'
   },
 ];

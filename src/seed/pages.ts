@@ -93,7 +93,10 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
         {
           blockType: 'proofStrip',
           variant: 'scarcity',
-          statements: [{ key: 'ongoing' }, { key: 'capacity' }],
+          statements: [
+            { number: '3', label: 'Projects ongoing' },
+            { number: '7', label: 'Max client capacity' },
+          ],
           pricingNote: 'Builds start at $5K',
           logos: { show: true, eyebrow: "Stores we've run numbers for", source: 'flagged' },
         },

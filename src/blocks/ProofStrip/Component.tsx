@@ -5,7 +5,7 @@ import React, { useId } from 'react'
 import type { BlockData } from '@/blocks/types'
 import { Container, Eyebrow, Media, Section } from '@/components/ui'
 import { cx } from '@/lib/cx'
-import { fillScarcityTokens, type ScarcityKey } from '@/lib/scarcity'
+import { fillScarcityTokens } from '@/lib/scarcity'
 import type { Client, Scarcity } from '@/payload-types'
 
 const MD_COLS = ['', 'md:grid-cols-1', 'md:grid-cols-2', 'md:grid-cols-3', 'md:grid-cols-2', 'md:grid-cols-3', 'md:grid-cols-3']
@@ -14,35 +14,43 @@ type Statement = NonNullable<Scarcity['statements']>[number]
 type Resolved = { loud: string; label?: string; reason: string; big: boolean }
 
 /**
- * ProofStrip, `scarcity` variant (Homepage.dc.html "Proof strip", desktop + mobile builds).
- * Server component: reads the `scarcity` global and the clients through the Local API.
+ * ProofStrip, `scarcity` variant (admin label "Numbers"; Homepage.dc.html "Proof strip", desktop +
+ * mobile builds). Server component: reads the clients through the Local API.
  *
- * Loud/quiet contract (CLAUDE.md rule 2): a statement is rendered ONLY when it has a filled
- * statistic AND a non-blank reason. There is no render path for a reason-less number.
+ * Each item is a big number + big text typed on the block. Human decision 2026-10-29: this strip
+ * renders NO reason line (an explicit override of the loud/quiet rule for THIS strip only; every
+ * other scarcity consumer, incl. the `metrics` variant's capacity tile below, keeps its reason).
  */
 export async function ProofStripBlock(props: BlockData<'proofStrip'>) {
   if (props.variant === 'metrics') return <ProofMetrics {...props} />
   const { statements, pricingNote, logos } = props
-  const picked = (statements ?? []).map((s) => s.key).filter((k): k is ScarcityKey => !!k && k !== 'none').slice(0, 2)
-  const resolved = picked.length ? await resolveStatements(picked) : []
+  const items = (statements ?? [])
+    .map((s) => ({ id: s.id, number: s.number?.trim() ?? '', label: s.label?.trim() ?? '' }))
+    .filter((s) => s.number && s.label)
+    .slice(0, 4)
   const clients = logos?.show !== false ? await resolveClients(logos) : []
   const note = pricingNote?.trim()
+  const n = items.length
 
-  if (!resolved.length && !clients.length) return null
+  if (!n && !clients.length) return null
 
   return (
     <Section tone="grey" pad="none" divider="both">
-      {resolved.length ? (
+      {n ? (
         <Container className="max-md:px-0">
-          <div className={cx('grid', resolved.length > 1 ? 'grid-cols-2' : 'grid-cols-1')}>
-            {resolved.map((s, i) => (
-              <StatGroup
-                key={i}
-                s={s}
+          <div className={cx('grid', n > 1 ? 'grid-cols-2' : 'grid-cols-1', n === 3 && 'md:grid-cols-3', n === 4 && 'md:grid-cols-4')}>
+            {items.map((s, i) => (
+              <NumberItem
+                key={s.id ?? i}
+                number={s.number}
+                label={s.label}
                 first={i === 0}
                 className={cx(
-                  'px-4.5 py-7 text-center md:px-8 md:py-11',
-                  i === 0 && resolved.length > 1 && 'border-r border-divider',
+                  'border-divider px-4.5 py-7 text-center md:px-8 md:py-11',
+                  // Hairline between neighbours: mobile is a 2-up grid, desktop one row.
+                  i < n - 1 && (i % 2 === 0 ? 'border-r' : 'md:border-r'),
+                  i >= 2 && 'border-t md:border-t-0',
+                  n === 3 && i === 2 && 'col-span-2 md:col-span-1',
                 )}
               />
             ))}
@@ -55,7 +63,7 @@ export async function ProofStripBlock(props: BlockData<'proofStrip'>) {
         </p>
       ) : null}
       {clients.length ? (
-        <div className={cx(resolved.length || note ? 'border-t border-divider' : '')}>
+        <div className={cx(n || note ? 'border-t border-divider' : '')}>
           <Container className="pt-8 pb-10 text-center md:pt-10 md:pb-12">
             {logos?.eyebrow?.trim() ? <Eyebrow muted>{logos.eyebrow.trim()}</Eyebrow> : null}
             <ul aria-label={logos?.eyebrow?.trim() || 'Clients'} className={cx('mt-5 grid list-none grid-cols-2 items-start justify-items-center gap-x-4 gap-y-5 p-0 opacity-55 md:mt-6 md:items-center md:gap-x-10 md:gap-y-6 lg:flex lg:flex-wrap lg:justify-center lg:gap-14',
@@ -164,48 +172,21 @@ function CapacityTile({ s }: { s: Resolved }) {
 }
 
 /**
- * One loud/quiet statement. `role=group` named by the loud number (+ its label) and described by
- * the quiet reason, so assistive tech announces them as one unit (F55). Own component for `useId`.
+ * One number item: big number (first one accent-coloured) + big text. `role=group` named by both,
+ * so assistive tech announces them as one unit. Own component for `useId`.
  */
-function StatGroup({ s, className, first }: { s: Resolved; className: string; first: boolean }) {
+function NumberItem({ number, label, className, first }: { number: string; label: string; className: string; first: boolean }) {
   const uid = useId()
   return (
-    <div
-      role="group"
-      aria-labelledby={`${uid}-n${s.big && s.label ? ` ${uid}-l` : ''}`}
-      aria-describedby={`${uid}-r`}
-      className={className}
-    >
-      {s.big ? (
-        <>
-          <span
-            id={`${uid}-n`}
-            className={cx(
-              'block font-display text-[3.25rem] leading-[.9] font-normal md:text-[5rem]',
-              first && 'text-ground-accent',
-            )}
-          >
-            {s.loud}
-          </span>
-          {s.label ? (
-            <span id={`${uid}-l`} className="mt-2.5 block font-display text-[0.9375rem] font-normal uppercase tracking-[0.02em] md:mt-3.5 md:text-[1.125rem]">
-              {s.label}
-            </span>
-          ) : null}
-        </>
-      ) : (
-        <span
-          id={`${uid}-n`}
-          className={cx(
-            'block text-balance font-display text-h3-mobile font-normal uppercase tracking-[0.02em] md:text-h3',
-            first && 'text-ground-accent',
-          )}
-        >
-          {s.loud.replace(/ (\S+)$/, '\u00A0$1')}
-        </span>
-      )}
-      <span id={`${uid}-r`} className="mt-2 block text-[0.75rem] leading-[1.4] text-gray-warm md:text-[0.8125rem]">
-        {s.reason}
+    <div role="group" aria-labelledby={`${uid}-n ${uid}-l`} className={className}>
+      <span
+        id={`${uid}-n`}
+        className={cx('block font-display text-[3.25rem] leading-[.9] font-normal md:text-[5rem]', first && 'text-ground-accent')}
+      >
+        {number}
+      </span>
+      <span id={`${uid}-l`} className="mt-2.5 block font-display text-[0.9375rem] font-normal uppercase tracking-[0.02em] md:mt-3.5 md:text-[1.125rem]">
+        {label}
       </span>
     </div>
   )

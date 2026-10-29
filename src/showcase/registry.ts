@@ -639,7 +639,7 @@ const error404Copy = { code: '404', heading: 'This page leaked.', body: "Unlike 
  * 'featured'` read published case studies through the Local API, so they show the REAL launch
  * state (fallback while nothing is published). Every other relation holds static fixtures.
  *
- * Scarcity-backed entries (ProofStrip, FinalCTA) read the LIVE `scarcity` global: a key the
+ * Scarcity-backed entries (ProofStrip `metrics`, FinalCTA) read the LIVE `scarcity` global: a key the
  * global has no statement for is skipped with a server console.error by design (no bare
  * numbers). The `capacity` key is used so at least one loud/quiet line renders on a DB
  * whose global holds only that statement.
@@ -680,12 +680,12 @@ export const showcaseEntries: ShowcaseEntry[] = [
   {
     block: 'proofStrip',
     variant: 'scarcity',
-    label: 'statements ongoing + capacity (from the scarcity global), pricing note, 6 manual logos',
+    label: 'numbers 3 / 7 (typed on the block, no reason line), pricing note, 6 manual logos',
     data: {
       variant: 'scarcity',
       statements: [
-        { id: 'fx-ps-1', key: 'ongoing' },
-        { id: 'fx-ps-2', key: 'capacity' },
+        { id: 'fx-ps-1', number: '3', label: 'Projects ongoing' },
+        { id: 'fx-ps-2', number: '7', label: 'Max client capacity' },
       ],
       pricingNote: 'Builds start at $5K',
       logos: { show: true, eyebrow: "Stores we've run numbers for", source: 'manual', clients: wordmarkClients },
@@ -694,24 +694,53 @@ export const showcaseEntries: ShowcaseEntry[] = [
   {
     block: 'proofStrip',
     variant: 'scarcity — logos hidden',
-    label: 'fallback: logo row hidden, statements only',
+    label: 'fallback: logo row hidden, numbers only',
     data: {
       variant: 'scarcity',
       statements: [
-        { id: 'fx-ps-3', key: 'ongoing' },
-        { id: 'fx-ps-4', key: 'capacity' },
+        { id: 'fx-ps-3', number: '3', label: 'Projects ongoing' },
+        { id: 'fx-ps-4', number: '7', label: 'Max client capacity' },
       ],
       logos: { show: false },
     },
   },
   {
     block: 'proofStrip',
-    variant: 'scarcity — one statement',
-    label: 'one statement (capacity) + logos',
+    variant: 'scarcity — one number',
+    label: 'one number + logos',
     data: {
       variant: 'scarcity',
-      statements: [{ id: 'fx-ps-5', key: 'capacity' }],
+      statements: [{ id: 'fx-ps-5', number: '7', label: 'Max client capacity' }],
       logos: { show: true, eyebrow: "Stores we've run numbers for", source: 'manual', clients: wordmarkClients },
+    },
+  },
+  {
+    block: 'proofStrip',
+    variant: 'scarcity — three numbers',
+    label: 'three numbers (mobile: third spans the row), logos hidden',
+    data: {
+      variant: 'scarcity',
+      statements: [
+        { id: 'fx-ps-8', number: '3', label: 'Projects ongoing' },
+        { id: 'fx-ps-9', number: '7', label: 'Max client capacity' },
+        { id: 'fx-ps-10', number: '55h', label: '[Placeholder] Hands-on hours per build' },
+      ],
+      logos: { show: false },
+    },
+  },
+  {
+    block: 'proofStrip',
+    variant: 'scarcity — four numbers (max)',
+    label: 'four numbers, the maximum (mobile: 2 × 2), logos hidden',
+    data: {
+      variant: 'scarcity',
+      statements: [
+        { id: 'fx-ps-11', number: '3', label: 'Projects ongoing' },
+        { id: 'fx-ps-12', number: '7', label: 'Max client capacity' },
+        { id: 'fx-ps-13', number: '55h', label: '[Placeholder] Hands-on hours per build' },
+        { id: 'fx-ps-14', number: '12', label: '[Placeholder] Weeks to handover' },
+      ],
+      logos: { show: false },
     },
   },
   {
@@ -721,8 +750,8 @@ export const showcaseEntries: ShowcaseEntry[] = [
     data: {
       variant: 'scarcity',
       statements: [
-        { id: 'fx-ps-6', key: 'ongoing' },
-        { id: 'fx-ps-7', key: 'capacity' },
+        { id: 'fx-ps-6', number: '3', label: 'Projects ongoing' },
+        { id: 'fx-ps-7', number: '7', label: 'Max client capacity' },
       ],
       pricingNote: 'Builds start at $5K',
       logos: {

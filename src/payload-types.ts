@@ -1876,7 +1876,7 @@ export interface ProofStripBlock {
   statements?:
     | {
         /**
-         * The big number. Text, so you can write "3", "7", "55h" or "$1K".
+         * The big number: a count or result, never a price (prices go in the Pricing note). Text, so you can write "3", "7" or "55h".
          */
         number: string;
         /**

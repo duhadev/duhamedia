@@ -53,7 +53,7 @@ export const ProofStrip: Block = {
               label: 'Number',
               admin: {
                 width: '30%',
-                description: 'The big number. Text, so you can write "3", "7", "55h" or "$1K".',
+                description: 'The big number: a count or result, never a price (prices go in the Pricing note). Text, so you can write "3", "7" or "55h".',
               },
             },
             {
@@ -79,7 +79,7 @@ export const ProofStrip: Block = {
           'Up to three proof numbers (results or counts, never prices). Prices go in the "Pricing note" below. Leave empty to show none.',
         initCollapsed: false,
       },
-      fields: metricFields(),
+      fields: metricFields({ accent: false }),
     },
     (() => {
       const f = scarcityRef({
