@@ -368,6 +368,7 @@ Decisions deferred to the human; each has a safe default applied so work continu
 | 2026-10-29 | Hero load-in design received (`design-reference/project/Hero Load-in.dc.html`). Human: "implement properly, don't mess with our colors, no extra bits like the 1 2 3" → port motion only into Hero typographic: keep site palette (no 4-colour bands), skip step draw/relay/ignite, no dot matrix/pulse added. Dispatched to block-coder. | Human request. |
 | 2026-10-29 | staging.duhamedia.com live: human added Cloudflare CNAME `staging` → `29d4cfa82fc7b8fb.vercel-dns-017.com` (DNS only); domain tracks `main`, behind Vercel Deployment Protection (SSO). | Human. |
 | 2026-10-29 | Intro animation rescaled to the Hero Load-in prototype's scale (human: "not the animation, the scale; ours is too large"): mark 104px, wordmark 24px / .08em tracking, 22px gap, one line at every viewport. Motion unchanged. | Human. |
+| 2026-10-29 | Hero dot-matrix pulse added (human: "dots should pulse every so often, origin = logo core"): accent-token dots on DotMatrix's 22px grid, spec ring mask + spec 225deg fade, 7s cycle from t0+4400 in step with the band fan, origin measured from the silhouette by HeroMotion (ResizeObserver); opacity held to 22% so it reads at 1440. No-JS falls back to the spec's desktop origin. | Human. |
 
 ## Session handoff
 - **Last session ended:** 2026-10-29 — /clear point. Site LIVE on Vercel Hobby as v1.0.5 (4a2b7e7); `main` is ahead (Preview green at 37ebadc).

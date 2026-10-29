@@ -19,7 +19,9 @@ const INTRO_ID = 'intro-overlay'
  *    re-time running animations, so on mount we copy that fact onto this
  *    element as `data-intro` (never removed).
  * 2. Ambient pause. An IntersectionObserver sets `data-offscreen` while the
- *    hero is out of view, which pauses the infinite float/fan loops.
+ *    hero is out of view, which pauses the infinite float/fan/pulse loops.
+ * 3. Pulse origin. A ResizeObserver keeps the pulse ring centred on the
+ *    silhouette (`--hm-cx/--hm-cy`) at every breakpoint and layout.
  */
 export function HeroMotion({ children }: { children: React.ReactNode }) {
   const ref = useRef<HTMLDivElement>(null)
@@ -44,6 +46,26 @@ export function HeroMotion({ children }: { children: React.ReactNode }) {
       window.addEventListener('keydown', skip, { once: true })
     }
 
+    // Pulse origin = silhouette centre, in the pulse layer's own px (both are
+    // absolutely positioned in the same section). Layout values only
+    // (offset* + the `translate` property), so the running sunrise / float
+    // transforms never skew it.
+    const sun = el.querySelector<HTMLElement>('.hm-sun')
+    const pulse = el.querySelector<HTMLElement>('.hm-pulse')
+    const place = () => {
+      if (!sun || !pulse) return
+      const [tx = '0px', ty = '0px'] = getComputedStyle(sun).translate.split(' ')
+      const px = (v: string, size: number) => (v.endsWith('%') ? (parseFloat(v) / 100) * size : parseFloat(v) || 0)
+      const cx = sun.offsetLeft + sun.offsetWidth / 2 + px(tx, sun.offsetWidth)
+      const cy = sun.offsetTop + sun.offsetHeight / 2 + px(ty === 'none' ? '0px' : ty, sun.offsetHeight)
+      pulse.style.setProperty('--hm-cx', `${Math.round(cx)}px`)
+      pulse.style.setProperty('--hm-cy', `${Math.round(cy)}px`)
+    }
+    place()
+    const ro = typeof ResizeObserver === 'undefined' || !sun || !pulse ? null : new ResizeObserver(place)
+    ro?.observe(el)
+    if (sun) ro?.observe(sun)
+
     const io =
       typeof IntersectionObserver === 'undefined'
         ? null
@@ -53,6 +75,7 @@ export function HeroMotion({ children }: { children: React.ReactNode }) {
     io?.observe(el)
     return () => {
       io?.disconnect()
+      ro?.disconnect()
       window.removeEventListener('pointerdown', skip)
       window.removeEventListener('keydown', skip)
     }

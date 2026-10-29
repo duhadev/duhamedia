@@ -220,6 +220,8 @@ function TypographicHero({
   const section = (
     <Section tone="light" pad="none" className="relative overflow-hidden">
       <DotMatrix fade="corner" intensity="strong" className="hm-dots" />
+      {/* ambient pulse: the same dot grid in the silhouette colour, a ring radiating from the logo core (heroMotion.css) */}
+      {geometry !== false ? <div aria-hidden="true" className="hm-pulse pointer-events-none absolute inset-0 z-0" /> : null}
       {geometry !== false ? (
         <div
           aria-hidden="true"
