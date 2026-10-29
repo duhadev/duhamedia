@@ -7,6 +7,7 @@ import { getChrome, getNewsletterFormId, getNewsletterHref, toNavItems, type Nav
 import { cx } from '@/lib/cx'
 import { getRequestPath } from '@/lib/requestPath'
 
+import { FooterColumns, FOOTER_HEADING, type FooterColumn } from './FooterColumns'
 import { HIT_AREA } from './hit'
 import { footerNudgeFormClassNames } from './footerNudgeForm'
 import { NavLink, navCurrent } from './NavLink'
@@ -18,10 +19,6 @@ const EDGE = 'mx-auto w-full max-w-site px-container-mobile md:px-container'
 // Mobile footer links meet the 44px touch target; on desktop (pointer) the design's tight list spacing is kept.
 // Horizontal rows (reduced footer) keep the tight desktop look and get an invisible 44px hit area.
 const LIST_LINK = `${HIT_AREA} flex min-h-target items-center text-cream no-underline opacity-85 md:min-h-0 md:opacity-75`
-// Vertical column lists: neighbours are only a line apart, so a hit area cannot overhang without overlapping; the row itself is 44px on every breakpoint.
-const COL_LINK = 'flex min-h-target items-center text-cream no-underline opacity-85 md:opacity-75'
-const HEADING =
-  'text-[10px] font-bold tracking-[0.1em] uppercase opacity-55 md:mb-1 md:text-label md:tracking-[0.08em] md:opacity-100'
 
 /**
  * Site footer (B1). Design: SiteFooter.dc.html + SiteFooterMobile.dc.html, one
@@ -104,7 +101,7 @@ async function StandardZones({
 }) {
   const columns = (footer?.standard?.columns ?? [])
     .map((column) => ({ title: column.title?.trim(), links: toNavItems(column.links) }))
-    .filter((column) => column.title && column.links.length > 0)
+    .filter((column): column is FooterColumn => Boolean(column.title) && column.links.length > 0)
   const nudge = footer?.standard?.newsletterNudge
   const newsletterFormId = await getNewsletterFormId(settings.newsletterForm)
   const newsletterHref = newsletterFormId === null ? await getNewsletterHref() : null
@@ -121,13 +118,13 @@ async function StandardZones({
       {/* Brand */}
       <div className="flex flex-col gap-3.5 text-small md:gap-2.5">
         <SiteLogo size="footer" onDark />
-        {tagline ? <span className="hidden max-w-[28ch] opacity-75 md:block">{tagline}</span> : null}
+        {tagline ? <span className="max-w-[28ch] opacity-75">{tagline}</span> : null}
       </div>
 
       {/* Newsletter nudge: second on mobile (design), last zone on desktop */}
       {nudge && (nudge.heading || nudge.line || nudge.buttonLabel) ? (
         <div className="flex flex-col gap-2.5 text-small md:col-start-5 md:row-start-1">
-          {nudge.heading ? <p className={cx(HEADING, 'hidden md:block')}>{nudge.heading}</p> : null}
+          {nudge.heading ? <p className={cx(FOOTER_HEADING, 'hidden md:block')}>{nudge.heading}</p> : null}
           {nudge.line ? <span className="text-[13px] opacity-60 md:text-small md:opacity-75">{nudge.line}</span> : null}
           {/* With `site-settings.newsletterForm` the nudge is a real inline form (F42); otherwise a link to the newsletter page. */}
           {newsletterFormId !== null ? (
@@ -152,21 +149,8 @@ async function StandardZones({
         </div>
       ) : null}
 
-      {/* Link columns: 2-up grid on mobile (an odd last column spans), the outer grid's tracks on desktop */}
-      {columns.length > 0 ? (
-        <div className="grid grid-cols-2 gap-x-5 gap-y-5.5 border-t border-on-accent/20 pt-6 md:contents md:border-0 md:pt-0 max-md:[&>:last-child:nth-child(odd)]:col-span-2">
-          {columns.map((column, index) => (
-            <nav key={column.title} aria-labelledby={`footer-col-${index}`} className="flex flex-col text-[15px] md:text-small">
-              <p id={`footer-col-${index}`} className={HEADING}>
-                {column.title}
-              </p>
-              {column.links.map((item) => (
-                <NavLink key={item.href + item.label} item={item} draw current={navCurrent(item.href, path)} className={COL_LINK} />
-              ))}
-            </nav>
-          ))}
-        </div>
-      ) : null}
+      {/* Link columns: balanced 2-up grid on mobile (FooterColumns), the outer grid's tracks on desktop */}
+      <FooterColumns columns={columns} path={path} />
     </div>
   )
 }
