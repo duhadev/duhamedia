@@ -66,35 +66,53 @@
   --color-base-950: #080807;
   --color-base-1000: #000000;
 
-  /* Accent scale (Payload calls it "success"): wine. */
-  --color-success-50: #fdf2f6;
-  --color-success-100: #fbe3ec;
-  --color-success-150: #f7cddd;
-  --color-success-200: #f2b0c8;
-  --color-success-250: #ec92b3;
-  --color-success-300: #e4739e;
-  --color-success-350: #d9528a;
-  --color-success-400: #cf3a78;
-  --color-success-450: #c8216a;
-  --color-success-500: #c20e59;
-  --color-success-550: #b00d52;
-  --color-success-600: #9d0b4a;
-  --color-success-650: #8a0a42;
-  --color-success-700: #770939;
-  --color-success-750: #650830;
-  --color-success-800: #530727;
-  --color-success-850: #42061f;
-  --color-success-900: #310417;
-  --color-success-950: #22030f;
+  /* Semantic scales. Payload's "success" is its default BLUE accent; here success = green, error = red.
+     Wine is the brand accent only and is applied via --duha-* vars and targeted selectors below. */
+  --color-success-50: #eaf4ee;
+  --color-success-100: #d3e6dc;
+  --color-success-150: #bcd9ca;
+  --color-success-200: #a5cbb8;
+  --color-success-250: #8ebea6;
+  --color-success-300: #77b093;
+  --color-success-350: #60a381;
+  --color-success-400: #49956f;
+  --color-success-450: #32885d;
+  --color-success-500: #1b7a4b;
+  --color-success-550: #197146;
+  --color-success-600: #176840;
+  --color-success-650: #165f3b;
+  --color-success-700: #145636;
+  --color-success-750: #124e30;
+  --color-success-800: #10452b;
+  --color-success-850: #0f3c26;
+  --color-success-900: #0d3320;
+  --color-success-950: #0b2a1b;
 
-  /* Errors: keep a clearly orange-red so they never read as the wine accent. */
-  --color-error-50: #fdf0ec;
-  --color-error-100: #fbe0d8;
-  --color-error-150: #f8c8bb;
-  --color-error-500: #d6331a;
-  --color-error-550: #c22b14;
-  --color-error-600: #ab2410;
-  --color-error-700: #8c1d0d;
+  --color-error-50: #fef2f2;
+  --color-error-100: #fadbdb;
+  --color-error-150: #f6c5c5;
+  --color-error-200: #f3aeae;
+  --color-error-250: #ef9797;
+  --color-error-300: #eb8181;
+  --color-error-350: #e76a6a;
+  --color-error-400: #e45353;
+  --color-error-450: #e03d3d;
+  --color-error-500: #dc2626;
+  --color-error-550: #cb2323;
+  --color-error-600: #ba2020;
+  --color-error-650: #aa1d1d;
+  --color-error-700: #991a1a;
+  --color-error-750: #881616;
+  --color-error-800: #771313;
+  --color-error-850: #671010;
+  --color-error-900: #560d0d;
+  --color-error-950: #450a0a;
+
+  --duha-wine-50: #fdf2f6;
+  --duha-wine-100: #fbe3ec;
+  --duha-wine-800: #530727;
+  --duha-wine-text: #9d0b4a;
+  --duha-wine-ring: rgba(194, 14, 89, 0.22);
 
   --theme-text: var(--duha-ink);
   --theme-overlay: rgba(17, 17, 17, 0.45);
@@ -104,12 +122,14 @@ html[data-theme='dark'] {
   --theme-text: #faf7f2;
   --theme-overlay: rgba(0, 0, 0, 0.7);
   --theme-input-bg: var(--theme-elevation-50);
-  /* Wine is too dark for small text/rings on ink: lift the accent steps. */
-  --theme-success-400: #cf3a78;
-  --theme-success-500: #ec5b8f;
-  --theme-success-550: #f0719f;
-  --theme-success-600: #f58aaf;
-  --theme-success-700: #fbb2cb;
+  /* green/red lifted for legibility on ink (Payload inverts the scales; 500 is not inverted) */
+  --theme-success-500: #3fb27f;
+  --theme-error-500: #f87171;
+  --duha-wine-50: #2a0a17;
+  --duha-wine-100: #3d0f23;
+  --duha-wine-800: #fbb2cb;
+  --duha-wine-text: #f58aaf;
+  --duha-wine-ring: rgba(236, 91, 143, 0.3);
   --duha-wine: #ec5b8f;
   --duha-wine-hover: #f0719f;
   --duha-on-wine: #111111;
@@ -251,7 +271,7 @@ html[data-theme='dark'] .duha-admin-logo img {
 .field-description a,
 .login__form a,
 .dashboard a:not(.btn):not(.card) {
-  color: var(--theme-success-600);
+  color: var(--duha-wine-text);
 }
 
 /* ---------- Nav ---------- */
@@ -265,8 +285,8 @@ html[data-theme='dark'] .duha-admin-logo img {
   &.active,
   &[aria-current='page'],
   &:has(.nav__link-indicator) {
-    background: var(--theme-success-50);
-    color: var(--theme-success-700);
+    background: var(--duha-wine-50);
+    color: var(--duha-wine-text);
 
     .nav__link-label {
       font-weight: 700;
@@ -290,29 +310,40 @@ html[data-theme='dark'] .duha-admin-logo img {
 
 .tabs-field__tab-button--active,
 .tabs-field__tab-button.tabs-field__tab-button--active {
-  color: var(--theme-success-700);
+  color: var(--duha-wine-text);
   box-shadow: inset 0 -2px 0 var(--duha-wine);
 }
 
-.checkbox-input__input.checkbox-input__input--checked,
-.checkbox-input input:checked + .checkbox-input__icon {
+.checkbox-input--checked .checkbox-input__input {
   background: var(--duha-wine);
+  border-color: var(--duha-wine);
+
+  svg,
+  .icon--check path,
+  .icon--line path {
+    stroke: var(--duha-on-wine);
+    color: var(--duha-on-wine);
+  }
+}
+
+.checkbox-input:not(.checkbox-input--read-only):focus-within .checkbox-input__input,
+.checkbox-input:not(.checkbox-input--read-only):active .checkbox-input__input {
+  box-shadow: 0 0 0 3px var(--duha-wine-ring) !important;
+  border-color: var(--duha-wine) !important;
+}
+
+.radio-input input[type='radio']:checked + .radio-input__styled-radio::before {
+  background-color: var(--duha-wine);
+}
+
+.radio-input input[type='radio']:focus + .radio-input__styled-radio {
+  box-shadow: 0 0 0 3px var(--duha-wine-ring);
   border-color: var(--duha-wine);
 }
 
-.switch-input--checked .switch-input__track,
-.switch-input__input:checked + .switch-input__track {
-  background: var(--duha-wine);
-}
-
-.radio-input--is-selected .radio-input__styled-radio::before,
-.radio-input__styled-radio--selected {
-  background: var(--duha-wine);
-}
-
 .react-select .rs__option--is-selected {
-  background: var(--theme-success-100);
-  color: var(--theme-success-800);
+  background: var(--duha-wine-100);
+  color: var(--duha-wine-800);
 }
 
 .react-select .rs__option--is-focused {
@@ -320,8 +351,8 @@ html[data-theme='dark'] .duha-admin-logo img {
 }
 
 .react-select .rs__multi-value {
-  background: var(--theme-success-100);
-  color: var(--theme-success-800);
+  background: var(--duha-wine-100);
+  color: var(--duha-wine-800);
 }
 
 /* ---------- Form fields ---------- */
@@ -391,24 +422,9 @@ html[data-theme='dark'] .duha-admin-logo img {
   border-radius: 999px;
 }
 
-.pill--style-success {
-  background: var(--theme-success-100);
-  color: var(--theme-success-800);
-}
-
 .pill--style-light-gray {
   background: var(--theme-elevation-100);
   color: var(--theme-elevation-700);
-}
-
-.pill--style-warning {
-  background: var(--theme-warning-100);
-  color: var(--theme-warning-800);
-}
-
-.pill--style-error {
-  background: var(--theme-error-100);
-  color: var(--theme-error-700);
 }
 
 /* ---------- Lists / tables ---------- */
@@ -454,27 +470,6 @@ html[data-theme='dark'] .duha-admin-logo img {
     border-color: var(--duha-wine);
     box-shadow: 0 6px 18px -10px color-mix(in srgb, var(--duha-ink) 35%, transparent);
   }
-}
-
-/* ---------- Banners / toasts: real success stays green ---------- */
-.banner--type-success {
-  background: #eaf4ee;
-  color: #0f4d2f;
-}
-
-html[data-theme='dark'] .banner--type-success {
-  background: #12281d;
-  color: #8fd6b0;
-}
-
-.payload-toast-item.toast-success,
-.Toastify__toast--success {
-  --duha-toast-accent: var(--duha-green);
-}
-
-.payload-toast-item.toast-success svg,
-.Toastify__toast--success svg {
-  color: var(--duha-green);
 }
 
 /* ---------- Doc controls / status bar ---------- */
