@@ -6,8 +6,7 @@ import { splitAccentPhrase } from '@/lib/accentPhrase'
 import { resolveLinkHref } from '@/components/ui/CMSLink'
 
 /**
- * TwoTrackPanels, `equal` variant (Homepage.dc.html "What we do", desktop +
- * mobile builds). Server component: no interactivity.
+ * TwoTrackPanels. Server component: no interactivity in any variant.
  */
 export function TwoTrackPanelsBlock(props: BlockData<'twoTrackPanels'>) {
   if (props.variant === 'contrast') return <Contrast {...props} />
@@ -17,54 +16,144 @@ export function TwoTrackPanelsBlock(props: BlockData<'twoTrackPanels'>) {
 }
 
 type Props = BlockData<'twoTrackPanels'>
+type Panel = NonNullable<Props['panels']>[number]
 
+/**
+ * `**phrase**` -> <strong>. Splits on the literal `**`; odd segments are bold.
+ * An unmatched trailing `**` is put back as text. Output is React text nodes
+ * only (escaped), so editor input can never inject markup.
+ */
+function InlineBold({ text }: { text: string }) {
+  const parts = text.split('**')
+  // An even part count means an odd number of markers: the last one is unmatched.
+  if (parts.length % 2 === 0) parts.splice(-2, 2, `${parts[parts.length - 2]}**${parts[parts.length - 1]}`)
+  return (
+    <>
+      {parts.map((part, i) => (i % 2 === 1 ? part ? <strong key={i}>{part}</strong> : null : part))}
+    </>
+  )
+}
+
+/**
+ * First money token in a pricing note: `$`, digits (with `.`/`,` groups), an
+ * optional K/M suffix and an optional `/unit` ("$5K", "$7k", "$1K/mo",
+ * "$1,500"). A trailing sentence period is not part of it.
+ */
+const MONEY = /\$\d+(?:[.,]\d+)*[kKmM]?(?:\/[a-zA-Z]+)?/
+
+function PriceTag({ note, accent }: { note: string; accent: boolean }) {
+  const m = MONEY.exec(note)
+  return (
+    <span
+      className={`inline-flex items-baseline px-3 py-1.5 text-small-mobile md:text-small ${
+        accent ? 'bg-ground-accent text-on-accent' : 'bg-ink text-cream'
+      }`}
+    >
+      {m ? (
+        <span>
+          {note.slice(0, m.index)}
+          <strong className="text-body-mobile leading-none font-bold md:text-body md:leading-none">{m[0]}</strong>
+          {note.slice(m.index + m[0].length)}
+        </span>
+      ) : (
+        note
+      )}
+    </span>
+  )
+}
+
+/**
+ * `equal` (homepage "What we do"). Restyled 2026-10-29 to the human's spec:
+ * each track is a square `border-2 border-ink` card (StepCards grammar),
+ * number tag 01/02 from position, title, body paragraphs (blank line = new
+ * paragraph, `**bold**`), optional service chips, then a footer row with the
+ * price tag and the text link. The accent track (`accentTitle`) also gets the
+ * 6px wine left edge and the wine price tag. Two equal-height columns from
+ * `lg` (at `md` a column would hold ~35ch of body); stacked below.
+ *
+ * PRICING: the price tag (amount enlarged + bold) overrides the locked
+ * "pricing only as small inline notes" rule (CLAUDE.md rule 5 / R13) FOR THIS
+ * VARIANT ONLY. Human-approved 2026-10-29. Do not copy it to other blocks.
+ */
 function Equal({ eyebrow, eyebrowTick, heading, accentPhrase, panels }: Props) {
-  const rows = (panels ?? []).filter((p) => p && p.title?.trim() && p.body?.trim())
+  const rows = (panels ?? []).filter((p): p is Panel => Boolean(p && p.title?.trim() && p.body?.trim()))
   if ((panels ?? []).length !== rows.length) {
     console.error('[TwoTrackPanels] a track is missing its title or body and was skipped.')
   }
 
   return (
-    <Section tone="light" className="relative overflow-hidden">
+    <Section tone="light" pad="none" className="relative overflow-hidden py-12 md:py-16">
       <DotMatrix fade="edges" />
       <Container className="relative z-10">
         <div className="flex flex-col gap-5 md:gap-6">
           {eyebrow ? <Eyebrow tick={eyebrowTick === true}>{eyebrow}</Eyebrow> : null}
           <AccentHeadline text={heading} accent={accentPhrase} level="section" />
-          {rows.map((p, i) => {
-            const linkText = resolveLinkHref(p.link) ? p.link?.label?.trim() : ''
-            return (
-              <div key={p.id ?? i}>
-                {p.label ? (
-                  <Eyebrow muted className="mb-2">
-                    {p.label}
-                  </Eyebrow>
-                ) : null}
-                <h3
-                  className={`mb-1 font-display text-body-mobile font-normal uppercase md:text-body ${p.accentTitle ? 'text-ground-accent' : ''}`}
-                >
-                  {p.title}
-                </h3>
-                <div className="text-body-mobile leading-[1.7] whitespace-pre-line md:text-body md:leading-[1.7]">
-                  {p.body}
-                  {p.pricingNote?.trim() ? <> {p.pricingNote.trim()}</> : null}
-                </div>
-                {linkText ? (
-                  // Site text-link grammar (CaseStudyCards "Read the case study"): bold, 2px ink rule, own line.
-                  <CMSLink
-                    link={p.link}
-                    className="ix-rule mt-3 inline-flex min-h-target items-center font-bold text-ink no-underline md:mt-4"
-                  >
-                    {/* one flex child: KeepArrow's text + nowrap span would lose the space between them */}
-                    <span>
-                      <KeepArrow label={linkText} />
-                    </span>
-                  </CMSLink>
-                ) : null}
-              </div>
-            )
-          })}
         </div>
+        {rows.length ? (
+          <div className="mt-8 grid gap-4 md:mt-10 lg:grid-cols-2 lg:items-stretch lg:gap-5">
+            {rows.map((p, i) => {
+              const accent = p.accentTitle === true
+              const linkText = resolveLinkHref(p.link) ? p.link?.label?.trim() : ''
+              const note = p.pricingNote?.trim()
+              const paragraphs = (p.body ?? '')
+                .split(/\n[ \t]*\n/)
+                .map((t) => t.trim())
+                .filter(Boolean)
+              const chips = (p.services ?? []).filter((c) => c?.label?.trim())
+              return (
+                <div
+                  key={p.id ?? i}
+                  className={`flex flex-col border-2 border-ink bg-cream p-6 ${accent ? 'border-l-6 border-l-ground-accent' : ''}`}
+                >
+                  <span className="font-mono text-[15px] leading-normal font-bold tracking-[0.08em] text-gray-warm md:text-[17px]">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  {p.label ? (
+                    <Eyebrow muted className="mt-2">
+                      {p.label}
+                    </Eyebrow>
+                  ) : null}
+                  <h3
+                    className={`mt-2 font-display text-body-mobile font-normal uppercase md:text-body ${accent ? 'text-ground-accent' : ''}`}
+                  >
+                    {p.title}
+                  </h3>
+                  <div className="mt-3 max-w-[60ch] text-body-mobile leading-[1.6] md:text-body md:leading-[1.6]">
+                    {paragraphs.map((para, pi) => (
+                      <p key={pi} className={`whitespace-pre-line ${pi > 0 ? 'mt-3' : ''}`}>
+                        <InlineBold text={para} />
+                      </p>
+                    ))}
+                  </div>
+                  {chips.length ? (
+                    <ul className="mt-4 flex flex-wrap gap-2">
+                      {chips.map((c, ci) => (
+                        <li key={c.id ?? ci} className="border border-ink px-3 py-1 text-small-mobile font-bold md:text-small">
+                          {c.label.trim()}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                  {note || linkText ? (
+                    <div className="mt-auto pt-6">
+                      <div className="flex flex-wrap items-center justify-between gap-4 border-t border-divider pt-4">
+                        {note ? <PriceTag note={note} accent={accent} /> : <span />}
+                        {linkText ? (
+                          // Site text-link grammar: bold, 2px ix-rule hugging the text, 44px tap area.
+                          <CMSLink link={p.link} className="inline-flex min-h-target items-center font-bold text-ink no-underline">
+                            <span className="ix-rule">
+                              <KeepArrow label={linkText} />
+                            </span>
+                          </CMSLink>
+                        ) : null}
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              )
+            })}
+          </div>
+        ) : null}
       </Container>
     </Section>
   )

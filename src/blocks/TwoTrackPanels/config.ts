@@ -5,7 +5,10 @@ import { rowLabel } from '../../components/admin/rowLabel'
 
 /**
  * TwoTrackPanels block (SCHEMA §8.3 item 10). Variants: `equal` (homepage
- * "What we do"; unchanged), `contrast` (Services Hub "Why both together":
+ * "What we do"; restyled 2026-10-29 as two cards with number tags, paragraph +
+ * **bold** body, optional service chips and a price-tag footer; the price tag
+ * is a human-approved exception to the small-inline-pricing rule for this
+ * variant only), `contrast` (Services Hub "Why both together":
  * struck claim + reality line per panel, then a conclusion) and
  * `primary-secondary` (Shopify page "Where people usually start": first panel
  * full weight, second visibly softer). New fields are optional / variant
@@ -84,7 +87,10 @@ export const TwoTrackPanels: Block = {
           type: 'checkbox',
           label: 'Show the title in the accent colour',
           defaultValue: false,
-          admin: { condition: isVariant('equal', 'primary-secondary', 'doors') },
+          admin: {
+            description: 'In the Equal layout this also gives the card a wine left edge and a wine price tag.',
+            condition: isVariant('equal', 'primary-secondary', 'doors'),
+          },
         },
         {
           name: 'body',
@@ -96,13 +102,33 @@ export const TwoTrackPanels: Block = {
               ? true
               : 'This field is required.',
           admin: {
-            description: 'What this track is. Runs on straight after the title.',
+            description:
+              'What this track is. Leave a blank line between paragraphs to start a new paragraph. Wrap a phrase in **double asterisks** to make it bold.',
             condition: isVariant('equal', 'primary-secondary', 'doors'),
           },
         },
         {
+          name: 'services',
+          type: 'array',
+          label: 'Services (chips)',
+          maxRows: 8,
+          labels: { singular: 'Service', plural: 'Services' },
+          admin: {
+            components: { RowLabel: rowLabel(['label'], 'Service') },
+            description: 'Optional small bordered chips under the paragraph, e.g. "SEO". Drag to reorder. Leave empty to hide.',
+            condition: isVariant('equal'),
+            initCollapsed: true,
+          },
+          fields: [{ name: 'label', type: 'text', required: true, maxLength: 40 }],
+        },
+        {
           ...pricingNote(),
-          admin: { ...pricingNote().admin, condition: isVariant('equal', 'primary-secondary', 'doors') },
+          admin: {
+            ...pricingNote().admin,
+            description:
+              "Short note, e.g. 'Builds start at $5K'. In the Equal layout it shows as a tag at the foot of the card with the amount ($5K, $1K/mo) enlarged; elsewhere it is a small inline note.",
+            condition: isVariant('equal', 'primary-secondary', 'doors'),
+          },
         },
         {
           ...linkField({

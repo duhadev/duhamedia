@@ -135,6 +135,13 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
               title: 'Then we grow it.',
               accentTitle: true,
               body: 'Email, ads, content, SEO, GBP and CRM run by one team. [Placeholder copy.]',
+              services: [
+                { label: 'Organic social' },
+                { label: 'Influencer collabs' },
+                { label: 'SEO' },
+                { label: 'GEO' },
+                { label: 'Google Business Profile' },
+              ],
               pricingNote: 'Engines start at $1K/mo.',
               link: L('What we run →', '/services/marketing'),
             },

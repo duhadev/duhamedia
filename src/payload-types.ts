@@ -2559,13 +2559,25 @@ export interface TwoTrackPanelsBlock {
          * The track lead-in, shown in capitals, e.g. "First, we build it." In the Contrast layout this is the reality line under the struck claim.
          */
         title: string;
+        /**
+         * In the Equal layout this also gives the card a wine left edge and a wine price tag.
+         */
         accentTitle?: boolean | null;
         /**
-         * What this track is. Runs on straight after the title.
+         * What this track is. Leave a blank line between paragraphs to start a new paragraph. Wrap a phrase in **double asterisks** to make it bold.
          */
         body?: string | null;
         /**
-         * Small inline note only, e.g. 'Builds start at $5K'. Never put a price in a headline or metric.
+         * Optional small bordered chips under the paragraph, e.g. "SEO". Drag to reorder. Leave empty to hide.
+         */
+        services?:
+          | {
+              label: string;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Short note, e.g. 'Builds start at $5K'. In the Equal layout it shows as a tag at the foot of the card with the amount ($5K, $1K/mo) enlarged; elsewhere it is a small inline note.
          */
         pricingNote?: string | null;
         /**
@@ -4815,6 +4827,12 @@ export interface TwoTrackPanelsBlockSelect<T extends boolean = true> {
         title?: T;
         accentTitle?: T;
         body?: T;
+        services?:
+          | T
+          | {
+              label?: T;
+              id?: T;
+            };
         pricingNote?: T;
         link?:
           | T

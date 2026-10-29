@@ -33,6 +33,7 @@ import * as migration_20261028_121301_vercel_blob_fields from './20261028_121301
 import * as migration_20261028_190000_seed_placeholder_content from './20261028_190000_seed_placeholder_content';
 import * as migration_20261029_143150_teamintro_pull_quote from './20261029_143150_teamintro_pull_quote';
 import * as migration_20261029_145749_proofstrip_numbers_on_block from './20261029_145749_proofstrip_numbers_on_block';
+import * as migration_20261029_155251_twotrack_services_chips from './20261029_155251_twotrack_services_chips';
 
 export const migrations = [
   {
@@ -208,6 +209,11 @@ export const migrations = [
   {
     up: migration_20261029_145749_proofstrip_numbers_on_block.up,
     down: migration_20261029_145749_proofstrip_numbers_on_block.down,
-    name: '20261029_145749_proofstrip_numbers_on_block'
+    name: '20261029_145749_proofstrip_numbers_on_block',
+  },
+  {
+    up: migration_20261029_155251_twotrack_services_chips.up,
+    down: migration_20261029_155251_twotrack_services_chips.down,
+    name: '20261029_155251_twotrack_services_chips'
   },
 ];
