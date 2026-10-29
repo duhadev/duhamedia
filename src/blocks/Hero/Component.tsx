@@ -235,10 +235,8 @@ function TypographicHero({
                 : 'pointer-events-none absolute -right-27.5 -top-12.5 z-0 size-55 md:-right-40 md:-top-20 md:size-85'
               : figures.length
               ? // stats sit in the right column on desktop: park the shape in the corner (Work.dc.html: 300px, right -140, top -60)
-                'pointer-events-none absolute -right-27.5 -top-37.5 z-0 size-55 lg:-right-35 lg:-top-15 lg:size-75'
-              : // Below lg the shape is lifted into the top-right cap (as the capture hero) so it never sits
-                // under the headline or body copy (human, 2026-10-29: wine behind black text on phones).
-                'pointer-events-none absolute -right-27.5 -top-37.5 z-0 size-55 lg:right-[8%] lg:top-[46%] lg:size-115 lg:-translate-y-1/2',
+                'pointer-events-none absolute -right-20 top-22.5 z-0 size-70 lg:-right-35 lg:-top-15 lg:size-75'
+              : 'pointer-events-none absolute -right-20 top-22.5 z-0 size-70 lg:right-[8%] lg:top-[46%] lg:size-115 lg:-translate-y-1/2',
           )}
         >
           {/* the masked mark, split into its four bands (heroMotion.css) so each can move */}
