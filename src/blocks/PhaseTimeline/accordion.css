@@ -1,0 +1,145 @@
+/*
+ * PhaseTimeline `accordion` motion (Homepage.dc.html Process, MERGED §2.5).
+ * Size easing is the design's untokenised cubic-bezier(.2,.8,.2,1); entrance
+ * uses --ease-out / --dur-enter (site-fx.js). Only transform-class properties
+ * (translate, scale), opacity, colours and ONE grid track property animate.
+ *
+ * Regiment (desktop):                 0 ─── 150 ─── 360 ─── 570 ─── 850 ms
+ *   outgoing title/detail fade out    ████
+ *   vertical title (opening card) out ███
+ *   columns resize (450 ms)               ██████████████████
+ *   number glide 8 px, colours 300 ms     ████████████
+ *   incoming title in (+8 px rise)                  ██████████
+ *   incoming detail in (+70 ms)                       ██████████
+ *   closing card's vertical title in                 ███████
+ */
+[data-pt-accordion] {
+  --pt-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --pt-out: 150ms;
+  --pt-size-delay: 120ms;
+  --pt-in: 360ms;
+  --pt-step: 70ms;
+}
+
+[data-pt-track] {
+  container-type: inline-size;
+}
+
+.pt-card {
+  transition:
+    background-color 300ms ease var(--pt-size-delay),
+    border-color 300ms ease var(--pt-size-delay),
+    color 300ms ease var(--pt-size-delay);
+}
+
+/* Closed-state content: hidden, resting 8px low, fades out fast; translate
+   resets only after the fade so nothing visibly slides down. */
+.pt-htitle,
+.pt-detail {
+  opacity: 0;
+  translate: 0 8px;
+  transition:
+    opacity var(--pt-out) ease,
+    translate 0s linear var(--pt-out);
+}
+.pt-card[data-open] .pt-htitle,
+.pt-card[data-open] .pt-detail {
+  opacity: 1;
+  translate: 0 0;
+  transition:
+    opacity 320ms var(--ease-out) var(--pt-in),
+    translate 420ms var(--ease-out) var(--pt-in);
+}
+.pt-card[data-open] .pt-detail {
+  transition-delay: calc(var(--pt-in) + var(--pt-step));
+}
+
+@media (min-width: 64rem) {
+  [data-pt-track] {
+    transition: grid-template-columns 450ms var(--pt-ease) var(--pt-size-delay);
+  }
+  /* Closed 12px padding → open 20px: the number glides with the resize. */
+  .pt-num {
+    display: inline-block;
+    transition: translate 450ms var(--pt-ease) var(--pt-size-delay);
+  }
+  .pt-card[data-open] .pt-num {
+    translate: 8px 0;
+  }
+  /* Vertical title returns once the column has (almost) finished narrowing. */
+  .pt-vtitle {
+    transition: opacity 260ms ease 420ms;
+  }
+  .pt-card[data-open] .pt-vtitle {
+    opacity: 0;
+    transition: opacity 120ms ease;
+  }
+}
+
+@media (max-width: 63.999rem) {
+  /* Height without measuring: the detail row animates 0fr → 1fr (design .4s). */
+  .pt-panel {
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 400ms var(--pt-ease) 100ms;
+  }
+  .pt-card[data-open] .pt-panel {
+    grid-template-rows: 1fr;
+  }
+  [data-pt-accordion] {
+    --pt-size-delay: 100ms;
+    --pt-in: 260ms;
+  }
+}
+
+/* ---------- Scroll entrance (JS sets data-pt-enter; absent = visible) ---------- */
+.pt-bar {
+  transform-origin: left center;
+}
+[data-pt-enter='armed'] [data-pt-rise],
+[data-pt-enter='armed'] .pt-card {
+  opacity: 0;
+  translate: 0 var(--enter-distance, 24px);
+  transition: none;
+}
+[data-pt-enter='armed'] .pt-bar {
+  scale: 0 1;
+  transition: none;
+}
+[data-pt-enter='armed'] .pt-label {
+  opacity: 0;
+  transition: none;
+}
+[data-pt-enter='in'] [data-pt-rise] {
+  transition:
+    opacity var(--dur-enter, 450ms) var(--ease-out),
+    translate var(--dur-enter, 450ms) var(--ease-out);
+}
+/* Rails draw in phase order (ink, then wine), each label with its rail. */
+[data-pt-enter='in'] .pt-bar {
+  transition: scale 600ms var(--ease-out) calc(150ms + var(--pt-g) * 180ms);
+}
+[data-pt-enter='in'] .pt-label {
+  transition: opacity 400ms var(--ease-out) calc(150ms + var(--pt-g) * 180ms);
+}
+/* Cards rise left → right (top → bottom on mobile). */
+[data-pt-enter='in'] .pt-card {
+  transition:
+    opacity var(--dur-enter, 450ms) var(--ease-out) calc(350ms + var(--pt-i) * 60ms),
+    translate var(--dur-enter, 450ms) var(--ease-out) calc(350ms + var(--pt-i) * 60ms),
+    background-color 300ms ease var(--pt-size-delay),
+    border-color 300ms ease var(--pt-size-delay),
+    color 300ms ease var(--pt-size-delay);
+}
+
+/* Reduced motion: the global rule (styles.css) zeroes durations; also drop
+   every delay and every movement so changes are instant. The number keeps its
+   open/closed offset (layout, not motion). */
+@media (prefers-reduced-motion: reduce) {
+  [data-pt-accordion],
+  [data-pt-accordion] * {
+    transition-delay: 0s !important;
+  }
+  [data-pt-accordion] *:not(.pt-num) {
+    translate: none !important;
+  }
+}
