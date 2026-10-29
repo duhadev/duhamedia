@@ -3,6 +3,8 @@ import React from 'react'
 
 import { docPath, type RoutableDoc } from '@/lib/docPath'
 
+import { ArrowText } from './ArrowText'
+
 /**
  * The stored shape of `linkField()` (src/fields/index.ts, SCHEMA §3). Written
  * structurally so every generated `linkField` group type (one per usage) is
@@ -57,8 +59,10 @@ export function CMSLink({
   children?: React.ReactNode
 } & AnchorRest) {
   const href = resolveLinkHref(link)
-  const content = children ?? link?.label
-  if (!href || content === null || content === undefined || content === '') return null
+  const raw = children ?? link?.label
+  if (!href || raw === null || raw === undefined || raw === '') return null
+  // A text label's trailing arrow advances on hover (interaction system).
+  const content = typeof raw === 'string' ? <ArrowText text={raw} /> : raw
 
   const newTab = link?.newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {}
   // SEO/a11y F64 A2: AT users get the same "opens in a new tab" cue sighted users infer.

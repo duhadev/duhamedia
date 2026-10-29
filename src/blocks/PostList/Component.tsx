@@ -68,7 +68,8 @@ const formatDate = (iso: string | null | undefined): { iso: string; text: string
       }
 }
 
-const HOVER_BTN = 'transition-colors duration-180 ease-out hover:bg-ink hover:text-cream'
+// Outlined control: ink fill wipes in from the left (interaction system).
+const HOVER_BTN = 'ix-wipe-ink'
 
 function FeaturedCard({ post, labels }: { post: PostItem; labels: typeof DEFAULT_LABELS }) {
   const href = docPath('posts', post)
@@ -107,7 +108,7 @@ function Row({ post, labels, first, last }: { post: PostItem; labels: typeof DEF
   const date = formatDate(post.sentAt ?? post.publishedAt)
   const cls = cx(
     'grid min-h-target grid-cols-[1fr_auto] gap-x-3 gap-y-1 py-3.5 text-ink no-underline md:gap-x-4',
-    href && 'transition-colors duration-180 ease-out hover:bg-gray-light',
+    href && 'transition-colors duration-180 ease-out hover:bg-gray-light focus-visible:bg-gray-light',
   )
   const body = (
     <>

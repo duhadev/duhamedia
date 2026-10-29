@@ -37,7 +37,7 @@ function Star() {
 
 /** Underlined text link with a 44px hit area (the underline is drawn on the text only). */
 function UnderlineText({ children }: { children: React.ReactNode }) {
-  return <span className="border-b-2 border-ink pb-1">{children}</span>
+  return <span className="ix-rule pb-1">{children}</span>
 }
 const UNDERLINE_LINK = 'inline-flex min-h-target items-center self-start text-small-mobile font-bold uppercase tracking-[0.06em] text-ink no-underline md:text-small'
 
@@ -64,8 +64,8 @@ function VideoPoster({ t }: { t: Testimonial }) {
     >
       {poster ? <Media resource={poster} fill alt="" sizes="(min-width: 768px) 520px, 100vw" /> : null}
       <span className="absolute inset-0 grid place-items-center bg-ink/20 transition-colors duration-180 group-hover:bg-ink/35">
-        <span className="grid size-14 place-items-center rounded-badge bg-cream text-ink">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <span className="ix-play grid size-14 place-items-center rounded-badge bg-cream text-ink">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="ix-play-glyph">
             <path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5Z" />
           </svg>
         </span>
@@ -169,13 +169,22 @@ function StudyCard({ study, readLabel }: { study: Study; readLabel: string }) {
       {doc.cardSummary ? <p className="m-0 whitespace-pre-line text-[0.9375rem] leading-[1.6] md:text-base">{doc.cardSummary}</p> : null}
       {readLabel ? (
         <span className="mt-1 inline-flex min-h-target items-center self-start text-[13px] font-bold uppercase tracking-[0.06em] md:text-small">
-          <UnderlineText>{readLabel} →</UnderlineText>
+          <UnderlineText>
+            {readLabel} <span aria-hidden="true" className="ix-arrow">→</span>
+          </UnderlineText>
         </span>
       ) : null}
     </>
   )
   return href ? (
-    <Link href={href} className={cx(CARD, 'no-underline')}>
+    <Link
+      href={href}
+      // Linked card: the CaseStudyCard reference lift (interaction system), no lift under reduced motion.
+      className={cx(
+        CARD,
+        'no-underline transition-[box-shadow,translate] duration-180 ease-out hover:shadow-lift focus-visible:shadow-lift motion-safe:hover:-translate-y-1 motion-safe:focus-visible:-translate-y-1',
+      )}
+    >
       {inner}
     </Link>
   ) : (
@@ -240,7 +249,9 @@ export function TestimonialRowView({
 
   const ctaEl = showCta && !asButton ? (
     <CMSLink link={cta} className={UNDERLINE_LINK}>
-      <UnderlineText>{cta?.label} →</UnderlineText>
+      <UnderlineText>
+        {cta?.label} <span aria-hidden="true" className="ix-arrow">→</span>
+      </UnderlineText>
     </CMSLink>
   ) : null
 
@@ -361,8 +372,8 @@ export function TestimonialClientVoiceView({
                   ) : null}
                 </div>
               ) : null}
-              <div className="flex flex-col gap-4 [&_a]:underline [&_ol]:list-decimal [&_ol]:pl-6 [&_p]:m-0 [&_ul]:list-disc [&_ul]:pl-6">
-                <RichText data={differently} disableContainer />
+              <div className="flex flex-col gap-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_p]:m-0 [&_ul]:list-disc [&_ul]:pl-6">
+                <RichText data={differently} linkClassName="ix-rule no-underline" disableContainer />
               </div>
             </div>
           ) : null}

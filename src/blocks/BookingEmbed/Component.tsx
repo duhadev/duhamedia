@@ -82,13 +82,13 @@ async function load(thankYouPage: BookingEmbedData['thankYouPage']): Promise<Loa
 }
 
 const ARROW_UP_RIGHT = (
-  <svg aria-hidden="true" viewBox="0 0 256 256" fill="currentColor" className="size-[1.1em] shrink-0">
+  <svg aria-hidden="true" viewBox="0 0 256 256" fill="currentColor" className="ix-arrow-ne size-[1.1em] shrink-0">
     <path d="M204 64v104a12 12 0 0 1-24 0V93L72.49 200.49a12 12 0 0 1-17-17L163 76H88a12 12 0 0 1 0-24h104a12 12 0 0 1 12 12Z" />
   </svg>
 )
 
 const ARROW_RIGHT = (
-  <svg aria-hidden="true" viewBox="0 0 256 256" fill="currentColor" className="size-[1.1em] shrink-0">
+  <svg aria-hidden="true" viewBox="0 0 256 256" fill="currentColor" className="ix-arrow size-[1.1em] shrink-0">
     <path d="M224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.51a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17Z" />
   </svg>
 )
@@ -102,7 +102,7 @@ const CALENDAR = (
 
 /** Book a Call mobile "Booking flow" footer button: full-width ink bar, display face. */
 const BAR =
-  'flex min-h-target w-full flex-1 cursor-pointer items-center justify-center gap-2.5 bg-ink p-4.5 font-display text-[1.1rem] font-normal uppercase leading-none tracking-[0.04em] text-cream no-underline transition-[filter] duration-180 ease-out hover:brightness-115 focus-visible:outline-offset-[-6px] focus-visible:outline-cream'
+  'flex min-h-target w-full flex-1 cursor-pointer items-center justify-center gap-2.5 bg-ink p-4.5 font-display text-[1.1rem] font-normal uppercase leading-none tracking-[0.04em] text-cream no-underline transition-[translate] duration-180 ease-out active:translate-y-px focus-visible:outline-offset-[-6px] focus-visible:outline-cream'
 
 /**
  * The bordered booking panel (Book a Call.dc.html "Booking flow" frame,
@@ -290,7 +290,7 @@ function BookingEmbedView({
                   href={bookingUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex min-h-target items-center gap-1.5 border-b-2 border-ink font-bold no-underline"
+                  className="ix-rule inline-flex min-h-target items-center gap-1.5 font-bold no-underline"
                 >
                   {newTabLabel.trim()}
                   {ARROW_UP_RIGHT}

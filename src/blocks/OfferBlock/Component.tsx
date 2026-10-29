@@ -77,7 +77,8 @@ export function OfferView({ eyebrow, eyebrowTick, heading, accentPhrase, body, c
         {hasBody ? (
           <RichText
             data={body}
-            className="mt-4 text-base leading-[1.6] md:mt-5 md:text-[1.0625rem] [&_a]:underline [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:m-0 [&_p+p]:mt-4 [&_ul]:list-disc [&_ul]:pl-5"
+            className="mt-4 text-base leading-[1.6] md:mt-5 md:text-[1.0625rem] [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:m-0 [&_p+p]:mt-4 [&_ul]:list-disc [&_ul]:pl-5"
+            linkClassName="ix-rule no-underline"
             disableContainer
           />
         ) : null}

@@ -55,9 +55,9 @@ export function VslHero({ eyebrow, eyebrowTick, heading, video, ctas, geometry }
             {poster ? <Media resource={poster} fill alt="" preload sizes="(min-width: 820px) 740px, 100vw" /> : null}
             <span
               aria-hidden="true"
-              className="pointer-events-none absolute top-1/2 left-1/2 grid size-14 -translate-x-1/2 -translate-y-1/2 place-items-center bg-ink text-cream transition-colors duration-180 group-hover:bg-ground-accent md:size-18"
+              className="pointer-events-none absolute top-1/2 left-1/2 grid size-14 -translate-x-1/2 -translate-y-1/2 place-items-center bg-ink text-cream ix-play md:size-18"
             >
-              <svg viewBox="0 0 256 256" fill="currentColor" className="size-5.5 md:size-7">
+              <svg viewBox="0 0 256 256" fill="currentColor" className="ix-play-glyph size-5.5 md:size-7">
                 <path d="M240,128a15.74,15.74,0,0,1-7.6,13.51L88.32,229.65a16,16,0,0,1-16.2.3A15.86,15.86,0,0,1,64,216.13V39.87a15.86,15.86,0,0,1,8.12-13.82,16,16,0,0,1,16.2.3L232.4,114.49A15.74,15.74,0,0,1,240,128Z" />
               </svg>
             </span>

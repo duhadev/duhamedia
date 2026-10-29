@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { CMSLink, Container, Section } from '@/components/ui'
+import { ArrowText, CMSLink, Container, Section } from '@/components/ui'
 import { resolveLinkHref } from '@/components/ui/CMSLink'
 import { cx } from '@/lib/cx'
 
@@ -71,9 +71,11 @@ export function ArcPhases({ heading, accentPhrase, phases }: PhaseTimelineProps)
                         // target, cancelled by a negative block margin.
                         <CMSLink
                           link={phase.link}
-                          className="-my-3 inline-flex min-h-target items-center text-[0.875rem] font-bold tracking-[0.06em] text-ink uppercase underline md:text-[0.9375rem]"
+                          className="-my-3 inline-flex min-h-target items-center text-[0.875rem] font-bold tracking-[0.06em] text-ink uppercase no-underline md:text-[0.9375rem]"
                         >
-                          {linkText}
+                          <span className="ix-rule">
+                            <ArrowText text={linkText} />
+                          </span>
                         </CMSLink>
                       ) : null}
                     </div>

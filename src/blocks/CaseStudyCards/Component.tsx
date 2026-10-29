@@ -4,7 +4,7 @@ import { getPayload, type Where } from 'payload'
 import React from 'react'
 
 import type { BlockData } from '@/blocks/types'
-import { AccentHeadline, CMSLink, Container, Eyebrow, Media, Section } from '@/components/ui'
+import { AccentHeadline, ArrowText, CMSLink, Container, Eyebrow, Media, Section } from '@/components/ui'
 import { resolveLinkHref } from '@/components/ui/CMSLink'
 import { cx } from '@/lib/cx'
 import { docPath } from '@/lib/docPath'
@@ -180,7 +180,7 @@ async function StudyCards(props: CaseStudyCardsProps) {
           </ul>
           <CMSLink
             link={allLink}
-            className="mt-8 inline-flex min-h-target items-center border-b-2 border-ink text-small font-bold"
+            className="ix-rule mt-8 inline-flex min-h-target items-center text-small font-bold"
           />
         </Container>
       </Section>
@@ -214,14 +214,18 @@ function StudyCard({ study, linkLabel }: { study: CaseStudy; linkLabel: string }
         ) : null}
         {study.cardSummary ? <p className="mt-2.5 whitespace-pre-line text-[0.9375rem] leading-normal">{study.cardSummary}</p> : null}
         {href ? (
-          <span className="mt-3.5 inline-block border-b-2 border-ink text-small font-bold">{linkLabel}</span>
+          <span className="ix-rule mt-3.5 inline-block text-small font-bold">
+            <ArrowText text={linkLabel} />
+          </span>
         ) : null}
       </div>
     </>
   )
 
+  // Reference lift of the interaction system. Tailwind 4's translate-* sets `translate`, not `transform`,
+  // so the transition list names `translate` (with `transform` the lift jumped instead of easing).
   const cls =
-    'flex flex-col bg-gray-light text-ink no-underline transition-[box-shadow,transform] duration-180 ease-out hover:-translate-y-1 hover:shadow-lift'
+    'flex flex-col bg-gray-light text-ink no-underline transition-[box-shadow,translate] duration-180 ease-out hover:shadow-lift focus-visible:shadow-lift motion-safe:hover:-translate-y-1 motion-safe:focus-visible:-translate-y-1'
   return href ? (
     <Link href={href} className={cls}>
       {body}
@@ -417,7 +421,7 @@ async function NextStudy(props: CaseStudyCardsProps) {
     return (
       <Section tone={tone} pad="none" className="pt-7 pb-9 md:pt-0 md:pb-14">
         <div className="mx-auto w-full max-w-[820px] px-container-mobile md:px-container">
-          <CMSLink link={allHref} className="inline-flex min-h-target items-center border-b-2 border-ink text-small font-bold" />
+          <CMSLink link={allHref} className="ix-rule inline-flex min-h-target items-center text-small font-bold" />
         </div>
       </Section>
     )
@@ -444,7 +448,7 @@ async function NextStudy(props: CaseStudyCardsProps) {
           </span>
           {readLabel ? (
             <span className="mt-1 text-[12px] font-bold uppercase tracking-[0.08em] md:mt-0 md:whitespace-nowrap">
-              {readLabel}
+              <ArrowText text={readLabel} />
             </span>
           ) : null}
         </Link>

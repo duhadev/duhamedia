@@ -24,7 +24,9 @@ const H2_NUMBER =
   '[counter-increment:article-section] before:mb-1.5 before:block before:font-display before:text-[0.8125rem] before:leading-[1.7] before:text-ground-accent before:content-[counter(article-section,decimal-leading-zero)] md:before:mb-2 md:before:text-[0.875rem]'
 
 /** Article link style (passed to the shared RichText link converters). */
-const LINK_CLASS = 'font-bold underline decoration-2 underline-offset-4 hover:text-ground-accent'
+// Site text-link grammar (interaction system): bold, 2px rule that redraws L->R on hover. Replaces the
+// former underline + wine hover, which the final page designs do not use (their links hover to ink).
+const LINK_CLASS = 'ix-rule font-bold no-underline'
 
 /**
  * Converters for the article typography (Case Study.dc.html "Article body"),
@@ -69,7 +71,7 @@ const makeConverters =
       const media = doc as MediaDoc
       if (!media.mimeType?.startsWith('image')) {
         return media.url ? (
-          <a href={media.url} className="font-bold underline decoration-2 underline-offset-4" rel="noopener noreferrer">
+          <a href={media.url} className="ix-rule font-bold no-underline" rel="noopener noreferrer">
             {media.filename ?? media.alt}
           </a>
         ) : null

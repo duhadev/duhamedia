@@ -57,7 +57,7 @@ export const LEDGER_COLS = 'lg:grid-cols-[52px_1.1fr_1.5fr_200px_40px] lg:gap-6'
 /** Phosphor "arrow-right" (bold), the design's `ph-bold ph-arrow-right` at 20px. */
 function ArrowRight() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 256 256" fill="currentColor" className="size-5">
+    <svg aria-hidden="true" viewBox="0 0 256 256" fill="currentColor" className="ix-arrow size-5">
       <path d="M224.49 136.49l-72 72a12 12 0 0 1-17-17L187 140H40a12 12 0 0 1 0-24h147l-51.49-51.52a12 12 0 0 1 17-17l72 72a12 12 0 0 1-.02 17.01z" />
     </svg>
   )
@@ -77,7 +77,7 @@ export function LedgerRow({
 }) {
   const tag = [row.client, labels.kind].filter(Boolean).join(' · ')
   const cls = cx(
-    'flex min-h-target flex-col gap-2 px-container-mobile py-5.5 text-ink no-underline transition-colors duration-180 ease-out hover:bg-gray-light md:px-container',
+    'flex min-h-target flex-col gap-2 px-container-mobile py-5.5 text-ink no-underline transition-colors duration-180 ease-out hover:bg-gray-light focus-visible:bg-gray-light md:px-container',
     'lg:grid lg:items-center lg:px-0 lg:py-6.5',
     LEDGER_COLS,
   )

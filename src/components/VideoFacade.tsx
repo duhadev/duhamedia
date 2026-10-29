@@ -45,7 +45,7 @@ export function VideoFacade({
   const hit = 'absolute inset-0 z-10 block cursor-pointer'
 
   return (
-    <div className={cx('group relative', className)}>
+    <div className={cx('ix-group group relative', className)}>
       {children}
       {playing ? (
         <iframe

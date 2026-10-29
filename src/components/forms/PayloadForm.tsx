@@ -518,7 +518,7 @@ export function PayloadForm({
           onClick={() => goTo(current - 1)}
           className={cx(
             'inline-flex min-h-target w-16 shrink-0 cursor-pointer items-center justify-center border-2 font-body text-body font-bold disabled:cursor-not-allowed disabled:opacity-40',
-            tone === 'dark' ? 'border-cream text-cream' : 'border-ink text-ink',
+            tone === 'dark' ? 'ix-wipe-cream border-cream text-cream' : 'ix-wipe-ink border-ink text-ink',
           )}
         >
           {icons?.back ?? <span aria-hidden="true">←</span>}
@@ -531,10 +531,16 @@ export function PayloadForm({
         ) : (
           <Button key="next" variant={submitVariant} size={submitSize} onClick={next} className="flex-1">
             {current === 0 ? (startLabel ?? nextLabel) : nextLabel}
-            {icons?.next ?? (
+            {icons?.next ? (
+              <span aria-hidden="true" className="ix-arrow">
+                {icons.next}
+              </span>
+            ) : (
               <>
                 {' '}
-                <span aria-hidden="true">→</span>
+                <span aria-hidden="true" className="ix-arrow">
+                  →
+                </span>
               </>
             )}
           </Button>

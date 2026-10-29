@@ -4,7 +4,7 @@ import React from 'react'
 
 import type { BlockData } from '@/blocks/types'
 import { RichText } from '@/components/RichText'
-import { CMSLink, Eyebrow, Section } from '@/components/ui'
+import { ArrowText, CMSLink, Eyebrow, Section } from '@/components/ui'
 import type { Faq } from '@/payload-types'
 
 type AccordionFAQProps = BlockData<'accordionFAQ'> & {
@@ -94,7 +94,7 @@ export const faqJsonLdItems = (faqs: FaqItem[]) =>
 function FaqRow({ f, open }: { f: FaqItem; open: boolean }) {
   return (
     <details open={open ? true : undefined} className="group border-t border-divider">
-      <summary className="flex min-h-target cursor-pointer list-none items-center justify-between gap-4 py-4.5 text-left text-[1.125rem] font-bold [&::-webkit-details-marker]:hidden">
+      <summary className="-mx-3 flex min-h-target cursor-pointer list-none items-center justify-between gap-4 px-3 py-4.5 text-left text-[1.125rem] font-bold transition-colors duration-180 ease-out hover:bg-gray-light focus-visible:bg-gray-light [&::-webkit-details-marker]:hidden">
         {f.question}
         <span
           aria-hidden="true"
@@ -103,8 +103,8 @@ function FaqRow({ f, open }: { f: FaqItem; open: boolean }) {
           +
         </span>
       </summary>
-      <div className="max-w-[62ch] pb-5 text-[1rem] leading-[1.6] font-medium [&_a]:underline [&_ol]:list-decimal [&_ol]:pl-5 [&_p+p]:mt-3 [&_ul]:list-disc [&_ul]:pl-5">
-        <RichText data={f.answer} disableContainer />
+      <div className="max-w-[62ch] pb-5 text-[1rem] leading-[1.6] font-medium [&_ol]:list-decimal [&_ol]:pl-5 [&_p+p]:mt-3 [&_ul]:list-disc [&_ul]:pl-5">
+        <RichText data={f.answer} linkClassName="ix-rule no-underline" disableContainer />
       </div>
     </details>
   )
@@ -140,7 +140,9 @@ function GroupFaq({ heading, items, openFirst, allLink, anchorId, spacing, eyebr
           ))}
         </div>
         <CMSLink link={allLink} className="mt-3 inline-flex min-h-target items-center text-[15px] font-bold no-underline md:mt-4">
-          <span className="border-b-2 border-ink">{allLink?.label}</span>
+          <span className="ix-rule">
+            <ArrowText text={allLink?.label ?? ''} />
+          </span>
         </CMSLink>
       </div>
     </Section>
@@ -214,7 +216,9 @@ export function AccordionFAQItemsView({
           ))}
         </div>
         <CMSLink link={allLink} className="mt-3 inline-flex min-h-target items-center text-[15px] font-bold no-underline md:mt-4">
-          <span className="border-b-2 border-ink">{allLink?.label}</span>
+          <span className="ix-rule">
+            <ArrowText text={allLink?.label ?? ''} />
+          </span>
         </CMSLink>
         {emitJsonLd ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }} /> : null}
       </div>

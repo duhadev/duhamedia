@@ -22,12 +22,12 @@ export function MiniCTAStripBlock(props: BlockData<'miniCTAStrip'>) {
   return (
     <Section tone="dark" pad="none">
       {linked ? (
-        <CMSLink link={link} className={`group ${STRIP} min-h-target no-underline text-cream`}>
+        <CMSLink link={link} className={`ix-group ${STRIP} min-h-target no-underline text-cream`}>
           <span className={TEXT}>{text}</span>
-          {/* Same square DS button as everywhere else (ghost-light on ink); the whole strip is the link, so hover is driven by the group. */}
-          <span className={buttonClasses({ variant: 'ghost-light', size: 'md', className: 'shrink-0 group-hover:bg-cream group-hover:text-ink' })}>
+          {/* Same square DS button as everywhere else (ghost-light on ink); the whole strip is the link, so hover is driven by `ix-group`. */}
+          <span className={buttonClasses({ variant: 'ghost-light', size: 'md', className: 'shrink-0' })}>
             {label}
-            <svg aria-hidden="true" viewBox="0 0 256 256" fill="currentColor" className="size-4 shrink-0">
+            <svg aria-hidden="true" viewBox="0 0 256 256" fill="currentColor" className="ix-arrow size-4 shrink-0">
               <path d="M221.66 133.66l-72 72a8 8 0 0 1-11.32-11.32L196.69 136H40a8 8 0 0 1 0-16h156.69l-58.35-58.34a8 8 0 0 1 11.32-11.32l72 72a8 8 0 0 1 0 11.32z" />
             </svg>
           </span>
@@ -62,7 +62,7 @@ function MiniCTAInline({ text, link }: BlockData<'miniCTAStrip'>) {
               {' '}
               <CMSLink
                 link={link}
-                className="relative font-bold text-ink no-underline border-b-2 border-ink after:absolute after:inset-x-0 after:-inset-y-3 after:content-['']"
+                className="ix-rule relative font-bold text-ink no-underline after:absolute after:inset-x-0 after:-inset-y-3 after:content-['']"
               >
                 {label}
               </CMSLink>

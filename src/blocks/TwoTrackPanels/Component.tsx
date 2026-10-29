@@ -1,7 +1,7 @@
 import React from 'react'
 
 import type { BlockData } from '@/blocks/types'
-import { AccentHeadline, ButtonLink, CMSLink, Container, DotMatrix, Eyebrow, Section } from '@/components/ui'
+import { AccentHeadline, ArrowText, ButtonLink, CMSLink, Container, DotMatrix, Eyebrow, Section } from '@/components/ui'
 import { splitAccentPhrase } from '@/lib/accentPhrase'
 import { resolveLinkHref } from '@/components/ui/CMSLink'
 
@@ -53,7 +53,7 @@ function Equal({ eyebrow, eyebrowTick, heading, accentPhrase, panels }: Props) {
                   // Site text-link grammar (CaseStudyCards "Read the case study"): bold, 2px ink rule, own line.
                   <CMSLink
                     link={p.link}
-                    className="mt-3 inline-flex min-h-target items-center border-b-2 border-ink font-bold text-ink no-underline md:mt-4"
+                    className="ix-rule mt-3 inline-flex min-h-target items-center font-bold text-ink no-underline md:mt-4"
                   >
                     {/* one flex child: KeepArrow's text + nowrap span would lose the space between them */}
                     <span>
@@ -129,17 +129,19 @@ function Contrast({ eyebrow, eyebrowTick, heading, accentPhrase, panels, conclus
 /** Keeps the last word with the trailing arrow (or other glyph) so it never wraps alone. */
 function KeepArrow({ label }: { label: string }) {
   const at = label.lastIndexOf(' ')
-  if (at < 0) return <>{label}</>
+  if (at < 0) return <ArrowText text={label} />
   const tail = label.slice(at + 1)
   const beforeTail = label.slice(0, at)
   const at2 = beforeTail.lastIndexOf(' ')
   // "Ask about a scratch build →": nowrap "build →" when the tail is only a glyph.
   const glue = /^[\p{L}\p{N}]/u.test(tail) ? at : at2
-  if (glue < 0) return <>{label}</>
+  if (glue < 0) return <ArrowText text={label} />
   return (
     <>
       {label.slice(0, glue)}{' '}
-      <span className="whitespace-nowrap">{label.slice(glue + 1)}</span>
+      <span className="whitespace-nowrap">
+        <ArrowText text={label.slice(glue + 1)} />
+      </span>
     </>
   )
 }
@@ -197,8 +199,8 @@ function PrimarySecondary({ eyebrow, eyebrowTick, heading, accentPhrase, panels,
                     primary ? (
                       <ButtonLink link={p.link} variant="primary" size="md" className="mt-auto self-start" />
                     ) : (
-                      <CMSLink link={p.link} className="mt-auto inline-flex min-h-target items-center self-start font-bold underline underline-offset-4">
-                        <span>
+                      <CMSLink link={p.link} className="mt-auto inline-flex min-h-target items-center self-start font-bold no-underline">
+                        <span className="ix-rule">
                           <KeepArrow label={p.link?.label?.trim() ?? ''} />
                         </span>
                       </CMSLink>
@@ -255,16 +257,17 @@ function Doors({ heading, accentPhrase, eyebrow, eyebrowTick, panels, conclusion
                 <span className={`whitespace-pre-line text-[0.9375rem] leading-[1.55] text-ink/80 md:text-base md:leading-[1.6] ${cta ? 'md:mb-2' : ''}`}>{p.body}</span>
                 {cta ? (
                   <span
-                    className={`mt-0.5 inline-flex min-h-target items-center self-start text-xs font-bold uppercase tracking-[0.06em] md:mt-auto md:px-6.5 md:text-small ${
+                    className={`ix-lift max-md:!translate-none max-md:!shadow-none mt-0.5 inline-flex min-h-target items-center self-start text-xs font-bold uppercase tracking-[0.06em] md:mt-auto md:px-6.5 md:text-small ${
                       wine ? 'text-ground-accent md:bg-ground-accent md:text-on-accent' : 'text-ink md:bg-ink md:text-cream'
                     }`}
                   >
-                    {cta}
+                    <ArrowText text={cta} />
                   </span>
                 ) : null}
               </>
             )
-            const cls = 'flex flex-col gap-1.5 border-t border-divider py-5 text-ink no-underline md:gap-4 md:border-t-0 md:py-0'
+            // ix-group: hovering the whole door lifts its button (interaction system).
+            const cls = 'ix-group flex flex-col gap-1.5 border-t border-divider py-5 text-ink no-underline md:gap-4 md:border-t-0 md:py-0'
             return href ? (
               <CMSLink key={p.id ?? i} link={p.link} className={cls}>
                 {inner}

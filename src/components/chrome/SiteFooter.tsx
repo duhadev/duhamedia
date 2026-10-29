@@ -9,7 +9,7 @@ import { getRequestPath } from '@/lib/requestPath'
 
 import { HIT_AREA } from './hit'
 import { footerNudgeFormClassNames } from './footerNudgeForm'
-import { NavLink } from './NavLink'
+import { NavLink, navCurrent } from './NavLink'
 import { SiteLogo } from './SiteLogo'
 
 export type FooterVariant = 'standard' | 'reduced-nav' | 'legal-only'
@@ -43,11 +43,12 @@ export async function SiteFooter({ variant = 'standard' }: { variant?: FooterVar
   const legalLinks = toNavItems(footer?.legalLinks)
   const year = new Date().getFullYear()
   const legalName = settings.legalName?.trim() || 'Duha Media'
+  const path = await getRequestPath()
 
   return (
     <footer data-tone="dark" className="bg-ink font-medium text-cream">
-      {variant === 'standard' ? <StandardZones settings={settings} footer={footer} /> : null}
-      {variant === 'reduced-nav' ? <ReducedZone links={toNavItems(footer?.reduced?.links)} /> : null}
+      {variant === 'standard' ? <StandardZones settings={settings} footer={footer} path={path} /> : null}
+      {variant === 'reduced-nav' ? <ReducedZone links={toNavItems(footer?.reduced?.links)} path={path} /> : null}
       <div className="border-t border-on-accent/20">
         <div
           className={cx(
@@ -64,6 +65,8 @@ export async function SiteFooter({ variant = 'standard' }: { variant?: FooterVar
                 <NavLink
                   key={item.href + item.label}
                   item={item}
+                  draw
+                  current={navCurrent(item.href, path)}
                   className={`${HIT_AREA} inline-flex min-h-target items-center text-cream no-underline md:min-h-0`}
                 />
               ))}
@@ -75,14 +78,14 @@ export async function SiteFooter({ variant = 'standard' }: { variant?: FooterVar
   )
 }
 
-function ReducedZone({ links }: { links: NavItem[] }) {
+function ReducedZone({ links, path }: { links: NavItem[]; path?: string }) {
   return (
     <div className={cx(EDGE, 'flex flex-col gap-4 py-6.5 md:flex-row md:items-center md:justify-between md:gap-6 md:py-10')}>
       <SiteLogo size="footer" onDark />
       {links.length > 0 ? (
         <nav aria-label="Footer" className="flex flex-wrap gap-x-4.5 text-[15px] md:gap-x-6 md:text-small">
           {links.map((item) => (
-            <NavLink key={item.href + item.label} item={item} className={LIST_LINK} />
+            <NavLink key={item.href + item.label} item={item} draw current={navCurrent(item.href, path)} className={LIST_LINK} />
           ))}
         </nav>
       ) : null}
@@ -93,9 +96,11 @@ function ReducedZone({ links }: { links: NavItem[] }) {
 async function StandardZones({
   settings,
   footer,
+  path,
 }: {
   settings: Awaited<ReturnType<typeof getChrome>>['settings']
   footer: Awaited<ReturnType<typeof getChrome>>['navigation']['footer']
+  path?: string
 }) {
   const columns = (footer?.standard?.columns ?? [])
     .map((column) => ({ title: column.title?.trim(), links: toNavItems(column.links) }))
@@ -104,7 +109,7 @@ async function StandardZones({
   const newsletterFormId = await getNewsletterFormId(settings.newsletterForm)
   const newsletterHref = newsletterFormId === null ? await getNewsletterHref() : null
   const tagline = settings.footerTagline?.trim()
-  const sourcePath = newsletterFormId !== null ? await getRequestPath() : undefined
+  const sourcePath = newsletterFormId !== null ? path : undefined
 
   return (
     <div
@@ -156,7 +161,7 @@ async function StandardZones({
                 {column.title}
               </p>
               {column.links.map((item) => (
-                <NavLink key={item.href + item.label} item={item} className={COL_LINK} />
+                <NavLink key={item.href + item.label} item={item} draw current={navCurrent(item.href, path)} className={COL_LINK} />
               ))}
             </nav>
           ))}

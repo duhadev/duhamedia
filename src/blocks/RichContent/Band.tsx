@@ -9,7 +9,9 @@ import type { RichContentProps } from './Component'
 
 type Fact = NonNullable<RichContentProps['facts']>[number]
 
-const LINK_CLASS = 'font-bold underline decoration-2 underline-offset-4 hover:text-ground-accent'
+// Site text-link grammar (interaction system): bold, 2px rule that redraws L->R on hover. Replaces the
+// former underline + wine hover, which the final page designs do not use (their links hover to ink).
+const LINK_CLASS = 'ix-rule font-bold no-underline'
 
 /**
  * Band prose: short paragraphs (DEV-SEO "DIY vs done": 1rem / 1.0625rem, lh 1.6).

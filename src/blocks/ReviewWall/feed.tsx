@@ -216,8 +216,8 @@ function VideoCard({ card, labels, mirrored }: { card: FeedCardData; labels: Fee
         {/* 16:9 minimum; at lg the tile also stretches to a taller quote column (poster crops via object-cover). */}
         <span aria-hidden="true" className="block aspect-video" />
         {card.poster ? <Media resource={card.poster} fill alt="" sizes="(min-width: 1024px) 640px, 100vw" /> : null}
-        <span className="absolute top-1/2 left-1/2 grid size-13 -translate-1/2 place-items-center bg-ink text-cream transition-transform duration-180 ease-out group-hover:scale-105 md:size-16">
-          <Icon name="play" className="size-5 md:size-6" />
+        <span className="absolute top-1/2 left-1/2 grid size-13 -translate-1/2 place-items-center bg-ink text-cream ix-play md:size-16">
+          <Icon name="play" className="ix-play-glyph size-5 md:size-6" />
         </span>
         {card.metricValue ? (
           <span className="absolute top-2.5 right-2.5 bg-accent-primary px-2.5 py-0.5 font-display text-[1.1rem] leading-[normal] text-on-accent md:top-3.5 md:right-3.5 md:px-3.5 md:py-1 md:text-[1.5rem]">

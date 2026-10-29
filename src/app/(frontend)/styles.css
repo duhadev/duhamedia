@@ -181,3 +181,204 @@
     }
   }
 }
+
+/*
+ * Interaction system (hover / focus / press), approved 2026-10-29.
+ * Rule: FILLED lifts, OUTLINED fills, a TEXT LINK redraws its rule, an ARROW
+ * advances. Mechanical and certain: square, hard ink offset shadow, no glow,
+ * scale, blur or new colours. One timing for everything: --dur-fast (180ms) +
+ * --ease-out (MERGED §2.4 / §2.5). Reference: CaseStudyCard (-4px + shadow-lift).
+ *
+ * - Hover only under a real pointer: every :hover sits in @media (hover: hover),
+ *   the same gate Tailwind 4.1's `hover:` variant emits.
+ * - :focus-visible gets the hover visual (plus the global focus ring).
+ * - :active (press) works on touch.
+ * - :disabled / [aria-disabled='true'] never hover, lift or press.
+ * - Trigger scope: the element itself, or a link/button/summary ancestor, or an
+ *   explicit `.ix-group` wrapper (NOT Tailwind's `group`, which is used for
+ *   unrelated things and would set off every nested control).
+ * - Raw CSS in the utilities layer, after Tailwind's own, so the hover colour
+ *   beats a resting `text-*` utility without `!important`.
+ *
+ * Classes:
+ *   ix-lift        filled control: translateY(-2px) onto shadow-card; press 1px, no shadow
+ *   ix-wipe-ink    outlined control: ink fill wipes in from the left, text -> cream
+ *   ix-wipe-cream  same on ink grounds: cream wipe, text -> ink
+ *   ix-rule        text link: 2px rule at rest (the affordance); on hover it redraws L->R
+ *   ix-draw        nav/tab/crumb: no rule at rest; on hover a 2px rule draws L->R;
+ *                  [aria-current=page|true] keeps it solid
+ *   ix-arrow       arrow glyph: advances 4px (ix-arrow-ne: up-right arrows, along their axis)
+ *   ix-play / ix-play-glyph  video play disc fills wine; its glyph nudges 2px right
+ */
+@layer utilities {
+  .ix-lift,
+  .ix-wipe-ink,
+  .ix-wipe-cream,
+  .ix-draw,
+  .ix-arrow,
+  .ix-arrow-ne,
+  .ix-play,
+  .ix-play-glyph {
+    /* Explicit list, never `all`: `all` would also tween the focus outline. */
+    transition-property: color, background-color, background-size, border-color, translate, box-shadow;
+    transition-duration: var(--dur-fast);
+    transition-timing-function: var(--ease-out);
+  }
+
+  /* Ground-aware lift shadow. On an ink fill a plain ink shadow-card merges with
+     the button and reads as "2px taller", not "lifted". So the shadow is a 2px
+     slice of the GROUND, then the 2px ink shadow: the plate visibly separates
+     from its hard shadow. The ground is inherited from the nearest bg-* ancestor
+     (set below); the control resets its own value so its fill never counts. */
+  .bg-cream {
+    --ix-ground: var(--color-cream);
+  }
+  .bg-gray-light {
+    --ix-ground: var(--color-gray-light);
+  }
+  .bg-ink {
+    --ix-ground: var(--color-ink);
+  }
+  .ix-lift.ix-lift {
+    --ix-ground: inherit;
+    --ix-lift-shadow: 0 2px 0 0 var(--ix-ground, var(--color-cream)), 0 4px 0 0 var(--color-ink);
+  }
+
+  .ix-wipe-ink,
+  .ix-wipe-cream {
+    background-image: linear-gradient(var(--ix-fill), var(--ix-fill));
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: 0% 100%;
+  }
+  .ix-wipe-ink {
+    --ix-fill: var(--color-ink);
+    --ix-on: var(--color-cream);
+  }
+  .ix-wipe-cream {
+    --ix-fill: var(--color-cream);
+    --ix-on: var(--color-ink);
+  }
+
+  .ix-rule,
+  .ix-draw {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: left bottom;
+    /* Elements with a (transparent) bottom border paint the rule in it. */
+    background-origin: border-box;
+  }
+  .ix-rule {
+    /* Replaces `border-b-2 border-ink`: same 2px box, rule painted by the background. */
+    border-bottom: 2px solid transparent;
+    background-size: 100% 2px;
+  }
+  .ix-draw {
+    background-size: 0% 2px;
+  }
+  .ix-arrow,
+  .ix-arrow-ne,
+  .ix-play-glyph {
+    display: inline-block;
+  }
+
+  @media (hover: hover) {
+    .ix-lift:not(:disabled, [aria-disabled='true']):hover,
+    .ix-group:hover .ix-lift {
+      translate: 0 -2px;
+      box-shadow: var(--ix-lift-shadow);
+    }
+    :is(.ix-wipe-ink, .ix-wipe-cream):not(:disabled, [aria-disabled='true']):hover,
+    .ix-group:hover :is(.ix-wipe-ink, .ix-wipe-cream) {
+      background-size: 100% 100%;
+      color: var(--ix-on);
+    }
+    .ix-rule:hover,
+    :is(a, button):hover .ix-rule {
+      animation: ix-rule-draw var(--dur-fast) var(--ease-out);
+    }
+    .ix-draw:hover,
+    :is(a, button):hover .ix-draw {
+      background-size: 100% 2px;
+    }
+    :is(a, button:not(:disabled), summary, .ix-group):hover .ix-arrow {
+      translate: 4px 0;
+    }
+    :is(a, button:not(:disabled), summary, .ix-group):hover .ix-arrow-ne {
+      translate: 3px -3px;
+    }
+    .ix-group:hover .ix-play {
+      background-color: var(--color-ground-accent);
+      color: var(--color-cream);
+    }
+    .ix-group:hover .ix-play-glyph {
+      translate: 2px 0;
+    }
+  }
+
+  /* Keyboard focus mirrors hover (the global ring is added on top). */
+  .ix-lift:not(:disabled, [aria-disabled='true']):focus-visible,
+  .ix-group:is(:focus-visible, :has(:focus-visible)) .ix-lift {
+    translate: 0 -2px;
+    box-shadow: var(--ix-lift-shadow);
+  }
+  :is(.ix-wipe-ink, .ix-wipe-cream):not(:disabled, [aria-disabled='true']):focus-visible,
+  .ix-group:is(:focus-visible, :has(:focus-visible)) :is(.ix-wipe-ink, .ix-wipe-cream) {
+    background-size: 100% 100%;
+    color: var(--ix-on);
+  }
+  .ix-rule:focus-visible,
+  :is(a, button):focus-visible .ix-rule {
+    animation: ix-rule-draw var(--dur-fast) var(--ease-out);
+  }
+  .ix-draw:focus-visible,
+  :is(a, button):focus-visible .ix-draw,
+  .ix-draw:is([aria-current='page'], [aria-current='true']),
+  :is([aria-current='page'], [aria-current='true']) .ix-draw {
+    background-size: 100% 2px;
+  }
+  :is(a, button, summary, .ix-group):focus-visible .ix-arrow,
+  .ix-group:is(:focus-visible, :has(:focus-visible)) .ix-arrow {
+    translate: 4px 0;
+  }
+  :is(a, button, summary, .ix-group):focus-visible .ix-arrow-ne,
+  .ix-group:is(:focus-visible, :has(:focus-visible)) .ix-arrow-ne {
+    translate: 3px -3px;
+  }
+  .ix-group:is(:focus-visible, :has(:focus-visible)) .ix-play {
+    background-color: var(--color-ground-accent);
+    color: var(--color-cream);
+  }
+  .ix-group:is(:focus-visible, :has(:focus-visible)) .ix-play-glyph {
+    translate: 2px 0;
+  }
+
+  /* Press (touch too): down 1px, shadow off. After hover/focus so it wins. */
+  :is(.ix-lift, .ix-wipe-ink, .ix-wipe-cream):not(:disabled, [aria-disabled='true']):active,
+  .ix-group:active :is(.ix-lift, .ix-wipe-ink, .ix-wipe-cream) {
+    translate: 0 1px;
+    box-shadow: none;
+  }
+
+  /* Reduced motion: colour/fill changes stay (made instant by the base rule);
+     no lift, press, redraw or arrow travel. The lift's shadow stays as a static cue. */
+  @media (prefers-reduced-motion: reduce) {
+    .ix-lift,
+    .ix-wipe-ink,
+    .ix-wipe-cream,
+    .ix-arrow,
+    .ix-arrow-ne,
+    .ix-play-glyph {
+      translate: none !important;
+    }
+    .ix-rule {
+      animation: none !important;
+    }
+  }
+}
+
+@keyframes ix-rule-draw {
+  from {
+    background-size: 0% 2px;
+  }
+}

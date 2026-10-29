@@ -3,10 +3,11 @@ import React from 'react'
 import { Container, ButtonLink } from '@/components/ui'
 import { getChrome, toNavItem, toNavItems } from '@/lib/chrome'
 import { getSeoDefaults, siteName } from '@/lib/metadata'
+import { getRequestPath } from '@/lib/requestPath'
 
 import { HIT_AREA } from './hit'
 import { MobileNav } from './MobileNav'
-import { NavLink } from './NavLink'
+import { NavLink, navCurrent } from './NavLink'
 import { SiteLogo } from './SiteLogo'
 
 export type HeaderVariant = 'standard' | 'logo-only' | 'none'
@@ -42,6 +43,7 @@ export async function SiteHeader({ variant = 'standard' }: { variant?: HeaderVar
   const homeLabel = `${siteName(await getSeoDefaults())} home`
   const links = toNavItems(navigation.header?.links)
   const cta = toNavItem(navigation.header?.cta)
+  const path = await getRequestPath()
   const linkClass = `${HIT_AREA} inline-flex min-h-target items-center text-[15px] font-medium text-ink no-underline`
 
   return (
@@ -51,7 +53,7 @@ export async function SiteHeader({ variant = 'standard' }: { variant?: HeaderVar
         {links.length > 0 || cta ? (
           <nav aria-label="Main" className="hidden items-center gap-7 md:flex">
             {links.map((item) => (
-              <NavLink key={item.href + item.label} item={item} className={linkClass} />
+              <NavLink key={item.href + item.label} item={item} draw current={navCurrent(item.href, path)} className={linkClass} />
             ))}
             {cta ? <ButtonLink link={navigation.header?.cta} variant="primary" size="sm" /> : null}
           </nav>
@@ -66,6 +68,8 @@ export async function SiteHeader({ variant = 'standard' }: { variant?: HeaderVar
                 <NavLink
                   key={item.href + item.label}
                   item={item}
+                  draw
+                  current={navCurrent(item.href, path)}
                   className="flex min-h-12 items-center border-b border-divider text-body-mobile text-ink no-underline"
                 />
               ))}

@@ -1,5 +1,6 @@
 // Shared UI primitives (B0). Blocks compose these; they never fork or restyle them.
 export { AccentHeadline } from './AccentHeadline'
+export { ArrowText } from './ArrowText'
 export { Button, ButtonLink, buttonClasses, type ButtonSize, type ButtonVariant } from './Button'
 export { CMSLink, resolveLinkHref, type CMSLinkData } from './CMSLink'
 export { Container } from './Container'

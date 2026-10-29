@@ -23,7 +23,7 @@ const LOGO_MASK: React.CSSProperties = {
 }
 
 /** Legal.dc.html links in the document: bold with a 2px ink rule beneath. */
-const LINK_CLASS = 'border-b-2 border-ink font-bold no-underline'
+const LINK_CLASS = 'ix-rule font-bold no-underline'
 
 /**
  * Anchored H2s clear the sticky chrome: mobile header 60 + section nav 45 (+16);
@@ -87,7 +87,7 @@ function SectionRail({ anchors, label }: { anchors: LegalAnchor[]; label: string
               href={`#${a.id}`}
               className="inline-flex min-h-target items-center whitespace-nowrap px-2.5 py-3.25 text-[0.8125rem] font-bold no-underline"
             >
-              {a.label}
+              <span className="ix-draw">{a.label}</span>
             </a>
           </li>
         ))}
@@ -113,7 +113,7 @@ function SectionSidebar({ anchors, label }: { anchors: LegalAnchor[]; label: str
         {anchors.map((a) => (
           <li key={a.id}>
             <a href={`#${a.id}`} className="flex min-h-target items-center px-5 py-2.5 text-small no-underline">
-              {a.label}
+              <span className="ix-draw">{a.label}</span>
             </a>
           </li>
         ))}

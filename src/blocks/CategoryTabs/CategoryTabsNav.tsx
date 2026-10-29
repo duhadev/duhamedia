@@ -65,7 +65,9 @@ export function CategoryTabsNav({ ariaLabel, tabs }: { ariaLabel: string; tabs: 
                 aria-current={on ? 'location' : undefined}
                 onClick={(e) => onClick(e, t.anchorId)}
                 className={cx(
-                  'inline-flex min-h-target shrink-0 items-center rounded-full border-2 border-ink px-4 text-[13px] font-bold whitespace-nowrap text-ink no-underline',
+                  // ix-draw: on hover an ink rule draws in along the (transparent) desktop bottom border; the active
+                  // tab keeps its solid border. On the mobile pills the rule sits under the opaque pill border.
+                  'ix-draw inline-flex min-h-target shrink-0 items-center rounded-full border-2 border-ink px-4 text-[13px] font-bold whitespace-nowrap text-ink no-underline',
                   'md:min-h-11.5 md:rounded-none md:border-0 md:border-b-2 md:px-[18px] md:py-3.5 md:text-sm',
                   on
                     ? 'bg-ink text-cream md:border-ground-accent md:bg-transparent md:text-ink'

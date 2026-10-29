@@ -188,7 +188,7 @@ const LOGO_MASK: React.CSSProperties = {
 
 const SECTION_LABEL = 'text-[10px] font-bold uppercase tracking-[0.1em] text-gray-warm'
 const SITE_ROW =
-  'flex min-h-16 items-center gap-3.5 border border-divider p-4.5 text-ink no-underline transition-colors duration-180 hover:bg-gray-light hover:text-ink'
+  'flex min-h-16 items-center gap-3.5 border border-divider p-4.5 text-ink no-underline transition-colors duration-180 ease-out hover:bg-gray-light hover:text-ink focus-visible:bg-gray-light'
 
 /** Pure render (exported for previews/tests): everything resolved, no I/O. */
 export function LinkStackView({
@@ -259,10 +259,10 @@ export function LinkStackView({
         <div className="flex flex-col gap-2">
           <CMSLink
             link={primary?.link}
-            className="flex min-h-target items-center justify-between gap-3.5 bg-ink px-5 py-5.5 text-cream no-underline transition-colors duration-180 hover:bg-wine hover:text-cream md:py-6"
+            className="ix-lift flex min-h-target items-center justify-between gap-3.5 bg-ink px-5 py-5.5 text-cream no-underline md:py-6"
           >
             <span className="font-display text-[1.5rem] leading-[1.05] font-normal uppercase">{primary?.link?.label}</span>
-            <Icon name="arrow-up-right" className="size-6.5" />
+            <Icon name="arrow-up-right" className="ix-arrow-ne size-6.5" />
           </CMSLink>
           {capacity ? <CapacityLine c={capacity} /> : null}
         </div>
@@ -278,14 +278,14 @@ export function LinkStackView({
                 <li key={s.id ?? i}>
                   <CMSLink
                     link={{ type: 'custom', url: s.url, label: s.handle, newTab: true }}
-                    className="flex min-h-15 items-center gap-3.5 bg-gray-light px-4.5 py-4 text-ink no-underline transition-colors duration-180 hover:bg-ink hover:text-cream"
+                    className="ix-lift flex min-h-15 items-center gap-3.5 bg-gray-light px-4.5 py-4 text-ink no-underline"
                   >
                     <Icon name={s.platform} className="size-6" />
                     <span className="min-w-0 font-display text-[1.125rem] leading-[1.15] font-normal break-words uppercase">
                       <span className="sr-only">{PLATFORM_NAMES[s.platform] ?? s.platform}: </span>
                       {s.handle}
                     </span>
-                    <Icon name="arrow-up-right" className="ml-auto size-4" />
+                    <Icon name="arrow-up-right" className="ix-arrow-ne ml-auto size-4" />
                   </CMSLink>
                 </li>
               ))}
@@ -321,7 +321,7 @@ function SiteRow({ icon, link, extra }: { icon: string; link: CMSLinkData; extra
         {link.label}
         {extra ? <span className="sr-only">: {extra}</span> : null}
       </span>
-      <Icon name={external ? 'arrow-up-right' : 'arrow-right'} className={cx('ml-auto', external ? 'size-4' : 'size-4.5')} />
+      <Icon name={external ? 'arrow-up-right' : 'arrow-right'} className={cx('ml-auto', external ? 'ix-arrow-ne size-4' : 'ix-arrow size-4.5')} />
     </CMSLink>
   )
   // CMSLink renders nothing for an unresolved link; skip the <li> too so the list has no empty items.

@@ -39,7 +39,7 @@ const SOCIAL: Record<Platform, { label: string; path: string }> = {
 // Padding on the anchor gives the 44px target; the underline lives on the inner
 // span so the look is unchanged.
 const LINK_CLASS = 'inline-block py-3 text-[15px] font-bold text-ink no-underline'
-const LINK_TEXT_CLASS = 'border-b-2 border-ink py-1'
+const LINK_TEXT_CLASS = 'ix-rule py-1'
 
 function IntroLink({ link, className }: { link: TeamIntroData['link']; className: string }) {
   const label = resolveLinkHref(link) ? link?.label?.trim() : ''
