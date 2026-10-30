@@ -132,6 +132,7 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 | 2026-10-29 | v1.0.10 (42286d4) | yes ("push to prod") | Fluid phone H1 (`--text-h1-mobile` clamp live in CSS), mobile hero-shape lift reverted; `/`, `/admin`, `/api/health` 200. Phone hero animation verified on prod (t0 2.16s); dev server mistimes it (late CSS injection, dev-only) |
 | 2026-10-29 | v1.0.11 (27778a9) | yes ("push the prod") | TwoTrack cards + services chips (migration 20261029_155251 in prod build), price box removed, founder Read more, mobile titles text-pretty, footer mobile layout; `/`, `/about`, `/admin`, `/api/health` 200 |
 | 2026-10-29 | v1.0.12 (8973777) | yes ("send it to prod") | PhaseTimeline mobile reading rail; `/`, `/admin`, `/api/health` 200 |
+| 2026-10-30 | v1.0.13 (5ee9fd6) | yes ("push to prod") | Founder Read more toggle below the story; `/`, `/admin`, `/api/health` 200 |
 
 
 ## Decision log
@@ -401,7 +402,7 @@ Decisions deferred to the human; each has a safe default applied so work continu
 | 2026-10-29 | PhaseTimeline accordion, mobile (human: scroll felt weird, wants award-level): root cause = scroll-to-open swapped the open step every 1–2 frames (62px/step), opens (500ms) longer than a step stayed active, content shifted up to 46px against the scroll. Replaced on mobile with a "reading rail": all steps open (no height changes), sticky phase labels + rails that fill as you read (ink, ink, wine), cards rise in and the card on the ~52% reading line lights up; step 08 stays lit. CSS scroll-driven animations (Chrome/Edge 115+, Safari 26+), IntersectionObserver fallback (Firefox). 0px layout jumps; desktop pixel-identical. Deviates from design's mobile accordion (human-ordered). Pinned-stage option rejected (5,000px runway, one step visible). On Preview. | Human. |
 
 ## Session handoff
-- **Last session ended:** 2026-10-29 — /clear point. Site LIVE on Vercel Hobby as v1.0.12 (8973777); `main` = production.
+- **Last session ended:** 2026-10-29 — /clear point. Site LIVE on Vercel Hobby as v1.0.13 (5ee9fd6); `main` = production.
 - **Release recipe:** `git push origin <sha>:refs/heads/production`, tag next `v1.0.x`, verify `/`, `/admin`, `/api/health`, log in Releases. The permission guard blocks the push until the human explicitly approves in chat.
 - **Hero animation:** shipped in v1.0.6 (load-in, 7s alternating logo breaks + synced thick dot pulse, no float; intro at prototype scale with brand tracking).
 - **Map:** `brand-assets/duha-service-area-map.{png,svg}` (OSM, Google-Maps style, brand palette, Lombard pin, no Chicago label). Generator + cached data in session scratchpad (will be lost on reboot; regen needs Overpass refetch). Human uploads it to Home → TeamIntro photo.
