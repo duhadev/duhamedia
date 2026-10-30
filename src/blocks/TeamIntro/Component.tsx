@@ -5,6 +5,8 @@ import { AccentHeadline, ButtonLink, CMSLink, Container, Eyebrow, Media, Section
 import { resolveLinkHref } from '@/components/ui/CMSLink'
 import type { Media as MediaDoc, TeamMember } from '@/payload-types'
 
+import { StoryMore } from './StoryMore'
+
 type TeamIntroData = BlockData<'teamIntro'>
 
 type Platform = NonNullable<TeamMember['socials']>[number]['platform']
@@ -69,8 +71,8 @@ const STORY_P = 'max-w-[68ch] whitespace-pre-line text-body-mobile leading-[1.7]
 
 /**
  * Founder story with "Read more" (human, 2026-10-29): the first paragraph always shows, the rest
- * sits in a native <details> (no JS, keyboard + screen-reader friendly, all text in the DOM).
- * One paragraph only: plain text, no toggle. Paragraphs = blank-line separated.
+ * opens from a toggle that sits under the text (StoryMore). One paragraph only: plain text, no
+ * toggle. Paragraphs = blank-line separated.
  */
 function FounderStory({ body }: { body: string }) {
   const [first, ...rest] = body.split(/\n[ \t]*\n/).map((p) => p.trim()).filter(Boolean)
@@ -78,22 +80,13 @@ function FounderStory({ body }: { body: string }) {
   return (
     <>
       <p className={STORY_P}>{first}</p>
-      <details className="tm-story group">
-        <summary className="mt-3 inline-flex min-h-target cursor-pointer list-none items-center gap-2 font-bold text-ink [&::-webkit-details-marker]:hidden">
-          <span className="ix-rule py-1 group-open:hidden">Read more</span>
-          <span className="ix-rule hidden py-1 group-open:inline">Show less</span>
-          <svg aria-hidden="true" viewBox="0 0 24 24" className="size-4 transition-transform duration-180 ease-out group-open:rotate-180" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
-            <path d="M6 9l6 6 6-6" />
-          </svg>
-        </summary>
-        <div className="flex flex-col gap-4 pt-2">
-          {rest.map((p, i) => (
-            <p key={i} className={STORY_P}>
-              {p}
-            </p>
-          ))}
-        </div>
-      </details>
+      <StoryMore>
+        {rest.map((p, i) => (
+          <p key={i} className={STORY_P}>
+            {p}
+          </p>
+        ))}
+      </StoryMore>
     </>
   )
 }

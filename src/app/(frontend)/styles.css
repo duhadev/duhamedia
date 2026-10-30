@@ -384,26 +384,3 @@
     background-size: 0% 2px;
   }
 }
-
-/* TeamIntro founder story "Read more" (<details>): smooth open where the browser can animate
-   to `height: auto` (interpolate-size + ::details-content); elsewhere it opens instantly. */
-@supports (interpolate-size: allow-keywords) {
-  .tm-story {
-    interpolate-size: allow-keywords;
-  }
-  .tm-story::details-content {
-    height: 0;
-    overflow: hidden;
-    transition:
-      height 450ms var(--ease-out),
-      content-visibility 450ms allow-discrete;
-  }
-  .tm-story[open]::details-content {
-    height: auto;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .tm-story::details-content {
-    transition: none;
-  }
-}
