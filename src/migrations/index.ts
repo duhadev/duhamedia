@@ -34,6 +34,7 @@ import * as migration_20261028_190000_seed_placeholder_content from './20261028_
 import * as migration_20261029_143150_teamintro_pull_quote from './20261029_143150_teamintro_pull_quote';
 import * as migration_20261029_145749_proofstrip_numbers_on_block from './20261029_145749_proofstrip_numbers_on_block';
 import * as migration_20261029_155251_twotrack_services_chips from './20261029_155251_twotrack_services_chips';
+import * as migration_20261107_150000_copy_round_01 from './20261107_150000_copy_round_01';
 
 export const migrations = [
   {
@@ -215,5 +216,10 @@ export const migrations = [
     up: migration_20261029_155251_twotrack_services_chips.up,
     down: migration_20261029_155251_twotrack_services_chips.down,
     name: '20261029_155251_twotrack_services_chips'
+  },
+  {
+    up: migration_20261107_150000_copy_round_01.up,
+    down: migration_20261107_150000_copy_round_01.down,
+    name: '20261107_150000_copy_round_01'
   },
 ];
