@@ -134,6 +134,7 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 | 2026-10-29 | v1.0.11 (27778a9) | yes ("push the prod") | TwoTrack cards + services chips (migration 20261029_155251 in prod build), price box removed, founder Read more, mobile titles text-pretty, footer mobile layout; `/`, `/about`, `/admin`, `/api/health` 200 |
 | 2026-10-29 | v1.0.12 (8973777) | yes ("send it to prod") | PhaseTimeline mobile reading rail; `/`, `/admin`, `/api/health` 200 |
 | 2026-10-30 | v1.0.13 (5ee9fd6) | yes ("push to prod") | Founder Read more toggle below the story; `/`, `/admin`, `/api/health` 200 |
+| 2026-11-07 | v1.0.14 (4940889) | yes ("Apply it fully without approval" + "push it to production") | Copy round 1 migration: prod applied 44, skipped 0 (Preview 39 / home skipped, seed layout). Live check: 14 pages clean of brackets + banned words, `/lp/sample-campaign` 404, sitemap drops testimonials/reviews/thank-you/links, `/admin` + `/api/health` 200 |
 
 
 ## Decision log
