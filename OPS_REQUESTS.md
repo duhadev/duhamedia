@@ -36,10 +36,11 @@ Requests from the duhamedia.com build to the server agent, relayed by the human.
 - **Needed from you:** a GHCR read token on the server for pulls (token name only here).
 - **Done when:** you confirm the script matches this contract.
 
-## #4 — Nextcloud booking · 2026-10-17 · Open (server agent; unchanged)
+## #4 — Nextcloud booking · 2026-10-17 · **Resolved 2026-11-08** (URL from the human)
 - **What:** the public Nextcloud Calendar Appointments booking URL (`/index.php/apps/calendar/appointment/<token>`), to store in `site-settings.bookingUrl`.
 - **Finding to confirm:** from the Nextcloud Calendar source, appointment pages send `frame-ancestors 'self'` with no admin setting to change it, and offer no post-booking redirect. The site will therefore **link out** to the booking page (no iframe): the link opens Nextcloud in a new tab and sends the original tab to `/thank-you` (decided 2026-10-17; the pre-call homework form is off at launch). Please confirm, and **do not** add reverse-proxy header rewrites to force framing.
 - **Done when:** URL provided and finding confirmed (or corrected).
+- **Resolved 2026-11-08:** `https://office.duhamedia.com/apps/calendar/appointment/bsWjWXp25db4` (Nextcloud Calendar built-in Appointments; path without `/index.php`). Verified logged-out: 200, booking page renders, `X-Frame-Options: SAMEORIGIN` → link-out confirmed. Since v1.0.15 the link-out keeps the visitor on /book-a-call (stepped flow), it no longer sends the tab to /thank-you. Human pastes it in Site settings → Booking; the case-study data migration also sets it if still empty. Server agent: confirm Nextcloud outgoing mail works (attendees must click an email confirmation before a booking is accepted) and that Calendar is not group-limited (calendar#7995).
 
 ## #5 — Cloudflare dashboard items (human) · 2026-10-17 · Superseded 2026-10-28 (see #16 / DECISIONS §R)
 - **Turnstile:** create a widget for `duhamedia.com` and `staging.duhamedia.com`; values go into `TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` in each `.env`.
