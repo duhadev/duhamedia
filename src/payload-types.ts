@@ -2868,6 +2868,10 @@ export interface RichContentBlock {
    */
   variant: 'article' | 'band' | 'legal';
   /**
+   * Narrow is the case-study reading column. Wide lines the text up with a full-width page header and, on desktop, puts each numbered section title in a column to the left of its text (used on About).
+   */
+  width?: ('narrow' | 'wide') | null;
+  /**
    * Optional small uppercase line above the heading.
    */
   eyebrow?: string | null;
@@ -3385,7 +3389,7 @@ export interface BookingEmbedBlock {
    */
   newTabLabel?: string | null;
   /**
-   * After the visitor clicks the booking button, this tab moves to this page while the calendar opens in a new tab. Leave empty to use the page at /thank-you. If that page is not published, this tab stays put.
+   * After the visitor clicks the booking button, this tab moves to this page while the calendar opens in a new tab. Leave empty to use the page at /thank-you. If that page is not published, this tab stays put. Not used by the step-by-step flow (the visitor stays on the page and moves to the homework step).
    */
   thankYouPage?: (number | null) | Page;
   /**
@@ -3424,6 +3428,97 @@ export interface BookingEmbedBlock {
      */
     url?: string | null;
     label?: string | null;
+  };
+  flow?: {
+    /**
+     * On: this widget is the whole booking section and shows one step at a time on a white ground. Step 1 is the booking panel above; the visitor moves on with the "I've booked my call" button; sending the homework moves them to the last step. Off: the booking panel alone on a grey band.
+     */
+    enabled?: boolean | null;
+    /**
+     * Names in the step bar at the top.
+     */
+    bookLabel?: string | null;
+    homeworkLabel?: string | null;
+    nextLabel?: string | null;
+    /**
+     * Step 1: the button that moves on to the homework. It appears once the visitor has opened the calendar (or beside an embedded calendar). Not shown while booking is offline.
+     */
+    bookedLabel?: string | null;
+    /**
+     * Step 2: goes back to the booking step.
+     */
+    backLabel?: string | null;
+    /**
+     * Step 1: small line under the booking panel, e.g. "Have a quick question first?". Leave empty for none. Hidden while booking is offline (that panel already links to Contact).
+     */
+    questionText?: string | null;
+    /**
+     * Usually "Contact us", linking to the Contact page.
+     */
+    questionLink?: {
+      type: 'internal' | 'custom';
+      newTab?: boolean | null;
+      reference?:
+        | ({
+            relationTo: 'pages';
+            value: number | Page;
+          } | null)
+        | ({
+            relationTo: 'case-studies';
+            value: number | CaseStudy;
+          } | null)
+        | ({
+            relationTo: 'posts';
+            value: number | Post;
+          } | null)
+        | ({
+            relationTo: 'lead-magnets';
+            value: number | LeadMagnet;
+          } | null);
+      /**
+       * https://…, mailto:…, or a site path like /book-a-call.
+       */
+      url?: string | null;
+      label?: string | null;
+    };
+    /**
+     * Step 2: the form to show (Forms collection, usually "Pre-call homework"). Its questions and the message shown after sending are edited on the form. Leave empty to skip this step.
+     */
+    homeworkForm?: (number | null) | Form;
+    /**
+     * Step 2: small uppercase line above the heading, e.g. "Pre-call homework". Optional.
+     */
+    homeworkEyebrow?: string | null;
+    /**
+     * Step 2: the heading above the form.
+     */
+    homeworkHeading?: string | null;
+    /**
+     * Step 2: optional short line under the heading.
+     */
+    homeworkBody?: string | null;
+    /**
+     * Step 2: text on the send button. Leave empty to use the label set on the form.
+     */
+    homeworkSubmitLabel?: string | null;
+    /**
+     * Step 3: heading, e.g. "What happens next". The form's own "sent" message shows above it.
+     */
+    nextHeading?: string | null;
+    /**
+     * Step 3: optional short line under the heading.
+     */
+    nextBody?: string | null;
+    /**
+     * Step 3: a short numbered list. Add, remove or drag to reorder.
+     */
+    nextSteps?:
+      | {
+          title: string;
+          detail?: string | null;
+          id?: string | null;
+        }[]
+      | null;
   };
   id?: string | null;
   blockName?: string | null;
@@ -4941,6 +5036,7 @@ export interface TeamIntroBlockSelect<T extends boolean = true> {
  */
 export interface RichContentBlockSelect<T extends boolean = true> {
   variant?: T;
+  width?: T;
   eyebrow?: T;
   eyebrowTick?: T;
   heading?: T;
@@ -5132,6 +5228,40 @@ export interface BookingEmbedBlockSelect<T extends boolean = true> {
         reference?: T;
         url?: T;
         label?: T;
+      };
+  flow?:
+    | T
+    | {
+        enabled?: T;
+        bookLabel?: T;
+        homeworkLabel?: T;
+        nextLabel?: T;
+        bookedLabel?: T;
+        backLabel?: T;
+        questionText?: T;
+        questionLink?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+        homeworkForm?: T;
+        homeworkEyebrow?: T;
+        homeworkHeading?: T;
+        homeworkBody?: T;
+        homeworkSubmitLabel?: T;
+        nextHeading?: T;
+        nextBody?: T;
+        nextSteps?:
+          | T
+          | {
+              title?: T;
+              detail?: T;
+              id?: T;
+            };
       };
   id?: T;
   blockName?: T;

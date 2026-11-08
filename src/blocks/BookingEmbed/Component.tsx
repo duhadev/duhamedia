@@ -4,9 +4,13 @@ import React from 'react'
 
 import type { BlockData } from '@/blocks/types'
 
-import { AccentHeadline, CMSLink, DotMatrix, resolveLinkHref, Section } from '@/components/ui'
+import { CMSForm, type PayloadFormClassNames } from '@/components/forms'
+import { RichText, type RichTextData } from '@/components/RichText'
+import { AccentHeadline, CMSLink, DotMatrix, Eyebrow, resolveLinkHref, Section } from '@/components/ui'
+import { cx } from '@/lib/cx'
 import { docPath } from '@/lib/docPath'
 
+import { BookingFlow, type FlowStep } from './BookingFlow'
 import { BookingLaunchLink } from './BookingLaunchLink'
 
 /** The generated `bookingEmbed` row type (src/payload-types.ts `BookingEmbedBlock`). */
@@ -183,15 +187,22 @@ export async function BookingEmbedBlock({
   fallbackBody,
   fallbackLink,
   id,
+  flow: flowData,
   settingsOverride,
 }: BookingEmbedData & { settingsOverride?: BookingSettingsOverride }) {
-  const { bookingUrl, bookingMode, thankYouHref } = settingsOverride
+  const flow = flowData?.enabled === true ? flowData : null
+  const loaded = settingsOverride
     ? {
         bookingUrl: safeBookingUrl(settingsOverride.bookingUrl),
         bookingMode: settingsOverride.bookingMode ?? 'link-out',
         thankYouHref: settingsOverride.thankYouHref ?? null,
       }
     : await load(thankYouPage)
+  const { bookingUrl, bookingMode } = loaded
+  // The flow keeps the visitor on this page (step 2 is the homework), so no move to Thank You.
+  const thankYouHref = flow ? null : loaded.thankYouHref
+  // Homework + next steps only exist while booking is online: offline, step 1 (write to us) is the whole widget.
+  const homework = flow && bookingUrl ? await loadHomework(flow.homeworkForm) : null
 
   return (
     <BookingEmbedView
@@ -199,7 +210,105 @@ export async function BookingEmbedBlock({
       bookingUrl={bookingUrl}
       bookingMode={bookingMode}
       thankYouHref={thankYouHref}
+      flow={flow}
+      homework={homework}
     />
+  )
+}
+
+type FlowData = NonNullable<BookingEmbedData['flow']>
+type Homework = { id: number; message: RichTextData | null }
+
+/** Trusted read of the homework form (forms are staff-read): existence + its own "sent" message. */
+async function loadHomework(value: FlowData['homeworkForm']): Promise<Homework | null> {
+  const id = typeof value === 'object' && value !== null ? value.id : value
+  if (typeof id !== 'number') return null
+  try {
+    const payload = await getPayload({ config })
+    const doc = await payload.findByID({ collection: 'forms', id, depth: 0, disableErrors: true, overrideAccess: true })
+    if (!doc) {
+      console.error(`[BookingEmbed] flow homework form ${id} not found (deleted?); homework step skipped`)
+      return null
+    }
+    const message = doc.confirmationType !== 'redirect' && doc.confirmationMessage ? (doc.confirmationMessage as RichTextData) : null
+    return { id, message }
+  } catch (error) {
+    console.error('[BookingEmbed] could not load the flow homework form; step skipped', error instanceof Error ? error.name : error)
+    return null
+  }
+}
+
+/** Steps 2 and 3 sit in the same 2px ink frame as the booking panel, on white. */
+const FRAME = 'relative border-2 border-ink bg-cream px-6 pb-8 pt-7 md:px-12 md:py-12'
+
+/** FormEmbed `standard` form slots (FormEmbed/Component.tsx `standardForm`): same look as the homework form had. */
+const HOMEWORK_FORM: PayloadFormClassNames = {
+  fields: 'flex flex-wrap gap-x-4 gap-y-5',
+  submit: 'w-full md:w-auto md:self-start',
+}
+
+const CHECK = (
+  <svg aria-hidden="true" viewBox="0 0 256 256" fill="currentColor" className="mt-0.5 size-5 shrink-0 text-success-strong">
+    <path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z" />
+  </svg>
+)
+
+function HomeworkStep({ flow, formId }: { flow: FlowData; formId: number }) {
+  const eyebrow = flow.homeworkEyebrow?.trim()
+  const title = flow.homeworkHeading?.trim()
+  const lead = flow.homeworkBody?.trim()
+  return (
+    <div className={FRAME}>
+      {eyebrow ? <Eyebrow muted>{eyebrow}</Eyebrow> : null}
+      {title ? <AccentHeadline text={title} level={2} as="h2" className={eyebrow ? 'mt-4' : undefined} /> : null}
+      {lead ? <p className="mt-4 max-w-[48ch] whitespace-pre-line text-body-mobile md:text-body">{lead}</p> : null}
+      <div className={eyebrow || title || lead ? 'mt-8' : undefined}>
+        <CMSForm
+          form={formId}
+          submitLabel={flow.homeworkSubmitLabel?.trim() || undefined}
+          tone="light"
+          submitVariant="dark"
+          submitSize="md"
+          classNames={HOMEWORK_FORM}
+          confirmationHeadingTag={title ? 'h3' : 'h2'}
+        />
+      </div>
+    </div>
+  )
+}
+
+function NextStep({ flow, message }: { flow: FlowData; message: RichTextData | null }) {
+  const title = flow.nextHeading?.trim()
+  const lead = flow.nextBody?.trim()
+  const items = (flow.nextSteps ?? []).filter((s) => s.title?.trim())
+  return (
+    <div className={FRAME}>
+      {message ? (
+        <div className="mb-8 flex items-start gap-3 border border-success-strong bg-success-tint p-4 text-body-mobile text-success-deep md:px-6">
+          {CHECK}
+          <div className="[&_p+p]:mt-2">
+            <RichText data={message} disableContainer />
+          </div>
+        </div>
+      ) : null}
+      {title ? <AccentHeadline text={title} level={2} as="h2" /> : null}
+      {lead ? <p className="mt-4 max-w-[48ch] whitespace-pre-line text-body-mobile md:text-body">{lead}</p> : null}
+      {items.length > 0 ? (
+        <ol className={cx('border-t border-divider', title || lead ? 'mt-6' : undefined)}>
+          {items.map((s, i) => (
+            <li key={s.id ?? i} className="grid grid-cols-[2.25rem_1fr] gap-x-3 border-b border-divider py-4 md:grid-cols-[3rem_1fr] md:py-5">
+              <span aria-hidden="true" className="pt-1 font-mono text-[11px] uppercase tracking-[0.14em] text-gray-warm md:text-xs">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <div>
+                <p className="font-display text-[1.1rem] uppercase leading-tight tracking-headline md:text-[1.25rem]">{s.title}</p>
+                {s.detail?.trim() ? <p className="mt-1.5 whitespace-pre-line text-body-mobile text-gray-warm">{s.detail}</p> : null}
+              </div>
+            </li>
+          ))}
+        </ol>
+      ) : null}
+    </div>
   )
 }
 
@@ -218,10 +327,14 @@ function BookingEmbedView({
   bookingUrl,
   bookingMode,
   thankYouHref,
-}: Omit<BookingEmbedData, 'thankYouPage' | 'blockType'> & {
+  flow,
+  homework,
+}: Omit<BookingEmbedData, 'thankYouPage' | 'blockType' | 'flow'> & {
   bookingUrl: string | null
   bookingMode: BookingMode
   thankYouHref: string | null
+  flow?: FlowData | null
+  homework?: Homework | null
 }) {
   const instance = React.useId().replace(/[^a-zA-Z0-9]/g, '')
   const headingId = `booking-${id ?? `panel-${instance}`}`
@@ -303,6 +416,50 @@ function BookingEmbedView({
       ) : (
         linkOut
       )
+  }
+
+  if (flow) {
+    const question = flow.questionText?.trim()
+    const questionLink = flow.questionLink && resolveLinkHref(flow.questionLink) && flow.questionLink.label?.trim() ? flow.questionLink : null
+    const steps: FlowStep[] = [
+      {
+        kind: 'book',
+        label: flow.bookLabel?.trim() || 'Book',
+        node: content,
+        // Offline, the fallback panel already links to Contact: no second line.
+        after:
+          bookingUrl && (question || questionLink) ? (
+            <p className="mt-6 flex flex-wrap items-center gap-x-2 text-small-mobile text-gray-warm md:justify-center md:text-small">
+              {question ? <span>{question}</span> : null}
+              {questionLink ? (
+                <CMSLink link={questionLink} className="ix-rule inline-flex min-h-target items-center font-bold text-ink no-underline">
+                  {questionLink.label}
+                </CMSLink>
+              ) : null}
+            </p>
+          ) : null,
+      },
+    ]
+    if (bookingUrl && homework) {
+      steps.push({ kind: 'form', label: flow.homeworkLabel?.trim() || 'Homework', node: <HomeworkStep flow={flow} formId={homework.id} />, formId: homework.id })
+    }
+    if (bookingUrl && (flow.nextHeading?.trim() || flow.nextSteps?.length || homework?.message)) {
+      steps.push({ kind: 'end', label: flow.nextLabel?.trim() || "What's next", node: <NextStep flow={flow} message={homework?.message ?? null} /> })
+    }
+    return (
+      // White ground, opt-in (the non-flow block keeps its grey band).
+      <Section tone="light" pad="none" className="pb-section-mobile pt-6 md:pb-section md:pt-8" aria-labelledby={headingId}>
+        <div className="mx-auto max-w-205 px-container-mobile md:px-container">
+          <BookingFlow
+            steps={steps}
+            embedded={bookingMode === 'embed'}
+            bookedLabel={flow.bookedLabel?.trim() || "I've booked my call"}
+            backLabel={flow.backLabel?.trim() || 'Back'}
+            stepBarLabel="Booking steps"
+          />
+        </div>
+      </Section>
+    )
   }
 
   return (

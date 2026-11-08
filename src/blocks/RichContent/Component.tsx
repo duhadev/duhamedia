@@ -4,6 +4,7 @@ import React from 'react'
 import type { BlockData } from '@/blocks/types'
 import { RichText, type RichTextData } from '@/components/RichText'
 import { AccentHeadline, ButtonLink, Eyebrow, Media, resolveLinkHref, Section } from '@/components/ui'
+import { cx } from '@/lib/cx'
 import type { Media as MediaDoc } from '@/payload-types'
 
 import { RichContentBand } from './Band'
@@ -100,7 +101,7 @@ const makeConverters =
  * wherever it comes from (a block field, or a case study's before / strategy /
  * results narrative). `numbered` adds 01/02/03 above each H2.
  */
-export function ArticleBody({ data, numbered = true }: { data: ArticleBodyData; numbered?: boolean }) {
+export function ArticleBody({ data, numbered = true, wide = false }: { data: ArticleBodyData; numbered?: boolean; wide?: boolean }) {
   return (
     <RichText
       data={data}
@@ -111,6 +112,12 @@ export function ArticleBody({ data, numbered = true }: { data: ArticleBodyData; 
         '[counter-reset:article-section]',
         '[&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_li+li]:mt-2 [&_li]:marker:text-ground-accent',
         '[&_strong]:font-bold',
+        // wide (About): from lg each H2 sits in a left column beside its text. Every non-H2 node
+        // takes column 2; an H2 asks for column 1, which auto-placement can only give it on a new
+        // row, so each section starts level with its title. Sections are separated by row margin.
+        wide
+          ? 'lg:grid lg:max-w-none lg:grid-cols-[minmax(0,17rem)_minmax(0,66ch)] lg:gap-x-14 lg:gap-y-5.5 lg:[&>*]:col-start-2 lg:[&>h2]:col-start-1 lg:[&>h2]:!mt-0 lg:[&>h2:not(:first-child)]:pt-10 lg:[&>h2:not(:first-child)+*]:pt-10'
+          : '',
       ].join(' ')}
     />
   )
@@ -159,17 +166,18 @@ export function RichContentBlock(props: RichContentProps) {
  * renders when the body is empty. The optional closing box (`callout`, p13)
  * follows the prose; without one the markup is exactly the pre-S6 article.
  */
-function RichContentArticle({ eyebrow, eyebrowTick, heading, accentPhrase, numberSections, body, callout }: RichContentProps) {
+function RichContentArticle({ eyebrow, eyebrowTick, heading, accentPhrase, numberSections, body, callout, width }: RichContentProps) {
   const hasBody = Array.isArray(body?.root?.children) && body.root.children.length > 0
   if (!hasBody && !heading) {
     console.warn('[RichContent] block has no text; rendering nothing')
     return null
   }
   const title = heading?.trim()
+  const wide = width === 'wide'
 
   return (
-    <Section tone="light" pad="none" className="pt-8 pb-11 md:pt-10 md:pb-16">
-      <div className="mx-auto w-full max-w-205 px-container-mobile md:px-container">
+    <Section tone="light" pad="none" className={wide ? 'pt-10 pb-14 md:pt-16 md:pb-24' : 'pt-8 pb-11 md:pt-10 md:pb-16'}>
+      <div className={cx('mx-auto w-full px-container-mobile md:px-container', wide ? 'max-w-site' : 'max-w-205')}>
         {eyebrow || title ? (
           <div className="mb-6 md:mb-8">
             {eyebrow ? (
@@ -180,8 +188,10 @@ function RichContentArticle({ eyebrow, eyebrowTick, heading, accentPhrase, numbe
             {title ? <AccentHeadline text={title} accent={accentPhrase} level={3} as="h2" /> : null}
           </div>
         ) : null}
-        {hasBody ? <ArticleBody data={body} numbered={numberSections !== false} /> : null}
-        <ArticleCallout callout={callout} />
+        {hasBody ? <ArticleBody data={body} numbered={numberSections !== false} wide={wide} /> : null}
+        <div className={wide ? 'lg:ml-[calc(17rem+3.5rem)]' : undefined}>
+          <ArticleCallout callout={callout} />
+        </div>
       </div>
     </Section>
   )

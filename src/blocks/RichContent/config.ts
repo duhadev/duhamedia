@@ -132,6 +132,22 @@ export const RichContent: Block = {
           'The text layout. Legal document is for Privacy / Terms / Cookies / GDPR pages and shows the page title itself (no Hero above it).',
       },
     },
+    {
+      name: 'width',
+      type: 'select',
+      label: 'Text width',
+      defaultValue: 'narrow',
+      options: [
+        { label: 'Narrow (820px reading column, centred)', value: 'narrow' },
+        { label: 'Wide (full site width, section titles beside the text on desktop)', value: 'wide' },
+      ],
+      admin: {
+        condition: forVariants('article'),
+        isClearable: false,
+        description:
+          'Narrow is the case-study reading column. Wide lines the text up with a full-width page header and, on desktop, puts each numbered section title in a column to the left of its text (used on About).',
+      },
+    },
     eyebrowRow(),
     ...headingFields(),
     {

@@ -103,6 +103,10 @@ function TypographicHero({
   const buttons = (ctas ?? []).slice(0, 2)
   const figures = stats ?? []
   const phases = (phaseStrip ?? []).slice(0, 3)
+  // Top-level hero rule (/work model): the right-hand column on desktop carries the hero's
+  // figures. With no figures, the phase steps take that column (strip stays under the copy below lg).
+  const phasesAside = !figures.length && phases.length > 0
+  const hasAside = figures.length > 0 || phasesAside
   const pairs = (callouts ?? []).filter((c) => c.label?.trim() && c.text?.trim()).slice(0, 2)
   const ratingText = rating ? `${rating.average} avg · ${rating.count} ${rating.count === 1 ? 'rating' : 'ratings'}` : ''
   const eyebrowText = [eyebrow?.trim(), ratingText].filter(Boolean).join(' · ')
@@ -197,7 +201,7 @@ function TypographicHero({
         ) : null}
         {subNote ? <p style={subNoteSlot} className="hm-enter mt-4 text-small-mobile text-gray-warm md:text-small">{subNote}</p> : null}
       {phases.length ? (
-        <ol style={phasesSlot} className="hm-enter mt-8 grid grid-cols-3 gap-3 md:mt-10 md:gap-6 lg:max-w-190">
+        <ol style={phasesSlot} className={cx('hm-enter mt-8 grid grid-cols-3 gap-3 md:mt-10 md:gap-6 lg:max-w-190', phasesAside && 'lg:hidden')}>
           {phases.map((phase, i) => {
             const last = i === phases.length - 1
             return (
@@ -233,8 +237,8 @@ function TypographicHero({
                 capture
                 ? 'pointer-events-none absolute -right-27.5 -top-37.5 z-0 size-55 md:-right-40 md:-top-20 md:size-85'
                 : 'pointer-events-none absolute -right-27.5 -top-12.5 z-0 size-55 md:-right-40 md:-top-20 md:size-85'
-              : figures.length
-              ? // stats sit in the right column on desktop: park the shape in the corner (Work.dc.html: 300px, right -140, top -60)
+              : hasAside
+              ? // stats (or the phase steps) sit in the right column on desktop: park the shape in the corner (Work.dc.html: 300px, right -140, top -60)
                 'pointer-events-none absolute -right-20 top-22.5 z-0 size-70 lg:-right-35 lg:-top-15 lg:size-75'
               : 'pointer-events-none absolute -right-20 top-22.5 z-0 size-70 lg:right-[8%] lg:top-[46%] lg:size-115 lg:-translate-y-1/2',
           )}
@@ -257,9 +261,26 @@ function TypographicHero({
       ) : null}
       {/* p7 Testimonials.dc.html: hero shares the feed's full container (1200px). It is the only compact hero with the rating flag; p9-p12 stay on the 820px column. */}
       <Wrap compact={compact} capture={capture} narrow={compact && (width ? width === 'narrow' : !figures.length && !showAggregateRating)}>
-        {figures.length ? (
+        {hasAside ? (
           <div className="lg:grid lg:grid-cols-[1fr_320px] lg:items-end lg:gap-14">
             <div>{copy}</div>
+            {phasesAside ? (
+              <ol style={{ '--r': '480ms' } as React.CSSProperties} className="hm-enter hidden border-l-2 border-ink pl-6 lg:flex lg:flex-col lg:gap-5">
+                {phases.map((phase, i) => {
+                  const last = i === phases.length - 1
+                  return (
+                    <li key={phase.id ?? i}>
+                      <span className={cx('block font-display text-h1-mobile', last ? 'text-ground-accent' : 'text-ink')}>{phase.number}</span>
+                      <span className="mt-1 block text-[11px] font-bold uppercase tracking-[0.1em] text-gray-warm">
+                        {phase.label}
+                        {last ? <span aria-hidden="true"> →</span> : null}
+                      </span>
+                    </li>
+                  )
+                })}
+              </ol>
+            ) : null}
+            {figures.length ? (
             <ul style={{ '--r': '480ms' } as React.CSSProperties} className="hm-enter hidden border-l-2 border-ink pl-6 lg:flex lg:flex-col lg:gap-5">
               {figures.map((fig, i) => (
                 <li key={fig.id ?? i}>
@@ -268,6 +289,7 @@ function TypographicHero({
                 </li>
               ))}
             </ul>
+            ) : null}
           </div>
         ) : (
           copy
@@ -280,17 +302,25 @@ function TypographicHero({
 
   // Mobile "Aggregates" strip (Work.dc.html): under the hero, below lg.
   const cols = figures.length <= 3 ? figures.length : 2
+  // Word figures ("Chicago, Illinois", About) do not fit three-up on a phone: stack them below md.
+  const wordy = cols > 1 && figures.some((fig) => (fig.value ?? '').trim().length > 6)
   return (
     <>
       <HeroMotion>{section}</HeroMotion>
       <div className="border-b-2 border-ink lg:hidden">
-        <ul className={cx('grid gap-px bg-divider', cols === 1 ? 'grid-cols-1' : cols === 2 ? 'grid-cols-2' : 'grid-cols-3')}>
+        <ul
+          className={cx(
+            'grid gap-px bg-divider',
+            cols === 1 ? 'grid-cols-1' : cols === 2 ? 'grid-cols-2' : 'grid-cols-3',
+            wordy && 'max-md:grid-cols-1',
+          )}
+        >
           {figures.map((fig, i) => (
             <li
               key={fig.id ?? i}
               className={cx(
                 'bg-cream px-container-mobile py-4 md:px-container',
-                cols === 2 && figures.length % 2 === 1 && i === figures.length - 1 && 'col-span-2',
+                cols === 2 && figures.length % 2 === 1 && i === figures.length - 1 && 'col-span-2 max-md:col-span-1',
               )}
             >
               <span className="block font-display text-[1.75rem] leading-none">{fig.value}</span>
