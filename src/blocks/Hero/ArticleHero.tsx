@@ -41,7 +41,6 @@ function MetaText({ text }: { text: string }) {
  */
 export function ArticleHero({
   eyebrow,
-  eyebrowTick,
   heading,
   accentPhrase,
   body,
@@ -77,7 +76,7 @@ export function ArticleHero({
       <div className="relative z-10 mx-auto max-w-205 px-container-mobile md:px-container">
         {breadcrumb?.length ? <Breadcrumb items={breadcrumb} tone="light" /> : null}
         {eyebrow ? (
-          <Eyebrow tick={eyebrowTick !== false} className="mt-4">
+          <Eyebrow muted className="mt-4">
             {eyebrow}
           </Eyebrow>
         ) : null}

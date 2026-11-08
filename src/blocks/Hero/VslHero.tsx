@@ -19,7 +19,7 @@ import { LOGO_MASK } from './logoMask'
  * Empty state: no (valid) video link -> no tile, logged; a missing poster
  * keeps the tile on its ink ground, logged.
  */
-export function VslHero({ eyebrow, eyebrowTick, heading, video, ctas, geometry }: BlockData<'hero'>) {
+export function VslHero({ eyebrow, heading, video, ctas, geometry }: BlockData<'hero'>) {
   const url = video?.url?.trim()
   const videoId = url ? youtubeVideoId(url) : null
   if (!videoId) console.error(`[Hero] vsl "${heading}": no valid YouTube link set; video tile left out`)
@@ -38,7 +38,7 @@ export function VslHero({ eyebrow, eyebrowTick, heading, video, ctas, geometry }
         />
       ) : null}
       <div className="relative z-10 mx-auto w-full max-w-205 px-container-mobile pt-11 pb-12 md:px-container md:py-16">
-        {eyebrow ? <Eyebrow tick={eyebrowTick !== false}>{eyebrow}</Eyebrow> : null}
+        {eyebrow ? <Eyebrow muted>{eyebrow}</Eyebrow> : null}
         <AccentHeadline
           text={heading}
           level={2}

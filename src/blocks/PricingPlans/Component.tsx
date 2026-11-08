@@ -123,7 +123,7 @@ export function PricingPlansBlock({ anchorId, eyebrow, eyebrowTick, heading, acc
         </div>
 
         {has(statement) ? (
-          <p className="mt-12 max-w-[56rem] font-display text-[1.25rem] leading-[1.3] md:mt-14 md:text-[1.5rem]">
+          <p className="mt-12 font-display text-[1.25rem] leading-[1.3] md:mt-14 md:text-[1.5rem]">
             <Statement text={statement} accent={statementAccent} />
           </p>
         ) : null}

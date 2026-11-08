@@ -74,7 +74,6 @@ async function loadAggregateRating(): Promise<AggregateRating | null> {
  */
 function TypographicHero({
   eyebrow,
-  eyebrowTick,
   heading,
   accentPhrase,
   badge,
@@ -103,10 +102,13 @@ function TypographicHero({
   const buttons = (ctas ?? []).slice(0, 2)
   const figures = stats ?? []
   const phases = (phaseStrip ?? []).slice(0, 3)
-  // Top-level hero rule (/work model): the right-hand column on desktop carries the hero's
-  // figures. With no figures, the phase steps take that column (strip stays under the copy below lg).
-  const phasesAside = !figures.length && phases.length > 0
-  const hasAside = figures.length > 0 || phasesAside
+  // Top-level hero rule (/work model): the right-hand column on desktop carries the hero's figures only.
+  // The phase steps never take that column (owner, 2026-11-08: no 1-2-3 column); they stay under the copy.
+  const hasAside = figures.length > 0
+  // Shape placement: every default hero parks the logo shape in the top-right corner (/work, /about,
+  // /services), except the homepage brand hero, recognised by its side microcopy (Homepage.dc.html pairs
+  // the vertical label with the large centre-right shape).
+  const featureShape = !hasAside && Boolean(verticalMicrocopy?.trim())
   const pairs = (callouts ?? []).filter((c) => c.label?.trim() && c.text?.trim()).slice(0, 2)
   const ratingText = rating ? `${rating.average} avg · ${rating.count} ${rating.count === 1 ? 'rating' : 'ratings'}` : ''
   const eyebrowText = [eyebrow?.trim(), ratingText].filter(Boolean).join(' · ')
@@ -128,7 +130,9 @@ function TypographicHero({
   const copy = (
     <>
         {eyebrowText ? (
-          <Eyebrow tick={eyebrowTick !== false} className="hm-eyebrow">
+          // Hero eyebrows: grey caps, no diamond (owner, 2026-11-08), the TeamIntro "Work with us" label style.
+          // `eyebrowTick` is kept in the schema but no longer read by any hero.
+          <Eyebrow muted className="hm-eyebrow">
             <span className="hm-eyebrow-t">{ratingText ? eyebrowText : eyebrow}</span>
           </Eyebrow>
         ) : null}
@@ -201,7 +205,7 @@ function TypographicHero({
         ) : null}
         {subNote ? <p style={subNoteSlot} className="hm-enter mt-4 text-small-mobile text-gray-warm md:text-small">{subNote}</p> : null}
       {phases.length ? (
-        <ol style={phasesSlot} className={cx('hm-enter mt-8 grid grid-cols-3 gap-3 md:mt-10 md:gap-6 lg:max-w-190', phasesAside && 'lg:hidden')}>
+        <ol style={phasesSlot} className="hm-enter mt-8 grid grid-cols-3 gap-3 md:mt-10 md:gap-6 lg:max-w-190">
           {phases.map((phase, i) => {
             const last = i === phases.length - 1
             return (
@@ -231,16 +235,18 @@ function TypographicHero({
           aria-hidden="true"
           className={cx(
             'hm-sun',
+            // Below lg the copy runs the full column width, so the shape is confined to the hero's top padding
+            // band: cropped off the top and right edges, only its lower-left arc shows, ~12-20px clear of the
+            // eyebrow (default pt 56 / md 104; compact pt 48 / md 80). Wider, the geometry is the design's.
             compact
-              ? // Testimonials.dc.html: 340px, right -160 top -80 (mobile 220px, -110 / -50).
-                // Capture form (p18): lifted on phones so only the top-right cap shows, never under the heading.
-                capture
-                ? 'pointer-events-none absolute -right-27.5 -top-37.5 z-0 size-55 md:-right-40 md:-top-20 md:size-85'
-                : 'pointer-events-none absolute -right-27.5 -top-12.5 z-0 size-55 md:-right-40 md:-top-20 md:size-85'
-              : hasAside
-              ? // stats (or the phase steps) sit in the right column on desktop: park the shape in the corner (Work.dc.html: 300px, right -140, top -60)
-                'pointer-events-none absolute -right-20 top-22.5 z-0 size-70 lg:-right-35 lg:-top-15 lg:size-75'
-              : 'pointer-events-none absolute -right-20 top-22.5 z-0 size-70 lg:right-[8%] lg:top-[46%] lg:size-115 lg:-translate-y-1/2',
+              ? // Testimonials.dc.html at 1440: 340px, right -160 top -80. Between lg and 1440 the 1200px feed column
+                // (p7, p19) reaches the corner, so compact heroes keep the top-band cap until 1440 (90rem: a px value would
+                // sort before the rem breakpoints and lose to md:). Capture (p18) shares it.
+                'pointer-events-none absolute -right-30 -top-51 z-0 size-60 md:-right-30 md:-top-54 md:size-70 min-[90rem]:-right-40 min-[90rem]:-top-20 min-[90rem]:size-85'
+              : featureShape
+              ? 'pointer-events-none absolute -right-30 -top-49 z-0 size-60 md:-right-35 md:-top-54 md:size-75 lg:right-[8%] lg:top-[46%] lg:size-115 lg:-translate-y-1/2'
+              : // top-level heroes at lg+: park the shape in the corner (Work.dc.html: 300px, right -140, top -60)
+                'pointer-events-none absolute -right-30 -top-49 z-0 size-60 md:-right-35 md:-top-54 md:size-75 lg:-right-35 lg:-top-15 lg:size-75',
           )}
         >
           {/* the masked mark, split into its four bands (heroMotion.css) so each can move */}
@@ -264,22 +270,6 @@ function TypographicHero({
         {hasAside ? (
           <div className="lg:grid lg:grid-cols-[1fr_320px] lg:items-end lg:gap-14">
             <div>{copy}</div>
-            {phasesAside ? (
-              <ol style={{ '--r': '480ms' } as React.CSSProperties} className="hm-enter hidden border-l-2 border-ink pl-6 lg:flex lg:flex-col lg:gap-5">
-                {phases.map((phase, i) => {
-                  const last = i === phases.length - 1
-                  return (
-                    <li key={phase.id ?? i}>
-                      <span className={cx('block font-display text-h1-mobile', last ? 'text-ground-accent' : 'text-ink')}>{phase.number}</span>
-                      <span className="mt-1 block text-[11px] font-bold uppercase tracking-[0.1em] text-gray-warm">
-                        {phase.label}
-                        {last ? <span aria-hidden="true"> →</span> : null}
-                      </span>
-                    </li>
-                  )
-                })}
-              </ol>
-            ) : null}
             {figures.length ? (
             <ul style={{ '--r': '480ms' } as React.CSSProperties} className="hm-enter hidden border-l-2 border-ink pl-6 lg:flex lg:flex-col lg:gap-5">
               {figures.map((fig, i) => (

@@ -80,7 +80,7 @@ function VideoPoster({ t }: { t: Testimonial }) {
 }
 
 /** One testimonial card (DS Testimonial: figure, 1px divider border, stars + source tag, quote, caption). */
-function TestimonialCard({ t }: { t: Testimonial }) {
+function TestimonialCard({ t, text = false }: { t: Testimonial; text?: boolean }) {
   const sourceLabel = SOURCE_LABELS[t.source]
   const rating = typeof t.rating === 'number' ? Math.min(5, Math.max(0, Math.round(t.rating))) : 0
   const client = typeof t.client === 'object' && t.client ? (t.client as Client) : null
@@ -89,7 +89,8 @@ function TestimonialCard({ t }: { t: Testimonial }) {
   const hasTopRow = rating > 0 || sourceLabel
 
   return (
-    <figure className="m-0 border border-divider bg-cream p-5">
+    // `text`: no box, the quote sits under a 2px ink rule (owner 2026-11-08: "not cardy").
+    <figure className={text ? 'm-0 border-t-2 border-ink pt-5' : 'm-0 border border-divider bg-cream p-5'}>
       {t.format === 'video' ? <VideoPoster t={t} /> : null}
       {hasTopRow ? (
         <div className="mb-4 flex items-center justify-between gap-3">
@@ -101,7 +102,11 @@ function TestimonialCard({ t }: { t: Testimonial }) {
           {sourceLabel ? <span className={cx(MONO, 'text-gray-warm')}>{sourceLabel}</span> : null}
         </div>
       ) : null}
-      <blockquote className="m-0 text-[1.0625rem] leading-normal font-medium text-pretty whitespace-pre-line">{t.quote}</blockquote>
+      <blockquote
+        className={cx('m-0 font-medium text-pretty whitespace-pre-line', text ? 'text-lg leading-[1.5] md:text-xl' : 'text-[1.0625rem] leading-normal')}
+      >
+        {t.quote}
+      </blockquote>
       {metric ? (
         <p className="mt-3 flex items-baseline gap-2">
           <span className="font-display text-h3-mobile text-ground-accent md:text-h3">{metric.value}</span>
@@ -192,6 +197,66 @@ function StudyCard({ study, readLabel }: { study: Study; readLabel: string }) {
   )
 }
 
+/**
+ * `presentation: text` study: the same content as StudyCard, set as typography
+ * under a 2px ink rule (no box, no lift). `wide` (study alone in the row):
+ * figure on the left, summary + link on the right from md. Only the read link
+ * is a link; without a read label the figure links to the study.
+ */
+function StudyText({ study, readLabel, label, wide }: { study: Study; readLabel: string; label?: string; wide: boolean }) {
+  const doc = study.kind === 'study' ? study.doc : null
+  const href = doc ? docPath('case-studies', doc) : null
+  const client = doc && typeof doc.client === 'object' && doc.client ? doc.client.name : null
+  const kicker = doc ? [client, doc.engagementLine].filter((s) => s?.trim()).join(' · ') : study.kind === 'metric' ? study.sub ?? '' : ''
+  const value = doc ? doc.headlineMetric.value : study.kind === 'metric' ? study.value : ''
+  const metricLabel = doc ? doc.headlineMetric.label : study.kind === 'metric' ? study.label : ''
+  const figure = (
+    <span className="flex flex-col gap-3 md:gap-3.5">
+      <span className={NUMBER}>{value}</span>
+      <span className={NUMBER_LABEL}>{metricLabel}</span>
+    </span>
+  )
+  const figureEl = href && !readLabel ? (
+    <Link href={href} className="self-start text-ink no-underline">
+      {figure}
+    </Link>
+  ) : (
+    figure
+  )
+  const summary = doc?.cardSummary ? <p className="m-0 max-w-[60ch] whitespace-pre-line text-body-mobile leading-[1.6] md:text-body md:leading-[1.6]">{doc.cardSummary}</p> : null
+  const read = href && readLabel ? (
+    <Link href={href} className={UNDERLINE_LINK}>
+      <UnderlineText>
+        {readLabel}
+        {client ? <span className="sr-only">: {client}</span> : null} <span aria-hidden="true" className="ix-arrow">→</span>
+      </UnderlineText>
+    </Link>
+  ) : null
+  const head = [label, kicker].filter((s) => s?.trim())
+  return (
+    <div className="border-t-2 border-ink pt-5 text-ink">
+      {head.length ? (
+        <div className="mb-4 flex flex-wrap gap-x-3 gap-y-1">
+          {head.map((h, i) => (
+            <span key={i} className={SMALL_LABEL}>
+              {h}
+            </span>
+          ))}
+        </div>
+      ) : null}
+      <div className={cx('flex flex-col gap-4', wide && 'md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:items-end md:gap-14')}>
+        {figureEl}
+        {summary || read ? (
+          <div className="flex flex-col gap-2">
+            {summary}
+            {read}
+          </div>
+        ) : null}
+      </div>
+    </div>
+  )
+}
+
 /* -------------------------------- block --------------------------------- */
 
 const COLS = { 1: '', 2: 'md:grid-cols-2', 3: 'md:grid-cols-3' } as const
@@ -216,6 +281,7 @@ export function TestimonialRowView({
   cta,
   ctaStyle,
   leadMetric,
+  presentation,
   featuredStudy = null,
 }: TestimonialRowProps & { featuredStudy?: CaseStudy | null }) {
   const cards = (testimonials ?? []).flatMap((t) => {
@@ -232,6 +298,7 @@ export function TestimonialRowView({
   // A video card beside a text card: the text card must not stretch to the video card's height (empty body).
   const mixedFormats = cards.some((t) => t.format === 'video') && cards.some((t) => t.format !== 'video')
   const studyLabel = studyCard?.label?.trim()
+  const text = presentation === 'text'
 
   const eyebrowEl = eyebrow ? (
     <span className={cx(SMALL_LABEL, eyebrowTick && 'flex items-center gap-2.5')}>
@@ -296,7 +363,7 @@ export function TestimonialRowView({
               {eyebrowEl}
               <div className={cx('grid gap-4 md:gap-5', !twoCol && COLS[Math.min(cards.length, 3) as 1 | 2 | 3], mixedFormats && 'md:items-start')}>
                 {cards.map((t) => (
-                  <TestimonialCard key={t.id} t={t} />
+                  <TestimonialCard key={t.id} t={t} text={text} />
                 ))}
               </div>
               {!twoCol ? ctaEl : null}
@@ -304,8 +371,13 @@ export function TestimonialRowView({
           ) : null}
           {study ? (
             <div className="flex flex-col gap-3.5 md:gap-5">
-              {studyLabel ? <span className={SMALL_LABEL}>{studyLabel}</span> : null}
-              <StudyCard study={study} readLabel={studyCard?.readLabel?.trim() ?? ''} />
+              {/* Beside testimonials the label sits above the rule, level with the eyebrow; alone it runs on the rule row. */}
+              {studyLabel && (!text || twoCol) ? <span className={SMALL_LABEL}>{studyLabel}</span> : null}
+              {text ? (
+                <StudyText study={study} readLabel={studyCard?.readLabel?.trim() ?? ''} label={twoCol ? undefined : studyLabel} wide={!twoCol} />
+              ) : (
+                <StudyCard study={study} readLabel={studyCard?.readLabel?.trim() ?? ''} />
+              )}
               {twoCol || cards.length === 0 ? ctaEl : null}
             </div>
           ) : null}

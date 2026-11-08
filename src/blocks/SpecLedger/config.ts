@@ -2,6 +2,7 @@ import type { Block, Condition } from 'payload'
 
 import { eyebrowField, headlineFields, pricingNote } from '../../fields'
 import { rowLabel } from '../../components/admin/rowLabel'
+import { toolLogoOptions } from './toolLogos'
 
 /**
  * SpecLedger block (SCHEMA §8.3 item 14, new, X7): a coded deliverable ledger.
@@ -12,6 +13,8 @@ import { rowLabel } from '../../components/admin/rowLabel'
  *                 (E-01…E-06): native <details> rows with a "+" marker.
  * - `signal-flow` p6 §Signal flow: the coded tiles converge on a hub card
  *                 ("Everything reports here" + dashboard image).
+ * - `tools`       brochure p4 "Preferred tools": a ruled row of tool logos +
+ *                 names (`logo` select or `logoImage` upload) and a footnote.
  * - `list`        p18 §What's inside: a narrow column of check bullets
  *                 (`items[].title` only; the lead-magnet template fills it
  *                 from the lead magnet's value bullets).
@@ -48,7 +51,7 @@ export const SpecLedger: Block = {
         { label: 'Expandable rows (coded rows that open: what we do / how you will know)', value: 'expandable' },
         { label: 'Signal flow (coded tiles feeding into one dashboard card)', value: 'signal-flow' },
         { label: 'Check list (a short column of ticked bullets, e.g. "What\'s inside")', value: 'list' },
-        { label: 'Tools row (a row of tool names, e.g. "Preferred tools")', value: 'tools' },
+        { label: 'Tools row (a row of tool logos and names, e.g. "Preferred tools")', value: 'tools' },
       ],
       admin: { description: 'Which layout to use.' },
     },
@@ -138,6 +141,34 @@ export const SpecLedger: Block = {
           },
         },
         {
+          type: 'row',
+          fields: [
+            {
+              name: 'logo',
+              type: 'select',
+              label: 'Logo',
+              options: toolLogoOptions,
+              admin: {
+                width: '50%',
+                condition: variantIs('tools'),
+                description: 'Pick the tool\'s logo (built in, in its brand colours). Leave empty for no logo, or upload one on the right for a tool not in the list.',
+              },
+            },
+            {
+              name: 'logoImage',
+              type: 'upload',
+              relationTo: 'media',
+              maxDepth: 1,
+              label: 'Other logo (upload)',
+              admin: {
+                width: '50%',
+                condition: variantIs('tools'),
+                description: 'Only for a tool not in the list. A square logo, ideally SVG or PNG on transparent. Used instead of the picked logo.',
+              },
+            },
+          ],
+        },
+        {
           name: 'image',
           type: 'upload',
           relationTo: 'media',
@@ -216,6 +247,16 @@ export const SpecLedger: Block = {
           admin: { description: 'A screenshot of the dashboard. The card keeps its shape if left empty.' },
         },
       ],
+    },
+    {
+      name: 'footnote',
+      type: 'text',
+      label: 'Footnote',
+      admin: {
+        condition: variantIs('tools'),
+        description:
+          'Small grey line under the row, e.g. "Product names are trademarks of their respective owners and are shown to identify the tools we work with." Optional.',
+      },
     },
     pricingNote(),
   ],

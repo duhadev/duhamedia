@@ -41,6 +41,20 @@ export const TestimonialRow: Block = {
       ],
       admin: { description: 'The layout. More layouts arrive with the pages that need them.' },
     },
+    {
+      name: 'presentation',
+      type: 'select',
+      required: true,
+      defaultValue: 'cards',
+      options: [
+        { label: 'Cards (boxed testimonials and study card)', value: 'cards' },
+        { label: 'Text (no boxes: quotes and the study figure under thin rules)', value: 'text' },
+      ],
+      admin: {
+        description: 'How the row looks. Text = the same content set as typography, without boxes. The homepage uses Text.',
+        condition: isRow,
+      },
+    },
     rowOnly(
       eyebrowField({
         defaultTick: false,

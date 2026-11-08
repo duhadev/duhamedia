@@ -894,8 +894,8 @@ export const showcaseEntries: ShowcaseEntry[] = [
   },
   {
     block: 'twoTrackPanels',
-    variant: 'equal — cards, full',
-    label: 'two-paragraph bodies, **bold** phrases, service chips, price tags + links on both cards',
+    variant: 'equal — text, full',
+    label: 'two-paragraph bodies, **bold** phrases, service chips, price tags + links on both tracks (text columns under rules, no boxes)',
     data: {
       variant: 'equal',
       eyebrow: 'What we do',
@@ -1032,6 +1032,45 @@ export const showcaseEntries: ShowcaseEntry[] = [
   },
   {
     block: 'testimonialRow',
+    variant: 'row — text, with testimonials',
+    label: 'presentation: text (homepage). 2 text testimonials + published fixture study, no boxes: quotes and the figure under 2px rules',
+    data: {
+      ...testimonialRowBase,
+      presentation: 'text',
+      testimonials: textTestimonials.slice(0, 2),
+      studyCard: { show: true, label: 'A study in full', source: 'manual', caseStudy: fixtureStudies[0], readLabel: 'Read the study' },
+    },
+  },
+  {
+    block: 'testimonialRow',
+    variant: 'row — text, study only',
+    label: 'presentation: text, no published testimonials (the live homepage state): the study alone, figure left + summary and link right',
+    data: {
+      ...testimonialRowBase,
+      presentation: 'text',
+      testimonials: [],
+      studyCard: { show: true, label: 'A study in full', source: 'manual', caseStudy: fixtureStudies[0], readLabel: 'Read the study' },
+    },
+  },
+  {
+    block: 'testimonialRow',
+    variant: 'row — text, fallback figure',
+    label: 'presentation: text, no study published: the quiet fallback figure under the rule',
+    data: {
+      ...testimonialRowBase,
+      presentation: 'text',
+      testimonials: [],
+      studyCard: {
+        show: true,
+        label: 'A study in full',
+        source: 'featured',
+        readLabel: 'Read the study',
+        fallbackMetric: { value: '[N]%', label: '[Metric label]', sub: '[Client A · placeholder]' },
+      },
+    },
+  },
+  {
+    block: 'testimonialRow',
     variant: 'row — empty',
     label: 'fallback: zero testimonials and no study → renders nothing (empty space below is by design)',
     data: { ...testimonialRowBase, testimonials: [], studyCard: { show: false } },
@@ -1067,6 +1106,24 @@ export const showcaseEntries: ShowcaseEntry[] = [
       pullQuote: '[Pull quote: one line from the story — placeholder]',
       member: fixtureMember,
       link: { type: 'custom', url: '/book-a-call', label: 'Book a call with me →' },
+    },
+  },
+  {
+    block: 'teamIntro',
+    variant: 'founder-card — long story, no pull quote',
+    label: 'the live homepage shape: four-paragraph story (production copy) + button, no pull quote; "Read more" sits under paragraph 1, "Show less" under the last line, the button on its own row below',
+    data: {
+      variant: 'founder-card',
+      heading: 'One founder, no layers.',
+      accentPhrase: 'no layers.',
+      body: [
+        "I started out building websites as a freelancer, and I kept running into the same kind of owner. Amazing reputation. Amazing product. Customers who’d tell anyone who’d listen. And an online store that did none of it justice, because nobody had ever shown them what a good one looks like or what a marketing campaign actually needs.",
+        "That gap is why Duha Media exists. I build for local owners who are loved by the people who know them but haven’t been discovered by everyone else yet. I design the store, build it, and market it, so the thing you’ve worked years to get right finally reaches people who don’t know about it.",
+        "I do that work myself, which is why I only take on seven projects at a time. I’m with you from the first phone call, and I can’t be that person for an eighth without letting one of you down. You hired me to help your business make more money, and if the work doesn’t do that, what was the point?",
+        "I’m a Muslim entrepreneur, born and working in Chicago. I’d like to help you build something that does your name justice.",
+      ].join('\n\n'),
+      member: fixtureMember,
+      link: { type: 'custom', url: '/book-a-call', label: 'Get in touch' },
     },
   },
   {
@@ -1466,7 +1523,7 @@ export const showcaseEntries: ShowcaseEntry[] = [
   {
     block: 'twoTrackPanels',
     variant: 'doors',
-    label: 'p4 Two doors, placeholder',
+    label: 'p4 Two doors, placeholder: one reading column, price note run into the paragraph, text links',
     data: {
       variant: 'doors',
       heading: '[Placeholder] Two doors.',
@@ -1810,6 +1867,26 @@ export const showcaseEntries: ShowcaseEntry[] = [
       eyebrow: 'How the signal moves',
       items: [{ id: 'fx-sl-x3', code: 'E-01', title: 'Email' }],
       hub: { kicker: 'Everything reports here', heading: '[Placeholder] One dashboard.' },
+    },
+  },
+  {
+    block: 'specLedger',
+    variant: 'tools',
+    label: 'services p4 "Preferred tools": built-in logos (brand colours) over names + trademark footnote; last item has no logo (fallback: name only)',
+    data: {
+      variant: 'tools',
+      heading: 'Preferred tools',
+      note: 'A small, proven stack. The accounts are in your name.',
+      items: [
+        { id: 'fx-sl-t1', title: 'Shopify', logo: 'shopify' },
+        { id: 'fx-sl-t2', title: 'Instagram', line: 'Shop', logo: 'instagram' },
+        { id: 'fx-sl-t3', title: 'Facebook', line: 'Shop', logo: 'facebook' },
+        { id: 'fx-sl-t4', title: 'TikTok', line: 'Shop', logo: 'tiktok' },
+        { id: 'fx-sl-t5', title: 'Meta', line: 'Ads', logo: 'meta' },
+        { id: 'fx-sl-t6', title: 'Microsoft', line: 'Clarity', logo: 'microsoft-clarity' },
+        { id: 'fx-sl-t7', title: '[Placeholder] Other tool' },
+      ],
+      footnote: 'Product names are trademarks of their respective owners and are shown to identify the tools we work with.',
     },
   },
   /* ==== Big step 5 (pages 7–12), in page order ==== */

@@ -1,4 +1,4 @@
-import type { Block, Condition, TextFieldSingleValidation } from 'payload'
+import type { Block, Condition, Field, RowField, TextFieldSingleValidation } from 'payload'
 import { text } from 'payload/shared'
 
 import { eyebrowField, headlineFields, LINK_TARGETS, linkField, metricFields, pricingNote, validateYouTubeUrl } from '../../fields'
@@ -15,6 +15,18 @@ import { rowLabel } from '../../components/admin/rowLabel'
 const forVariants =
   (...variants: string[]): Condition =>
   (_data, siblingData) => variants.includes((siblingData?.variant as string | undefined) ?? 'typographic')
+
+/** The shared eyebrow row with its diamond checkbox hidden (heroes render no tick). Admin options only. */
+const heroEyebrow = (row: RowField): RowField => ({
+  ...row,
+  fields: row.fields.map((f) =>
+    'name' in f && f.name === 'eyebrowTick'
+      ? ({ ...f, admin: { ...f.admin, hidden: true } } as Field)
+      : 'name' in f && f.name === 'eyebrow'
+        ? ({ ...f, admin: { ...f.admin, width: '100%' } } as Field)
+        : f,
+  ),
+})
 
 /** Breadcrumb address: a site path (/…) or an https:// address; empty is allowed. */
 const validateCrumbUrl: TextFieldSingleValidation = (value, options) => {
@@ -77,9 +89,13 @@ export const Hero: Block = {
         condition: (_data, siblingData) => siblingData?.variant === 'typographic' && siblingData?.size === 'compact',
       },
     },
-    eyebrowField({
-      description: 'Small uppercase line above the headline, e.g. "Integrated ecommerce growth partner — Chicago".',
-    }),
+    // Heroes never show the diamond (owner, 2026-11-08): the tick checkbox is hidden in the admin
+    // (admin-only change; the column stays, so no migration) and the eyebrow takes the full row.
+    heroEyebrow(
+      eyebrowField({
+        description: 'Small grey uppercase line above the headline, e.g. "Work", "About".',
+      }),
+    ),
     // Accent phrase only where it shows: service + article recolour it wine.
     // Typographic (incl. compact / form card) renders it in --accent-primary =
     // ink on ink, and the video layout has none (Campaign LP.dc.html "Hero variant A — VSL").

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { ButtonLink, Section } from '@/components/ui'
+import { ButtonLink, Container, Section } from '@/components/ui'
 import { resolveLinkHref } from '@/components/ui/CMSLink'
 
 import { Headline, titledSteps, type PhaseTimelineProps } from './shared'
@@ -40,8 +40,8 @@ export function StepCards({ heading, accentPhrase, steps, closingLine, cta, outc
 
   return (
     <Section tone="light" pad="none" className="pt-9 pb-11 md:py-18">
-      {/* The design's container is 1400px wide here (not --container-max). */}
-      <div className="mx-auto w-full max-w-[1400px] px-container-mobile md:px-container">
+      {/* The standard site container: the design's 1400px box ran past every other section's edges at desktop. */}
+      <Container>
         <Headline
           text={heading}
           accent={accentPhrase}
@@ -112,18 +112,18 @@ export function StepCards({ heading, accentPhrase, steps, closingLine, cta, outc
         {closingLine?.trim() || hasCta ? (
           <div className="flex flex-col">
             {closingLine?.trim() ? (
-              <p className="order-2 mt-3.5 text-small text-gray-warm md:order-1 md:mt-5 md:text-[0.9375rem]">
+              <p className="mt-5 text-small text-gray-warm md:text-[0.9375rem]">
                 {closingLine.trim()}
               </p>
             ) : null}
             {hasCta ? (
-              <div className="order-1 mt-6 grid md:order-2 md:mt-7 md:block">
+              <div className="mt-5 grid md:mt-7 md:block">
                 <ButtonLink link={cta} variant="primary" size="md" className="max-md:min-h-13 max-md:w-full" />
               </div>
             ) : null}
           </div>
         ) : null}
-      </div>
+      </Container>
     </Section>
   )
 }

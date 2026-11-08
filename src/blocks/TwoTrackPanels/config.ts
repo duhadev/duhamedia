@@ -5,8 +5,9 @@ import { rowLabel } from '../../components/admin/rowLabel'
 
 /**
  * TwoTrackPanels block (SCHEMA §8.3 item 10). Variants: `equal` (homepage
- * "What we do"; restyled 2026-10-29 as two cards with number tags, paragraph +
- * **bold** body, optional service chips and a price-tag footer; the price tag
+ * "Two jobs. One team."; two text columns under rules since 2026-11-08, with
+ * number tags, paragraph + **bold** body, optional service list and a price
+ * footer; the price tag
  * is a human-approved exception to the small-inline-pricing rule for this
  * variant only), `contrast` (Services Hub "Why both together":
  * struck claim + reality line per panel, then a conclusion) and
@@ -33,7 +34,7 @@ export const TwoTrackPanels: Block = {
         { label: 'Equal (two tracks, same weight)', value: 'equal' },
         { label: 'Contrast (struck claim vs reality, then a conclusion)', value: 'contrast' },
         { label: 'Primary / secondary (first track full weight, second softer)', value: 'primary-secondary' },
-        { label: 'Doors (two linked cards: title, paragraph, button)', value: 'doors' },
+        { label: 'Doors (one reading column: title, paragraph with price note, link)', value: 'doors' },
       ],
       admin: { description: 'The panel layout. Equal = two paragraphs; Contrast = two "sold to you as" cards; Primary / secondary = a lead option plus a quieter alternative.' },
     },
@@ -88,7 +89,7 @@ export const TwoTrackPanels: Block = {
           label: 'Show the title in the accent colour',
           defaultValue: false,
           admin: {
-            description: 'In the Equal layout this also gives the card a wine left edge and a wine price tag.',
+            description: 'In the Equal layout this also makes the rule above the track and the price amount wine.',
             condition: isVariant('equal', 'primary-secondary', 'doors'),
           },
         },
@@ -115,7 +116,7 @@ export const TwoTrackPanels: Block = {
           labels: { singular: 'Service', plural: 'Services' },
           admin: {
             components: { RowLabel: rowLabel(['label'], 'Service') },
-            description: 'Optional small bordered chips under the paragraph, e.g. "SEO". Drag to reorder. Leave empty to hide.',
+            description: 'Optional short items listed under the paragraph, e.g. "SEO". Drag to reorder. Leave empty to hide.',
             condition: isVariant('equal'),
             initCollapsed: true,
           },
@@ -126,7 +127,7 @@ export const TwoTrackPanels: Block = {
           admin: {
             ...pricingNote().admin,
             description:
-              "Short note, e.g. 'Builds start at $5K'. In the Equal layout it shows as a tag at the foot of the card with the amount ($5K, $1K/mo) enlarged; elsewhere it is a small inline note.",
+              "Short note, e.g. 'Builds start at $5K'. In the Equal layout it shows at the foot of the track with the amount ($7K) enlarged; elsewhere it is a small inline note.",
             condition: isVariant('equal', 'primary-secondary', 'doors'),
           },
         },

@@ -5,6 +5,8 @@ import { DiamondHeading } from '@/components/BrochureParts'
 import { AccentHeadline, Container, Eyebrow, Media, Section } from '@/components/ui'
 import { cx } from '@/lib/cx'
 
+import { TOOL_LOGOS, type ToolLogo } from './toolLogos'
+
 export type SpecLedgerData = BlockData<'specLedger'>
 
 type Item = NonNullable<SpecLedgerData['items']>[number]
@@ -288,26 +290,53 @@ function ListVariant({ props, items }: { props: SpecLedgerData; items: Item[] })
   )
 }
 
+/** The item's logo: an uploaded one wins, else the built-in pick, else none. */
+function ToolLogoMark({ item }: { item: Item }) {
+  const box = 'relative mx-auto mb-3 block size-10 md:size-12'
+  // Decorative: the tool's name is printed right under it.
+  if (item.logoImage && typeof item.logoImage === 'object') {
+    return (
+      <span className={box}>
+        <Media resource={item.logoImage} fill sizes="48px" alt="" className="!object-contain" />
+      </span>
+    )
+  }
+  const builtIn = item.logo ? TOOL_LOGOS[item.logo as ToolLogo] : undefined
+  if (!builtIn) return null
+  return (
+    <span className={box}>
+      {/* A static file from /public: next/image adds nothing for an SVG this size. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={builtIn.src} alt="" width={48} height={48} loading="lazy" className="size-full object-contain" />
+    </span>
+  )
+}
+
 /**
  * `tools` (brochure 2026-11-07 p4 "Preferred tools"): diamond heading, one
- * line under it, then the tool names as a ruled row of text (no logos: brand
- * files are not used). `line` is an optional second line, e.g. "Shop".
+ * line under it, then a ruled row of tools, each a logo (built-in pick or an
+ * upload, in brand colours) over its name, then the trademark footnote.
+ * `line` is an optional second line of the name, e.g. "Shop".
  */
 function ToolsVariant({ props, items }: { props: SpecLedgerData; items: Item[] }) {
-  const { heading, note } = props
+  const { heading, note, footnote } = props
   return (
-    <Section tone={props.tone === 'grey' ? 'grey' : 'light'} pad="none" className="pb-12 md:pb-16">
+    // Bottom pad trimmed (owner QA 2026-11-08): the ruled tools row, not the quiet footnote, reads as the
+    // section end, so rule -> next section content lands on one section boundary (64 + 64 at md+).
+    <Section tone={props.tone === 'grey' ? 'grey' : 'light'} pad="none" className="pb-3 md:pb-8">
       <Container>
         {hasText(heading) ? <DiamondHeading>{heading}</DiamondHeading> : null}
         {hasText(note) ? <p className="mt-2 text-body-mobile text-gray-warm md:text-body">{note}</p> : null}
-        <ul className="mt-5 grid list-none grid-cols-2 gap-x-4 gap-y-5 border-y border-divider p-0 py-6 sm:grid-cols-4 lg:grid-cols-7 lg:text-center">
+        <ul className="mt-5 grid list-none grid-cols-2 gap-x-4 gap-y-6 border-y border-divider p-0 py-6 text-center sm:grid-cols-4 md:py-7 lg:grid-cols-7">
           {items.map((item, i) => (
             <li key={item.id ?? i} className="font-display text-[1rem] leading-tight md:text-[1.0625rem]">
+              <ToolLogoMark item={item} />
               {item.title}
               {hasText(item.line) ? <span className="block">{item.line}</span> : null}
             </li>
           ))}
         </ul>
+        {hasText(footnote) ? <p className="m-0 mt-3 text-[0.8125rem] leading-[1.5] text-gray-warm">{footnote}</p> : null}
       </Container>
     </Section>
   )

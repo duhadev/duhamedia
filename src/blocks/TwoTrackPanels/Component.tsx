@@ -61,17 +61,20 @@ function PriceTag({ note, accent }: { note: string; accent: boolean }) {
 }
 
 /**
- * `equal` (homepage "What we do"). Restyled 2026-10-29 to the human's spec:
- * each track is a square `border-2 border-ink` card (StepCards grammar),
- * number tag 01/02 from position, title, body paragraphs (blank line = new
- * paragraph, `**bold**`), optional service chips, then a footer row with the
- * price tag and the text link. The accent track (`accentTitle`) also gets the
- * 6px wine left edge and a wine price amount. Two equal-height columns from
- * `lg` (at `md` a column would hold ~35ch of body); stacked below.
+ * `equal` (homepage "Two jobs. One team."). Text-led since 2026-11-08 (owner:
+ * "not cardy, more text-based"), after the brochure p1 pair ("Made by hand. /
+ * BUILD" - "Then made known. / GROW": two text columns under thin rules) and
+ * the /services label-rows. Each track: a 2px ink rule, number tag 01/02 from
+ * position, optional label, title, body paragraphs (blank line = new
+ * paragraph, `**bold**`), optional service chips, then a hairline footer row
+ * with the price note and the text link. No box, fill or shadow. The accent
+ * track (`accentTitle`) gets a wine rule, wine title and wine price amount.
+ * Two columns from `lg` (at `md` a column would hold ~35ch of body); stacked
+ * below.
  *
- * PRICING: the price tag (amount enlarged + bold) overrides the locked
- * "pricing only as small inline notes" rule (CLAUDE.md rule 5 / R13) FOR THIS
- * VARIANT ONLY. Human-approved 2026-10-29. Do not copy it to other blocks.
+ * PRICING: the price note's amount is enlarged + bold, which overrides the
+ * locked "pricing only as small inline notes" rule (CLAUDE.md rule 5 / R13)
+ * FOR THIS VARIANT ONLY. Human-approved 2026-10-29. Do not copy it to other blocks.
  */
 function Equal({ eyebrow, eyebrowTick, heading, accentPhrase, panels }: Props) {
   const rows = (panels ?? []).filter((p): p is Panel => Boolean(p && p.title?.trim() && p.body?.trim()))
@@ -88,7 +91,7 @@ function Equal({ eyebrow, eyebrowTick, heading, accentPhrase, panels }: Props) {
           <AccentHeadline text={heading} accent={accentPhrase} level="section" />
         </div>
         {rows.length ? (
-          <div className="mt-8 grid gap-4 md:mt-10 lg:grid-cols-2 lg:items-stretch lg:gap-5">
+          <div className="mt-8 grid gap-10 md:mt-10 lg:grid-cols-2 lg:items-stretch lg:gap-16">
             {rows.map((p, i) => {
               const accent = p.accentTitle === true
               const linkText = resolveLinkHref(p.link) ? p.link?.label?.trim() : ''
@@ -99,24 +102,23 @@ function Equal({ eyebrow, eyebrowTick, heading, accentPhrase, panels }: Props) {
                 .filter(Boolean)
               const chips = (p.services ?? []).filter((c) => c?.label?.trim())
               return (
-                <div
-                  key={p.id ?? i}
-                  className={`flex flex-col border-2 border-ink bg-cream p-6 ${accent ? 'border-l-6 border-l-ground-accent' : ''}`}
-                >
-                  <span className="font-mono text-[15px] leading-normal font-bold tracking-[0.08em] text-gray-warm md:text-[17px]">
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  {p.label ? (
-                    <Eyebrow muted className="mt-2">
-                      {p.label}
-                    </Eyebrow>
-                  ) : null}
+                <div key={p.id ?? i} className={`flex flex-col border-t-2 pt-5 md:pt-6 ${accent ? 'border-ground-accent' : 'border-ink'}`}>
+                  <div className="flex items-baseline gap-3">
+                    <span className="font-mono text-[15px] leading-normal font-bold tracking-[0.08em] text-gray-warm md:text-[17px]">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    {p.label ? (
+                      <Eyebrow muted as="span">
+                        {p.label}
+                      </Eyebrow>
+                    ) : null}
+                  </div>
                   <h3
-                    className={`mt-2 font-display text-body-mobile font-normal uppercase md:text-body ${accent ? 'text-ground-accent' : ''}`}
+                    className={`mt-3 font-display text-xl leading-[1.12] font-normal uppercase md:text-2xl ${accent ? 'text-ground-accent' : ''}`}
                   >
                     {p.title}
                   </h3>
-                  <div className="mt-3 max-w-[60ch] text-body-mobile leading-[1.6] md:text-body md:leading-[1.6]">
+                  <div className="mt-4 max-w-[60ch] text-body-mobile leading-[1.6] md:text-body md:leading-[1.6]">
                     {paragraphs.map((para, pi) => (
                       <p key={pi} className={`whitespace-pre-line ${pi > 0 ? 'mt-3' : ''}`}>
                         <InlineBold text={para} />
@@ -124,9 +126,11 @@ function Equal({ eyebrow, eyebrowTick, heading, accentPhrase, panels }: Props) {
                     ))}
                   </div>
                   {chips.length ? (
-                    <ul className="mt-4 flex flex-wrap gap-2">
+                    // Text list, not chips-as-boxes: middot-separated, bold.
+                    <ul className="mt-4 flex flex-wrap gap-x-2 text-small-mobile font-bold md:text-small">
                       {chips.map((c, ci) => (
-                        <li key={c.id ?? ci} className="border border-ink px-3 py-1 text-small-mobile font-bold md:text-small">
+                        <li key={c.id ?? ci} className="flex gap-2">
+                          {ci > 0 ? <span aria-hidden="true" className="text-gray-warm">·</span> : null}
                           {c.label.trim()}
                         </li>
                       ))}
@@ -134,7 +138,7 @@ function Equal({ eyebrow, eyebrowTick, heading, accentPhrase, panels }: Props) {
                   ) : null}
                   {note || linkText ? (
                     <div className="mt-auto pt-6">
-                      <div className="flex flex-wrap items-center justify-between gap-4 border-t border-divider pt-4">
+                      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-divider pt-3">
                         {note ? <PriceTag note={note} accent={accent} /> : <span />}
                         {linkText ? (
                           // Site text-link grammar: bold, 2px ix-rule hugging the text, 44px tap area.
@@ -305,10 +309,13 @@ function PrimarySecondary({ eyebrow, eyebrowTick, heading, accentPhrase, panels,
 }
 
 /**
- * `doors` (Services Hub.dc.html "Two doors"): each panel is one linked card:
- * title, paragraph, filled CTA (ink for the first door, wine when
- * `accentTitle`). The design's big price numeral is NOT rendered (R13); the
- * `pricingNote` sits where it was, at small-note size. Mobile = ruled rows.
+ * `doors` (/services "Two doors."). Article-style since 2026-11-08 (owner: "a
+ * normal article kind of thing, not card-based"; two side-by-side columns
+ * read unbalanced): ONE reading column, each door a subheading, its paragraph
+ * with the price note run in as a bold closing sentence, then a text link.
+ * Doors are separated by a hairline. No boxes, no buttons, no side-by-side
+ * columns. `accentTitle` makes the price note and link wine. The design's big
+ * price numeral is NOT rendered (R13).
  */
 function Doors({ heading, accentPhrase, eyebrow, eyebrowTick, panels, conclusion }: Props) {
   const rows = (panels ?? []).filter((p) => p && p.title?.trim() && p.body?.trim())
@@ -318,55 +325,47 @@ function Doors({ heading, accentPhrase, eyebrow, eyebrowTick, panels, conclusion
   // Door titles are h3 under the section headline; without one they are the section's h2.
   const TitleTag = heading?.trim() ? 'h3' : 'h2'
   return (
-    <Section tone="light" pad="none" className="pb-7 md:pb-18">
+    <Section tone="light" pad="none" className="pb-10 md:pb-18">
       <Container>
-        {heading?.trim() || eyebrow ? (
-          <div className="flex flex-col gap-5 pb-6 md:pb-10">
-            {eyebrow ? <Eyebrow tick={eyebrowTick === true}>{eyebrow}</Eyebrow> : null}
-            {heading?.trim() ? <AccentHeadline text={heading} accent={accentPhrase} level="section" /> : null}
-          </div>
-        ) : null}
-        <div className="flex flex-col md:grid md:grid-cols-2 md:gap-16">
+        <div className="max-w-[44rem]">
+          {heading?.trim() || eyebrow ? (
+            <div className="flex flex-col gap-5 pb-2 md:pb-4">
+              {eyebrow ? <Eyebrow tick={eyebrowTick === true}>{eyebrow}</Eyebrow> : null}
+              {heading?.trim() ? <AccentHeadline text={heading} accent={accentPhrase} level="section" /> : null}
+            </div>
+          ) : null}
           {rows.map((p, i) => {
-            const href = resolveLinkHref(p.link)
-            const cta = href ? p.link?.label?.trim() : ''
+            const cta = resolveLinkHref(p.link) ? p.link?.label?.trim() : ''
             const wine = p.accentTitle === true
-            const inner = (
-              <>
-                <div className="flex items-baseline justify-between gap-3 md:flex-col md:items-start md:gap-4">
-                  <TitleTag className="font-display text-lg leading-[1.05] font-normal uppercase md:text-2xl">{p.title}</TitleTag>
-                  {p.pricingNote?.trim() ? (
-                    <span className={`shrink-0 text-small-mobile md:text-small ${wine ? 'text-ground-accent' : 'text-gray-warm'}`}>
-                      {p.pricingNote.trim()}
-                    </span>
+            const note = p.pricingNote?.trim()
+            return (
+              <div key={p.id ?? i} className={`py-6 md:py-8 ${i > 0 ? 'border-t border-divider' : ''}`}>
+                <TitleTag className="font-display text-lg leading-[1.1] font-normal uppercase md:text-2xl">{p.title}</TitleTag>
+                <p className="mt-3 text-body-mobile leading-[1.6] whitespace-pre-line md:mt-4 md:text-body md:leading-[1.6]">
+                  {p.body?.trim()}
+                  {note ? (
+                    <>
+                      {' '}
+                      <strong className={`font-bold ${wine ? 'text-ground-accent' : ''}`}>{note}</strong>
+                    </>
                   ) : null}
-                </div>
-                <span className={`whitespace-pre-line text-[0.9375rem] leading-[1.55] text-ink/80 md:text-base md:leading-[1.6] ${cta ? 'md:mb-2' : ''}`}>{p.body}</span>
+                </p>
                 {cta ? (
-                  <span
-                    className={`ix-lift max-md:!translate-none max-md:!shadow-none mt-0.5 inline-flex min-h-target items-center self-start text-xs font-bold uppercase tracking-[0.06em] md:mt-auto md:px-6.5 md:text-small ${
-                      wine ? 'text-ground-accent md:bg-ground-accent md:text-on-accent' : 'text-ink md:bg-ink md:text-cream'
-                    }`}
+                  // Site text-link grammar: bold, 2px ix-rule hugging the text, 44px tap area.
+                  <CMSLink
+                    link={p.link}
+                    className={`mt-2 inline-flex min-h-target items-center font-bold no-underline ${wine ? 'text-ground-accent' : 'text-ink'}`}
                   >
-                    <ArrowText text={cta} />
-                  </span>
+                    <span className="ix-rule">
+                      <KeepArrow label={cta} />
+                    </span>
+                  </CMSLink>
                 ) : null}
-              </>
-            )
-            // ix-group: hovering the whole door lifts its button (interaction system).
-            const cls = 'ix-group flex flex-col gap-1.5 border-t border-divider py-5 text-ink no-underline md:gap-4 md:border-t-0 md:py-0'
-            return href ? (
-              <CMSLink key={p.id ?? i} link={p.link} className={cls}>
-                {inner}
-              </CMSLink>
-            ) : (
-              <div key={p.id ?? i} className={cls}>
-                {inner}
               </div>
             )
           })}
+          {conclusion?.trim() ? <p className="mt-2 text-small-mobile whitespace-pre-line text-gray-warm md:text-small">{conclusion}</p> : null}
         </div>
-        {conclusion?.trim() ? <p className="mt-6 max-w-[60ch] text-small-mobile whitespace-pre-line text-gray-warm md:text-small">{conclusion}</p> : null}
       </Container>
     </Section>
   )

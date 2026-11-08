@@ -42,6 +42,11 @@ import * as migration_20261108_011914_book_a_call_flow_schema from './20261108_0
 import * as migration_20261108_013230_book_a_call_flow from './20261108_013230_book_a_call_flow';
 import * as migration_20261108_013207_brochure_blocks from './20261108_013207_brochure_blocks';
 import * as migration_20261108_013300_brochure_restructure from './20261108_013300_brochure_restructure';
+import * as migration_20261108_100000_hero_eyebrows from './20261108_100000_hero_eyebrows';
+import * as migration_20261108_095000_home_text_sections_schema from './20261108_095000_home_text_sections_schema';
+import * as migration_20261108_095100_services_logos_schema from './20261108_095100_services_logos_schema';
+import * as migration_20261108_110000_home_text_sections from './20261108_110000_home_text_sections';
+import * as migration_20261108_110100_services_logos from './20261108_110100_services_logos';
 
 export const migrations = [
   {
@@ -263,5 +268,30 @@ export const migrations = [
     up: migration_20261108_013300_brochure_restructure.up,
     down: migration_20261108_013300_brochure_restructure.down,
     name: '20261108_013300_brochure_restructure',
+  },
+  {
+    up: migration_20261108_100000_hero_eyebrows.up,
+    down: migration_20261108_100000_hero_eyebrows.down,
+    name: '20261108_100000_hero_eyebrows',
+  },
+  {
+    up: migration_20261108_095000_home_text_sections_schema.up,
+    down: migration_20261108_095000_home_text_sections_schema.down,
+    name: '20261108_095000_home_text_sections_schema',
+  },
+  {
+    up: migration_20261108_095100_services_logos_schema.up,
+    down: migration_20261108_095100_services_logos_schema.down,
+    name: '20261108_095100_services_logos_schema',
+  },
+  {
+    up: migration_20261108_110000_home_text_sections.up,
+    down: migration_20261108_110000_home_text_sections.down,
+    name: '20261108_110000_home_text_sections',
+  },
+  {
+    up: migration_20261108_110100_services_logos.up,
+    down: migration_20261108_110100_services_logos.down,
+    name: '20261108_110100_services_logos',
   },
 ];

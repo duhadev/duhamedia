@@ -84,12 +84,13 @@ export async function FinalCTABlock({ heading, accentPhrase, body, capacity, but
   }
 
   return (
-    <Section tone="dark" pad="none" className="relative overflow-hidden pt-16 pb-18 md:py-24">
+    <Section tone="dark" pad="none" className="relative overflow-hidden pt-16 pb-24 md:py-24">
       <DotMatrix fade="edges" onDark />
       <div
         aria-hidden="true"
         style={LOGO_MASK}
-        className={`pointer-events-none absolute -left-22.5 z-0 size-55 bg-ground-accent md:-bottom-25 md:-left-25 md:size-60 ${links.length > 1 ? '-bottom-32.5' : '-bottom-22.5'}`}
+        // Below md the mark sits in the bottom padding only (80px of it shows inside the 96px pad), so it clears every button and line of text.
+        className="pointer-events-none absolute -bottom-35 -left-22.5 z-0 size-55 bg-ground-accent md:-bottom-25 md:-left-25 md:size-60"
       />
       <div className="relative z-10 mx-auto max-w-190 px-container-mobile text-center md:px-container">
         {title ? <AccentHeadline text={title} accent={accent} level={2} accentColor="ground" /> : null}
@@ -99,7 +100,7 @@ export async function FinalCTABlock({ heading, accentPhrase, body, capacity, but
         ) : null}
         {links.length ? (
           <div className="mt-7 flex flex-col items-center justify-center gap-3 md:mt-8 md:flex-row md:gap-3.5">
-            {/* Two stacked buttons keep the design's 220px width on mobile (FAQ.dc.html) and the corner mark sits lower, so they never overlap; a single button stays full width. */}
+            {/* Two stacked buttons keep the design's 220px width on mobile (FAQ.dc.html); a single button stays full width. */}
             {links.map((b, i) => (
               <ButtonLink
                 key={b.id}

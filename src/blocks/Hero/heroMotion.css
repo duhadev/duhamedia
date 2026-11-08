@@ -111,6 +111,9 @@
   animation-delay: var(--t0);
 }
 .hm-eyebrow-t {
+  /* inline-block: clip-path on a wrapped inline box clips to its first line only */
+  display: inline-block;
+  max-width: 100%;
   animation: hmWipe 480ms var(--hm-out) both;
   animation-delay: calc(var(--t0) + 80ms);
 }

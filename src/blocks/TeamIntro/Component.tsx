@@ -71,14 +71,15 @@ const STORY_P = 'max-w-[68ch] whitespace-pre-line text-body-mobile leading-[1.7]
 
 /**
  * Founder story with "Read more" (human, 2026-10-29): the first paragraph always shows, the rest
- * opens from a toggle that sits under the text (StoryMore). One paragraph only: plain text, no
- * toggle. Paragraphs = blank-line separated.
+ * opens from a "Read more" text link directly under the visible text (StoryMore); the CTA button
+ * stays below, on its own row. One paragraph only: plain text, no toggle. Paragraphs = blank-line separated.
  */
 function FounderStory({ body }: { body: string }) {
   const [first, ...rest] = body.split(/\n[ \t]*\n/).map((p) => p.trim()).filter(Boolean)
   if (!rest.length) return <p className={STORY_P}>{first}</p>
+  // One block-level wrapper: the toggle is part of the story, never of the CTA row below it.
   return (
-    <>
+    <div data-story>
       <p className={STORY_P}>{first}</p>
       <StoryMore>
         {rest.map((p, i) => (
@@ -87,7 +88,7 @@ function FounderStory({ body }: { body: string }) {
           </p>
         ))}
       </StoryMore>
-    </>
+    </div>
   )
 }
 

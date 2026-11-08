@@ -1,7 +1,7 @@
 import React from 'react'
 
 import type { BlockData } from '@/blocks/types'
-import { AccentHeadline, ButtonLink, Container, Section } from '@/components/ui'
+import { AccentHeadline, ButtonLink, Container, Eyebrow, Section } from '@/components/ui'
 import { cx } from '@/lib/cx'
 
 import { Breadcrumb } from './Breadcrumb'
@@ -9,15 +9,14 @@ import { Breadcrumb } from './Breadcrumb'
 /**
  * Hero, `service` variant (Shopify Theme Development.dc.html "Breadcrumb" +
  * "Dev hero", Marketing.dc.html "Breadcrumb" + "Marketing hero"; desktop +
- * mobile builds): ink band, breadcrumb bar on top, eyebrow with a yellow
- * diamond, h1, body; to the right (lg) or in full-bleed rows below (mobile) the
+ * mobile builds): ink band, breadcrumb bar on top, grey caps eyebrow (no
+ * diamond), h1, body; to the right (lg) or in full-bleed rows below (mobile) the
  * key figures, the pricing note, the sub-note and the call to action.
  * R13: the design's "$5K" / "$1K/mo" display stat is NOT rendered; the price
  * is the small inline `pricingNote`. Server component. The only h1.
  */
 export function ServiceHero({
   eyebrow,
-  eyebrowTick,
   heading,
   accentPhrase,
   body,
@@ -48,12 +47,8 @@ export function ServiceHero({
       <Section tone="dark" pad="none" className="border-t border-cream/20">
         <Container className={cx('lg:pt-14 lg:pb-13', hasAside && 'lg:grid lg:grid-cols-[1fr_300px] lg:items-end lg:gap-14')}>
           <div className={cx('pt-8', hasAside ? 'pb-5' : 'pb-8', 'lg:py-0')}>
-            {eyebrow ? (
-              <p className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.12em] opacity-70 md:gap-2.25 md:text-[11px]">
-                {eyebrowTick !== false ? <span aria-hidden="true" className="size-2 shrink-0 rotate-45 bg-gold-pale md:size-2.25" /> : null}
-                {eyebrow}
-              </p>
-            ) : null}
+            {/* hero eyebrow style (grey caps, no diamond), in light grey for the ink ground */}
+            {eyebrow ? <Eyebrow className="text-gray-light/65">{eyebrow}</Eyebrow> : null}
             <AccentHeadline
               text={heading}
               accent={accentPhrase}

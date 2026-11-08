@@ -300,7 +300,7 @@ export interface HeroBlock {
    */
   width?: ('narrow' | 'wide') | null;
   /**
-   * Small uppercase line above the headline, e.g. "Integrated ecommerce growth partner — Chicago".
+   * Small grey uppercase line above the headline, e.g. "Work", "About".
    */
   eyebrow?: string | null;
   /**
@@ -2340,6 +2340,10 @@ export interface TestimonialRowBlock {
    */
   variant: 'row' | 'client-voice';
   /**
+   * How the row looks. Text = the same content set as typography, without boxes. The homepage uses Text.
+   */
+  presentation?: ('cards' | 'text') | null;
+  /**
    * Small uppercase line above the testimonial cards, e.g. "What clients say".
    */
   eyebrow?: string | null;
@@ -2566,7 +2570,7 @@ export interface TwoTrackPanelsBlock {
          */
         title: string;
         /**
-         * In the Equal layout this also gives the card a wine left edge and a wine price tag.
+         * In the Equal layout this also makes the rule above the track and the price amount wine.
          */
         accentTitle?: boolean | null;
         /**
@@ -2574,7 +2578,7 @@ export interface TwoTrackPanelsBlock {
          */
         body?: string | null;
         /**
-         * Optional small bordered chips under the paragraph, e.g. "SEO". Drag to reorder. Leave empty to hide.
+         * Optional short items listed under the paragraph, e.g. "SEO". Drag to reorder. Leave empty to hide.
          */
         services?:
           | {
@@ -2583,7 +2587,7 @@ export interface TwoTrackPanelsBlock {
             }[]
           | null;
         /**
-         * Short note, e.g. 'Builds start at $5K'. In the Equal layout it shows as a tag at the foot of the card with the amount ($5K, $1K/mo) enlarged; elsewhere it is a small inline note.
+         * Short note, e.g. 'Builds start at $5K'. In the Equal layout it shows at the foot of the track with the amount ($7K) enlarged; elsewhere it is a small inline note.
          */
         pricingNote?: string | null;
         /**
@@ -3094,6 +3098,14 @@ export interface SpecLedgerBlock {
          */
         line?: string | null;
         /**
+         * Pick the tool's logo (built in, in its brand colours). Leave empty for no logo, or upload one on the right for a tool not in the list.
+         */
+        logo?: ('shopify' | 'instagram' | 'facebook' | 'tiktok' | 'meta' | 'microsoft-clarity') | null;
+        /**
+         * Only for a tool not in the list. A square logo, ideally SVG or PNG on transparent. Used instead of the picked logo.
+         */
+        logoImage?: (number | null) | Media;
+        /**
          * The picture for this card (template cards 4:3, feature cards wide). The card keeps its shape if left empty.
          */
         image?: (number | null) | Media;
@@ -3145,6 +3157,10 @@ export interface SpecLedgerBlock {
      */
     image?: (number | null) | Media;
   };
+  /**
+   * Small grey line under the row, e.g. "Product names are trademarks of their respective owners and are shown to identify the tools we work with." Optional.
+   */
+  footnote?: string | null;
   /**
    * Small inline note only, e.g. 'Builds start at $5K'. Never put a price in a headline or metric.
    */
@@ -5184,6 +5200,7 @@ export interface ReviewWallBlockSelect<T extends boolean = true> {
  */
 export interface TestimonialRowBlockSelect<T extends boolean = true> {
   variant?: T;
+  presentation?: T;
   eyebrow?: T;
   eyebrowTick?: T;
   heading?: T;
@@ -5447,6 +5464,8 @@ export interface SpecLedgerBlockSelect<T extends boolean = true> {
         code?: T;
         title?: T;
         line?: T;
+        logo?: T;
+        logoImage?: T;
         image?: T;
         whatLabel?: T;
         what?: T;
@@ -5464,6 +5483,7 @@ export interface SpecLedgerBlockSelect<T extends boolean = true> {
         note?: T;
         image?: T;
       };
+  footnote?: T;
   pricingNote?: T;
   id?: T;
   blockName?: T;
