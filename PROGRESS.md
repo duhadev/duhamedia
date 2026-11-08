@@ -142,6 +142,7 @@ Statuses: `queued` → `coding` → `integrated` → `gate1` → `gate2` → `re
 | 2026-10-29 | v1.0.12 (8973777) | yes ("send it to prod") | PhaseTimeline mobile reading rail; `/`, `/admin`, `/api/health` 200 |
 | 2026-10-30 | v1.0.13 (5ee9fd6) | yes ("push to prod") | Founder Read more toggle below the story; `/`, `/admin`, `/api/health` 200 |
 | 2026-11-07 | v1.0.14 (4940889) | yes ("Apply it fully without approval" + "push it to production") | Copy round 1 migration: prod applied 44, skipped 0 (Preview 39 / home skipped, seed layout). Live check: 14 pages clean of brackets + banned words, `/lp/sample-campaign` 404, sitemap drops testimonials/reviews/thank-you/links, `/admin` + `/api/health` 200 |
+| 2026-11-08 | v1.0.15 (299b7bd) | yes (owner pre-approved: "push to production. This is my approval") | Copy round 2 + heroes + book-a-call flow + brochure restructure. Two failed attempts first (bf17c83, 1570357: data migration before schema, see Decision log), never served; tag moved. Final: all 7 migrations applied, 0 skipped. Live check: 13 pages 200, no brackets/banned words, `/api/health` 200 |
 
 
 ## Decision log
