@@ -35,11 +35,11 @@ import * as migration_20261029_143150_teamintro_pull_quote from './20261029_1431
 import * as migration_20261029_145749_proofstrip_numbers_on_block from './20261029_145749_proofstrip_numbers_on_block';
 import * as migration_20261029_155251_twotrack_services_chips from './20261029_155251_twotrack_services_chips';
 import * as migration_20261107_150000_copy_round_01 from './20261107_150000_copy_round_01';
-import * as migration_20261107_200000_copy_round_02 from './20261107_200000_copy_round_02';
+import * as migration_20261108_013210_copy_round_02 from './20261108_013210_copy_round_02';
 import * as migration_20261108_011630_richcontent_article_width from './20261108_011630_richcontent_article_width';
-import * as migration_20261108_012000_hero_consistency from './20261108_012000_hero_consistency';
+import * as migration_20261108_013220_hero_consistency from './20261108_013220_hero_consistency';
 import * as migration_20261108_011914_book_a_call_flow_schema from './20261108_011914_book_a_call_flow_schema';
-import * as migration_20261108_013000_book_a_call_flow from './20261108_013000_book_a_call_flow';
+import * as migration_20261108_013230_book_a_call_flow from './20261108_013230_book_a_call_flow';
 import * as migration_20261108_013207_brochure_blocks from './20261108_013207_brochure_blocks';
 import * as migration_20261108_013300_brochure_restructure from './20261108_013300_brochure_restructure';
 
@@ -245,19 +245,19 @@ export const migrations = [
     name: '20261108_013207_brochure_blocks',
   },
   {
-    up: migration_20261107_200000_copy_round_02.up,
-    down: migration_20261107_200000_copy_round_02.down,
-    name: '20261107_200000_copy_round_02',
+    up: migration_20261108_013210_copy_round_02.up,
+    down: migration_20261108_013210_copy_round_02.down,
+    name: '20261108_013210_copy_round_02',
   },
   {
-    up: migration_20261108_012000_hero_consistency.up,
-    down: migration_20261108_012000_hero_consistency.down,
-    name: '20261108_012000_hero_consistency',
+    up: migration_20261108_013220_hero_consistency.up,
+    down: migration_20261108_013220_hero_consistency.down,
+    name: '20261108_013220_hero_consistency',
   },
   {
-    up: migration_20261108_013000_book_a_call_flow.up,
-    down: migration_20261108_013000_book_a_call_flow.down,
-    name: '20261108_013000_book_a_call_flow',
+    up: migration_20261108_013230_book_a_call_flow.up,
+    down: migration_20261108_013230_book_a_call_flow.down,
+    name: '20261108_013230_book_a_call_flow',
   },
   {
     up: migration_20261108_013300_brochure_restructure.up,
