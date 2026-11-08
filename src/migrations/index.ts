@@ -230,19 +230,9 @@ export const migrations = [
     name: '20261107_150000_copy_round_01',
   },
   {
-    up: migration_20261107_200000_copy_round_02.up,
-    down: migration_20261107_200000_copy_round_02.down,
-    name: '20261107_200000_copy_round_02',
-  },
-  {
     up: migration_20261108_011630_richcontent_article_width.up,
     down: migration_20261108_011630_richcontent_article_width.down,
     name: '20261108_011630_richcontent_article_width',
-  },
-  {
-    up: migration_20261108_012000_hero_consistency.up,
-    down: migration_20261108_012000_hero_consistency.down,
-    name: '20261108_012000_hero_consistency',
   },
   {
     up: migration_20261108_011914_book_a_call_flow_schema.up,
@@ -250,14 +240,24 @@ export const migrations = [
     name: '20261108_011914_book_a_call_flow_schema',
   },
   {
-    up: migration_20261108_013000_book_a_call_flow.up,
-    down: migration_20261108_013000_book_a_call_flow.down,
-    name: '20261108_013000_book_a_call_flow',
-  },
-  {
     up: migration_20261108_013207_brochure_blocks.up,
     down: migration_20261108_013207_brochure_blocks.down,
     name: '20261108_013207_brochure_blocks',
+  },
+  {
+    up: migration_20261107_200000_copy_round_02.up,
+    down: migration_20261107_200000_copy_round_02.down,
+    name: '20261107_200000_copy_round_02',
+  },
+  {
+    up: migration_20261108_012000_hero_consistency.up,
+    down: migration_20261108_012000_hero_consistency.down,
+    name: '20261108_012000_hero_consistency',
+  },
+  {
+    up: migration_20261108_013000_book_a_call_flow.up,
+    down: migration_20261108_013000_book_a_call_flow.down,
+    name: '20261108_013000_book_a_call_flow',
   },
   {
     up: migration_20261108_013300_brochure_restructure.up,
