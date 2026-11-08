@@ -22,7 +22,7 @@ import { rowLabel } from '../../components/admin/rowLabel'
  * field to turn that off.
  */
 
-type Variant = 'accordion' | 'arc' | 'steps' | 'build-run' | 'engine-rollout'
+type Variant = 'accordion' | 'arc' | 'steps' | 'build-run' | 'engine-rollout' | 'grid'
 
 /** Admin condition: show the field only for the listed variants. */
 const onlyFor =
@@ -53,6 +53,7 @@ export const PhaseTimeline: Block = {
         { label: 'Step cards (numbered cards with "You leave with" outcomes and a button)', value: 'steps' },
         { label: 'Build run (dark band of numbered steps, sign-offs marked)', value: 'build-run' },
         { label: 'Engine rollout (dark band, one row of steps with timings)', value: 'engine-rollout' },
+        { label: 'Grid (numbered cells in rows of four under phase bars, as the brochure)', value: 'grid' },
       ],
       admin: {
         isClearable: false,
@@ -64,17 +65,17 @@ export const PhaseTimeline: Block = {
         defaultTick: false,
         description: 'Small uppercase line above the headline, e.g. "How it runs".',
       }),
-      admin: { condition: onlyFor('accordion', 'build-run', 'engine-rollout') },
+      admin: { condition: onlyFor('accordion', 'build-run', 'engine-rollout', 'grid') },
     },
     // Accent shows in wine on every layout except Accordion (ink on ink there).
     ...headlineFields({
       description: 'The section headline, e.g. "Three phases. The last one is the point."',
-      accent: onlyFor('arc', 'steps', 'build-run', 'engine-rollout'),
+      accent: onlyFor('arc', 'steps', 'build-run', 'engine-rollout', 'grid'),
     }),
     {
       name: 'intro',
       type: 'textarea',
-      admin: { condition: onlyFor('accordion'), description: 'Optional short paragraph under the headline.' },
+      admin: { condition: onlyFor('accordion', 'grid'), description: 'Optional short paragraph under the headline.' },
     },
     {
       name: 'phases',
@@ -86,7 +87,7 @@ export const PhaseTimeline: Block = {
       admin: {
         components: { RowLabel: rowLabel(['number', 'title'], 'Phase') },
         initCollapsed: false,
-        condition: onlyFor('accordion', 'arc'),
+        condition: onlyFor('accordion', 'arc', 'grid'),
         description:
           'Up to three, in order. Accordion: each phase is a labelled bar its steps sit under. Arc: each phase is a row with its description and link. The LAST phase is always shown in the accent colour (the independence handover); that cannot be switched off.',
       },
@@ -106,6 +107,16 @@ export const PhaseTimeline: Block = {
               admin: { width: '70%', description: 'e.g. "Build foundation". Keep it short: it is cut off with "…" when the column is narrow.' },
             },
           ],
+        },
+        {
+          name: 'continuedLabel',
+          type: 'text',
+          label: 'Bar text when the phase continues',
+          admin: {
+            condition: onlyFor('grid'),
+            description:
+              'Grid only: the bar over a phase\'s second row on wide screens, e.g. "Phase 1 · Build, continued". Leave empty to repeat the phase name.',
+          },
         },
         {
           name: 'body',
@@ -140,9 +151,9 @@ export const PhaseTimeline: Block = {
       admin: {
         components: { RowLabel: rowLabel(['number', 'title'], 'Step') },
         initCollapsed: true,
-        condition: onlyFor('accordion', 'steps', 'build-run', 'engine-rollout'),
+        condition: onlyFor('accordion', 'steps', 'build-run', 'engine-rollout', 'grid'),
         description:
-          'In order. Accordion: each step sits under the phase you pick; the first starts open. Step cards: three or four fit side by side. Build run: three per row. Engine rollout: one row (six fit). The LAST step is the handover and always shows at full weight.',
+          'In order. Grid: four per row on wide screens, each under its phase bar. Accordion: each step sits under the phase you pick; the first starts open. Step cards: three or four fit side by side. Build run: three per row. Engine rollout: one row (six fit). The LAST step is the handover and always shows at full weight.',
       },
       fields: [
         {
@@ -175,7 +186,7 @@ export const PhaseTimeline: Block = {
               admin: {
                 width: '30%',
                 isClearable: false,
-                condition: onlyFor('accordion'),
+                condition: onlyFor('accordion', 'grid'),
                 description: 'Which phase bar this step sits under.',
               },
             },

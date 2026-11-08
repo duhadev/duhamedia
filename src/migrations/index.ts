@@ -40,6 +40,8 @@ import * as migration_20261108_011630_richcontent_article_width from './20261108
 import * as migration_20261108_012000_hero_consistency from './20261108_012000_hero_consistency';
 import * as migration_20261108_011914_book_a_call_flow_schema from './20261108_011914_book_a_call_flow_schema';
 import * as migration_20261108_013000_book_a_call_flow from './20261108_013000_book_a_call_flow';
+import * as migration_20261108_013207_brochure_blocks from './20261108_013207_brochure_blocks';
+import * as migration_20261108_013300_brochure_restructure from './20261108_013300_brochure_restructure';
 
 export const migrations = [
   {
@@ -251,5 +253,15 @@ export const migrations = [
     up: migration_20261108_013000_book_a_call_flow.up,
     down: migration_20261108_013000_book_a_call_flow.down,
     name: '20261108_013000_book_a_call_flow',
+  },
+  {
+    up: migration_20261108_013207_brochure_blocks.up,
+    down: migration_20261108_013207_brochure_blocks.down,
+    name: '20261108_013207_brochure_blocks',
+  },
+  {
+    up: migration_20261108_013300_brochure_restructure.up,
+    down: migration_20261108_013300_brochure_restructure.down,
+    name: '20261108_013300_brochure_restructure',
   },
 ];

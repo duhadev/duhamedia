@@ -16,9 +16,11 @@ import { NewsletterBandBlock } from './NewsletterBand/Component'
 import { OfferBlockBlock } from './OfferBlock/Component'
 import { PhaseTimelineBlock } from './PhaseTimeline/Component'
 import { PostListBlock } from './PostList/Component'
+import { PricingPlansBlock } from './PricingPlans/Component'
 import { ProofStripBlock } from './ProofStrip/Component'
 import { ReviewWallBlock } from './ReviewWall/Component'
 import { RichContentBlock } from './RichContent/Component'
+import { ServiceSheetBlock } from './ServiceSheet/Component'
 import { SpecLedgerBlock } from './SpecLedger/Component'
 import { TeamIntroBlock } from './TeamIntro/Component'
 import { TestimonialRowBlock } from './TestimonialRow/Component'
@@ -55,6 +57,8 @@ export const blockComponents: BlockComponents = {
   teamIntro: TeamIntroBlock,
   richContent: RichContentBlock,
   specLedger: SpecLedgerBlock,
+  serviceSheet: ServiceSheetBlock,
+  pricingPlans: PricingPlansBlock,
   newsletterBand: NewsletterBandBlock,
   formEmbed: FormEmbedBlock,
   bookingEmbed: BookingEmbedBlock,

@@ -233,6 +233,8 @@ export interface Page {
     | TeamIntroBlock
     | RichContentBlock
     | SpecLedgerBlock
+    | ServiceSheetBlock
+    | PricingPlansBlock
     | NewsletterBandBlock
     | FormEmbedBlock
     | BookingEmbedBlock
@@ -2121,6 +2123,10 @@ export interface MetricEventBlock {
    */
   variant: 'table' | 'facts';
   /**
+   * Company facts only. Wide lines the facts up with a wide text section above (used on About).
+   */
+  width?: ('narrow' | 'wide') | null;
+  /**
    * Small line above the table, e.g. "Results — 12 months, client-reported". For Company facts this is the caption, e.g. "The company, in numbers".
    */
   eyebrow?: string | null;
@@ -2628,7 +2634,7 @@ export interface PhaseTimelineBlock {
   /**
    * The timeline layout. Each layout shows only the fields it uses.
    */
-  variant: 'accordion' | 'arc' | 'steps' | 'build-run' | 'engine-rollout';
+  variant: 'accordion' | 'arc' | 'steps' | 'build-run' | 'engine-rollout' | 'grid';
   /**
    * Small uppercase line above the headline, e.g. "How it runs".
    */
@@ -2662,6 +2668,10 @@ export interface PhaseTimelineBlock {
          * e.g. "Build foundation". Keep it short: it is cut off with "…" when the column is narrow.
          */
         title: string;
+        /**
+         * Grid only: the bar over a phase's second row on wide screens, e.g. "Phase 1 · Build, continued". Leave empty to repeat the phase name.
+         */
+        continuedLabel?: string | null;
         /**
          * What happens in this phase, in two to four sentences.
          */
@@ -2699,7 +2709,7 @@ export interface PhaseTimelineBlock {
       }[]
     | null;
   /**
-   * In order. Accordion: each step sits under the phase you pick; the first starts open. Step cards: three or four fit side by side. Build run: three per row. Engine rollout: one row (six fit). The LAST step is the handover and always shows at full weight.
+   * In order. Grid: four per row on wide screens, each under its phase bar. Accordion: each step sits under the phase you pick; the first starts open. Step cards: three or four fit side by side. Build run: three per row. Engine rollout: one row (six fit). The LAST step is the handover and always shows at full weight.
    */
   steps?:
     | {
@@ -3037,7 +3047,7 @@ export interface SpecLedgerBlock {
   /**
    * Which layout to use.
    */
-  variant: 'cards' | 'expandable' | 'signal-flow' | 'list';
+  variant: 'cards' | 'expandable' | 'signal-flow' | 'list' | 'tools';
   /**
    * Template cards suit a coded set such as T-01 to T-04. Feature cards suit two big pictures.
    */
@@ -3063,7 +3073,7 @@ export interface SpecLedgerBlock {
    */
   accentPhrase?: string | null;
   /**
-   * Short grey line beside the caption (under the cards on mobile), e.g. "Four templates carry almost every order."
+   * Short grey line beside the caption (under the cards on mobile), e.g. "Four templates carry almost every order." Tools row: the line under the heading, e.g. "A small, proven stack."
    */
   note?: string | null;
   /**
@@ -3142,6 +3152,335 @@ export interface SpecLedgerBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'specLedger';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ServiceSheetBlock".
+ */
+export interface ServiceSheetBlock {
+  why?: {
+    /**
+     * Section title with the diamond, e.g. "Why it matters".
+     */
+    heading?: string | null;
+    /**
+     * The paragraphs. Leave a blank line between paragraphs. Wrap words in **double stars** to make them bold, e.g. the closing line.
+     */
+    body?: string | null;
+  };
+  /**
+   * The grey card under the paragraphs, e.g. "The build, in numbers". Leave the numbers empty for no card.
+   */
+  numbers?: {
+    /**
+     * Small caption at the top, e.g. "Every month".
+     */
+    label?: string | null;
+    layout?: ('columns' | 'rows') | null;
+    /**
+     * Up to three. Add, remove and drag to reorder.
+     */
+    items?:
+      | {
+          /**
+           * e.g. "~55" or "1 hr".
+           */
+          value: string;
+          /**
+           * Rows layout only: the bold words before the sentence, e.g. "Planning call."
+           */
+          lead?: string | null;
+          accent?: boolean | null;
+          /**
+           * The line under (or beside) the number.
+           */
+          text?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * The black-outlined box, e.g. "You own it". Leave the text empty for no box.
+   */
+  box: {
+    /**
+     * Small caption at the top of the box.
+     */
+    label?: string | null;
+    body?: string | null;
+    /**
+     * Optional link at the end of the box, e.g. "See pricing".
+     */
+    link: {
+      type: 'internal' | 'custom';
+      newTab?: boolean | null;
+      reference?:
+        | ({
+            relationTo: 'pages';
+            value: number | Page;
+          } | null)
+        | ({
+            relationTo: 'case-studies';
+            value: number | CaseStudy;
+          } | null)
+        | ({
+            relationTo: 'posts';
+            value: number | Post;
+          } | null)
+        | ({
+            relationTo: 'lead-magnets';
+            value: number | LeadMagnet;
+          } | null);
+      /**
+       * https://…, mailto:…, or a site path like /book-a-call.
+       */
+      url?: string | null;
+      label?: string | null;
+    };
+  };
+  nextStep: {
+    /**
+     * Small caption, e.g. "Next step".
+     */
+    label?: string | null;
+    /**
+     * The bold line, as a link, e.g. "Book a call to talk through your build." to /book-a-call.
+     */
+    link: {
+      type: 'internal' | 'custom';
+      newTab?: boolean | null;
+      reference?:
+        | ({
+            relationTo: 'pages';
+            value: number | Page;
+          } | null)
+        | ({
+            relationTo: 'case-studies';
+            value: number | CaseStudy;
+          } | null)
+        | ({
+            relationTo: 'posts';
+            value: number | Post;
+          } | null)
+        | ({
+            relationTo: 'lead-magnets';
+            value: number | LeadMagnet;
+          } | null);
+      /**
+       * https://…, mailto:…, or a site path like /book-a-call.
+       */
+      url?: string | null;
+      label?: string | null;
+    };
+  };
+  included?: {
+    /**
+     * Section title with the diamond, e.g. "What's included".
+     */
+    heading?: string | null;
+    /**
+     * Each group is a small title over a list. Add, remove and drag to reorder.
+     */
+    groups?:
+      | {
+          /**
+           * e.g. "Strategy and design".
+           */
+          title: string;
+          items?:
+            | {
+                /**
+                 * Bold lead-in, e.g. "Discovery". Optional.
+                 */
+                lead?: string | null;
+                text: string;
+                id?: string | null;
+              }[]
+            | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  differentiators?: {
+    /**
+     * Section title with the diamond, e.g. "Key differentiators".
+     */
+    heading?: string | null;
+    /**
+     * A small caption and one line each. Add, remove and drag to reorder.
+     */
+    rows?:
+      | {
+          /**
+           * e.g. "No templates".
+           */
+          label: string;
+          line: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'serviceSheet';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PricingPlansBlock".
+ */
+export interface PricingPlansBlock {
+  /**
+   * Lets other pages link straight to this section, e.g. "pricing" → /services#pricing. Letters, numbers and dashes only.
+   */
+  anchorId?: string | null;
+  /**
+   * Small uppercase line above the headline, e.g. "Pricing".
+   */
+  eyebrow?: string | null;
+  /**
+   * The small wine diamond before the eyebrow.
+   */
+  eyebrowTick?: boolean | null;
+  /**
+   * e.g. "Two jobs. Two ways to pay."
+   */
+  heading?: string | null;
+  /**
+   * Optional: one word or phrase copied from the headline to show in the accent colour.
+   */
+  accentPhrase?: string | null;
+  /**
+   * One line under the headline.
+   */
+  intro?: string | null;
+  build: {
+    /**
+     * Caption, e.g. "Build your store".
+     */
+    label?: string | null;
+    /**
+     * Words above the price, e.g. "Builds start at".
+     */
+    lead?: string | null;
+    /**
+     * e.g. "$7K".
+     */
+    price?: string | null;
+    /**
+     * Add, remove and drag to reorder.
+     */
+    bullets?:
+      | {
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * e.g. "Next step".
+     */
+    nextLabel?: string | null;
+    /**
+     * e.g. "Book a call to talk through your build." to /book-a-call.
+     */
+    nextLink: {
+      type: 'internal' | 'custom';
+      newTab?: boolean | null;
+      reference?:
+        | ({
+            relationTo: 'pages';
+            value: number | Page;
+          } | null)
+        | ({
+            relationTo: 'case-studies';
+            value: number | CaseStudy;
+          } | null)
+        | ({
+            relationTo: 'posts';
+            value: number | Post;
+          } | null)
+        | ({
+            relationTo: 'lead-magnets';
+            value: number | LeadMagnet;
+          } | null);
+      /**
+       * https://…, mailto:…, or a site path like /book-a-call.
+       */
+      url?: string | null;
+      label?: string | null;
+    };
+  };
+  marketing?: {
+    /**
+     * Caption, e.g. "Marketing plan".
+     */
+    label?: string | null;
+    /**
+     * e.g. "Three plans, settled quarterly. Every plan includes the full toolkit."
+     */
+    intro?: string | null;
+    /**
+     * Left footer caption on every plan.
+     */
+    firstLabel?: string | null;
+    /**
+     * Right footer caption on every plan.
+     */
+    afterLabel?: string | null;
+    /**
+     * Add, remove and drag to reorder.
+     */
+    plans?:
+      | {
+          /**
+           * e.g. "Standard".
+           */
+          name: string;
+          /**
+           * Right of the name, e.g. "Best for steady sales".
+           */
+          tag?: string | null;
+          /**
+           * The sentence. Wrap words in **double stars** to make them bold.
+           */
+          body?: string | null;
+          /**
+           * e.g. "$1,000 flat".
+           */
+          first?: string | null;
+          /**
+           * e.g. "$1,500 a quarter".
+           */
+          after?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * The outlined line under the plans. **Double stars** for bold.
+     */
+    threshold?: string | null;
+    finePrint?: string | null;
+  };
+  /**
+   * The bold statement under the cards.
+   */
+  statement?: string | null;
+  /**
+   * Optional: a sentence copied from the statement to show in the accent colour.
+   */
+  statementAccent?: string | null;
+  /**
+   * Up to three captioned paragraphs side by side, e.g. "Switching early". Add, remove and drag to reorder.
+   */
+  terms?:
+    | {
+        label: string;
+        body: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'pricingPlans';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -4457,6 +4796,8 @@ export interface PagesSelect<T extends boolean = true> {
         teamIntro?: T | TeamIntroBlockSelect<T>;
         richContent?: T | RichContentBlockSelect<T>;
         specLedger?: T | SpecLedgerBlockSelect<T>;
+        serviceSheet?: T | ServiceSheetBlockSelect<T>;
+        pricingPlans?: T | PricingPlansBlockSelect<T>;
         newsletterBand?: T | NewsletterBandBlockSelect<T>;
         formEmbed?: T | FormEmbedBlockSelect<T>;
         bookingEmbed?: T | BookingEmbedBlockSelect<T>;
@@ -4756,6 +5097,7 @@ export interface CaseStudyCardsBlockSelect<T extends boolean = true> {
  */
 export interface MetricEventBlockSelect<T extends boolean = true> {
   variant?: T;
+  width?: T;
   eyebrow?: T;
   eyebrowTick?: T;
   heading?: T;
@@ -4960,6 +5302,7 @@ export interface PhaseTimelineBlockSelect<T extends boolean = true> {
     | {
         number?: T;
         title?: T;
+        continuedLabel?: T;
         body?: T;
         link?:
           | T
@@ -5122,6 +5465,160 @@ export interface SpecLedgerBlockSelect<T extends boolean = true> {
         image?: T;
       };
   pricingNote?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ServiceSheetBlock_select".
+ */
+export interface ServiceSheetBlockSelect<T extends boolean = true> {
+  why?:
+    | T
+    | {
+        heading?: T;
+        body?: T;
+      };
+  numbers?:
+    | T
+    | {
+        label?: T;
+        layout?: T;
+        items?:
+          | T
+          | {
+              value?: T;
+              lead?: T;
+              accent?: T;
+              text?: T;
+              id?: T;
+            };
+      };
+  box?:
+    | T
+    | {
+        label?: T;
+        body?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+      };
+  nextStep?:
+    | T
+    | {
+        label?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+      };
+  included?:
+    | T
+    | {
+        heading?: T;
+        groups?:
+          | T
+          | {
+              title?: T;
+              items?:
+                | T
+                | {
+                    lead?: T;
+                    text?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
+      };
+  differentiators?:
+    | T
+    | {
+        heading?: T;
+        rows?:
+          | T
+          | {
+              label?: T;
+              line?: T;
+              id?: T;
+            };
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PricingPlansBlock_select".
+ */
+export interface PricingPlansBlockSelect<T extends boolean = true> {
+  anchorId?: T;
+  eyebrow?: T;
+  eyebrowTick?: T;
+  heading?: T;
+  accentPhrase?: T;
+  intro?: T;
+  build?:
+    | T
+    | {
+        label?: T;
+        lead?: T;
+        price?: T;
+        bullets?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        nextLabel?: T;
+        nextLink?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+      };
+  marketing?:
+    | T
+    | {
+        label?: T;
+        intro?: T;
+        firstLabel?: T;
+        afterLabel?: T;
+        plans?:
+          | T
+          | {
+              name?: T;
+              tag?: T;
+              body?: T;
+              first?: T;
+              after?: T;
+              id?: T;
+            };
+        threshold?: T;
+        finePrint?: T;
+      };
+  statement?: T;
+  statementAccent?: T;
+  terms?:
+    | T
+    | {
+        label?: T;
+        body?: T;
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }

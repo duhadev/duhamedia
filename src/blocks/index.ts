@@ -16,9 +16,11 @@ import { NewsletterBand } from './NewsletterBand/config'
 import { OfferBlock } from './OfferBlock/config'
 import { PhaseTimeline } from './PhaseTimeline/config'
 import { PostList } from './PostList/config'
+import { PricingPlans } from './PricingPlans/config'
 import { ProofStrip } from './ProofStrip/config'
 import { ReviewWall } from './ReviewWall/config'
 import { RichContent } from './RichContent/config'
+import { ServiceSheet } from './ServiceSheet/config'
 import { SpecLedger } from './SpecLedger/config'
 import { TeamIntro } from './TeamIntro/config'
 import { TestimonialRow } from './TestimonialRow/config'
@@ -58,6 +60,8 @@ export const pageBlocks: Block[] = [
   TeamIntro,
   RichContent,
   SpecLedger,
+  ServiceSheet,
+  PricingPlans,
   NewsletterBand,
   FormEmbed,
   BookingEmbed,

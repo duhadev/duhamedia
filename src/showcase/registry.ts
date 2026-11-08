@@ -4,6 +4,10 @@ import type { LinkStackData } from '@/blocks/LinkStack/Component'
 import type { PostItem, PostListData } from '@/blocks/PostList/Component'
 import type { BlockData, PageBlockType } from '@/blocks/types'
 import type { CaseStudy, Client, Faq, Media, TeamMember, Testimonial } from '@/payload-types'
+import { PRICING, PROCESS_GRID, SHEET_BUILD, SHEET_GROW, TOOLS } from '@/lib/brochureCopy'
+
+/** A brochure block constant without its `blockType` (the showcase entry carries it as `block`). */
+const noType = <T extends { blockType: string }>({ blockType: _b, ...rest }: T): Omit<T, 'blockType'> => rest
 
 import { customLink, figure, h, hr, internalLink, p, quote, root, text, ul } from './lexical'
 
@@ -2701,6 +2705,50 @@ export const showcaseEntries: ShowcaseEntry[] = [
       navLabel: 'On this page',
       body: root(counsel(' A document without section headings.')),
     },
+  },
+
+  /* ---- Brochure 2026-11-07 (services pages, pricing) ---- */
+  {
+    block: 'serviceSheet',
+    variant: 'build (numbers side by side)',
+    label: 'Brochure p2 sheet: why it matters + numbers card + You own it + next step | what\'s included + differentiators',
+    data: noType(SHEET_BUILD),
+  },
+  {
+    block: 'serviceSheet',
+    variant: 'grow (numbers as rows, box with link)',
+    label: 'Brochure p3 sheet: numbers as rows, "How it\'s paid" box with a link',
+    data: noType(SHEET_GROW),
+  },
+  {
+    block: 'serviceSheet',
+    variant: 'sparse',
+    label: 'Only paragraphs and one group: empty parts render nothing',
+    data: { why: { heading: 'Why it matters', body: 'One paragraph.\n\n**A bold closing line.**' }, included: { heading: "What's included", groups: [{ title: 'One group', items: [{ text: 'A bullet with no lead-in.' }] }] }, box: { link: { type: 'custom' } }, nextStep: { link: { type: 'custom' } } },
+  },
+  {
+    block: 'phaseTimeline',
+    variant: 'grid',
+    label: 'Brochure p4: 8 steps, Phase 1 wraps to a "continued" bar on desktop; last phase wine',
+    data: noType(PROCESS_GRID),
+  },
+  {
+    block: 'specLedger',
+    variant: 'tools',
+    label: 'Brochure p4 preferred tools (text only, no logos)',
+    data: noType(TOOLS),
+  },
+  {
+    block: 'pricingPlans',
+    variant: 'default',
+    label: 'Brochure p5: build card, three plan cards, boxed note, small print, statement, terms row',
+    data: noType(PRICING),
+  },
+  {
+    block: 'metricEvent',
+    variant: 'facts — wide',
+    label: 'Facts, wide (About): caption beside the rows from lg',
+    data: { variant: 'facts', width: 'wide', eyebrow: 'The company, in numbers', items: [{ id: 'w1', label: 'Builds in progress', value: '3' }, { id: 'w2', label: 'Client cap', value: '7', accent: true }] },
   },
 
   /* ---- p21 404 ---- */

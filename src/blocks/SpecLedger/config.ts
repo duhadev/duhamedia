@@ -20,7 +20,7 @@ import { rowLabel } from '../../components/admin/rowLabel'
  * payload@3.91.0 fields/config/types.d.ts `Condition`, third argument).
  */
 
-type Variant = 'cards' | 'expandable' | 'signal-flow' | 'list'
+type Variant = 'cards' | 'expandable' | 'signal-flow' | 'list' | 'tools'
 type BlockDataArg = { blockData?: { variant?: string } }
 
 const variantIs =
@@ -48,6 +48,7 @@ export const SpecLedger: Block = {
         { label: 'Expandable rows (coded rows that open: what we do / how you will know)', value: 'expandable' },
         { label: 'Signal flow (coded tiles feeding into one dashboard card)', value: 'signal-flow' },
         { label: 'Check list (a short column of ticked bullets, e.g. "What\'s inside")', value: 'list' },
+        { label: 'Tools row (a row of tool names, e.g. "Preferred tools")', value: 'tools' },
       ],
       admin: { description: 'Which layout to use.' },
     },
@@ -92,8 +93,9 @@ export const SpecLedger: Block = {
       type: 'text',
       label: 'Side note',
       admin: {
-        condition: isAnatomyCards,
-        description: 'Short grey line beside the caption (under the cards on mobile), e.g. "Four templates carry almost every order."',
+        condition: (data, sibling, ctx) => isAnatomyCards(data, sibling, ctx) || variantIs('tools')(data, sibling, ctx),
+        description:
+          'Short grey line beside the caption (under the cards on mobile), e.g. "Four templates carry almost every order." Tools row: the line under the heading, e.g. "A small, proven stack."',
       },
     },
     {
@@ -132,7 +134,7 @@ export const SpecLedger: Block = {
           admin: {
             description:
               'The short line beside the title (rows), under the picture (template cards), or under the title (feature cards). Not used by signal flow tiles.',
-            condition: variantIs('cards', 'expandable'),
+            condition: variantIs('cards', 'expandable', 'tools'),
           },
         },
         {

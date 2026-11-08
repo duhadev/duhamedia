@@ -1,6 +1,7 @@
 import React from 'react'
 
 import type { BlockData } from '@/blocks/types'
+import { DiamondHeading } from '@/components/BrochureParts'
 import { AccentHeadline, Container, Eyebrow, Media, Section } from '@/components/ui'
 import { cx } from '@/lib/cx'
 
@@ -287,6 +288,31 @@ function ListVariant({ props, items }: { props: SpecLedgerData; items: Item[] })
   )
 }
 
+/**
+ * `tools` (brochure 2026-11-07 p4 "Preferred tools"): diamond heading, one
+ * line under it, then the tool names as a ruled row of text (no logos: brand
+ * files are not used). `line` is an optional second line, e.g. "Shop".
+ */
+function ToolsVariant({ props, items }: { props: SpecLedgerData; items: Item[] }) {
+  const { heading, note } = props
+  return (
+    <Section tone={props.tone === 'grey' ? 'grey' : 'light'} pad="none" className="pb-12 md:pb-16">
+      <Container>
+        {hasText(heading) ? <DiamondHeading>{heading}</DiamondHeading> : null}
+        {hasText(note) ? <p className="mt-2 text-body-mobile text-gray-warm md:text-body">{note}</p> : null}
+        <ul className="mt-5 grid list-none grid-cols-2 gap-x-4 gap-y-5 border-y border-divider p-0 py-6 sm:grid-cols-4 lg:grid-cols-7 lg:text-center">
+          {items.map((item, i) => (
+            <li key={item.id ?? i} className="font-display text-[1rem] leading-tight md:text-[1.0625rem]">
+              {item.title}
+              {hasText(item.line) ? <span className="block">{item.line}</span> : null}
+            </li>
+          ))}
+        </ul>
+      </Container>
+    </Section>
+  )
+}
+
 /* ------------------------------ block ---------------------------------- */
 
 /**
@@ -300,11 +326,12 @@ export function SpecLedgerBlock(props: SpecLedgerData) {
   const layout = props.cardLayout ?? 'anatomy'
   const items = (props.items ?? []).filter((it) => hasText(it?.title))
 
-  if (variant !== 'cards' && variant !== 'expandable' && variant !== 'signal-flow' && variant !== 'list') {
+  if (variant !== 'cards' && variant !== 'expandable' && variant !== 'signal-flow' && variant !== 'list' && variant !== 'tools') {
     console.error(`[SpecLedger] unknown variant "${String(variant)}"; rendering nothing.`)
     return null
   }
   if (variant === 'list') return items.length === 0 ? null : <ListVariant props={props} items={items} />
+  if (variant === 'tools') return items.length === 0 ? null : <ToolsVariant props={props} items={items} />
   if (items.length === 0 && !hasText(heading) && !hasText(eyebrow)) return null
 
   const defaultTone = variant === 'expandable' || (variant === 'cards' && layout === 'feature') ? 'light' : 'grey'

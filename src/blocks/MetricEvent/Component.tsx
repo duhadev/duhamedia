@@ -200,7 +200,7 @@ function MetricTable({ eyebrow, eyebrowTick, heading, accentPhrase, columns, ite
  * the table caption ("The company, in numbers"). A real <table>; no colour-only
  * meaning. Rows without both label and value are skipped (never a blank row).
  */
-function MetricFacts({ eyebrow, heading, accentPhrase, items, note }: MetricEventData) {
+function MetricFacts({ eyebrow, heading, accentPhrase, items, note, width }: MetricEventData) {
   const rows = (items ?? []).filter((r) => r?.label?.trim() && r?.value?.trim())
   if (!rows.length) {
     console.warn('[MetricEvent] facts variant has no valid rows (label + value required); rendering nothing.')
@@ -209,14 +209,26 @@ function MetricFacts({ eyebrow, heading, accentPhrase, items, note }: MetricEven
   const title = heading?.trim()
   const caption = eyebrow?.trim()
   const methodNote = note?.trim()
+  const wide = width === 'wide'
 
   return (
-    <Section tone="light" pad="none" className="pt-3 pb-8">
-      <Container className="md:max-w-205">
+    <Section tone="light" pad="none" className={wide ? 'pt-3 pb-14 md:pb-24' : 'pt-3 pb-8'}>
+      <Container
+        className={
+          wide
+            ? 'lg:grid lg:grid-cols-[minmax(0,17rem)_minmax(0,66ch)] lg:gap-x-14 lg:[&>*]:col-start-2 lg:[&>.me-side]:col-start-1 lg:[&>.me-side]:row-start-1'
+            : 'md:max-w-205'
+        }
+      >
+        {wide && caption ? (
+          <p aria-hidden="true" className={cx(TH, 'me-side hidden tracking-[0.12em] lg:block lg:pt-4')}>
+            {caption}
+          </p>
+        ) : null}
         {title ? <AccentHeadline text={title} accent={accentPhrase} level={3} className="mt-2" /> : null}
         <table className="mt-3.5 w-full border-collapse text-left text-[1rem]">
           {caption ? (
-            <caption className={cx(TH, 'pb-3 text-left tracking-[0.12em]')} style={{ captionSide: 'top' }}>
+            <caption className={cx(TH, 'pb-3 text-left tracking-[0.12em]', wide && 'lg:sr-only')} style={{ captionSide: 'top' }}>
               {caption}
             </caption>
           ) : (

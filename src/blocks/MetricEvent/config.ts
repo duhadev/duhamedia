@@ -30,6 +30,21 @@ export const MetricEvent: Block = {
       ],
       admin: { description: 'The metrics layout. More layouts arrive with the pages that need them.' },
     },
+    {
+      name: 'width',
+      type: 'select',
+      label: 'Width',
+      defaultValue: 'narrow',
+      options: [
+        { label: 'Narrow (820px column, centred)', value: 'narrow' },
+        { label: 'Wide (full site width, caption beside the rows on desktop)', value: 'wide' },
+      ],
+      admin: {
+        condition: (_data, _sibling, { blockData }) => blockData?.variant === 'facts',
+        isClearable: false,
+        description: 'Company facts only. Wide lines the facts up with a wide text section above (used on About).',
+      },
+    },
     eyebrowField({
       defaultTick: false,
       description:
