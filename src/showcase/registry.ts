@@ -103,21 +103,45 @@ const emptyRichText = {
   root: { type: 'root', children: [], direction: null, format: '', indent: 0, version: 1 },
 } satisfies CaseStudy['narrative']['before']['body']
 
+/** Placeholder store screenshots for the study previews (public/showcase/*.svg, grey wireframes). */
+const screenMedia = (id: number, file: string, alt: string, width: number, height: number): Media => ({
+  id,
+  alt,
+  url: `/showcase/${file}`,
+  width,
+  height,
+  mimeType: 'image/svg+xml',
+  updatedAt: '',
+  createdAt: '',
+})
+const fixtureScreens = {
+  desktop: screenMedia(960, 'screen-desktop.svg', '[Placeholder store screenshot, desktop]', 1440, 900),
+  mobile: screenMedia(961, 'screen-phone.svg', '[Placeholder store screenshot, phone]', 390, 844),
+}
+
 /**
  * A PUBLISHED fixture case study (static; never a DB document). Placeholder client and figures
- * only (CLAUDE.md content rule 3). `heroMedia` is a bare id, which `Media` renders as nothing,
- * so the card shows its ink 16:9 media frame.
+ * only (CLAUDE.md content rule 3). `heroMedia` is a bare id, which `Media` renders as nothing;
+ * the previews show the placeholder `screens` (never `heroMedia`).
  */
 const mk = (n: number, client: string, value: string, label: string): CaseStudy => ({
   id: 900 + n,
   _status: 'published',
-  title: `[Fixture study ${n}]`,
+  title: `[Fixture study ${n}.] [Second line.]`,
+  accentPhrase: '[Second line.]',
   slug: `fx-${n}`,
-  client: { id: 900 + n, name: client, createdAt: '', updatedAt: '' },
+  client: { id: 900 + n, name: client, website: 'https://example.com', createdAt: '', updatedAt: '' },
   track: 'build',
   engagementLine: '[Engagement line]',
   headlineMetric: { value, label },
-  cardSummary: '[Placeholder summary of the work.]',
+  services: ['brand', 'design', 'custom-shopify-build'],
+  screens: fixtureScreens,
+  facts: [
+    { id: `fx-f${n}-1`, label: '[Fact label]', before: '[N]', value: value, accent: true, context: '[One line that says what the number means.]' },
+    { id: `fx-f${n}-2`, label: '[Fact label]', value: '[N]h+', context: '[One line of context.]' },
+    { id: `fx-f${n}-3`, label: '[Fact label]', value: '[Zero]', context: '[One line of context.]' },
+  ],
+  cardSummary: '[Placeholder sentence: what we made for the client, in plain words.]',
   inShort: '[Placeholder in-short line.]',
   heroMedia: 900 + n,
   narrative: {
@@ -136,6 +160,9 @@ const fixtureStudies: CaseStudy[] = [
   mk(2, '[Client B]', '[N×]', 'ROAS after restructure'),
   mk(3, '[Client C]', '[$N]', 'Agency fees after handover'),
 ]
+
+/** A published fixture study with no screenshots and no facts: the text-only preview. */
+const bareStudy: CaseStudy = { ...mk(4, '[Client D]', '[N]', '[Metric label]'), screens: {}, facts: [], services: [] }
 
 /**
  * Published fixture testimonials. The video one uses the YouTube id `PLACEHOLDER` (11 characters,
@@ -380,8 +407,8 @@ const numberedStudies: CaseStudy[] = fixtureStudies.map((s, i) => ({ ...s, study
 const ledgerLabels = {
   number: '№',
   client: 'Client',
-  summary: 'What was leaking / what we changed',
-  metric: 'Returned',
+  summary: 'What we did',
+  metric: 'Result',
   kind: 'Case study',
   readLabel: 'Read the study →',
 } satisfies BlockData<'caseStudyCards'>['ledgerLabels']
@@ -785,6 +812,64 @@ export const showcaseEntries: ShowcaseEntry[] = [
   },
   {
     block: 'caseStudyCards',
+    variant: 'cards — one study (row)',
+    label: 'one published study: ONE wide preview (screens left, text right), never a grid of one (service pages, /about)',
+    data: {
+      layout: 'cards',
+      eyebrow: 'Selected work',
+      heading: 'The work, up close.',
+      accentPhrase: 'up close.',
+      source: 'manual',
+      caseStudies: [fixtureStudies[0]],
+      cardLinkLabel: 'Read the case study',
+      allLink: { type: 'custom' },
+      fallbackMode: 'ledger',
+    },
+  },
+  {
+    block: 'caseStudyCards',
+    variant: 'cards — two studies',
+    label: 'two published studies: two stacked previews side by side (2 facts each)',
+    data: {
+      layout: 'cards',
+      heading: 'The work, up close.',
+      source: 'manual',
+      caseStudies: fixtureStudies.slice(0, 2),
+      cardLinkLabel: 'Read the case study',
+      allLink: { type: 'custom' },
+      fallbackMode: 'ledger',
+    },
+  },
+  {
+    block: 'caseStudyCards',
+    variant: 'cards — one study, no screenshots',
+    label: 'a study without store screenshots or facts: text-only preview (never a stand-in image)',
+    data: {
+      layout: 'cards',
+      heading: 'The work, up close.',
+      source: 'manual',
+      caseStudies: [bareStudy],
+      cardLinkLabel: 'Read the case study',
+      allLink: { type: 'custom' },
+      fallbackMode: 'ledger',
+    },
+  },
+  {
+    block: 'caseStudyCards',
+    variant: 'cards — the source featured (DB) real study',
+    label: 'source featured, read from the database: with the Abu Oud study published this is the live service-page/about pull',
+    data: {
+      layout: 'cards',
+      source: 'featured',
+      limit: 2,
+      cardLinkLabel: 'Read the case study',
+      allLink: { type: 'custom' },
+      fallbackMode: 'note',
+      fallbackHeading: '[No study published]',
+    },
+  },
+  {
+    block: 'caseStudyCards',
     variant: 'cards — featured (DB)',
     label:
       'REAL launch state: source featured, read from the database (published + featured only). With no published study this is the ledger fallback',
@@ -1050,6 +1135,29 @@ export const showcaseEntries: ShowcaseEntry[] = [
       presentation: 'text',
       testimonials: [],
       studyCard: { show: true, label: 'A study in full', source: 'manual', caseStudy: fixtureStudies[0], readLabel: 'Read the study' },
+    },
+  },
+  {
+    block: 'testimonialRow',
+    variant: 'row — text, featured study (DB)',
+    label: 'presentation: text, no testimonials, study source featured from the database: the live homepage proof section',
+    data: {
+      ...testimonialRowBase,
+      heading: 'The work, up close.',
+      presentation: 'text',
+      testimonials: [],
+      studyCard: { show: true, label: 'A study in full', source: 'featured', readLabel: 'Read the study', fallbackMetric: {} },
+    },
+  },
+  {
+    block: 'testimonialRow',
+    variant: 'row — cards, featured study (DB)',
+    label: 'presentation: cards, no testimonials, study source featured from the database: the live /services and /newsletter state',
+    data: {
+      ...testimonialRowBase,
+      heading: 'The work, up close.',
+      testimonials: [],
+      studyCard: { show: true, label: 'A study in full', source: 'featured', readLabel: 'Read the study', fallbackMetric: {} },
     },
   },
   {
@@ -1449,6 +1557,36 @@ export const showcaseEntries: ShowcaseEntry[] = [
     variant: 'next-link',
     label: 'p2 next study line (manual pick; the template passes the current study)',
     data: { layout: 'next-link', source: 'manual', allLink: { type: 'custom' }, caseStudies: [numberedStudies[1]], nextLabels: { label: 'Next study', readLabel: 'Read it →' } },
+  },
+  {
+    block: 'caseStudyCards',
+    variant: 'feature — one study',
+    label: 'p3 Work page with ONE published study: one large feature (screens, client + services, headline, sentence, links, facts panel), no rows',
+    data: { layout: 'feature', source: 'manual', allLink: { type: 'custom' }, caseStudies: [numberedStudies[0]], ledgerLabels, cardLinkLabel: 'Read the case study', fallbackMode: 'ledger' },
+  },
+  {
+    block: 'caseStudyCards',
+    variant: 'feature — three studies',
+    label: 'p3 Work page later: the first study as the feature, the others as ledger rows below (result column = first fact)',
+    data: { layout: 'feature', source: 'manual', allLink: { type: 'custom' }, caseStudies: numberedStudies, ledgerLabels, cardLinkLabel: 'Read the case study', fallbackMode: 'ledger' },
+  },
+  {
+    block: 'caseStudyCards',
+    variant: 'feature — latest (DB)',
+    label: 'p3 REAL state: source latest from the database (the live /work block); none published → ledger fallback',
+    data: {
+      layout: 'feature',
+      source: 'latest',
+      allLink: { type: 'custom' },
+      ledgerLabels,
+      pageSize: 6,
+      loadMore: true,
+      cardLinkLabel: 'Read the case study',
+      fallbackMode: 'ledger',
+      ...ledgerFallback,
+      fallbackBody: 'Studies publish here as clients sign off.',
+      fallbackMetrics: [{ id: 'fx-cs-f1', label: '[Metric label]', value: '[N]', sub: '[quiet line]' }],
+    },
   },
   {
     block: 'caseStudyCards',

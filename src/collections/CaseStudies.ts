@@ -27,6 +27,7 @@ import { blockDeleteIfReferenced } from '../hooks/blockDeleteIfReferenced'
 import { setPublishedAtOnPublish } from '../hooks/publishedAt'
 import { revalidateTagHooks } from '../hooks/revalidateTag'
 import { uniqueSlugHooks } from '../hooks/uniqueSlug'
+import { CASE_STUDY_SERVICES } from '../lib/caseStudyServices'
 import { docPath } from '../lib/docPath'
 import { lexicalWordCount, readTimeMinutes } from '../lib/lexicalText'
 import { PREVIEW_BREAKPOINTS, previewUrl } from '../lib/preview'
@@ -111,7 +112,7 @@ const fillReadTime: CollectionBeforeChangeHook = ({ data, originalDoc }) => {
   const current = data?.readTime ?? originalDoc?.readTime
   if (typeof current === 'number' && current > 0) return data
   const narrative = data?.narrative ?? originalDoc?.narrative
-  const words = ['before', 'strategy', 'results'].reduce(
+  const words = ['before', 'strategy', 'results', 'next'].reduce(
     (sum, key) => sum + lexicalWordCount(narrative?.[key]?.body),
     0,
   )
@@ -223,7 +224,7 @@ export const CaseStudies: CollectionConfig = {
   // collection (payload@3.91.0 fields/hooks/afterRead/relationshipPopulationPromise.js:38),
   // and nothing forces `_status` into it (utilities/sanitizeSelect.js), so it is
   // listed explicitly: the blocks drop any pick whose `_status` is not 'published'.
-  // studyNumber/engagementLine: ledger rows + TestimonialRow kicker; featured: same flags as a queried study.
+  // studyNumber/engagementLine: ledger rows; services/screens/facts: the study previews (src/components/StudyPreview.tsx); featured: same flags as a queried study.
   defaultPopulate: {
     title: true,
     slug: true,
@@ -234,6 +235,9 @@ export const CaseStudies: CollectionConfig = {
     headlineMetric: true,
     cardSummary: true,
     heroMedia: true,
+    services: true,
+    screens: true,
+    facts: true,
     featured: true,
     publishedAt: true,
     _status: true,
@@ -356,7 +360,85 @@ export const CaseStudies: CollectionConfig = {
               // 2: populates when this doc is itself reached from a page block at page depth 2 (maxDepth caps against absolute depth).
               maxDepth: 2,
               required: true,
-              admin: { description: 'Main visual, shown in a browser frame (e.g. a screenshot of the store).' },
+              admin: {
+                description:
+                  'Fallback visual and share image. The study page and every preview show the store screenshots below when they are set.',
+              },
+            },
+            {
+              name: 'services',
+              type: 'select',
+              hasMany: true,
+              label: 'Services delivered',
+              options: CASE_STUDY_SERVICES.map((o) => ({ ...o })),
+              admin: {
+                description:
+                  'What we did, in order. Shown above the headline on the study and on every preview, e.g. "Brand · Design · Custom Shopify build".',
+              },
+            },
+            {
+              name: 'screens',
+              type: 'group',
+              label: 'Store screenshots',
+              admin: {
+                description:
+                  'The finished store, shown on the study page and on every preview: a desktop screenshot in a browser frame with a phone screenshot beside it.',
+              },
+              fields: [
+                {
+                  type: 'row',
+                  fields: [
+                    {
+                      name: 'desktop',
+                      type: 'upload',
+                      relationTo: 'media',
+                      maxDepth: 2,
+                      label: 'Desktop screenshot',
+                      admin: { width: '50%', description: '16:10, e.g. 1440×900 or 1920×1200.' },
+                    },
+                    {
+                      name: 'mobile',
+                      type: 'upload',
+                      relationTo: 'media',
+                      maxDepth: 2,
+                      label: 'Phone screenshot',
+                      admin: { width: '50%', description: 'A full phone screen, e.g. 390×844.' },
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              name: 'facts',
+              type: 'array',
+              label: 'Facts',
+              labels: { singular: 'Fact', plural: 'Facts' },
+              maxRows: 3,
+              admin: {
+                description:
+                  'Up to three facts, each with its label and one line of context (brochure style). Shown under the study hero and on the previews instead of the headline metric.',
+              },
+              fields: [
+                {
+                  type: 'row',
+                  fields: [
+                    { name: 'label', type: 'text', required: true, admin: { width: '40%', description: 'e.g. "Products listed".' } },
+                    { name: 'before', type: 'text', label: 'Before (optional)', admin: { width: '20%', description: 'e.g. "12". Shown as "12 → 50+".' } },
+                    { name: 'value', type: 'text', required: true, admin: { width: '20%', description: 'e.g. "50+".' } },
+                    {
+                      name: 'accent',
+                      type: 'checkbox',
+                      label: 'Accent colour',
+                      admin: { width: '20%', style: { alignSelf: 'flex-end' } },
+                    },
+                  ],
+                },
+                {
+                  name: 'context',
+                  type: 'textarea',
+                  admin: { description: 'One or two lines that say what the number means, e.g. "The full catalog is loading now."' },
+                },
+              ],
             },
           ],
         },
@@ -367,11 +449,40 @@ export const CaseStudies: CollectionConfig = {
               name: 'narrative',
               type: 'group',
               label: 'Story sections',
-              admin: { description: 'The three numbered sections of the study, always in this order.' },
+              admin: { description: 'The story of the study, always in this order (brochure p6: Why, How, What, What\'s next).' },
               fields: [
                 narrativeSection('before', '01 — The before', 'What we found'),
                 narrativeSection('strategy', '02 — The strategy', 'The order of work, and why'),
                 narrativeSection('results', '03 — The results', 'What changed, month by month'),
+                {
+                  name: 'next',
+                  type: 'group',
+                  label: "04 — What's next (optional)",
+                  fields: [
+                    {
+                      name: 'title',
+                      type: 'text',
+                      label: 'Heading',
+                      admin: { description: 'e.g. "What\'s next". The section shows only when the text is filled in.' },
+                    },
+                    { name: 'body', type: 'richText', label: 'Text', editor: narrativeEditor },
+                  ],
+                },
+                {
+                  name: 'aside',
+                  type: 'group',
+                  label: 'Pull line (optional)',
+                  admin: { description: 'A short line set in a black box beside the story, e.g. the brochure\'s "A website is like a business card."' },
+                  fields: [
+                    {
+                      type: 'row',
+                      fields: [
+                        { name: 'quote', type: 'textarea', label: 'Line', admin: { width: '60%' } },
+                        { name: 'caption', type: 'text', label: 'Small caption', admin: { width: '40%', description: 'e.g. "Why the marketing comes next".' } },
+                      ],
+                    },
+                  ],
+                },
               ],
             },
           ],

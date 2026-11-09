@@ -5,23 +5,34 @@ import { FinalCTABlock } from '@/blocks/FinalCTA/Component'
 import { HeroBlock } from '@/blocks/Hero/Component'
 import { MetricEventBlock, resultsTableToMetricEvent } from '@/blocks/MetricEvent/Component'
 import { NewsletterBandBlock } from '@/blocks/NewsletterBand/Component'
-import { RichContentBlock } from '@/blocks/RichContent/Component'
 import { TestimonialClientVoiceView } from '@/blocks/TestimonialRow/Component'
 import type { BlockData } from '@/blocks/types'
+import { CaseStudyStory } from '@/components/CaseStudyStory'
 import { PageShell } from '@/components/chrome'
+import { StudyFacts, StudyScreens, studyKicker, studyScreens, studySite, usableFacts } from '@/components/StudyPreview'
+import { ArrowText, Container, Section } from '@/components/ui'
 import { ReadingProgress } from '@/components/ReadingProgress'
 import { type CaseStudyLabels, resolveCaseStudyLabels } from '@/lib/caseStudyLabels'
 import { getChrome } from '@/lib/chrome'
 import type { CaseStudy } from '@/payload-types'
 
 /**
- * The p2 Case Study template (S4-12, SCHEMA §9 p2, CLAUDE.md p2 locked order):
- * one `case-studies` doc fed into the EXISTING block components, no visual
- * code of its own. Order (locked): 1 Hero `article` → 2 RichContent article
- * body (The Before / The Strategy / The Results) → 3 MetricEvent `table` →
- * 4 TestimonialRow `client-voice` → 5 CaseStudyCards `next-link` →
+ * The p2 Case Study template (S4-12, SCHEMA §9 p2, CLAUDE.md p2 locked order),
+ * laid out like brochure p6 since 2026-11-08 (owner: the study must say who,
+ * what was made and what it looks like). One `case-studies` doc fed into the
+ * existing block components plus the shared study pieces
+ * (src/components/StudyPreview.tsx, CaseStudyStory.tsx). Order (locked):
+ * 1 Hero `article` (services kicker, headline, client + meta line, "In
+ * short") then the finished store (desktop + phone screenshots, live-store
+ * link) and the facts panel → 2 the story: Why / How / What / What's next
+ * (The Before / The Strategy / The Results, retitled) → 3 MetricEvent
+ * `table` → 4 TestimonialRow `client-voice` → 5 CaseStudyCards `next-link` →
  * 6 NewsletterBand `band` → 7 FinalCTA. Standard header + footer, reading
  * progress on (R10: a template behaviour, not a field).
+ *
+ * The headline metric and `heroMedia` are no longer shown here: the facts
+ * carry the numbers with their context, and only the store screenshots are
+ * shown as the work (never a fallback image posing as the store).
  *
  * Each section keeps its block's own empty state (no client voice → nothing;
  * no other published study → no next line; no newsletter form/page → no band).
@@ -46,10 +57,6 @@ export const getCaseStudyLabels = async (): Promise<CaseStudyLabels> =>
  */
 const capacityForTrack = (track: CaseStudy['track'] | null | undefined): 'builds-line' | 'engines-line' =>
   track === 'growth' ? 'engines-line' : 'builds-line'
-
-type Narrative = CaseStudy['narrative']
-type LexicalRoot = BlockData<'richContent'>['body']
-type LexicalNode = LexicalRoot['root']['children'][number]
 
 const pad2 = (n: number): string => String(n).padStart(2, '0')
 
@@ -90,66 +97,25 @@ const metaLine = (study: CaseStudy, labels: CaseStudyLabels): string => {
   return parts.join(' · ')
 }
 
-const textNode = (text: string): LexicalNode => ({
-  type: 'text',
-  version: 1,
-  text,
-  format: 0,
-  detail: 0,
-  mode: 'normal',
-  style: '',
-})
-
-/**
- * The three narrative sections as ONE Lexical document: each section's title
- * becomes an H2 (numbered 01/02/03 by RichContent's `numberSections`) followed
- * by that section's body. The narrative editor has no headings of its own, so
- * the numbering is exactly the three section titles.
- */
-const narrativeBody = (narrative: Narrative): LexicalRoot => {
-  const children: LexicalNode[] = []
-  for (const key of ['before', 'strategy', 'results'] as const) {
-    const section = narrative?.[key]
-    const title = section?.title?.trim()
-    if (title) {
-      children.push({
-        type: 'heading',
-        tag: 'h2',
-        version: 1,
-        direction: 'ltr',
-        format: '',
-        indent: 0,
-        children: [textNode(title)],
-      })
-    }
-    children.push(...((section?.body?.root?.children as LexicalNode[] | undefined) ?? []))
-  }
-  return { root: { type: 'root', version: 1, direction: 'ltr', format: '', indent: 0, children } }
-}
-
 export function CaseStudyView({ study, labels }: { study: CaseStudy; labels: CaseStudyLabels }) {
   const meta = metaLine(study, labels)
+  const { client, services } = studyKicker(study)
+  const { desktop, mobile } = studyScreens(study)
+  const facts = usableFacts(study.facts)
+  const site = studySite(study)
 
   const hero: BlockData<'hero'> = {
     blockType: 'hero',
     variant: 'article',
+    eyebrow: services,
     heading: study.title,
     accentPhrase: study.accentPhrase,
-    geometry: true,
+    // No corner shape: on phones it sat under the kicker and the headline (text over the shape).
+    geometry: false,
     breadcrumb: caseStudyBreadcrumb(study, labels),
-    resultMetric: study.headlineMetric,
-    body: study.engagementLine,
+    body: [client, study.engagementLine?.trim()].filter(Boolean).join(' · ') || null,
     metaLine: meta || null,
     summary: { label: labels.inShort, body: study.inShort },
-    media: study.heroMedia,
-    mediaFrame: 'browser',
-  }
-
-  const article: BlockData<'richContent'> = {
-    blockType: 'richContent',
-    variant: 'article',
-    numberSections: true,
-    body: narrativeBody(study.narrative),
   }
 
   const nextStudy: BlockData<'caseStudyCards'> = {
@@ -179,7 +145,30 @@ export function CaseStudyView({ study, labels }: { study: CaseStudy; labels: Cas
       <ReadingProgress />
       <main>
         <HeroBlock {...hero} />
-        <RichContentBlock {...article} />
+        {desktop || mobile || facts.length > 0 ? (
+          <Section tone="light" pad="none" className="pt-8 pb-10 md:pt-12 md:pb-14">
+            <Container>
+              <StudyScreens desktop={desktop} mobile={mobile} sizes="(min-width: 1200px) 990px, 90vw" preload />
+              {site ? (
+                <p className="mt-4 flex justify-end md:mt-5">
+                  <a
+                    href={site.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex min-h-target items-center text-small font-bold text-ink no-underline"
+                  >
+                    <span className="ix-rule pb-0.5">
+                      <ArrowText text={`${site.host} ↗`} />
+                      <span className="sr-only"> (opens in a new tab)</span>
+                    </span>
+                  </a>
+                </p>
+              ) : null}
+              <StudyFacts facts={facts} variant="panel" className={desktop || mobile ? 'mt-6 md:mt-8' : undefined} />
+            </Container>
+          </Section>
+        ) : null}
+        <CaseStudyStory narrative={study.narrative} />
         <MetricEventBlock {...resultsTableToMetricEvent(study.resultsTable)} />
         <TestimonialClientVoiceView
           clientVoice={study.clientVoice}

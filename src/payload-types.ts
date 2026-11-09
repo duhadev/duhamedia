@@ -624,11 +624,53 @@ export interface CaseStudy {
    */
   inShort: string;
   /**
-   * Main visual, shown in a browser frame (e.g. a screenshot of the store).
+   * Fallback visual and share image. The study page and every preview show the store screenshots below when they are set.
    */
   heroMedia: number | Media;
   /**
-   * The three numbered sections of the study, always in this order.
+   * What we did, in order. Shown above the headline on the study and on every preview, e.g. "Brand · Design · Custom Shopify build".
+   */
+  services?: ('brand' | 'design' | 'custom-shopify-build' | 'marketing' | 'seo' | 'content')[] | null;
+  /**
+   * The finished store, shown on the study page and on every preview: a desktop screenshot in a browser frame with a phone screenshot beside it.
+   */
+  screens?: {
+    /**
+     * 16:10, e.g. 1440×900 or 1920×1200.
+     */
+    desktop?: (number | null) | Media;
+    /**
+     * A full phone screen, e.g. 390×844.
+     */
+    mobile?: (number | null) | Media;
+  };
+  /**
+   * Up to three facts, each with its label and one line of context (brochure style). Shown under the study hero and on the previews instead of the headline metric.
+   */
+  facts?:
+    | {
+        /**
+         * e.g. "Products listed".
+         */
+        label: string;
+        /**
+         * e.g. "12". Shown as "12 → 50+".
+         */
+        before?: string | null;
+        /**
+         * e.g. "50+".
+         */
+        value: string;
+        accent?: boolean | null;
+        /**
+         * One or two lines that say what the number means, e.g. "The full catalog is loading now."
+         */
+        context?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The story of the study, always in this order (brochure p6: Why, How, What, What's next).
    */
   narrative: {
     before: {
@@ -702,6 +744,37 @@ export interface CaseStudy {
         };
         [k: string]: unknown;
       };
+    };
+    next?: {
+      /**
+       * e.g. "What's next". The section shows only when the text is filled in.
+       */
+      title?: string | null;
+      body?: {
+        root: {
+          type: string;
+          children: {
+            type: any;
+            version: number;
+            [k: string]: unknown;
+          }[];
+          direction: ('ltr' | 'rtl') | null;
+          format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+          indent: number;
+          version: number;
+        };
+        [k: string]: unknown;
+      } | null;
+    };
+    /**
+     * A short line set in a black box beside the story, e.g. the brochure's "A website is like a business card."
+     */
+    aside?: {
+      quote?: string | null;
+      /**
+       * e.g. "Why the marketing comes next".
+       */
+      caption?: string | null;
     };
   };
   resultsTable: {
@@ -1951,7 +2024,7 @@ export interface CaseStudyCardsBlock {
   /**
    * The layout of the studies. "Next study" is meant for the case-study template: it links to the study after the one being read.
    */
-  layout: 'cards' | 'ledger' | 'next-link';
+  layout: 'cards' | 'feature' | 'ledger' | 'next-link';
   /**
    * Background colour of the whole section (live and fallback).
    */
@@ -1989,7 +2062,7 @@ export interface CaseStudyCardsBlock {
    */
   limit?: number | null;
   /**
-   * The underlined text at the bottom of every card.
+   * The link under every study preview.
    */
   cardLinkLabel?: string | null;
   /**
@@ -6176,6 +6249,23 @@ export interface CaseStudiesSelect<T extends boolean = true> {
   cardSummary?: T;
   inShort?: T;
   heroMedia?: T;
+  services?: T;
+  screens?:
+    | T
+    | {
+        desktop?: T;
+        mobile?: T;
+      };
+  facts?:
+    | T
+    | {
+        label?: T;
+        before?: T;
+        value?: T;
+        accent?: T;
+        context?: T;
+        id?: T;
+      };
   narrative?:
     | T
     | {
@@ -6196,6 +6286,18 @@ export interface CaseStudiesSelect<T extends boolean = true> {
           | {
               title?: T;
               body?: T;
+            };
+        next?:
+          | T
+          | {
+              title?: T;
+              body?: T;
+            };
+        aside?:
+          | T
+          | {
+              quote?: T;
+              caption?: T;
             };
       };
   resultsTable?:

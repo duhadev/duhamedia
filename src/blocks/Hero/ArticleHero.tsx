@@ -67,10 +67,13 @@ export function ArticleHero({
     <Section tone="light" pad="none" className="relative overflow-hidden pt-9 md:pt-18">
       <DotMatrix fade="corner" />
       {geometry !== false ? (
+        // The 820px column reaches the corner below ~1200px, so until 1440 (90rem: a px value would sort before the
+        // rem breakpoints and lose to md:) the shape is confined to the top padding band (pt 36 / md 72), cropped off
+        // the top and right edges, 12px clear of the first line. At 1440 the design's geometry.
         <div
           aria-hidden="true"
           style={LOGO_MASK}
-          className="pointer-events-none absolute -right-25 -top-12.5 z-0 size-52.5 bg-ground-accent md:-right-40 md:-top-20 md:size-85"
+          className="pointer-events-none absolute -right-30 -top-54 z-0 size-60 bg-ground-accent md:-right-35 md:-top-60 md:size-75 min-[90rem]:-right-40 min-[90rem]:-top-20 min-[90rem]:size-85"
         />
       ) : null}
       <div className="relative z-10 mx-auto max-w-205 px-container-mobile md:px-container">

@@ -1,15 +1,14 @@
-import Link from 'next/link'
 import React from 'react'
 
 import { loadFeaturedStudy } from './loadFeaturedStudy'
 import type { BlockData } from '@/blocks/types'
 import { RichText } from '@/components/RichText'
+import { StudyPreview } from '@/components/StudyPreview'
 import { VideoFacade } from '@/components/VideoFacade'
 import { ButtonLink, CMSLink, Container, Eyebrow, Media, Section } from '@/components/ui'
 import { resolveLinkHref } from '@/components/ui/CMSLink'
 import { AccentHeadline } from '@/components/ui/AccentHeadline'
 import { cx } from '@/lib/cx'
-import { docPath } from '@/lib/docPath'
 import { youtubeVideoId } from '@/lib/youtube'
 import type { CaseStudy, Client, Testimonial } from '@/payload-types'
 
@@ -130,12 +129,11 @@ type Study =
   | { kind: 'study'; doc: CaseStudy }
   | { kind: 'metric'; value: string; label: string; sub?: string | null }
 
-/** Published-only (R3). A draft or id-only relation never becomes a study card. */
+/** Published-only (R3). A draft or id-only relation never becomes a study preview. */
 function usableStudy(cs: unknown): CaseStudy | null {
   if (!cs || typeof cs !== 'object') return null
   const doc = cs as CaseStudy
-  if (doc._status !== 'published' || !doc.slug) return null
-  if (!doc.headlineMetric?.value?.trim() || !doc.headlineMetric?.label?.trim()) return null
+  if (doc._status !== 'published' || !doc.slug || !doc.title?.trim()) return null
   return doc
 }
 
@@ -152,87 +150,22 @@ const CARD = 'flex flex-col gap-3 border-2 border-ink bg-cream px-5 py-5.5 text-
 const NUMBER = 'font-display text-metric-mobile leading-none text-ground-accent md:text-[3.5rem]'
 const NUMBER_LABEL = '-mt-1.5 text-[0.8125rem] font-bold uppercase tracking-[0.04em] text-gray-warm md:text-[0.875rem]'
 
-function StudyCard({ study, readLabel }: { study: Study; readLabel: string }) {
-  if (study.kind === 'metric') {
-    return (
-      <div className={CARD}>
-        {study.sub ? <span className={SMALL_LABEL}>{study.sub}</span> : null}
-        <span className={NUMBER}>{study.value}</span>
-        <span className={NUMBER_LABEL}>{study.label}</span>
-      </div>
-    )
-  }
-  const { doc } = study
-  const href = docPath('case-studies', doc)
-  const client = typeof doc.client === 'object' && doc.client ? doc.client.name : null
-  const kicker = [client, doc.engagementLine].filter((s) => s?.trim()).join(' · ')
-  const inner = (
-    <>
-      {kicker ? <span className={SMALL_LABEL}>{kicker}</span> : null}
-      <span className={NUMBER}>{doc.headlineMetric.value}</span>
-      <span className={NUMBER_LABEL}>{doc.headlineMetric.label}</span>
-      {doc.cardSummary ? <p className="m-0 whitespace-pre-line text-[0.9375rem] leading-[1.6] md:text-base">{doc.cardSummary}</p> : null}
-      {readLabel ? (
-        <span className="mt-1 inline-flex min-h-target items-center self-start text-[13px] font-bold uppercase tracking-[0.06em] md:text-small">
-          <UnderlineText>
-            {readLabel} <span aria-hidden="true" className="ix-arrow">→</span>
-          </UnderlineText>
-        </span>
-      ) : null}
-    </>
-  )
-  return href ? (
-    <Link
-      href={href}
-      // Linked card: the CaseStudyCard reference lift (interaction system), no lift under reduced motion.
-      className={cx(
-        CARD,
-        'no-underline transition-[box-shadow,translate] duration-180 ease-out hover:shadow-lift focus-visible:shadow-lift motion-safe:hover:-translate-y-1 motion-safe:focus-visible:-translate-y-1',
-      )}
-    >
-      {inner}
-    </Link>
-  ) : (
-    <div className={CARD}>{inner}</div>
+type FallbackFigure = Extract<Study, { kind: 'metric' }>
+
+/** The quiet fallback figure (no published study) in a box (`cards` presentation). */
+function FigureCard({ figure }: { figure: FallbackFigure }) {
+  return (
+    <div className={CARD}>
+      {figure.sub ? <span className={SMALL_LABEL}>{figure.sub}</span> : null}
+      <span className={NUMBER}>{figure.value}</span>
+      <span className={NUMBER_LABEL}>{figure.label}</span>
+    </div>
   )
 }
 
-/**
- * `presentation: text` study: the same content as StudyCard, set as typography
- * under a 2px ink rule (no box, no lift). `wide` (study alone in the row):
- * figure on the left, summary + link on the right from md. Only the read link
- * is a link; without a read label the figure links to the study.
- */
-function StudyText({ study, readLabel, label, wide }: { study: Study; readLabel: string; label?: string; wide: boolean }) {
-  const doc = study.kind === 'study' ? study.doc : null
-  const href = doc ? docPath('case-studies', doc) : null
-  const client = doc && typeof doc.client === 'object' && doc.client ? doc.client.name : null
-  const kicker = doc ? [client, doc.engagementLine].filter((s) => s?.trim()).join(' · ') : study.kind === 'metric' ? study.sub ?? '' : ''
-  const value = doc ? doc.headlineMetric.value : study.kind === 'metric' ? study.value : ''
-  const metricLabel = doc ? doc.headlineMetric.label : study.kind === 'metric' ? study.label : ''
-  const figure = (
-    <span className="flex flex-col gap-3 md:gap-3.5">
-      <span className={NUMBER}>{value}</span>
-      <span className={NUMBER_LABEL}>{metricLabel}</span>
-    </span>
-  )
-  const figureEl = href && !readLabel ? (
-    <Link href={href} className="self-start text-ink no-underline">
-      {figure}
-    </Link>
-  ) : (
-    figure
-  )
-  const summary = doc?.cardSummary ? <p className="m-0 max-w-[60ch] whitespace-pre-line text-body-mobile leading-[1.6] md:text-body md:leading-[1.6]">{doc.cardSummary}</p> : null
-  const read = href && readLabel ? (
-    <Link href={href} className={UNDERLINE_LINK}>
-      <UnderlineText>
-        {readLabel}
-        {client ? <span className="sr-only">: {client}</span> : null} <span aria-hidden="true" className="ix-arrow">→</span>
-      </UnderlineText>
-    </Link>
-  ) : null
-  const head = [label, kicker].filter((s) => s?.trim())
+/** The quiet fallback figure as typography under a 2px ink rule (`text` presentation). */
+function FigureText({ figure, label }: { figure: FallbackFigure; label?: string }) {
+  const head = [label, figure.sub].filter((s): s is string => Boolean(s?.trim()))
   return (
     <div className="border-t-2 border-ink pt-5 text-ink">
       {head.length ? (
@@ -244,15 +177,25 @@ function StudyText({ study, readLabel, label, wide }: { study: Study; readLabel:
           ))}
         </div>
       ) : null}
-      <div className={cx('flex flex-col gap-4', wide && 'md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:items-end md:gap-14')}>
-        {figureEl}
-        {summary || read ? (
-          <div className="flex flex-col gap-2">
-            {summary}
-            {read}
-          </div>
-        ) : null}
-      </div>
+      <span className="flex flex-col gap-3 md:gap-3.5">
+        <span className={NUMBER}>{figure.value}</span>
+        <span className={NUMBER_LABEL}>{figure.label}</span>
+      </span>
+    </div>
+  )
+}
+
+/**
+ * A published study, through the site's one study preview (src/components/
+ * StudyPreview.tsx, owner 2026-11-08): store screenshots, client + services,
+ * headline, one sentence, facts, links. Alone in the row it is the wide `row`
+ * preview; beside testimonials the stacked `card`. The `text` presentation
+ * sets it under the same 2px ink rule as the quotes (no box).
+ */
+function StudyColumn({ doc, readLabel, label, text, wide }: { doc: CaseStudy; readLabel: string; label?: string; text: boolean; wide: boolean }) {
+  return (
+    <div className={text ? 'border-t-2 border-ink pt-5' : undefined}>
+      <StudyPreview study={doc} size={wide ? 'row' : 'card'} linkLabel={readLabel || 'Read the case study'} label={label} />
     </div>
   )
 }
@@ -373,10 +316,18 @@ export function TestimonialRowView({
             <div className="flex flex-col gap-3.5 md:gap-5">
               {/* Beside testimonials the label sits above the rule, level with the eyebrow; alone it runs on the rule row. */}
               {studyLabel && (!text || twoCol) ? <span className={SMALL_LABEL}>{studyLabel}</span> : null}
-              {text ? (
-                <StudyText study={study} readLabel={studyCard?.readLabel?.trim() ?? ''} label={twoCol ? undefined : studyLabel} wide={!twoCol} />
+              {study.kind === 'study' ? (
+                <StudyColumn
+                  doc={study.doc}
+                  readLabel={studyCard?.readLabel?.trim() ?? ''}
+                  label={text && !twoCol ? studyLabel : undefined}
+                  text={text}
+                  wide={!twoCol}
+                />
+              ) : text ? (
+                <FigureText figure={study} label={twoCol ? undefined : studyLabel} />
               ) : (
-                <StudyCard study={study} readLabel={studyCard?.readLabel?.trim() ?? ''} />
+                <FigureCard figure={study} />
               )}
               {twoCol || cards.length === 0 ? ctaEl : null}
             </div>

@@ -31,10 +31,12 @@ export function VslHero({ eyebrow, heading, video, ctas, geometry }: BlockData<'
     <Section tone="light" pad="none" className="relative overflow-hidden">
       <DotMatrix fade="corner" />
       {geometry !== false ? (
+        // As ArticleHero: the 820px column reaches the corner below ~1150px, so until 1440 (90rem) the shape stays in
+        // the top padding band (pt 44 / md 64), 12px clear of the eyebrow. At 1440 the design's geometry.
         <div
           aria-hidden="true"
           style={LOGO_MASK}
-          className="pointer-events-none absolute -right-30 -top-37.5 z-0 size-60 bg-ground-accent md:-right-35 md:-top-15 md:size-75"
+          className="pointer-events-none absolute -right-30 -top-52 z-0 size-60 bg-ground-accent md:-right-35 md:-top-62 md:size-75 min-[90rem]:-right-35 min-[90rem]:-top-15 min-[90rem]:size-75"
         />
       ) : null}
       <div className="relative z-10 mx-auto w-full max-w-205 px-container-mobile pt-11 pb-12 md:px-container md:py-16">

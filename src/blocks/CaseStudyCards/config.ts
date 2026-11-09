@@ -22,6 +22,9 @@ import { rowLabel } from '../../components/admin/rowLabel'
  *   page uses the ledger look).
  * - S5-4 (p8): the `logo-strip` fallback mode (client logo row) and its
  *   optional `fallbackLogos` override.
+ * - 2026-11-08 (owner: "the previews are confusing"): every study renders
+ *   through the shared StudyPreview (store screenshots, client + services,
+ *   headline, one sentence, labelled facts). New `feature` layout for /work.
  *
  * LAUNCH STATE (CLAUDE.md rule 1, SCHEMA §5): there is deliberately NO field
  * that forces the "live" state. The component renders cards only from
@@ -35,8 +38,11 @@ const modeOf = (s: Sibling): string => (typeof s?.fallbackMode === 'string' ? s.
 const isManual: Condition = (_data, siblingData) => siblingData?.source === 'manual'
 const isTrack: Condition = (_data, siblingData) => siblingData?.source === 'track'
 const isCards: Condition = (_data, siblingData) => layoutOf(siblingData) === 'cards'
-const isLedgerLayout: Condition = (_data, siblingData) => layoutOf(siblingData) === 'ledger'
-const isLoadMore: Condition = (_data, siblingData) => layoutOf(siblingData) === 'ledger' && siblingData?.loadMore === true
+// `feature` lists every study after the featured one as ledger rows, so it shares the ledger's settings.
+const hasRows = (s: Sibling): boolean => ['ledger', 'feature'].includes(layoutOf(s))
+const hasCardLink: Condition = (_data, siblingData) => ['cards', 'feature'].includes(layoutOf(siblingData))
+const isLedgerLayout: Condition = (_data, siblingData) => hasRows(siblingData)
+const isLoadMore: Condition = (_data, siblingData) => hasRows(siblingData) && siblingData?.loadMore === true
 const isNextLink: Condition = (_data, siblingData) => layoutOf(siblingData) === 'next-link'
 const notNextLink: Condition = (_data, siblingData) => layoutOf(siblingData) !== 'next-link'
 const hasFallbackMetrics: Condition = (_data, siblingData) =>
@@ -57,8 +63,9 @@ export const CaseStudyCards: Block = {
       required: true,
       defaultValue: 'cards',
       options: [
-        { label: 'Cards (1–3 study cards in a row)', value: 'cards' },
-        { label: 'Ledger (numbered rows, one per study, e.g. the Work page)', value: 'ledger' },
+        { label: 'Cards (1–3 study previews; one study shows as a wide row)', value: 'cards' },
+        { label: 'Featured (the newest study large, every other study as a row below, e.g. the Work page)', value: 'feature' },
+        { label: 'Ledger (numbered rows, one per study)', value: 'ledger' },
         { label: 'Next study (one boxed line linking to the next study)', value: 'next-link' },
       ],
       admin: {
@@ -144,7 +151,7 @@ export const CaseStudyCards: Block = {
       type: 'text',
       label: 'Card link text',
       defaultValue: 'Read the case study',
-      admin: { condition: isCards, description: 'The underlined text at the bottom of every card.' },
+      admin: { condition: hasCardLink, description: 'The link under every study preview.' },
     },
     {
       type: 'row',
@@ -213,10 +220,10 @@ export const CaseStudyCards: Block = {
               name: 'summary',
               type: 'text',
               label: 'Summary column heading',
-              defaultValue: 'What was leaking / what we changed',
+              defaultValue: 'What we did',
               admin: { width: '25%' },
             },
-            { name: 'metric', type: 'text', label: 'Result column heading', defaultValue: 'Returned', admin: { width: '25%' } },
+            { name: 'metric', type: 'text', label: 'Result column heading', defaultValue: 'Result', admin: { width: '25%' } },
           ],
         },
         {

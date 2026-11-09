@@ -32,11 +32,21 @@ export type LedgerRowData = {
 
 /** The study fields a row needs (a full doc, or the REST `select` subset LoadMore asks for). */
 export type LedgerSource = Pick<CaseStudy, 'id' | 'title'> &
-  Partial<Pick<CaseStudy, 'slug' | 'client' | 'studyNumber' | 'engagementLine' | 'headlineMetric' | 'cardSummary'>>
+  Partial<Pick<CaseStudy, 'slug' | 'client' | 'studyNumber' | 'engagementLine' | 'headlineMetric' | 'facts' | 'cardSummary'>>
 
 export const toLedgerRow = (study: LedgerSource): LedgerRowData => {
   const client = typeof study.client === 'object' && study.client !== null ? study.client.name?.trim() || null : null
   const n = study.studyNumber
+  // The result column shows the study's first labelled fact ("12 → 50+" / "Products listed"),
+  // falling back to the headline metric for studies without facts.
+  const fact = (study.facts ?? []).find((f) => f?.label?.trim() && f?.value?.trim())
+  const result = fact
+    ? { value: [fact.before?.trim(), fact.value.trim()].filter(Boolean).join(' → '), label: fact.label.trim(), accent: fact.accent === true }
+    : {
+        value: study.headlineMetric?.value?.trim() || null,
+        label: study.headlineMetric?.label?.trim() || null,
+        accent: study.headlineMetric?.accent === true,
+      }
   return {
     id: study.id,
     href: docPath('case-studies', study),
@@ -45,9 +55,9 @@ export const toLedgerRow = (study: LedgerSource): LedgerRowData => {
     engagement: study.engagementLine?.trim() || null,
     title: study.title,
     summary: study.cardSummary?.trim() || null,
-    value: study.headlineMetric?.value?.trim() || null,
-    label: study.headlineMetric?.label?.trim() || null,
-    accent: study.headlineMetric?.accent === true,
+    value: result.value,
+    label: result.label,
+    accent: result.accent,
   }
 }
 

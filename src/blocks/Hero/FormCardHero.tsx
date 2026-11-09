@@ -45,10 +45,12 @@ export function FormCardHero({
     <Section tone="light" pad="none" className="relative overflow-hidden">
       <DotMatrix fade="corner" />
       {geometry !== false ? (
+        // Below lg the copy runs the full column width, so the shape is confined to the top padding band
+        // (pt 48 / md 96): cropped off the top and right edges, 12px clear of the eyebrow. From lg, the design's geometry.
         <div
           aria-hidden="true"
           style={LOGO_MASK}
-          className="pointer-events-none absolute -right-30 -top-37.5 z-0 size-60 bg-ground-accent md:-top-12.5 lg:-right-45 lg:-top-22.5 lg:size-105"
+          className="pointer-events-none absolute -right-30 -top-51 z-0 size-60 bg-ground-accent md:-right-35 md:-top-54 md:size-75 lg:-right-45 lg:-top-22.5 lg:size-105"
         />
       ) : null}
       <Container className="relative z-10 pt-12 pb-11 md:pt-24 md:pb-20">

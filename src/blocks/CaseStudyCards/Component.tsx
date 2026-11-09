@@ -4,6 +4,7 @@ import { getPayload, type Where } from 'payload'
 import React from 'react'
 
 import type { BlockData } from '@/blocks/types'
+import { StudyPreview } from '@/components/StudyPreview'
 import { AccentHeadline, ArrowText, CMSLink, Container, Eyebrow, Media, Section } from '@/components/ui'
 import { resolveLinkHref } from '@/components/ui/CMSLink'
 import { cx } from '@/lib/cx'
@@ -95,8 +96,15 @@ async function loadStudies(
  */
 async function resolvePicks(picks: CaseStudyCardsData['caseStudies']): Promise<CaseStudy[]> {
   const items = (picks ?? []).filter((s) => s !== null && s !== undefined)
+  // Complete = a published object whose preview relations are populated too (a
+  // trimmed populate can carry the screenshots as bare ids, which render nothing).
+  const populated = (m: unknown): boolean => m === null || m === undefined || typeof m === 'object'
   const complete = (s: number | CaseStudy): boolean =>
-    typeof s === 'object' && s._status === 'published' && 'studyNumber' in s
+    typeof s === 'object' &&
+    s._status === 'published' &&
+    'studyNumber' in s &&
+    populated(s.screens?.desktop) &&
+    populated(s.screens?.mobile)
   const ids = items
     .filter((s) => !complete(s) && (typeof s === 'number' || s._status !== 'draft'))
     .map((s) => (typeof s === 'number' ? s : s.id))
@@ -134,7 +142,8 @@ async function resolvePicks(picks: CaseStudyCardsData['caseStudies']): Promise<C
 /**
  * CaseStudyCards (SCHEMA §8.2 item 6). Async server component; the only
  * client code is the ledger's Load More island (LoadMore.tsx).
- * Layouts: `cards` (B3, p1/p5/p6), `ledger` (p3), `next-link` (p2).
+ * Layouts: `cards` (B3, p1/p5/p6), `feature` (p3 since 2026-11-08), `ledger`
+ * (p3 until then), `next-link` (p2).
  * LAUNCH STATE: every layout derives its state from PUBLISHED studies only;
  * with none, `cards`/`ledger` render the designed fallback and `next-link`
  * renders only the optional "All studies" link (else nothing).
@@ -142,6 +151,7 @@ async function resolvePicks(picks: CaseStudyCardsData['caseStudies']): Promise<C
 export async function CaseStudyCardsBlock(props: CaseStudyCardsProps) {
   const layout = props.layout ?? 'cards'
   if (layout === 'next-link') return <NextStudy {...props} />
+  if (layout === 'feature') return <StudyFeature {...props} />
   if (layout === 'ledger') return <StudyLedger {...props} />
   return <StudyCards {...props} />
 }
@@ -161,7 +171,9 @@ async function StudyCards(props: CaseStudyCardsProps) {
   const studies = await loadStudies(source ?? 'featured', caseStudies, clampLimit(limit), track)
 
   if (studies.length > 0) {
-    const cols = studies.length === 1 ? 'md:grid-cols-1' : studies.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-3'
+    // One study reads as one wide preview (screens beside the text), never a grid of one.
+    const single = studies.length === 1
+    const linkLabel = cardLinkLabel?.trim() || 'Read the case study'
     return (
       <Section tone={tone}>
         <Container>
@@ -171,13 +183,25 @@ async function StudyCards(props: CaseStudyCardsProps) {
             </Eyebrow>
           ) : null}
           {heading ? <AccentHeadline text={heading} accent={accentPhrase} level="section" /> : null}
-          <ul className={cx('m-0 grid list-none grid-cols-1 items-start gap-4 p-0 pt-7 md:gap-5 md:pt-9', cols)}>
-            {studies.map((study) => (
-              <li key={study.id}>
-                <StudyCard study={study} linkLabel={cardLinkLabel?.trim() || 'Read the case study'} />
-              </li>
-            ))}
-          </ul>
+          {single ? (
+            <div className={heading || eyebrow ? 'pt-7 md:pt-10' : undefined}>
+              <StudyPreview study={studies[0]} size="row" linkLabel={linkLabel} headingAs={heading ? 'h3' : 'h2'} />
+            </div>
+          ) : (
+            <ul
+              className={cx(
+                'm-0 grid list-none grid-cols-1 items-start gap-12 p-0 md:gap-8',
+                heading || eyebrow ? 'pt-7 md:pt-10' : undefined,
+                studies.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-3',
+              )}
+            >
+              {studies.map((study) => (
+                <li key={study.id}>
+                  <StudyPreview study={study} size="card" linkLabel={linkLabel} headingAs={heading ? 'h3' : 'h2'} />
+                </li>
+              ))}
+            </ul>
+          )}
           <CMSLink
             link={allLink}
             className="ix-rule mt-8 inline-flex min-h-target items-center text-small font-bold"
@@ -188,51 +212,6 @@ async function StudyCards(props: CaseStudyCardsProps) {
   }
 
   return <Fallback {...props} />
-}
-
-/** DS CaseStudyCard (CaseStudyCard.jsx): gray card, 16:9 ink media, metric, summary, underlined link. */
-function StudyCard({ study, linkLabel }: { study: CaseStudy; linkLabel: string }) {
-  const client = typeof study.client === 'object' && study.client !== null ? (study.client as Client).name : null
-  const metric = study.headlineMetric
-  const hero = typeof study.heroMedia === 'object' ? study.heroMedia : null
-  const href = docPath('case-studies', study)
-
-  const body = (
-    <>
-      <div className="relative aspect-video overflow-hidden bg-ink">
-        {hero ? <Media resource={hero} fill sizes="(min-width: 768px) 33vw, 100vw" alt={hero.alt} /> : null}
-      </div>
-      <div className="p-5">
-        {client ? (
-          <span className="text-label uppercase tracking-eyebrow text-gray-warm">{client}</span>
-        ) : null}
-        {metric?.value ? (
-          <span className="mt-2 block font-display text-[2.5rem] leading-[1.05] text-accent-primary">{metric.value}</span>
-        ) : null}
-        {metric?.label ? (
-          <span className="mt-1 block text-small font-bold uppercase tracking-[0.04em]">{metric.label}</span>
-        ) : null}
-        {study.cardSummary ? <p className="mt-2.5 whitespace-pre-line text-[0.9375rem] leading-normal">{study.cardSummary}</p> : null}
-        {href ? (
-          <span className="ix-rule mt-3.5 inline-block text-small font-bold">
-            <ArrowText text={linkLabel} />
-          </span>
-        ) : null}
-      </div>
-    </>
-  )
-
-  // Reference lift of the interaction system. Tailwind 4's translate-* sets `translate`, not `transform`,
-  // so the transition list names `translate` (with `transform` the lift jumped instead of easing).
-  const cls =
-    'flex flex-col bg-gray-light text-ink no-underline transition-[box-shadow,translate] duration-180 ease-out hover:shadow-lift focus-visible:shadow-lift motion-safe:hover:-translate-y-1 motion-safe:focus-visible:-translate-y-1'
-  return href ? (
-    <Link href={href} className={cls}>
-      {body}
-    </Link>
-  ) : (
-    <div className={cls}>{body}</div>
-  )
 }
 
 /* -------------------------------------------------------------------------- */
@@ -256,9 +235,91 @@ const LEDGER_SELECT = {
   studyNumber: true,
   engagementLine: true,
   headlineMetric: true,
+  facts: true,
   cardSummary: true,
   _status: true,
 } as const
+
+type LedgerData = { studies: CaseStudy[]; hasMore: boolean; query: string }
+
+/**
+ * The ledger rows for the block's source: manual picks in the editor's order
+ * (all of them, no Load More), else the first `pageSize` published studies
+ * plus the REST query the Load More island continues with. `exclude` drops
+ * one study (the `feature` layout's featured study) from the rows.
+ */
+async function loadLedger(props: CaseStudyCardsProps, exclude?: CaseStudy['id']): Promise<LedgerData> {
+  const { source, caseStudies, track } = props
+  const pageSize = clampPageSize(props.pageSize)
+  if ((source ?? 'featured') === 'manual') {
+    const studies = (await resolvePicks(caseStudies)).filter((s) => s.id !== exclude)
+    return { studies, hasMore: false, query: '' }
+  }
+  const base = sourceWhere(source ?? 'featured', track)
+  if (!base) return { studies: [], hasMore: false, query: '' }
+  const where: Where = exclude === undefined ? base : { and: [base, { id: { not_equals: exclude } }] }
+  try {
+    const payload = await getPayload({ config })
+    const res = await payload.find({
+      collection: 'case-studies',
+      draft: false,
+      overrideAccess: false,
+      depth: 1,
+      limit: pageSize,
+      sort: '-publishedAt',
+      where,
+    })
+    const query = toQuery(
+      { where, sort: '-publishedAt', select: LEDGER_SELECT, populate: { clients: { name: true } } },
+      '',
+      new URLSearchParams(),
+    ).toString()
+    return { studies: res.docs.filter((d) => d._status === 'published'), hasMore: res.hasNextPage, query }
+  } catch (error) {
+    console.error('[CaseStudyCards] could not load published case studies; rendering the fallback state', error)
+    return { studies: [], hasMore: false, query: '' }
+  }
+}
+
+/** Column header + rows (+ the Load More island when more studies are published). */
+function LedgerList({ props, data }: { props: CaseStudyCardsProps; data: LedgerData }) {
+  const l = props.ledgerLabels
+  const rows = data.studies.map(toLedgerRow)
+  const labels: LedgerRowLabels = { kind: l?.kind?.trim() ?? '', readLabel: l?.readLabel?.trim() ?? '' }
+  const headers = [l?.number, l?.client, l?.summary, l?.metric].map((h) => h?.trim() ?? '')
+  const HEAD = 'text-[10px] font-bold uppercase tracking-[0.12em] text-gray-warm'
+  const pageSize = clampPageSize(props.pageSize)
+  return (
+    <>
+      {headers.some(Boolean) ? (
+        <div aria-hidden="true" className={cx('hidden items-end border-b-2 border-ink pb-2.5 lg:grid', LEDGER_COLS)}>
+          <span className="font-mono text-[10px] font-bold tracking-[0.12em] text-gray-warm">{headers[0]}</span>
+          <span className={HEAD}>{headers[1]}</span>
+          <span className={HEAD}>{headers[2]}</span>
+          <span className={HEAD}>{headers[3]}</span>
+          <span />
+        </div>
+      ) : null}
+      {props.loadMore !== false && data.hasMore && data.query ? (
+        <LedgerLoadMore
+          initialRows={rows}
+          query={data.query}
+          pageSize={pageSize}
+          labels={labels}
+          buttonLabel={props.loadMoreLabel?.trim() || 'Load more studies'}
+          loadingLabel={props.loadMoreLoadingLabel?.trim() || 'Loading…'}
+          errorLabel={props.loadMoreErrorLabel?.trim() || 'Could not load more studies. Try again.'}
+        />
+      ) : (
+        <ul className={LEDGER_LIST}>
+          {rows.map((row) => (
+            <LedgerRow key={row.id} row={row} labels={labels} />
+          ))}
+        </ul>
+      )}
+    </>
+  )
+}
 
 /**
  * CaseStudyCards, `ledger` layout (Work.dc.html "Study ledger", desktop +
@@ -268,48 +329,10 @@ const LEDGER_SELECT = {
  * island. Manual picks show every published pick (no Load More).
  */
 async function StudyLedger(props: CaseStudyCardsProps) {
-  const { eyebrow, eyebrowTick, heading, accentPhrase, source, caseStudies, track, ledgerLabels: l } = props
+  const { eyebrow, eyebrowTick, heading, accentPhrase } = props
   const tone = props.tone ?? 'light'
-  const pageSize = clampPageSize(props.pageSize)
-  let studies: CaseStudy[] = []
-  let hasMore = false
-  let query = ''
-
-  if ((source ?? 'featured') === 'manual') {
-    studies = await resolvePicks(caseStudies)
-  } else {
-    const where = sourceWhere(source ?? 'featured', track)
-    if (where) {
-      try {
-        const payload = await getPayload({ config })
-        const res = await payload.find({
-          collection: 'case-studies',
-          draft: false,
-          overrideAccess: false,
-          depth: 1,
-          limit: pageSize,
-          sort: '-publishedAt',
-          where,
-        })
-        studies = res.docs.filter((d) => d._status === 'published')
-        hasMore = res.hasNextPage
-        query = toQuery(
-          { where, sort: '-publishedAt', select: LEDGER_SELECT, populate: { clients: { name: true } } },
-          '',
-          new URLSearchParams(),
-        ).toString()
-      } catch (error) {
-        console.error('[CaseStudyCards] could not load published case studies; rendering the fallback state', error)
-      }
-    }
-  }
-
-  if (studies.length === 0) return <Fallback {...props} />
-
-  const rows = studies.map(toLedgerRow)
-  const labels: LedgerRowLabels = { kind: l?.kind?.trim() ?? '', readLabel: l?.readLabel?.trim() ?? '' }
-  const headers = [l?.number, l?.client, l?.summary, l?.metric].map((h) => h?.trim() ?? '')
-  const HEAD = 'text-[10px] font-bold uppercase tracking-[0.12em] text-gray-warm'
+  const data = await loadLedger(props)
+  if (data.studies.length === 0) return <Fallback {...props} />
 
   return (
     <Section tone={tone} pad="none" className="lg:pb-6">
@@ -324,32 +347,62 @@ async function StudyLedger(props: CaseStudyCardsProps) {
             {heading ? <AccentHeadline text={heading} accent={accentPhrase} level="section" /> : null}
           </div>
         ) : null}
-        {headers.some(Boolean) ? (
-          <div aria-hidden="true" className={cx('hidden items-end border-b-2 border-ink pb-2.5 lg:grid', LEDGER_COLS)}>
-            <span className="font-mono text-[10px] font-bold tracking-[0.12em] text-gray-warm">{headers[0]}</span>
-            <span className={HEAD}>{headers[1]}</span>
-            <span className={HEAD}>{headers[2]}</span>
-            <span className={HEAD}>{headers[3]}</span>
-            <span />
+        <LedgerList props={props} data={data} />
+      </Container>
+    </Section>
+  )
+}
+
+/* -------------------------------------------------------------------------- */
+/* `feature` (p3 Work page, owner 2026-11-08)                                 */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * CaseStudyCards, `feature` layout: the first study of the source (newest
+ * first; the first pick for manual) as ONE large preview (StudyPreview
+ * `feature`: store screenshots, client + services, headline, sentence, facts
+ * panel), then every other published study as ledger rows below, with the
+ * ledger's labels and Load More. One published study = the feature alone.
+ * None = the designed fallback.
+ */
+async function StudyFeature(props: CaseStudyCardsProps) {
+  const { eyebrow, eyebrowTick, heading, accentPhrase, source, caseStudies, track, cardLinkLabel } = props
+  const tone = props.tone ?? 'light'
+
+  let featured: CaseStudy | null = null
+  if ((source ?? 'featured') === 'manual') {
+    featured = (await resolvePicks(caseStudies))[0] ?? null
+  } else {
+    featured = (await loadStudies(source ?? 'featured', caseStudies, 1, track))[0] ?? null
+  }
+  if (!featured) return <Fallback {...props} />
+  const rest = await loadLedger(props, featured.id)
+
+  return (
+    <Section tone={tone} pad="none" className="pt-10 pb-section-mobile md:pt-14 md:pb-section">
+      <Container>
+        {eyebrow || heading ? (
+          <div className="pb-7 md:pb-10">
+            {eyebrow ? (
+              <Eyebrow tick={eyebrowTick !== false} className="mb-4.5">
+                {eyebrow}
+              </Eyebrow>
+            ) : null}
+            {heading ? <AccentHeadline text={heading} accent={accentPhrase} level="section" /> : null}
           </div>
         ) : null}
-        {props.loadMore !== false && hasMore && query ? (
-          <LedgerLoadMore
-            initialRows={rows}
-            query={query}
-            pageSize={pageSize}
-            labels={labels}
-            buttonLabel={props.loadMoreLabel?.trim() || 'Load more studies'}
-            loadingLabel={props.loadMoreLoadingLabel?.trim() || 'Loading…'}
-            errorLabel={props.loadMoreErrorLabel?.trim() || 'Could not load more studies. Try again.'}
-          />
-        ) : (
-          <ul className={LEDGER_LIST}>
-            {rows.map((row) => (
-              <LedgerRow key={row.id} row={row} labels={labels} />
-            ))}
-          </ul>
-        )}
+        <StudyPreview
+          study={featured}
+          size="feature"
+          linkLabel={cardLinkLabel?.trim() || 'Read the case study'}
+          headingAs={heading ? 'h3' : 'h2'}
+          preload
+        />
+        {rest.studies.length > 0 ? (
+          <div className="mt-section-mobile md:mt-section">
+            <LedgerList props={props} data={rest} />
+          </div>
+        ) : null}
       </Container>
     </Section>
   )

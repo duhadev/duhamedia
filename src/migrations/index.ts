@@ -35,18 +35,20 @@ import * as migration_20261029_143150_teamintro_pull_quote from './20261029_1431
 import * as migration_20261029_145749_proofstrip_numbers_on_block from './20261029_145749_proofstrip_numbers_on_block';
 import * as migration_20261029_155251_twotrack_services_chips from './20261029_155251_twotrack_services_chips';
 import * as migration_20261107_150000_copy_round_01 from './20261107_150000_copy_round_01';
-import * as migration_20261108_013210_copy_round_02 from './20261108_013210_copy_round_02';
 import * as migration_20261108_011630_richcontent_article_width from './20261108_011630_richcontent_article_width';
-import * as migration_20261108_013220_hero_consistency from './20261108_013220_hero_consistency';
 import * as migration_20261108_011914_book_a_call_flow_schema from './20261108_011914_book_a_call_flow_schema';
-import * as migration_20261108_013230_book_a_call_flow from './20261108_013230_book_a_call_flow';
 import * as migration_20261108_013207_brochure_blocks from './20261108_013207_brochure_blocks';
+import * as migration_20261108_013210_copy_round_02 from './20261108_013210_copy_round_02';
+import * as migration_20261108_013220_hero_consistency from './20261108_013220_hero_consistency';
+import * as migration_20261108_013230_book_a_call_flow from './20261108_013230_book_a_call_flow';
 import * as migration_20261108_013300_brochure_restructure from './20261108_013300_brochure_restructure';
-import * as migration_20261108_100000_hero_eyebrows from './20261108_100000_hero_eyebrows';
 import * as migration_20261108_095000_home_text_sections_schema from './20261108_095000_home_text_sections_schema';
 import * as migration_20261108_095100_services_logos_schema from './20261108_095100_services_logos_schema';
+import * as migration_20261108_100000_hero_eyebrows from './20261108_100000_hero_eyebrows';
 import * as migration_20261108_110000_home_text_sections from './20261108_110000_home_text_sections';
 import * as migration_20261108_110100_services_logos from './20261108_110100_services_logos';
+import * as migration_20261108_120000_casestudy_preview_schema from './20261108_120000_casestudy_preview_schema';
+import * as migration_20261108_121000_casestudy_preview from './20261108_121000_casestudy_preview';
 
 export const migrations = [
   {
@@ -270,11 +272,6 @@ export const migrations = [
     name: '20261108_013300_brochure_restructure',
   },
   {
-    up: migration_20261108_100000_hero_eyebrows.up,
-    down: migration_20261108_100000_hero_eyebrows.down,
-    name: '20261108_100000_hero_eyebrows',
-  },
-  {
     up: migration_20261108_095000_home_text_sections_schema.up,
     down: migration_20261108_095000_home_text_sections_schema.down,
     name: '20261108_095000_home_text_sections_schema',
@@ -285,6 +282,11 @@ export const migrations = [
     name: '20261108_095100_services_logos_schema',
   },
   {
+    up: migration_20261108_100000_hero_eyebrows.up,
+    down: migration_20261108_100000_hero_eyebrows.down,
+    name: '20261108_100000_hero_eyebrows',
+  },
+  {
     up: migration_20261108_110000_home_text_sections.up,
     down: migration_20261108_110000_home_text_sections.down,
     name: '20261108_110000_home_text_sections',
@@ -293,5 +295,15 @@ export const migrations = [
     up: migration_20261108_110100_services_logos.up,
     down: migration_20261108_110100_services_logos.down,
     name: '20261108_110100_services_logos',
+  },
+  {
+    up: migration_20261108_120000_casestudy_preview_schema.up,
+    down: migration_20261108_120000_casestudy_preview_schema.down,
+    name: '20261108_120000_casestudy_preview_schema',
+  },
+  {
+    up: migration_20261108_121000_casestudy_preview.up,
+    down: migration_20261108_121000_casestudy_preview.down,
+    name: '20261108_121000_casestudy_preview',
   },
 ];
