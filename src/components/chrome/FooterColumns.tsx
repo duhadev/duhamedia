@@ -7,9 +7,9 @@ import { NavLink, navCurrent } from './NavLink'
 
 export type FooterColumn = { title: string; links: NavItem[] }
 
-// Every link row is 44px on every breakpoint: neighbours in a vertical list are only a line apart, so a hit
+// Every link box is at least 44x44 on every breakpoint: neighbours in a vertical list are only a line apart, so a hit
 // area cannot overhang without overlapping. Inline (wrapped) rows are 44px boxes too, so nothing overhangs.
-const COL_LINK = 'flex min-h-target items-center text-cream no-underline opacity-85 md:opacity-75'
+const COL_LINK = 'flex min-h-target min-w-target items-center text-cream no-underline opacity-85 md:opacity-75'
 export const FOOTER_HEADING =
   'text-[10px] font-bold tracking-[0.1em] uppercase opacity-55 md:mb-1 md:text-label md:tracking-[0.08em] md:opacity-100'
 
@@ -42,21 +42,22 @@ export function mobileColumnModes(columns: FooterColumn[]): ('stack' | 'inline')
 /**
  * The standard footer's link columns. Mobile/tablet (< md): a 2-up grid under a hairline, balanced by
  * `mobileColumnModes` (full-width inline rows are moved after the pairs with `order`, the DOM keeps the
- * CMS order). Desktop (md+): `contents`, so each column is a track of the footer's outer grid, unchanged.
+ * CMS order). Tablet (md–xl): one row of equal tracks spanning the footer, `--footer-cols` set by
+ * SiteFooter. Desktop (xl+): `contents`, so each column is a track of the footer's outer grid.
  */
 export function FooterColumns({ columns, path }: { columns: FooterColumn[]; path?: string }) {
   if (columns.length === 0) return null
   const modes = mobileColumnModes(columns)
 
   return (
-    <div className="grid grid-cols-2 gap-x-5 gap-y-6 border-t border-on-accent/20 pt-6 md:contents md:border-0 md:pt-0">
+    <div className="grid grid-cols-2 gap-x-5 gap-y-6 border-t border-on-accent/20 pt-6 md:col-span-2 md:grid-cols-[repeat(var(--footer-cols),minmax(0,1fr))] md:gap-10 md:border-0 md:pt-0 xl:contents">
       {columns.map((column, index) => {
         const inline = modes[index] === 'inline'
         return (
           <nav
             key={column.title}
             aria-labelledby={`footer-col-${index}`}
-            className={cx('flex flex-col text-[15px] md:text-small', inline && 'max-md:order-1 max-md:col-span-2')}
+            className={cx('flex min-w-0 flex-col text-[15px] md:text-small', inline && 'max-md:order-1 max-md:col-span-2')}
           >
             <p id={`footer-col-${index}`} className={cx(FOOTER_HEADING, 'max-md:mb-1')}>
               {column.title}

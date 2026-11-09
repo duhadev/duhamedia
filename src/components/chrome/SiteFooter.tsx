@@ -108,11 +108,21 @@ async function StandardZones({
   const tagline = settings.footerTagline?.trim()
   const sourcePath = newsletterFormId !== null ? path : undefined
 
+  // Layout per width: < md the stacked mobile design; md–xl brand | newsletter on one row with the link
+  // columns as an equal-track row under them; xl+ the design's single row, brand 2fr, one 1fr track per
+  // link column (any count), newsletter 1.5fr. Text tracks are minmax(0, …) so long labels wrap inside
+  // their track instead of widening the grid past the viewport (the old auto tracks overflowed 768px by
+  // 33px with three columns). The newsletter track keeps an 18.75rem floor: the interaction-only Turnstile
+  // slot is a fixed 300px wide, and that floor is what the old auto track resolved to at 1440.
+  const style = { '--footer-cols': Math.max(1, columns.length) } as React.CSSProperties
+
   return (
     <div
+      style={style}
       className={cx(
         EDGE,
-        'flex flex-col gap-6.5 pt-8 pb-6.5 md:grid md:grid-cols-[2fr_1fr_1fr_1fr_1.5fr] md:gap-10 md:pt-16 md:pb-8',
+        'flex flex-col gap-6.5 pt-8 pb-6.5 md:grid md:grid-cols-2 md:gap-10 md:pt-16 md:pb-8',
+        'xl:grid-cols-[minmax(0,2fr)_repeat(var(--footer-cols),minmax(0,1fr))_minmax(18.75rem,1.5fr)]',
       )}
     >
       {/* Brand */}
@@ -123,7 +133,7 @@ async function StandardZones({
 
       {/* Newsletter nudge: second on mobile (design), last zone on desktop */}
       {nudge && (nudge.heading || nudge.line || nudge.buttonLabel) ? (
-        <div className="flex flex-col gap-2.5 text-small md:col-start-5 md:row-start-1">
+        <div className="flex min-w-0 flex-col gap-2.5 text-small md:col-start-2 md:row-start-1 xl:col-start-[-2]">
           {nudge.heading ? <p className={cx(FOOTER_HEADING, 'hidden md:block')}>{nudge.heading}</p> : null}
           {nudge.line ? <span className="text-[13px] opacity-60 md:text-small md:opacity-75">{nudge.line}</span> : null}
           {/* With `site-settings.newsletterForm` the nudge is a real inline form (F42); otherwise a link to the newsletter page. */}
@@ -149,7 +159,7 @@ async function StandardZones({
         </div>
       ) : null}
 
-      {/* Link columns: balanced 2-up grid on mobile (FooterColumns), the outer grid's tracks on desktop */}
+      {/* Link columns: balanced 2-up grid on mobile, their own row on tablet, the outer grid's tracks on desktop (FooterColumns) */}
       <FooterColumns columns={columns} path={path} />
     </div>
   )
