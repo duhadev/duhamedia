@@ -14,8 +14,9 @@ Sections are added here as each part of the site is finished and approved.
 
 | I want to… | How |
 |---|---|
-| Edit scarcity numbers | **Admin → Globals → Capacity & scarcity** → change the four counts and/or the **Statements** → **Save**. Live straight away (no Publish). See [Capacity & scarcity](#capacity--scarcity). |
+| Edit scarcity numbers | **Admin → Globals → Capacity & scarcity** → change the four counts and/or the **Statements** → **Save**. Live straight away (no Publish). The homepage "3 / 7" strip follows **Active clients** and **Client cap**; every statement must keep its reason line or its number is hidden. See [Capacity & scarcity](#capacity--scarcity) and [Capacity strip](#capacity-strip-proof-strip-capacity-layout). |
 | Add a redirect | **Admin → Redirects → Create New** → **Old address** (starts with `/`) → **Send visitors to** a page or another address → **Redirect type** (normally 301) → **Save**. Applies immediately on the live site (the page routing carries out redirects when no page exists at the old address). See [Redirects](#redirects-site-wide). |
+| Edit homepage sections (stats, process steps, toolkit tools, founder) | **Admin → Collections → Pages → (Homepage) → Content tab → Sections** → open the section. Entries: [capacity strip](#capacity-strip-proof-strip-capacity-layout), [two jobs](#two-jobs-one-team-two-track-panels-equal), [process](#your-project-start-to-finish-phase-timeline-grid), [toolkit](#the-toolkit-spec-ledger-tools-row-grid-layout), [founder](#one-founder-no-layers-team-intro-founder-card-homepage-section). The founder's name, photo and socials are edited in **Admin → Collections → Team members**. |
 | Edit page copy or images | **Admin → Collections → Pages → (page) → Content tab → Sections** → open the section (block) → edit its text fields or pick an image → **Publish changes**. Add, remove or reorder sections with **Add Section** and the drag handle. Every page (1 to 21) is documented; see [Pages](#pages-site-pages) and the page's own entry. Images: [Media library](#media-library-images). |
 | Find form submissions and failed deliveries | **Admin → Form submissions** → filter **Delivery status** equals **Failed** (or use the **Failed deliveries** saved view if it exists). To retry: open the submission → right-hand sidebar → **Re-send to secretary**. See [Contact form: what happens to a submission](#contact-form-what-happens-to-a-submission) and [Forms and form submissions](#forms-and-form-submissions). |
 | Change the booking link | **Admin → Globals → Site settings → Booking tab → Booking page address** → paste the full `https://` address → **Save**. Keep **How the booking page opens** on the new-tab button. Live straight away; the Book a Call page follows. See [Booking widget](#booking-widget-bookingembed). |
@@ -52,14 +53,15 @@ Sections are added here as each part of the site is finished and approved.
   - [Forms and form submissions](#forms-and-form-submissions)
 1. [Homepage](#1-homepage)
    - [Hero, typographic layout](#hero-typographic-layout-hero)
-   - [Scarcity strip (Proof strip)](#scarcity-strip-proof-strip-scarcity-layout)
-   - [Featured case studies (Case study cards, "Cards")](#featured-case-studies-case-study-cards-cards-layout)
+   - [Capacity strip (Proof strip, "Capacity")](#capacity-strip-proof-strip-capacity-layout)
+   - [Two jobs. One team. (Two Track Panels, "Equal")](#two-jobs-one-team-two-track-panels-equal)
    - [Call-to-action band (Mini CTA strip, "Band")](#call-to-action-band-mini-cta-strip-band)
-   - [What we do (Two Track Panels, "Equal")](#what-we-do-two-track-panels-equal)
-   - [Process timeline (Phase timeline, "Accordion")](#process-timeline-phase-timeline-accordion)
-   - [Founder and team (Team intro)](#founder-and-team-team-intro)
-   - [Testimonials (Testimonial row, "Row")](#testimonials-testimonial-row-row)
+   - [Your project, start to finish. (Phase timeline, "Grid")](#your-project-start-to-finish-phase-timeline-grid)
+   - [The toolkit (Spec ledger, Tools grid)](#the-toolkit-spec-ledger-tools-row-grid-layout)
+   - [Case study, "The work, up close." (Testimonial row, "Row")](#testimonials-testimonial-row-row)
+   - [One founder, no layers. (Team intro, Founder card)](#one-founder-no-layers-team-intro-founder-card-homepage-section)
    - [Closing call to action (Final call to action)](#closing-call-to-action-final-call-to-action)
+   - [Featured case studies (Case study cards, "Cards"), reference](#featured-case-studies-case-study-cards-cards-layout)
 2. [Case Study template](#2-case-study-template)
    - [Case studies (the collection)](#case-studies-the-collection)
    - [How the sections of a case study page are edited](#how-the-sections-of-a-case-study-page-are-edited)
@@ -445,7 +447,7 @@ Every form on the website (Contact, the pre-call homework, newsletter sign-ups, 
 
 ## 1. Homepage
 
-The Homepage is a Page with the web address `home` (it is shown at `duhamedia.com/`). Its title in the admin list is "Integrated ecommerce growth partner, Chicago". Page order: hero → scarcity strip (capacity numbers and client logos) → featured case studies → call-to-action band → "What we do" → process timeline → "Who you'd work with" → testimonials → "One founder, no layers" → closing "book a call" section → footer. Edit at **Admin → Collections → Pages → (the page titled "Integrated ecommerce growth partner, Chicago") → Content tab → Sections**. Add, remove and reorder sections as described under [Pages](#pages-site-pages).
+The Homepage is a Page with the web address `home` (it is shown at `duhamedia.com/`). Its title in the admin list is "Integrated ecommerce growth partner, Chicago". Page order (the "Home B" redesign, live since 2026-11-09): hero → capacity strip → "Two jobs. One team." → call-to-action band → "Your project, start to finish." (process) → "The toolkit" → case study ("The work, up close.") → "One founder, no layers." → closing "book a call" section → footer. The old "Who you'd work with" intro section has been removed: the founder section now covers it. Edit at **Admin → Collections → Pages → (the page titled "Integrated ecommerce growth partner, Chicago") → Content tab → Sections**. Add, remove and reorder sections as described under [Pages](#pages-site-pages).
 
 **Fields you will meet in almost every block** (explained once here):
 - **Eyebrow**: the small uppercase line above a headline. The **Show the diamond marker** tick box next to it adds the small wine diamond before it.
@@ -481,51 +483,55 @@ The big opening banner. The same **Hero** block, in its **Typographic** layout, 
 
 **Other:** the homepage Hero is seeded with both prices in its **Pricing note** ("Builds start at $5K. Engines start at $1K/mo."). Keep them there as a small note.
 
-### Scarcity strip (Proof strip, "Scarcity" layout)
+### Capacity strip (Proof strip, "Capacity" layout)
 
-A grey strip with up to two big capacity statements side by side (for example how many projects are ongoing and the client cap), each with its reason quietly beneath, then a row of client logos.
+A slim grey band (about a third of the old height) split down the middle. On the left, the loud "**3** / 7" with "Client spots in use" and, quietly beneath, the reason ("We cap at 7, so every store gets our full attention."). On the right, "Stores we've built" and the client names. There is no meter and no "spots open" label.
 
-**SEO:** logos take their **Alt** text from the [Media library](#media-library-images); a client without a logo shows its name as text.
+**SEO:** ordinary page text; client names are plain text. Nothing to set.
 
 **Editable by marketing**
-- Open **Sections → Proof strip** and keep **Variant** on **Scarcity (capacity statements + client logos)**. (The other layout is described under [Proof strip, "Metrics" layout](#proof-strip-metrics-layout).)
-- **Statements** (up to 2 rows): each row has a **Statement** drop-down listing the statement types from **Admin → Globals → Capacity & scarcity**, plus **None (hide)**. **The numbers and the reason lines are not typed here.** To change a number or its wording, go to **Admin → Globals → Capacity & scarcity**: see [Capacity & scarcity](#capacity--scarcity) (the cap is 7). **Add:** **Add Statement**; **reorder:** drag; **remove:** the row's menu.
-- **Loud and quiet:** the big line always appears with its one-line reason underneath. **A statement that has no reason, or whose count is blank, is left out entirely** rather than shown as a bare number.
-- **Pricing note:** an optional small line under the statements (the Homepage uses "Builds start at $5K").
-- **Client logos** (group): **Show the logo row** (tick box), **Eyebrow** (the small line above the logos, starts "Stores we've run numbers for"), **Source** (**Clients marked "show in logo strip"** uses every published client with **Show In Logo Strip** ticked, in their **Sort Order**, up to 12; **Pick clients by hand** lets you choose and drag-order them under **Clients**). Unpublished clients are skipped. Manage the clients themselves in [Clients](#clients-logo-strips).
-- If there is no statement to show and no logo, the whole strip is hidden.
+- Open **Admin → Collections → Pages → (Homepage) → Content tab → Sections → Proof strip**. **Variant** is **Capacity (one capacity line with its reason, beside client names; homepage)**. (The older layouts of this block are described under [Proof strip, "Metrics" layout](#proof-strip-metrics-layout).)
+- **Capacity statement:** the drop-down must be on **Client spots in use (homepage strip)**. **The number and the reason line are not typed here.** They come from **Admin → Globals → Capacity & scarcity**, the statement whose **Type** is **Client spots in use (homepage strip)**.
+  - To change the "3": **Admin → Globals → Capacity & scarcity** → change **Active clients** (and **Client cap** only if the cap itself changes) → **Save**. The strip updates straight away (no Publish). See [Capacity & scarcity](#capacity--scarcity).
+  - To change the wording: edit that statement's **Statement (loud)** and **Reason (quiet)** in the same global.
+- **Loud and quiet:** every capacity statement must keep its **Reason (quiet)** line. **If the reason is empty, or the count is blank, the number is not shown at all**, never a bare number.
+- **Client names (right side):** the **Client logos** group. **Show the logo row** (tick box), **Eyebrow** (starts "Stores we've run numbers for"), **Source**: **Clients marked "show in logo strip"** uses every published client with **Show In Logo Strip** ticked, in their **Sort Order**; **Pick clients by hand** lets you choose and drag-order them under **Clients**. Unpublished clients are skipped. To add, remove or reorder names automatically, tick or untick **Show In Logo Strip** or change **Sort Order** on the client: see [Clients](#clients-logo-strips).
+- The older Numbers layouts also had statement rows; the Capacity layout does not.
 
 **Forms & leads:** n/a. **Social share:** n/a.
 
-### Featured case studies (Case study cards, "Cards" layout)
+**Other**
+- **Warning, do not pick "Client spots in use" anywhere else.** Several blocks have a capacity or statement drop-down (for example the Final call to action's **Capacity line**). Only this homepage strip fills in its numbers for that type. Chosen elsewhere, the visitor would see a raw "{capacity}" placeholder instead of a number. Keep **Client spots in use** for this strip only.
 
-One to three study cards in a row (client name, big headline result, one-line summary, picture and a "Read the case study" link), pulled from [Case studies](#case-studies-the-collection).
+### Two jobs. One team. (Two Track Panels, "Equal")
 
-**The launch state, in plain words:** with no published case study, the section does **not** show cards and does **not** say "coming soon". On the Homepage it shows a **text block beside a ruled list of true facts** (headline "Numbers anyway." with up to three facts, plus a short line that studies publish as clients sign off). When you publish a case study that matches the **Source**, the section switches to the cards by itself; the fallback text stays saved and comes back if every study is later unpublished. Nothing else needs editing.
+Two columns split by a thin line, no cards: "Service 01 · Build your store" ("First, we build it.") and "Service 02 · Grow your store" ("Then we grow it."). Each has a big numeral, a one-line lede, a row of three stats, up to six bullet points, a link and a small pricing note. The long paragraphs that used to be here now live on the Services page.
 
-**SEO:** each card is a normal link to the study; the card picture uses the study's hero image **Alt** text. The study's own search settings are on the study.
+**SEO:** the headline is a section heading (an "h2"), not the page's main heading. Links are normal links.
 
 **Editable by marketing**
-- Open **Sections → Case study cards**. **Layout** is **Cards (1–3 study cards in a row)** here. The other layouts are on [Work hub](#case-study-ledger-case-study-cards-ledger) (**Ledger**) and, for the "Next study" line, [Case Study template](#how-the-sections-of-a-case-study-page-are-edited).
-- **Background:** **White** or **Light grey band** (applies to both the live and the fallback state).
-- **Eyebrow**, **Heading** and **Accent phrase**: shown **only when studies are live**.
-- **Source** (which studies): **Featured studies (ticked "Featured" on the study)**, **Latest published studies**, **Studies of one or more engagement types** (used on [5](#proof-while-no-study-is-published-case-study-cards-by-engagement-type) and [6](#metric-strip-proof-case-study-cards-metric-strip)) or **Pick studies by hand** (then choose them under **Studies to show**, in order). **A draft study is never shown, even if picked by hand.**
-- **Limit** (1 to 3, starts at 3), **Card link text** (the underlined text at the foot of each card) and **"All studies" link** (an optional link under the cards, for example "All studies →"; shown only when studies are live).
-- **When no study is published** has five settings:
-  - **Ledger: a short text block beside a ruled list of facts** (the Homepage and Work hub choice) uses **Fallback eyebrow**, **Fallback headline**, **Fallback accent phrase**, **Fallback text** and **Fallback facts**.
-  - **Note: a short text block only** uses the same text fields and no facts.
-  - **Testimonials** and **Metric strip** are described on [Shopify Theme Development](#proof-while-no-study-is-published-case-study-cards-by-engagement-type) and [Marketing](#metric-strip-proof-case-study-cards-metric-strip).
-  - **Logo strip** is described on [About](#client-logo-strip-case-study-cards-logo-strip-fallback).
-- **Fallback facts** (up to 3 rows): **Value**, **Label**, optional **Sub-line** and **Accent colour** tick. **Add:** **Add Fact**; **reorder:** drag; **remove:** the row's menu. **Real, client-approved figures or plain counts only; never a price.** State what is true: the fallback text must not read as "coming soon".
-- **Pricing note:** a small line shown in the fallback state (the Homepage uses both prices).
+- **Admin → Collections → Pages → (Homepage) → Content tab → Sections → Two Track Panels**, **Variant** = **Equal (two tracks, same weight)**.
+- **Eyebrow** (optional, e.g. "What we do"), **Heading** and **Accent phrase** (a word or phrase copied from the heading, shown in wine, e.g. "One team.").
+- **Intro line**: the short line to the right of the headline ("Start with the store, or start with the marketing. Same people either way."). Leave empty to hide it.
+- **Tracks:** **exactly two** rows, in this order. You can **drag** a row to swap them; you cannot add or remove one. The big **01** and **02** numerals are automatic (they follow the row order, so you do not type them). Each row has:
+  - **Label**: the small line above the title (e.g. "Service 01 · Build your store").
+  - **Title** and **Accent phrase**: the heading of the column, with the part to show in wine (e.g. "grow it.").
+  - **Show the title in the accent colour** (tick box): makes that column's big numeral wine.
+  - **Body**: the one-line lede.
+  - **Stats (3-across row)**: up to three figures. Each has a **Value** (shown as typed, max 12 characters, e.g. "$7K", "3–4hrs"), a **Label** (the caption under it, max 48 characters) and **Show the figure in wine** (tick box; the wine highlight). **Add:** **Add Stat**; **reorder:** drag; **remove:** the row's menu. Leave the list empty to hide the row. Write units without a space ("55hrs"). A stat is a fact or a count; the "$7K" stat is the one approved place where a price sits in a figure.
+  - **Points (bullets)**: up to six short bullets, each with a bold **Lead** (max 80 characters) and an optional **Text** (max 160). **Add:** **Add Point**; **reorder:** drag; **remove:** the row's menu.
+  - **Pricing note**: the small grey line beside the link (the Grow column carries "Marketing: three plans, settled quarterly. Ad spend is separate.").
+  - **Link**: e.g. "How the build works →" and "What we run →".
+- The old **Services (chips)** list is no longer shown (it is hidden in the admin); do not look for it.
+- The other layouts are described where they are used: **Doors** and **Contrast** on [Services Hub](#two-doors-two-track-panels-doors), **Primary / secondary** on [Shopify Theme Development](#where-people-usually-start-two-track-panels-primary-and-secondary).
 
 **Forms & leads:** n/a. **Social share:** n/a.
 
-**Other:** the seeded fallback facts are demonstration values in brackets; replace them with true figures or reduce the list before launch.
+**Other:** keep the stat numbers in step with the Services page and the brochure; nothing links them automatically.
 
 ### Call-to-action band (Mini CTA strip, "Band")
 
-A dark strip with one short line and an outlined button; the whole strip is clickable.
+A dark strip with one short line and an outlined button; the whole strip is clickable. Unchanged by the redesign.
 
 **SEO:** the link is a normal link search engines can follow.
 
@@ -537,54 +543,49 @@ A dark strip with one short line and an outlined button; the whole strip is clic
 
 **Forms & leads:** n/a. **Social share:** n/a.
 
-### What we do (Two Track Panels, "Equal")
+### Your project, start to finish. (Phase timeline, "Grid")
 
-Two tracks of equal weight: "First, we build it." and "Then we grow it."
-
-**SEO:** the headline is a section heading (an "h2"), not the page's main heading. Links are normal links.
-
-**Editable by marketing**
-- **Sections → Two Track Panels**, **Variant** = **Equal (two tracks, same weight)**.
-- **Eyebrow** (optional), **Heading** (required) and **Accent phrase**.
-- **Tracks:** **exactly two** rows, shown in this order. You can **drag** a row to swap them; you cannot add or remove one. Each row: **Label** (optional small tag, for example "Phase 1"), **Title** (the lead-in, shown in capitals), **Show the title in the accent colour** (tick box), **Body** (required; runs on straight after the title), **Pricing note** (for example "Builds start at $5K.") and **Link** (optional "how it works" link after the paragraph).
-- The other layouts are described where they are used: **Doors** and **Contrast** on [Services Hub](#two-doors-two-track-panels-doors), **Primary / secondary** on [Shopify Theme Development](#where-people-usually-start-two-track-panels-primary-and-secondary).
-
-**Forms & leads:** n/a. **Social share:** n/a.
-
-### Process timeline (Phase timeline, "Accordion")
-
-Eight steps grouped under three phase bars; one step is open at a time and the first starts open. An **accordion** is a list where clicking a step opens its detail.
+The process: a short strip of three "before you start" cells (for example Day 0 / Within 72 hours / After you sign off), then the eight numbered steps. In **One row** layout on wide screens (1280 pixels and up) all eight steps sit side by side in a single row, with a dark bar over the Build steps ("Phase 1 · Build your store") and a wine bar over the Grow steps ("Phase 2 · Grow (optional)"). On phones and narrower screens it stacks. It uses the same block as the Services page ([How we work](#how-we-work-phase-timeline-grid)); the content is the same, so keep the two in step.
 
 **SEO:** ordinary page text; nothing to set.
 
 **Editable by marketing**
-- **Sections → Phase timeline**, **Variant** = **Accordion (steps grouped by phase, one open at a time)**. Each layout shows only its own fields; the other layouts are on [4](#phase-arc-phase-timeline-arc), [5](#build-run-phase-timeline-build-run) and [6](#engine-rollout-phase-timeline-engine-rollout).
-- **Eyebrow** (with the diamond tick), **Heading**, **Accent phrase**, **Intro** (an optional short paragraph).
-- **Phases** (1 to 3 rows): **Number** (for example "Phase 1") and **Title** (keep it short, it is cut off with "…" in a narrow column). **Add:** **Add Phase**; **reorder:** drag; **remove:** the row's menu.
-- **Steps** (1 to 10 rows): **Number** (for example "01"), **Title** (about 14 characters; on desktop it runs vertically when the step is closed), **Phase** (**Phase 1**, **Phase 2** or **Phase 3**: which bar the step sits under) and **Detail** (about 160 characters, shown when the step is open). **Add:** **Add Step**; **reorder:** drag; **remove:** the row's menu. Steps appear in the order of the list.
-- **Closing line:** an optional quiet line under the timeline.
-- **The last phase and the last step (the independence handover) always show at full visual weight, in the accent colour. There is deliberately no setting to turn that off.**
+- **Admin → Collections → Pages → (Homepage) → Content tab → Sections → Phase timeline**, **Variant** = **Grid (numbered cells in rows of four under phase bars, as the brochure)**.
+- **Grid layout** (drop-down): **One row (all steps in one row under the phase bars on wide screens, stacked below)** is the homepage choice; **Stacked (each phase bar over its own block of cells, as on Services)** is the Services page choice. One row also shows the closing line and link.
+- **Section link name** (the "anchor id"): a short name that lets a link jump straight to this section. For example, a link to `/services#process` scrolls to the section whose link name is `process` (the Services page uses `process`). Lowercase letters, numbers and dashes only; anything else is refused. Optional. Do not rename `process` on the Services page without updating every link that uses it (the "The full process →" link below points at it).
+- **Eyebrow**, **Heading**, **Accent phrase** (e.g. "start to finish.") and **Intro** (the sub-line).
+- **Phases** (up to 3 rows): **Number** and **Title** (e.g. "Phase 1" / "Build your store"), plus **Bar text when the phase continues** (used by the Stacked layout's second row; leave empty in One row). **Add:** **Add Phase**; **reorder:** drag; **remove:** the row's menu.
+- **Steps** (up to 12 rows): **Number** (e.g. "01"), **Title**, **Phase** and **Detail** (the one line under the title), plus **Tag**. The **Phase** drop-down picks the bar a step sits under; **0 — before the phases (grid only)** puts a step in the "before you start" strip (e.g. "Day 0"; its **Tag** is the small grey label above it). **Add:** **Add Step**; **reorder:** drag by the handle (the step order is the order shown); **remove:** the row's menu.
+- **Closing line**: the quiet text under the row (e.g. "Build only? Steps 7 and 8 are optional."). **Button**: the bold underlined link at its right (e.g. "The full process →", pointing at the Services page's `process` section). Leave the link text empty for none. Both show in the One row layout.
+- The last phase and the last step always show at full weight in the accent colour; there is deliberately no setting to turn that off.
 
 **Forms & leads:** n/a. **Social share:** n/a.
 
-### Founder and team (Team intro)
+**Other:** this section replaced the old auto-advancing accordion. The other layouts are on [4](#phase-arc-phase-timeline-arc), [5](#build-run-phase-timeline-build-run) and [6](#engine-rollout-phase-timeline-engine-rollout).
 
-The Homepage uses this block twice with two layouts: "Who you'd work with" (text beside a large photo) and "One founder, no layers." (text with a person card).
+### The toolkit (Spec ledger, "Tools row", Grid layout)
 
-**SEO:** the photo takes its **Alt** text from the [Media library](#media-library-images).
+New. A grid of the tools we work with (Shopify, Claude Design, Meta Ads, Instagram, Facebook, TikTok, Google Business Profile, Search Console, GEO, Microsoft Clarity, Shopify Email), 4 across by 3 down on wide screens, with the headline "Tools you know. Accounts in your name." Each tile has a small logo, the tool name, a one-line description and a small **BUILD** (grey) or **GROW** (wine) tag. The last tile is a dark link tile to the Services page. Underneath is a small trademark footnote. On phones the tiles are two across and the BUILD/GROW tags are hidden.
+
+**SEO:** the tool names are plain page text. Nothing to set. The tile link is a normal link.
 
 **Editable by marketing**
-- **Sections → Team intro**. **Variant** picks the layout:
-  - **Intro (text beside a large photo)**: **Photo** (a portrait, 4:5 works best; leave empty for text only). Shown beside the text on desktop and under it on phones.
-  - **Founder card (headline, text and a person card with social links)**: **Team member** (required; pick the person). Their photo, name, role and social links come from [Team members](#team-members), not from this block. **The person must be published, otherwise the card does not appear.**
-- **Eyebrow** (optional), **Heading**, **Accent phrase**, **Body**, and an optional **Link** (for example "More about us →").
-- The founder sentence in the seed is a placeholder: the bio is written by the founder (see [Team members](#team-members)). Never invent founder facts.
+- **Admin → Collections → Pages → (Homepage) → Content tab → Sections → Spec ledger**, **Variant** = **Tools row (a row of tool logos and names, e.g. "Preferred tools")**, **Tools layout** = **Grid (hairline grid of tools with a BUILD / GROW tag each and a dark link tile last, big headline)**.
+- **Eyebrow**, **Heading** and **Accent phrase** (shown in wine on this layout) and **Side note** (the lede beside the headline).
+- **Items** (up to 12 rows): the tools. **Add:** **Add Item**; **reorder:** drag the row by its handle (the grid fills left to right, top to bottom); **remove:** the row's menu. Keep the number of tools so that, with the link tile, the grid fills neatly (11 tools plus the link tile makes 12). Each item:
+  - **Title** (required): the tool name.
+  - **One-line summary**: what it is for (e.g. "Paid ads").
+  - **Logo**: pick the tool's built-in logo from the drop-down. For a tool that is not in the list, use **Other logo (upload)** (a square SVG or PNG on a transparent background) instead; the upload wins over the picked logo. Leave both empty for no logo.
+  - **Tag**: **None**, **BUILD (grey)** or **GROW (wine)**. Shown on computers only.- **Link tile (last cell)**: **Link** (the link text is the tile's label, e.g. "See every tool on Services", pointing at the Services page) and **Short label (phones)** (e.g. "Every tool"; empty = use the link text). Leave the link text empty for no link tile.
+- **Footnote**: the small grey trademark line under the grid (e.g. "Product names are trademarks of their respective owners and are shown to identify the tools we work with."). Optional.
 
 **Forms & leads:** n/a. **Social share:** n/a.
+
+**Other:** **this list is separate from the tool rows on the Services page** ([Preferred tools](#preferred-tools-spec-ledger-tools-row)). If a tool is added, removed or renamed, update both places by hand.
 
 ### Testimonials (Testimonial row, "Row")
 
-Up to three testimonial cards, and beside them an "A study in full" card for a case study.
+This is the homepage's case-study section, "The work, up close.": up to three testimonial cards, and beside them an "A study in full" card for a case study (or the quiet figure while no study is published). Unchanged by the redesign.
 
 **SEO:** video testimonials use the poster image's **Alt** text from the [Media library](#media-library-images).
 
@@ -602,6 +603,23 @@ Up to three testimonial cards, and beside them an "A study in full" card for a c
 
 **Other:** changes to a testimonial appear once you publish the testimonial; the page does not need re-publishing.
 
+### One founder, no layers. (Team intro, "Founder card", Homepage section)
+
+The founder section. Left: the eyebrow "Who you'd work with", the headline "One founder, no layers.", three paragraphs and two links (a solid dark **Book a Call** button and a text link "More about us →"). Right: the founder's profile card (photo, name, role, social icons). It replaces the old "Who you'd work with / Chicago operators" intro section, which no longer exists on the homepage.
+
+**SEO:** the photo takes its **Alt** text from the [Media library](#media-library-images).
+
+**Editable by marketing**
+- **Admin → Collections → Pages → (Homepage) → Content tab → Sections → Team intro**, **Variant** = **Founder card (headline, text and a person card with social links)**.
+- **Presentation** (drop-down, only for the Founder card): the homepage uses **Homepage section (all paragraphs, no pull quote, ink button + "more" link, card without bio)**. In this setting all paragraphs of the **Body** show, the **Pull quote** (if any) is not shown, and the card's bio line is hidden. **Standard** (first paragraph + "Read more", pull quote, wine button) is the setting for [About](#8-about) and [FAQ](#11-faq); leave those on Standard.
+- **Eyebrow**, **Heading** and **Accent phrase** (e.g. "No layers."), **Body** (leave a blank line between paragraphs).
+- **Link**: the solid button (e.g. "Book a Call"). **More link**: the plain text link beside it (e.g. "More about us →"). The More link field shows only in the Homepage section setting. Leave a link's text empty for none.
+- **Team member** (required): the person on the card. **Their name, photo, role and social links are not edited here.** They come from **Admin → Collections → Team members → (person)**, so changing them there also changes About and FAQ. See [Team members](#team-members). The person must be published, or the card does not appear. Social icons (LinkedIn, X and so on) show in the order of the person's **Social links** rows.
+
+**Forms & leads:** n/a. **Social share:** n/a.
+
+**Other:** never invent founder facts; the founder writes their own bio (its bio is not shown on the homepage card).
+
 ### Closing call to action (Final call to action)
 
 The dark closing band before the footer, with the capacity line and one or two buttons. Used on almost every page.
@@ -618,6 +636,32 @@ The dark closing band before the footer, with the capacity line and one or two b
 **Forms & leads:** the button usually goes to the [Book a Call](#9-book-a-call) page; bookings are made in the booking calendar, not on this site.
 
 **Social share:** n/a.
+
+### Featured case studies (Case study cards, "Cards" layout)
+
+Reference only: this block is **not part of the Home B homepage order**. It is kept here because other pages link to its explanation of the launch state. It can still be added to a page (and was used on the homepage before the redesign). One to three study cards in a row (client name, big headline result, one-line summary, picture and a "Read the case study" link), pulled from [Case studies](#case-studies-the-collection).
+
+**The launch state, in plain words:** with no published case study, the section does **not** show cards and does **not** say "coming soon". It shows a **text block beside a ruled list of true facts** instead. When you publish a case study that matches the **Source**, the section switches to the cards by itself; the fallback text stays saved and comes back if every study is later unpublished. Nothing else needs editing.
+
+**SEO:** each card is a normal link to the study; the card picture uses the study's hero image **Alt** text. The study's own search settings are on the study.
+
+**Editable by marketing**
+- Open **Sections → Case study cards**. **Layout** is **Cards (1–3 study cards in a row)** here. The other layouts are on [Work hub](#case-study-ledger-case-study-cards-ledger) (**Ledger**) and, for the "Next study" line, [Case Study template](#how-the-sections-of-a-case-study-page-are-edited).
+- **Background:** **White** or **Light grey band** (applies to both the live and the fallback state).
+- **Eyebrow**, **Heading** and **Accent phrase**: shown **only when studies are live**.
+- **Source** (which studies): **Featured studies (ticked "Featured" on the study)**, **Latest published studies**, **Studies of one or more engagement types** (used on [5](#proof-while-no-study-is-published-case-study-cards-by-engagement-type) and [6](#metric-strip-proof-case-study-cards-metric-strip)) or **Pick studies by hand** (then choose them under **Studies to show**, in order). **A draft study is never shown, even if picked by hand.**
+- **Limit** (1 to 3, starts at 3), **Card link text** (the underlined text at the foot of each card) and **"All studies" link** (an optional link under the cards, for example "All studies →"; shown only when studies are live).
+- **When no study is published** has five settings:
+  - **Ledger: a short text block beside a ruled list of facts** (the Work hub choice) uses **Fallback eyebrow**, **Fallback headline**, **Fallback accent phrase**, **Fallback text** and **Fallback facts**.
+  - **Note: a short text block only** uses the same text fields and no facts.
+  - **Testimonials** and **Metric strip** are described on [Shopify Theme Development](#proof-while-no-study-is-published-case-study-cards-by-engagement-type) and [Marketing](#metric-strip-proof-case-study-cards-metric-strip).
+  - **Logo strip** is described on [About](#client-logo-strip-case-study-cards-logo-strip-fallback).
+- **Fallback facts** (up to 3 rows): **Value**, **Label**, optional **Sub-line** and **Accent colour** tick. **Add:** **Add Fact**; **reorder:** drag; **remove:** the row's menu. **Real, client-approved figures or plain counts only; never a price.** State what is true: the fallback text must not read as "coming soon".
+- **Pricing note:** a small line shown in the fallback state.
+
+**Forms & leads:** n/a. **Social share:** n/a.
+
+**Other:** the seeded fallback facts are demonstration values in brackets; replace them with true figures or reduce the list before launch.
 
 ## 2. Case Study template
 
@@ -1861,8 +1905,8 @@ How busy we are, kept in one place. The site uses these numbers in several spots
 - **Add:** click **Add Statement** (you need at least one to save). **Reorder:** drag a row by its handle. **Remove:** use the row's menu, then **Save**. Rows are collapsed to start; click a row to open it. Each collapsed row is labelled with its type.
 
 *Where each type is used*
-- **Projects ongoing (big number)**: the "projects ongoing" figure in the scarcity strip on the Homepage.
-- **Client cap (big number)**: the "we cap at" figure in that same strip.
+- **Client spots in use (homepage strip)**: the loud "3 / 7" and its reason in the Homepage [Capacity strip](#capacity-strip-proof-strip-capacity-layout). **Use it only in that strip.** Other blocks' capacity drop-downs also list it, but only the homepage strip fills in the numbers there; chosen anywhere else, visitors would see a raw "{capacity}" instead of a number.
+- **Projects ongoing (big number)** and **Client cap (big number)**: the older homepage scarcity-strip layout (no longer used on the Homepage; still available to other pages).
 - **Builds line (Final CTA)**: the capacity line above the closing call-to-action on most pages.
 - **Engines line (Marketing / MKT-SEO Final CTA)**: the same line, but about engines, on the Marketing page and MKT-SEO articles.
 - **Slots line (Link-in-Bio)**: the slots line on the Link-in-Bio page.

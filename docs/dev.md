@@ -22,14 +22,20 @@ Entry format for every unit: **Files** / **Fields & schema** / **Wiring** (regis
    - [BreadcrumbJsonLd](#breadcrumbjsonld)
 1. [Homepage](#1-homepage)
    - [Hero (B3)](#hero-unit-b3)
+   - [Homepage section order and Home B migrations (2026-11-09)](#homepage-section-order-and-home-b-migrations-2026-11-09)
+   - [Hero (B3)](#hero-unit-b3)
    - [ProofStrip (B3)](#proofstrip-unit-b3)
+   - [ProofStrip, capacity variant and scarcity key `spots` (Home B)](#proofstrip-capacity-variant-and-scarcity-key-spots-home-b)
    - [CaseStudyCards (B3)](#casestudycards-unit-b3)
    - [MiniCTAStrip (B3)](#minictastrip-unit-b3)
    - [TwoTrackPanels (B3)](#twotrackpanels-unit-b3)
+   - [TwoTrackPanels, equal restyle (Home B)](#twotrackpanels-equal-restyle-home-b)
    - [PhaseTimeline (B3)](#phasetimeline-unit-b3)
-   - [TeamIntro (B3)](#teamintro-unit-b3)
+   - [PhaseTimeline, grid: gridLayout, anchorId, closingLine, cta (Home B)](#phasetimeline-grid-gridlayout-anchorid-closingline-cta-home-b)
+   - [SpecLedger, tools toolsLayout grid (Home B)](#specledger-tools-toolslayout-grid-home-b)
+   - [TeamIntro (B3), orphan on the homepage since Home B](#teamintro-unit-b3)
    - [TestimonialRow (B3)](#testimonialrow-unit-b3)
-   - [TeamIntro, founder-card variant (B3)](#teamintro-founder-card-variant-unit-b3)
+   - [TeamIntro, founder-card variant (B3) and section presentation (Home B)](#teamintro-founder-card-variant-unit-b3)
    - [FinalCTA (B3)](#finalcta-unit-b3)
 2. [Case Study template](#2-case-study-template)
    - [Template route and view (S4-12)](#template-route-and-view-unit-s4-12)
@@ -196,7 +202,7 @@ Sitewide frontend machinery, not tied to a page. Every block unit depends on it.
   4. Run `pnpm generate:types`.
   5. Add `'<slug>': Component` to `src/blocks/components.ts`. A missing entry is a type error.
   6. Add showcase fixtures to `showcaseEntries` in `src/showcase/registry.ts`: `{ block, variant, viewport?, label, data }` (include the fallback / empty states).
-  7. Migration: generate with `pnpm payload migrate:create <name>` against a **fresh scratch database migrated to HEAD** (never the push-managed dev DB), under a pty (the command prompts), and check that generated identifiers are at most 63 characters. Prove it with `migrate` up, `migrate:down`, `migrate` up again. Commit the `.ts` and `.json` and register it in `src/migrations/index.ts`.
+  7. Migration: generate with `pnpm payload migrate:create <name>` against a **fresh scratch database migrated to HEAD** (never the push-managed dev DB; migrate-from-zero currently fails at the 2026-10-28 seed migration, see the known gap under [Local development](#local-development)), under a pty (the command prompts), and check that generated identifiers are at most 63 characters. Prove it with `migrate` up, `migrate:down`, `migrate` up again. Commit the `.ts` and `.json` and register it in `src/migrations/index.ts`.
   8. pnpm is run as `npx -y pnpm@11.28.3 <command>` in the agent environment.
   9. `block-coder` self-checks the rendered block with headless chromium before reporting.
 - Tokens come from `design-reference/merged-tokens.css` and `MERGED.md`; new tokens need a Decision-log entry. Not ported: the mobile canvas colour `#DED9D0` and the X/Twitter card colours.
@@ -546,7 +552,41 @@ Documented under [page 12](#organization--localbusiness-json-ld-organizationjson
 
 Variants added to these blocks by big step 4 (Hero, CaseStudyCards, TwoTrackPanels, PhaseTimeline, TestimonialRow) are documented under pages 2 to 6, where each is first used.
 
-Locked section order: Hero → Scarcity strip → Client logo strip → Featured case studies → Mini CTA strip → What we do → Process timeline → Founder/team + about → Testimonials → Final CTA → Footer (standard).
+Original locked section order (superseded for the live homepage on 2026-11-09, see below): Hero → Scarcity strip → Client logo strip → Featured case studies → Mini CTA strip → What we do → Process timeline → Founder/team + about → Testimonials → Final CTA → Footer (standard).
+
+### Homepage section order and Home B migrations (2026-11-09)
+
+Released as v1.0.20 (commit `eb7371e`). Spec: `design-reference/home-b-2026-11-09/` (`README.md`, `IMPLEMENTATION.md`). Schema delta: SCHEMA.md "Delta 2026-11-09 (homepage "home B")".
+
+**Homepage order after the data migration** (9 blocks, `layout[0]` to `layout[8]`):
+1. `hero` (unchanged)
+2. `proofStrip`, variant `capacity` (capacity strip)
+3. `twoTrackPanels`, variant `equal` ("Two jobs. One team.")
+4. `miniCTAStrip` (unchanged)
+5. `phaseTimeline`, variant `grid`, `gridLayout: row` ("Your project, start to finish.")
+6. `specLedger`, variant `tools`, `toolsLayout: grid` ("The toolkit", new)
+7. `testimonialRow` (unchanged, "The work, up close.")
+8. `teamIntro`, variant `founder-card`, `presentation: section` ("One founder, no layers.")
+9. `finalCTA` (unchanged)
+
+The `teamIntro` `intro` section ("Chicago operators, not account managers") is no longer in the homepage layout; its content is absorbed into block 8. The section order overrides the locked page-1 order (README: "log it in the Decision log", a PM task).
+
+**Orphan variants kept in the schema** (nothing dropped; still selectable in the admin and in the showcase): ProofStrip `scarcity`, PhaseTimeline `accordion`, TeamIntro `intro`.
+
+**Migrations** (both registered in `src/migrations/index.ts`; the schema file sorts before the data file):
+- `src/migrations/20261109_150019_home_b_schema.ts` (+ `.json`). Additive only, `pages` and `_pages_v`: `ADD VALUE 'capacity'` on the ProofStrip `variant` enums; `ADD VALUE 'spots'` on `enum_scarcity_statements_key` and on every scarcityRef enum (FinalCTA `capacity`, OfferBlock `capacity`, ProofStrip `capacity_statement`, ReviewWall inserts `statement`, LinkStack `primary_capacity`); `ADD VALUE 'grid'` on the SpecLedger `tools_layout` enums; new enums `grid_layout` (`stacked`, `row`, default `stacked`), `presentation` (`standard`, `section`, default `standard`), `more_link_type`, items `tag` (`none`, `build`, `grow`, default `none`), `link_tile_link_type`; new columns `intro`, `accent_phrase`, `anchor_id`, `more_link_*`, `link_tile_*`; new tables `pages_blocks_two_track_panels_panels_stats` and `…_points` with `_pages_v_` equivalents. Its `down` keeps the F88 guard (returns early once `users` is gone) and rebuilds the enums; it fails while any row uses `capacity`, `grid` or `spots` (including the scarcity global's `spots` row written by the data migration), by design.
+- `src/migrations/20261109_151000_home_b.ts`. Data only, via `patchPage` in `src/lib/contentPatch.ts`; copy in `src/lib/homeCopy.ts` (used once by this migration and by the showcase fixtures; after it runs the words live in the CMS). It does three things:
+  1. Home: rewrites the layout to the order above. `down` is a no-op (content is never rolled back; version history keeps the previous versions).
+  2. `/services`: sets `anchorId: 'process'` on the PhaseTimeline grid at `layout[5]`.
+  3. `scarcity` global: appends a `spots` row (statistic `{active} / {capacity}`, label "Client spots in use", reason "We cap at {capacity}, so every store gets our full attention.") unless the key already exists.
+
+**Data-migration guard behaviour.**
+- Home is patched only when `layout` has exactly 9 blocks of types hero, proofStrip, twoTrackPanels, miniCTAStrip, phaseTimeline, teamIntro, testimonialRow, teamIntro, finalCTA, with variants proofStrip `scarcity`, twoTrackPanels `equal`, phaseTimeline `accordion`, teamIntro[5] `intro`, teamIntro[7] `founder-card`. Any other shape (the local dev home is the older 10-block seed shape, page id 59) is skipped. A second run also fails the guard and is skipped.
+- `/services` is patched only when its layout is the post-redesign 10-block shape (hero, serviceSheet, specLedger, serviceSheet, specLedger, phaseTimeline `grid`, pricingPlans, testimonialRow, accordionFAQ, finalCTA) and `layout[5]` does not already have `anchorId: 'process'`.
+- `patchPage` does not throw on a guard failure and does not fail the build: it records the reason in `skipped` and returns. A skipped page is therefore silent unless you read the log. The migration ends with `report()`, which logs `home B: applied N: …` and, if any, `home B: SKIPPED N: …` in the build log. Read those two lines after a deploy to know whether the homepage was actually rewritten.
+- The scarcity-global step runs independently of the page steps, so the `spots` row can be added while the home page was skipped.
+- Validation errors from the page or global update are also caught and logged under SKIPPED.
+- Prove the data migration on a scratch DB holding a production-shaped home and `/services` (applied, then re-run skipped); not on the local dev DB.
 
 The homepage also renders the company structured data: [Organization / LocalBusiness JSON-LD](#organization--localbusiness-json-ld-organizationjsonld) (documented under page 12).
 
@@ -612,6 +652,33 @@ Section: Scarcity strip + Client logo strip. Variant built now: `scarcity`. The 
 - The whole block renders nothing when there are no resolvable statements and no logo clients.
 - Client without a logo renders its name as text. Unpublished clients are never shown.
 - A failed read is logged and degrades (statements skipped / row hidden); it never fails the page.
+
+### ProofStrip, capacity variant and scarcity key `spots` (Home B)
+
+Section: capacity strip (replaces the scarcity strip and client logo strip on the homepage). Same block and files as [ProofStrip](#proofstrip-unit-b3).
+
+**Files**
+- `src/blocks/ProofStrip/config.ts`, `src/blocks/ProofStrip/Component.tsx` (`ProofCapacity`, async server component; `CapacityLine`).
+- `src/lib/scarcity.ts` (`SCARCITY_KEYS`, `fillScarcityTokens`).
+- Showcase: `src/showcase/homeB/unitA.ts`; `ShowcaseExtras` in `src/showcase/registry.ts`.
+
+**Fields & schema**
+- `variant`: new option `capacity`. Uses `capacityStatement` (a `scarcityRef`; the homepage sets `spots`) and `logos` (`show`, `eyebrow`, `source`, `clients`). No `statements` rows, no metrics, no `pricingNote` (migration sets `pricingNote` to null).
+- Scarcity key `spots` (label "Client spots in use (homepage strip)"): added to `SCARCITY_KEYS`, to `enum_scarcity_statements_key` and to every scarcityRef enum (FinalCTA, OfferBlock, ProofStrip `capacityStatement`, ReviewWall inserts, LinkStack primary capacity).
+- Homepage data after the migration: `capacityStatement: spots`, `logos.eyebrow` "Stores we've built", client relationship unchanged.
+
+**Wiring**
+- Component key `proofStrip` (the `ProofStripBlock` dispatches on `variant`). Page: [Homepage](#1-homepage) `layout[1]`.
+- Reads the `scarcity` global (counts and the `spots` row) and the `clients` collection through the Local API, as the other variants.
+- `previewScarcity` (showcase-only prop): `{ statistic, reason, label, counts }`, declared in `ShowcaseExtras`. When present, `ProofCapacity` resolves the row from it instead of the `scarcity` global (the showcase DB has no `spots` row). Never set by a page.
+- Migration: `20261109_150019_home_b_schema` (enum values), `20261109_151000_home_b` (page patch, `spots` row). Details under [Homepage section order and Home B migrations](#homepage-section-order-and-home-b-migrations-2026-11-09).
+
+**Notes**
+- Tokens (`{active}`, `{capacity}`) are filled in both the statistic and the reason line in this variant only (`fillScarcityTokens` on the reason is gated by a `fillReason` argument to `resolveStatements`/`resolveRow`); other variants and blocks fill the statistic only.
+- Loud/quiet rule holds: a statement with no reason, or with an unfillable token, is not rendered; the client names then stand alone. The part of the statistic before the first ` / ` is wine, the remainder ink.
+- Layout: `gray-light` band with hairlines; from `md` two equal halves split on the centre line (left half right-aligned, `md:pr-12`; right half `md:pl-12` with a `border-l`). No slot meter, no "spots open" label. Clients without a logo render their name in `font-display` at 60% ink; with a logo, greyscale at 60% opacity.
+- The block renders nothing when there is neither a resolvable statement nor a client.
+- The `scarcity` variant is kept in the schema (orphan on the homepage).
 
 ### CaseStudyCards (unit B3)
 
@@ -695,6 +762,34 @@ Section: What we do (We build it / Then we grow it). Variant built now: `equal`.
 - A track missing its `title` or `body` is skipped (logged with `console.error`). Each track is one running paragraph: title, body, pricing note, link.
 - Prices appear only through the small inline `pricingNote` (CLAUDE.md rule 5).
 
+### TwoTrackPanels, equal restyle (Home B)
+
+Section: "Two jobs. One team." Same block and files as [TwoTrackPanels](#twotrackpanels-unit-b3); the `equal` variant was restyled in place.
+
+**Files**
+- `src/blocks/TwoTrackPanels/config.ts`, `src/blocks/TwoTrackPanels/Component.tsx` (`Equal`).
+- Showcase: `src/showcase/homeB/unitB.ts`.
+
+**Fields & schema**
+- Block `intro`: textarea, the right-aligned lede beside the headline.
+- Panel `accentPhrase`: text; a substring of `title` rendered in wine.
+- Panel `stats[]`: array, max 3; each `{ value, label, accent }` (`accent` checkbox, default false, renders that value in wine). Tables `pages_blocks_two_track_panels_panels_stats` and `_pages_v_*`.
+- Panel `points[]`: array, max 6; each `{ lead, text }` (bold lead-in, then text). Tables `pages_blocks_two_track_panels_panels_points` and `_pages_v_*`.
+- Panel `services` (the older column): hidden in the admin; the column is kept. The migration sets `services: []` on the homepage panels.
+- Unchanged: `eyebrow`, `eyebrowTick`, `heading`, `accentPhrase`, `panels` (exactly 2) with `label`, `title`, `accentTitle`, `body`, `pricingNote`, `link`.
+
+**Wiring**
+- Component key `twoTrackPanels`. Page: [Homepage](#1-homepage) `layout[2]`.
+- Reads no collection or global.
+- Migration: `20261109_150019_home_b_schema` (columns and tables), `20261109_151000_home_b` (copy; keeps both existing panel links and replaces only their labels: "How the build works →", "What we run →").
+
+**Notes**
+- Layout: a 2px ink rule, then two columns split by a 1px hairline from `lg`; stacked below `lg` with stats still three across. No cards.
+- The big numeral ("01", "02") comes from the panel's position, is `aria-hidden`, and is wine when that panel's `accentTitle` is ticked, ink otherwise. It is not a field.
+- Stats are a `dl`: `dt` is the label and `dd` the value, shown reversed (`flex-col-reverse`: value above label). Rows missing a value or label are dropped; at most 3 are rendered. Points without a `lead` are dropped. Bullets are 8px wine squares.
+- `pricingNote` renders as a small grey inline note under the link (never a price block). Homepage: panel 1 none; panel 2 "Marketing: three plans, settled quarterly. Ad spend is separate."
+- A panel missing `title` or `body` is skipped with a `console.error`.
+
 ### PhaseTimeline (unit B3)
 
 Section: Process timeline (8-beat; independence handover at full weight). Variant built now: `accordion`. Later units append `arc` / `build-run` / `engine-rollout` / `steps` with their own fields (`phases.link`, `steps.tag`, `isSignOff`, `outcomes`, `cta`).
@@ -722,9 +817,58 @@ Section: Process timeline (8-beat; independence handover at full weight). Varian
 - Client island `AccordionSteps.tsx` (`'use client'`, reason: click and scroll listeners): one step open at a time and always one open (clicking the open step does nothing); a `toggle` backstop for opens that bypass the click; below `md` the step nearest 45% of the viewport height opens on scroll (rAF-throttled, 24px hysteresis, paused after a click until the visitor scrolls half a screen, disabled under `prefers-reduced-motion: reduce`, never moves focus). The design's desktop auto-advance timer is not ported (WCAG 2.2.2).
 - Transitions use the design's exact cubic-bezier values; the global reduced-motion override in `styles.css` zeroes them.
 
+### PhaseTimeline, grid: gridLayout, anchorId, closingLine, cta (Home B)
+
+Section: "Your project, start to finish." Same block and files as [PhaseTimeline, grid variant and step-0 strip](#phasetimeline-grid-variant-and-step-0-strip-unit-svc-a) (page 4); this entry covers the Home B additions.
+
+**Files**
+- `src/blocks/PhaseTimeline/config.ts`, `src/blocks/PhaseTimeline/PhaseGrid.tsx`.
+- Copy: `src/lib/homeCopy.ts` (`PROCESS`; intro and the three Day 0 steps are shared with `/services` through `PROCESS` in `src/lib/servicesCopy.ts`).
+- Showcase: `src/showcase/homeB/unitC.ts`.
+
+**Fields & schema**
+- `gridLayout`: select, `stacked` (default) or `row`; `grid` only.
+- `anchorId`: text; becomes the `id` of the section (`scroll-mt-31`, `md:scroll-mt-34`); `grid` only.
+- `closingLine` and `cta` (`linkField`): the admin conditions now include `grid`.
+
+**Wiring**
+- Pages: [Homepage](#1-homepage) `layout[4]` uses `gridLayout: row`; `/services` ([page 4](#4-services-hub)) `layout[5]` uses `stacked` with `anchorId: process` (set by `20261109_151000_home_b`). The homepage "The full process →" link targets `/services#process`.
+- Homepage data: phases "Phase 1 / Build your store" and "Phase 2 / Grow (optional)"; steps 01 to 08 (01 to 06 phase 1, 07 and 08 phase 2) plus the three phase-0 Day 0 steps; `closingLine` "Build only? Steps 7 and 8 are optional."; `cta` custom `/services#process`.
+- Migration: `20261109_150019_home_b_schema` (enum `grid_layout`, columns `grid_layout`, `anchor_id`).
+
+**Notes**
+- `stacked` is the previous rendering (phases stacked, each with its own bar). `row` is stacked below `xl`; at `xl` all steps of all phases sit in one row with one column per step (`--cols` = total steps, 8 on the homepage). Each phase bar spans its steps (`col-span` = that phase's step count); the last phase bar is wine, the others ink.
+- Footer row: `closingLine` (left) and `cta` (right, bold link with a 2px underline) render only in `row`. In `stacked`, `cta` is not rendered; `closingLine` renders as a line under the grid.
+- The `accordion` variant is kept in the schema (orphan on the homepage).
+
+### SpecLedger, tools toolsLayout grid (Home B)
+
+Section: "The toolkit" (new homepage section). Same block and files as [SpecLedger, tools variant: tiles layout](#specledger-tools-variant-tiles-layout-unit-svc-a) (page 4).
+
+**Files**
+- `src/blocks/SpecLedger/config.ts`, `src/blocks/SpecLedger/Component.tsx` (`ToolsGrid`), `toolLogos.ts`.
+- Copy: `src/lib/homeCopy.ts` (`TOOLKIT`). Showcase: `src/showcase/homeB/unitC.ts`.
+
+**Fields & schema**
+- `toolsLayout`: new option `grid` (existing: `row`, `tiles`).
+- `items[].tag`: select `none` (default), `build`, `grow`; shown only when `variant` is `tools` and `toolsLayout` is `grid` (`isToolsGrid`); rendered from lg up.
+- `linkTile`: group `{ link (linkField), shortLabel }`. Columns `link_tile_link_type`, `link_tile_link_new_tab`, `link_tile_link_url`, `link_tile_link_label`, `link_tile_short_label`.
+- Reused: `eyebrow`, `eyebrowTick`, `heading`, `accentPhrase` (now also used by `tools`/`grid`), `note` (shown as the lede), `footnote`, `items`.
+
+**Wiring**
+- Page: [Homepage](#1-homepage) `layout[5]`, inserted by `20261109_151000_home_b` (the `teamIntro` `intro` block at the old index 5 is removed in the same patch). Component key `specLedger`.
+- Homepage data: 11 items. Tags: Shopify and Claude Design are `build`, the other nine `grow`; GEO uses logo key `sparkle`. `linkTile` is custom `/services`, label "See every tool on Services", `shortLabel` "Every tool". `footnote` is the trademark line from `GROW_TOOLS` in `servicesCopy.ts`.
+- Migration: `20261109_150019_home_b_schema` (enum `ADD VALUE 'grid'`, enum `items_tag`, `link_tile_*` columns).
+
+**Notes**
+- The hairline grid: `grid-cols-2`, `md:grid-cols-3`, `lg:grid-cols-4`, 1px gaps on the divider colour; tiles are not cards. Tags render only from `lg` (`max-lg:hidden`); `grow` in wine, `build` in grey.
+- `linkTile` is the last grid cell, an ink tile. The whole tile is one link (`CMSLink`, `aria-label` = the full label). It renders only when the link resolves and has a label. With `shortLabel` set, the tile text is the short label below `md` and the full label from `md`.
+- The tool list lives in `homeCopy.ts` on purpose and is not shared with `servicesCopy` (`GROW_TOOLS`): the homepage list is a different selection, order and wording (Shopify and Claude Design as build tiles, "Search Console", one Claude Design tile, no "Collaborations"). Only the trademark footnote is reused.
+- Server component.
+
 ### TeamIntro (unit B3)
 
-Section: Founder/team + about, first instance (`intro` variant). The second homepage instance uses the `founder-card` variant: see [TeamIntro, founder-card variant](#teamintro-founder-card-variant-unit-b3). Variants built now: `intro` and `founder-card`. Later pages reuse these or append new options.
+Section: Founder/team + about, first instance (`intro` variant). Removed from the homepage layout by Home B (2026-11-09); the variant stays in the schema. The second homepage instance uses the `founder-card` variant: see [TeamIntro, founder-card variant](#teamintro-founder-card-variant-unit-b3). Variants built now: `intro` and `founder-card`. Later pages reuse these or append new options.
 
 **Files**
 - `src/blocks/TeamIntro/config.ts`, `src/blocks/TeamIntro/Component.tsx` (`TeamIntroBlock`, server component; one component for both variants).
@@ -799,6 +943,25 @@ Section: second founder block, "One founder, no layers." Same block and files as
 **Notes**
 - Fallback: no member, an unpopulated member (id only: draft or unreadable) or a member whose `_status` is not `published` makes the whole block render nothing (logged with `console.error`), never a half card.
 - No "latest posts" (R12); copy is single-founder (R17). The headline renders at `level={2}` with the wine accent colour.
+
+**Home B: `presentation: section` and `moreLink` (2026-11-09)**
+
+*Files*: `src/blocks/TeamIntro/config.ts`, `src/blocks/TeamIntro/Component.tsx`; copy `FOUNDER` in `src/lib/homeCopy.ts`; showcase `src/showcase/homeB/unitA.ts`.
+
+*Fields & schema*
+- `presentation`: select `standard` (default) or `section`; `founder-card` only.
+- `moreLink`: `linkField` (columns `more_link_type`, `more_link_new_tab`, `more_link_url`, `more_link_label`); the secondary "More about us →" link.
+- Homepage values after the migration: `presentation: section`, eyebrow "Who you'd work with" (tick on), heading "One founder, no layers.", `accentPhrase` "no layers.", `body` = three paragraphs separated by a blank line, `pullQuote` null, `link` custom `/book-a-call` "Book a Call", `moreLink` custom `/about` "More about us →". `member` is untouched.
+
+*Wiring*
+- Page: [Homepage](#1-homepage) `layout[7]` (after the data migration; `layout[6]` is the TestimonialRow). `/about` and `/faq` stay `standard`.
+- Migration: `20261109_150019_home_b_schema` (enums `presentation`, `more_link_type`; columns), `20261109_151000_home_b` (copy).
+
+*Notes*
+- `section` renders no quote and no bio: the pull quote is ignored (`pullQuote` is not read) and the member's `bio` is not shown. Every `body` paragraph is shown (split on blank lines); there is no "Read more".
+- The heading takes `text-balance!`. The socials render on one row (`flex-nowrap`, spread with `justify-between`, 16px icons). The `moreLink` renders only when it resolves and has a label.
+- The member card (photo, name, role, socials) is otherwise the `standard` card.
+- Block-level fallback is unchanged: no member, unpopulated or unpublished member renders nothing.
 
 ### FinalCTA (unit B3)
 
@@ -3891,6 +4054,7 @@ The submit-side data model (forms, submissions, delivery fields) is documented i
 - Schema change: `pnpm payload migrate:create <name>` (scratch DB), review, commit with `pnpm generate:types` output.
 - Migration workflow details (from C1):
   - Generate against a scratch DB migrated to HEAD (all committed migrations applied), never the push-managed dev DB.
+  - **Known gap (not a fix): migrate-from-zero currently fails at the 2026-10-28 seed migration.** Workaround used to bring a scratch DB to HEAD: mark the 11 data-only migrations as applied in the `payload_migrations` table (insert their names), then run `migrate`. This leaves those migrations' data steps unexecuted on that scratch DB.
   - `migrate:create` is interactive on enum/column renames (drizzle create-vs-rename prompts). Run it under a pty and answer each prompt explicitly.
   - Hand-edited data steps (e.g. the C1 admin-preserving `UPDATE`) must be applied to the dev DB by running the migration's SQL before the next push, because push cannot run them.
   - Whenever a migration adds a collection, Payload's generated `down()` emits `DROP TABLE … CASCADE` before the `DROP CONSTRAINT` for the new `payload_locked_documents_rels_*_fk`, so `down` fails (the CASCADE already removed the FK). Hand-reorder `down()` to drop those FKs first (done in C2 and C3–C6).
@@ -4000,3 +4164,13 @@ Commits `25dcb07`, `ec3a47c`.
 **Kept**: the live online-profit pricing definition in `finePrint`, all FAQ answers in the `faqs` collection (shared with `/faq`), the FinalCTA button style, `src/seed/pages.ts` (not updated; stale for `/services`).
 
 **Added**: schema migration `20261109_045545_services_redesign_schema`, data migration `20261109_050000_services_redesign`, `src/lib/servicesCopy.ts`, `src/blocks/Hero/HeroEyebrow.tsx`, `public/brand/tools/{google,googlesearchconsole,claude}.svg`. Details under [4. Services Hub](#4-services-hub).
+
+### 2026-11-09: homepage "Home B" redesign (owner-approved, v1.0.20, commit `eb7371e`)
+
+**Removed from the homepage layout** (data migration `20261109_151000_home_b`; the page's version history keeps it): the "Chicago operators, not account managers" TeamIntro `intro` section, with its content absorbed into the founder section ("One founder, no layers."). The old ProofStrip `scarcity` strip, PhaseTimeline `accordion` and TeamIntro `intro` variants stay in the schema as orphans (nothing dropped).
+
+**Replaced in place**: the scarcity and client-logo strip (now the `capacity` variant), the "What we do" panels (restyled `equal`), the auto-advancing process accordion (now a `grid` row), the founder block (now `presentation: section`).
+
+**Kept**: Hero, MiniCTAStrip, TestimonialRow ("The work, up close.") and FinalCTA on the homepage; `src/seed/pages.ts` (not updated).
+
+**Added**: schema migration `20261109_150019_home_b_schema`, data migration `20261109_151000_home_b`, `src/lib/homeCopy.ts`, showcase fixtures `src/showcase/homeB/`, a new SpecLedger "toolkit" section. Details under [1. Homepage](#homepage-section-order-and-home-b-migrations-2026-11-09).
