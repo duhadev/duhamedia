@@ -53,6 +53,7 @@ import * as migration_20261109_045545_services_redesign_schema from './20261109_
 import * as migration_20261109_050000_services_redesign from './20261109_050000_services_redesign';
 import * as migration_20261109_150019_home_b_schema from './20261109_150019_home_b_schema';
 import * as migration_20261109_151000_home_b from './20261109_151000_home_b';
+import * as migration_20261109_163910_admin_wording_defaults from './20261109_163910_admin_wording_defaults';
 
 export const migrations = [
   {
@@ -329,5 +330,10 @@ export const migrations = [
     up: migration_20261109_151000_home_b.up,
     down: migration_20261109_151000_home_b.down,
     name: '20261109_151000_home_b',
+  },
+  {
+    up: migration_20261109_163910_admin_wording_defaults.up,
+    down: migration_20261109_163910_admin_wording_defaults.down,
+    name: '20261109_163910_admin_wording_defaults',
   },
 ];

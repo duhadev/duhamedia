@@ -11,7 +11,7 @@ export const SCARCITY_KEYS = [
   { label: 'Client cap (big number)', value: 'capacity' },
   { label: 'Client spots in use (homepage strip)', value: 'spots' },
   { label: 'Builds line (Final CTA)', value: 'builds-line' },
-  { label: 'Engines line (Marketing / MKT-SEO Final CTA)', value: 'engines-line' },
+  { label: 'Marketing clients line (Marketing / MKT-SEO Final CTA)', value: 'engines-line' },
   { label: 'Slots line (Link-in-Bio)', value: 'slots-line' },
   { label: 'Offer line (Campaign LP offer)', value: 'offer-line' },
 ] as const

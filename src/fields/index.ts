@@ -360,7 +360,7 @@ export const pricingNote = (name = 'pricingNote'): TextField => ({
   label: 'Pricing note',
   maxLength: 80,
   admin: {
-    description: "Small inline note only, e.g. 'Builds start at $5K'. Never put a price in a headline or metric.",
+    description: "Small inline note only, e.g. 'Builds start at $7K'. Never put a price in a headline or metric.",
   },
 })
 

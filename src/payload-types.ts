@@ -338,7 +338,7 @@ export interface HeroBlock {
    */
   standfirst?: string | null;
   /**
-   * Small inline note only, e.g. 'Builds start at $5K'. Never put a price in a headline or metric.
+   * Small inline note only, e.g. 'Builds start at $7K'. Never put a price in a headline or metric.
    */
   pricingNote?: string | null;
   /**
@@ -404,7 +404,7 @@ export interface HeroBlock {
    */
   subNote?: string | null;
   /**
-   * Short uppercase line, e.g. "Build · Operate · Hand over". Runs vertically down the left on desktop; sits under the paragraph on mobile.
+   * Short uppercase line, e.g. "Build · Grow". Runs vertically down the left on desktop; sits under the paragraph on mobile.
    */
   verticalMicrocopy?: string | null;
   /**
@@ -505,7 +505,7 @@ export interface HeroBlock {
       }[]
     | null;
   /**
-   * A compact three-step strip under the buttons, e.g. 01 Build / 02 Operate / 03 Independence. The last step is always shown at full weight.
+   * A compact three-step strip under the buttons, e.g. 01 Build your store / 02 Grow your store / 03 You own it. The last step is always shown at full weight.
    */
   phaseStrip?:
     | {
@@ -514,7 +514,7 @@ export interface HeroBlock {
          */
         number: string;
         /**
-         * The step name, e.g. "Build", "Operate", "Independence".
+         * The step name, e.g. "Build your store", "Grow your store", "You own it".
          */
         label: string;
         id?: string | null;
@@ -599,7 +599,7 @@ export interface CaseStudy {
    */
   studyNumber?: number | null;
   /**
-   * e.g. "Build + engine, 12 months · Hardgoods retail, 3 locations".
+   * e.g. "Build + marketing, 12 months · Hardgoods retail, 3 locations".
    */
   engagementLine?: string | null;
   /**
@@ -1154,7 +1154,7 @@ export interface Post {
     [k: string]: unknown;
   };
   /**
-   * Small inline note only, e.g. 'Builds start at $5K'. Never put a price in a headline or metric.
+   * Small inline note only, e.g. 'Builds start at $7K'. Never put a price in a headline or metric.
    */
   pricingNote?: string | null;
   /**
@@ -1421,7 +1421,7 @@ export interface LeadMagnet {
    */
   valueBullets: {
     /**
-     * e.g. "The benchmark conversion rate for your store size".
+     * e.g. "The numbers to check before you redesign your store".
      */
     text: string;
     id?: string | null;
@@ -1773,7 +1773,7 @@ export interface MiniCTAStripBlock {
    */
   variant: 'band' | 'inline' | 'button';
   /**
-   * The one-line statement on the strip. Band: e.g. "One team. One dashboard. A handover date." (shown in capitals). Inline: the lead-in before the link, e.g. "Have a quick question first?" (shown as written). Button: optional short line above the button (shown as written); leave empty for the button alone.
+   * The one-line statement on the strip. Band: e.g. "No templates. No middlemen. One person accountable." (shown in capitals). Inline: the lead-in before the link, e.g. "Have a quick question first?" (shown as written). Button: optional short line above the button (shown as written); leave empty for the button alone.
    */
   text?: string | null;
   /**
@@ -2001,7 +2001,7 @@ export interface ProofStripBlock {
   capacityStatement?:
     ('none' | 'ongoing' | 'capacity' | 'spots' | 'builds-line' | 'engines-line' | 'slots-line' | 'offer-line') | null;
   /**
-   * Small inline note only, e.g. 'Builds start at $5K'. Never put a price in a headline or metric.
+   * Small inline note only, e.g. 'Builds start at $7K'. Never put a price in a headline or metric.
    */
   pricingNote?: string | null;
   /**
@@ -2060,7 +2060,7 @@ export interface CaseStudyCardsBlock {
    */
   source: 'featured' | 'latest' | 'track' | 'manual';
   /**
-   * Show studies whose engagement type is any of these, e.g. Build + "Build + engine" on the Shopify page, Growth engine + "Build + engine" on the Marketing page.
+   * Show studies whose engagement type is any of these, e.g. Build + "Build + marketing" on the Shopify page, Marketing + "Build + marketing" on the Marketing page.
    */
   track?: ('build' | 'growth' | 'build-and-growth' | 'handover')[] | null;
   /**
@@ -2189,7 +2189,7 @@ export interface CaseStudyCardsBlock {
    */
   fallbackLogos?: (number | Client)[] | null;
   /**
-   * Small inline note only, e.g. 'Builds start at $5K'. Never put a price in a headline or metric.
+   * Small inline note only, e.g. 'Builds start at $7K'. Never put a price in a headline or metric.
    */
   pricingNote?: string | null;
   id?: string | null;
@@ -2272,7 +2272,7 @@ export interface MetricEventBlock {
          */
         baseline?: string | null;
         /**
-         * The change, e.g. "+[N]%" or "-[N]pt". A leading + or - shows an up/down arrow; any other text (e.g. "Handover") shows as written.
+         * The change, e.g. "+[N]%" or "-[N]pt". A leading + or - shows an up/down arrow; any other text (e.g. "Launched") shows as written.
          */
         change?: string | null;
         id?: string | null;
@@ -2785,7 +2785,7 @@ export interface PhaseTimelineBlock {
    */
   eyebrowTick?: boolean | null;
   /**
-   * The section headline, e.g. "Three phases. The last one is the point."
+   * The section headline, e.g. "Your project, start to finish."
    */
   heading: string;
   /**
@@ -2797,7 +2797,7 @@ export interface PhaseTimelineBlock {
    */
   intro?: string | null;
   /**
-   * Up to three, in order. Accordion: each phase is a labelled bar its steps sit under. Arc: each phase is a row with its description and link. The LAST phase is always shown in the accent colour (the independence handover); that cannot be switched off.
+   * Up to three, in order. Accordion: each phase is a labelled bar its steps sit under. Arc: each phase is a row with its description and link. The LAST phase is always shown in the accent colour (e.g. "You own it"); that cannot be switched off.
    */
   phases?:
     | {
@@ -2850,7 +2850,7 @@ export interface PhaseTimelineBlock {
       }[]
     | null;
   /**
-   * In order. Grid: four per row on wide screens, each under its phase bar. Accordion: each step sits under the phase you pick; the first starts open. Step cards: three or four fit side by side. Build run: three per row. Engine rollout: one row (six fit). The LAST step is the handover and always shows at full weight.
+   * In order. Grid: four per row on wide screens, each under its phase bar. Accordion: each step sits under the phase you pick; the first starts open. Step cards: three or four fit side by side. Build run: three per row. Marketing rollout: one row (six fit). The LAST step always shows at full weight.
    */
   steps?:
     | {
@@ -2867,11 +2867,11 @@ export interface PhaseTimelineBlock {
          */
         phase?: ('0' | '1' | '2' | '3') | null;
         /**
-         * Accordion: shown when the step is open (about 160 characters). Step cards: the sentence under the title. Build run / Engine rollout: the line under the title on phones (computers show the tag instead).
+         * Accordion: shown when the step is open (about 160 characters). Step cards: the sentence under the title. Build run / Marketing rollout: the line under the title on phones (computers show the tag instead).
          */
         detail?: string | null;
         /**
-         * Short label, e.g. a timing ("Week one") or "Your sign-off". Grid: the small grey label over a phase-0 step ("Day 0"). Step cards: the boxed tag. Build run / Engine rollout: the line under the title on computers.
+         * Short label, e.g. a timing ("Week one") or "Your sign-off". Grid: the small grey label over a phase-0 step ("Day 0"). Step cards: the boxed tag. Build run / Marketing rollout: the line under the title on computers.
          */
         tag?: string | null;
         /**
@@ -3130,7 +3130,7 @@ export interface RichContentBlock {
       }[]
     | null;
   /**
-   * Optional small quiet line under the facts (or the text), e.g. 'Builds start at $5K'. The only place a price may appear in this band.
+   * Optional small quiet line under the facts (or the text), e.g. 'Builds start at $7K'. The only place a price may appear in this band.
    */
   pricingNote?: string | null;
   /**
@@ -3264,7 +3264,7 @@ export interface SpecLedgerBlock {
          */
         code?: string | null;
         /**
-         * The item name, e.g. "Conversion build". Shown in capitals. In the check list it is the bullet sentence, shown as written.
+         * The item name, e.g. "Custom theme". Shown in capitals. In the check list it is the bullet sentence, shown as written.
          */
         title: string;
         /**
@@ -3310,7 +3310,7 @@ export interface SpecLedgerBlock {
          */
         what?: string | null;
         /**
-         * Small label above the second detail, e.g. "How you'll know it worked" or "What you'll see on the dashboard".
+         * Small label above the second detail, e.g. "How you'll know it worked" or "What you'll see".
          */
         proofLabel?: string | null;
         /**
@@ -3333,7 +3333,7 @@ export interface SpecLedgerBlock {
      */
     kicker?: string | null;
     /**
-     * The card headline, e.g. "One dashboard. You see what we see."
+     * The card headline, e.g. "You see what we see."
      */
     heading?: string | null;
     /**
@@ -3345,7 +3345,7 @@ export interface SpecLedgerBlock {
      */
     note?: string | null;
     /**
-     * A screenshot of the dashboard. The card keeps its shape if left empty.
+     * A picture for the summary card, e.g. a screenshot of a report. The card keeps its shape if left empty.
      */
     image?: (number | null) | Media;
   };
@@ -3392,7 +3392,7 @@ export interface SpecLedgerBlock {
    */
   footnote?: string | null;
   /**
-   * Small inline note only, e.g. 'Builds start at $5K'. Never put a price in a headline or metric.
+   * Small inline note only, e.g. 'Builds start at $7K'. Never put a price in a headline or metric.
    */
   pricingNote?: string | null;
   id?: string | null;
@@ -4225,7 +4225,7 @@ export interface DirectContactBlock {
   map?: {
     show?: boolean | null;
     /**
-     * The sentence under the map (also read out to screen-reader users). Leave empty to use the automatic line built from Site settings > Location, e.g. "Based in Lombard, IL, serving clients within about 30 miles." Type here to override it.
+     * The sentence under the map (also read out to screen-reader users). Leave empty to use the automatic line built from Site settings > Location, e.g. "Based in Chicago, IL, serving clients within about 30 miles." Type here to override it.
      */
     caption?: string | null;
     /**
@@ -7135,7 +7135,7 @@ export interface SiteSetting {
    */
   legalName: string;
   /**
-   * The short line under the logo in the main footer, e.g. "One team. Store, engine, then yours to run. Chicago."
+   * The short line under the logo in the main footer, e.g. "Made by hand. Then made known."
    */
   footerTagline?: string | null;
   /**
@@ -7174,11 +7174,11 @@ export interface SiteSetting {
      */
     country?: string | null;
     /**
-     * How the location reads on the site, e.g. "Lombard, IL".
+     * How the location reads on the site, e.g. "Chicago, IL".
      */
     displayLine?: string | null;
     /**
-     * The metro area named in the brand line, e.g. "Chicago" in "Integrated ecommerce growth partner — Chicago".
+     * The metro area named in the brand line, e.g. "Chicago" in "Custom Shopify stores · Chicago".
      */
     marketArea?: string | null;
     /**

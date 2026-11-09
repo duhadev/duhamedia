@@ -14,8 +14,8 @@ import { SEED_CONTEXT, ensure, ensureUpload, link, omit, ph, phSub, type SeedCtx
  * - placeholder copy only, bracketed where it stands in for a real fact
  *   (F61: brackets are allowed in the seed; Gate 3 blocks them on public pages);
  * - no invented clients, people, numbers, ratings or policy terms;
- * - prices only as the two approved facts ("Builds start at $5K",
- *   "Engines start at $1K/mo"), inline;
+ * - prices only as the approved facts ("Builds start at $7K", "Marketing:
+ *   three plans, settled quarterly. Ad spend is separate."), inline;
  * - case studies, posts and the lead magnet are DRAFTS (Launch-state rule, F149).
  */
 
@@ -264,7 +264,7 @@ export async function seedLibrary(ctx: SeedCtx) {
     sortOrder: 1,
   })
   const tHandover = await testimonial('t2 direct + metric', {
-    quote: '[Placeholder quote about the handover, not the agency.]',
+    quote: '[Placeholder quote about the result, not the agency.]',
     authorName: '[Client name]',
     authorRole: '[Role, Company]',
     client: clientIds[1],
@@ -337,26 +337,26 @@ export async function seedLibrary(ctx: SeedCtx) {
     'What does it cost?',
     'pricing-contracts',
     1,
-    'Builds start at $5K. Engines start at $1K/mo. Exact scope is priced on the call, in writing, before anything is signed. [Placeholder copy.]',
+    'Builds start at $7K. Marketing is paid through one of three plans, settled quarterly. Ad spend and influencer costs are paid by you, separately. Your exact price is set on the call, in writing, before anything is signed.',
   )
   const fRetainer = await faq(
     'Do you lock clients into retainers?',
     'pricing-contracts',
     2,
-    'No. The endgame is your team running it: Phase 3 is a scheduled handover, not a renewal conversation. [Placeholder copy.]',
+    'No. The marketing runs on two-quarter terms that renew, and either side can cancel with notice before the next term. You own everything we make for you: the store, the code, the domain, the content and the accounts.',
   )
   const fTerm = await faq('How long are contracts?', 'pricing-contracts', 3, '[Placeholder — contract length and terms, final copy TBD with counsel.]')
   const fStartOver = await faq(
     'I already have a store. Do I have to start over?',
     'builds',
     1,
-    'Usually not. Most builds start as a revision: keep what converts, fix what leaks. [Placeholder copy.]',
+    'No. Your products, customers and domain stay. We redesign the store around them and build the theme from scratch.',
   )
   const fBuildOnly = await faq(
     'Can I do the build without the engine?',
     'builds',
     2,
-    "Yes. Phase 1 is fixed-scope and stands alone. We'll tell you on the call whether an engine makes sense for your numbers. [Placeholder copy.]",
+    "Yes. The marketing steps are optional. We'll tell you on the call whether marketing makes sense for your store right now.",
   )
   const fBuildTime = await faq('How long does a build take?', 'builds', 3, '[Placeholder — typical build length, final copy TBD.]')
   const fMinTerm = await faq('Is there a minimum term for the engine?', 'marketing', 1, '[Placeholder — the minimum term and the reason for it, final copy TBD.]')
@@ -364,19 +364,19 @@ export async function seedLibrary(ctx: SeedCtx) {
     'Can I just get ads?',
     'marketing',
     2,
-    'The engine runs as one system — email, ads, content, SEO, GBP and CRM — so the mix is priced on the call. [Placeholder copy.]',
+    'Every plan includes the full toolkit, and paid ads are where we start. If the numbers show organic content or collaborations will do more for your store, we shift effort there. You pay the same plan either way.',
   )
   const fFit = await faq(
     'Will this work for my business?',
     'process-trust',
     1,
-    'It is built for established businesses netting $500K to $5M a year that do well offline and are under-scaled online. The call is where we say whether it fits. [Placeholder copy.]',
+    "It's built for owner-operated businesses in Chicago with a proven product, whose online store and marketing don't show it yet. We don't guarantee results. On the call, we'll tell you honestly whether we're the right fit.",
   )
   const fDifferent = await faq(
     'What makes you different?',
     'process-trust',
     2,
-    'One accountable team builds the store, runs the growth engine, then trains your team to take over. Leaving is the deliverable. [Placeholder copy.]',
+    'One person is accountable for your store, from the first call to the marketing. No templates: every store is designed and coded from scratch. No middlemen: the founder does the work, in-house. And we cap at 7 clients, so every store gets the hours it needs.',
   )
 
   /* ---------------- case studies (DRAFTS ONLY — Launch-state rule) ---------------- */
@@ -417,7 +417,7 @@ export async function seedLibrary(ctx: SeedCtx) {
           clientVoice: {
             testimonial: tVideo,
             doDifferently: root(p("[Placeholder] What we would change with hindsight, in the client's terms.")),
-            phaseMapping: '[Placeholder] Phase 1 built the foundation. Phase 2 ran the engine. Phase 3 handed it over.',
+            phaseMapping: '[Placeholder] Phase 1 built the store. Phase 2 grew it.',
             link: link('See the two tracks', '/services'),
           },
           featured,
@@ -446,13 +446,13 @@ export async function seedLibrary(ctx: SeedCtx) {
     author: founder,
     body: root(
       h('h2', "Why you're searching this"),
-      p('[Placeholder] The pattern behind this page, in two sentences. You want the store to convert and one name accountable when it does not.'),
+      p('[Placeholder] The pattern behind this page, in two sentences. You want the store to sell and one name accountable when it does not.'),
       h('h2', 'Revision before rebuild'),
-      p('[Placeholder] Our default is the Revision, not the scratch build. We keep what converts and replace what leaks.'),
+      p('[Placeholder] Your products, customers and domain stay. We redesign the store around them and build the theme from scratch.'),
     ),
     howWeDoIt: {
       eyebrow: 'How we do it',
-      body: '[Placeholder] Scoped after the audit, by the team that also runs the growth engine afterwards. The build ends with training, not a support retainer.',
+      body: '[Placeholder] Scoped on the call, by the team that can also run the marketing afterwards. You own the store, the theme code and the domain from launch.',
       link: link('Full build scope', '/services/shopify-theme-development'),
     },
     diyBridge: {
@@ -461,10 +461,10 @@ export async function seedLibrary(ctx: SeedCtx) {
       body: root(p('[Placeholder] When a freelancer is the right call, and when the build and the marketing become the same decisions.')),
       facts: [
         { value: '[N–N]', label: 'Weeks', sub: '[Placeholder] Signed scope to launch.', accent: true },
-        { value: '1', label: 'Team, one dashboard', sub: 'One owner of the revenue number.' },
+        { value: '1', label: 'Person accountable', sub: 'The founder does the work himself.' },
       ],
     },
-    pricingNote: 'Builds start at $5K',
+    pricingNote: 'Builds start at $7K',
     educational: {
       eyebrow: '[Placeholder] Before you brief anyone',
       heading: '[Placeholder] Three questions to ask any developer.',
@@ -480,10 +480,10 @@ export async function seedLibrary(ctx: SeedCtx) {
 
   const mktPost = await post('integrated-ecommerce-marketing', {
     track: 'mkt-seo',
-    title: ph('One team for email, ads, content, SEO, GBP and CRM.'),
+    title: ph('One team for ads, social content, search and your newsletter.'),
     targetKeyword: 'integrated ecommerce marketing',
     eyebrow: 'Education — integrated growth',
-    dek: phSub('Five vendors, five reports, nobody owning the number. What changes when one team runs the whole engine.'),
+    dek: phSub('Five vendors, five reports, nobody owning the number. What changes when one team runs all of it.'),
     author: founder,
     body: root(
       h('h2', '[Placeholder] The teach'),
@@ -498,16 +498,16 @@ export async function seedLibrary(ctx: SeedCtx) {
     },
     howWeDoIt: {
       eyebrow: 'How Duha does it',
-      body: '[Placeholder] Email, ads, content, SEO, GBP and CRM run as one engine — one owner of the revenue number, ending in a handover.',
-      link: link('See the engine', '/services/marketing'),
+      body: '[Placeholder] Paid ads, social content, collaborations, search and a newsletter, run by one team. Everything stays in your name.',
+      link: link('See the marketing', '/services/marketing'),
     },
-    pricingNote: 'Engines start at $1K/mo',
+    pricingNote: 'Marketing: three plans, settled quarterly. Ad spend is separate.',
     proof: {
       source: 'track',
       fallbackMode: 'metricStrip',
       fallbackMetrics: [
-        { value: '6', label: 'Channels, one team', sub: 'Email, ads, content, SEO, GBP, CRM', accent: true },
-        { value: '1', label: 'Dashboard', sub: 'You see what we see' },
+        { value: '6', label: 'Channels, one team', sub: 'Ads, social, collaborations, GBP, search, newsletter', accent: true },
+        { value: '1', label: 'Person accountable', sub: 'The founder runs the work himself' },
       ],
     },
     faqHeading: '[Placeholder] On consolidating your marketing',

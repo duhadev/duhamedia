@@ -25,7 +25,7 @@ import { revalidateGlobalHook } from '../hooks/revalidateTag'
  * - `organization` { name, logo, foundingDate }: Organization JSON-LD. `sameAs` comes from
  *   `site-settings.socials`, `url` from server-side env `SITE_URL` — not stored here.
  * - `localBusiness` { type, areaServed, openingHours }: LocalBusiness JSON-LD; the
- *   address/geo comes from `site-settings.location` (Lombard, IL).
+ *   address/geo comes from `site-settings.location` (Chicago, IL).
  *
  * Facts only (CLAUDE.md content rule 3): the only defaults are the brand name
  * "Duha Media" (`organization.name`), the SCHEMA title template, and SCHEMA's

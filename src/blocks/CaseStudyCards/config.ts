@@ -114,14 +114,14 @@ export const CaseStudyCards: Block = {
       label: 'Engagement types',
       options: [
         { label: 'Build', value: 'build' },
-        { label: 'Growth engine', value: 'growth' },
-        { label: 'Build + engine', value: 'build-and-growth' },
-        { label: 'Handover complete', value: 'handover' },
+        { label: 'Marketing', value: 'growth' },
+        { label: 'Build + marketing', value: 'build-and-growth' },
+        { label: 'Finished engagement (old type, not used for new studies)', value: 'handover' },
       ],
       admin: {
         condition: isTrack,
         description:
-          'Show studies whose engagement type is any of these, e.g. Build + "Build + engine" on the Shopify page, Growth engine + "Build + engine" on the Marketing page.',
+          'Show studies whose engagement type is any of these, e.g. Build + "Build + marketing" on the Shopify page, Marketing + "Build + marketing" on the Marketing page.',
       },
     },
     {

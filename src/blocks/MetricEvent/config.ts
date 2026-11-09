@@ -101,7 +101,7 @@ export const MetricEvent: Block = {
               admin: {
                 width: '50%',
                 description:
-                  'The change, e.g. "+[N]%" or "-[N]pt". A leading + or - shows an up/down arrow; any other text (e.g. "Handover") shows as written.',
+                  'The change, e.g. "+[N]%" or "-[N]pt". A leading + or - shows an up/down arrow; any other text (e.g. "Launched") shows as written.',
               },
             },
           ],

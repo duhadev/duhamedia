@@ -230,7 +230,7 @@ export const Hero: Block = {
       label: 'Side microcopy',
       admin: {
         description:
-          'Short uppercase line, e.g. "Build · Operate · Hand over". Runs vertically down the left on desktop; sits under the paragraph on mobile.',
+          'Short uppercase line, e.g. "Build · Grow". Runs vertically down the left on desktop; sits under the paragraph on mobile.',
         condition: forVariants('typographic'),
       },
     },
@@ -418,7 +418,7 @@ export const Hero: Block = {
       admin: {
         components: { RowLabel: rowLabel(['number', 'label'], 'Phase') },
         description:
-          'A compact three-step strip under the buttons, e.g. 01 Build / 02 Operate / 03 Independence. The last step is always shown at full weight.',
+          'A compact three-step strip under the buttons, e.g. 01 Build your store / 02 Grow your store / 03 You own it. The last step is always shown at full weight.',
         initCollapsed: true,
         condition: forVariants('typographic'),
       },
@@ -427,7 +427,7 @@ export const Hero: Block = {
           type: 'row',
           fields: [
             { name: 'number', type: 'text', required: true, admin: { width: '25%', description: 'e.g. "01".' } },
-            { name: 'label', type: 'text', required: true, admin: { width: '75%', description: 'The step name, e.g. "Build", "Operate", "Independence".' } },
+            { name: 'label', type: 'text', required: true, admin: { width: '75%', description: 'The step name, e.g. "Build your store", "Grow your store", "You own it".' } },
           ],
         },
       ],

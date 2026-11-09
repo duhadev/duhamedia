@@ -16,7 +16,7 @@ const mapOn: Condition = (_d, s) => (s as { show?: boolean } | undefined)?.show 
  * section at both breakpoints. The email, socials and location VALUES are not
  * block fields: they come from the `site-settings` global at render, so they
  * are edited in one place. This block only chooses which rows to show and the
- * wording around them. The map is fixed monochrome, Lombard IL (R9): no
+ * wording around them. The map is fixed monochrome, centred on Site settings > Location (R9): no
  * treatment select. One variant.
  */
 export const DirectContact: Block = {
@@ -98,7 +98,7 @@ export const DirectContact: Block = {
           admin: {
             condition: mapOn,
             description:
-              'The sentence under the map (also read out to screen-reader users). Leave empty to use the automatic line built from Site settings > Location, e.g. "Based in Lombard, IL, serving clients within about 30 miles." Type here to override it.',
+              'The sentence under the map (also read out to screen-reader users). Leave empty to use the automatic line built from Site settings > Location, e.g. "Based in Chicago, IL, serving clients within about 30 miles." Type here to override it.',
           },
         },
         {

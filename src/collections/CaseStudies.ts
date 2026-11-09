@@ -296,9 +296,9 @@ export const CaseStudies: CollectionConfig = {
                   required: true,
                   options: [
                     { label: 'Build', value: 'build' },
-                    { label: 'Growth engine', value: 'growth' },
-                    { label: 'Build + engine', value: 'build-and-growth' },
-                    { label: 'Handover complete', value: 'handover' },
+                    { label: 'Marketing', value: 'growth' },
+                    { label: 'Build + marketing', value: 'build-and-growth' },
+                    { label: 'Finished engagement (old type, not used for new studies)', value: 'handover' },
                   ],
                   admin: {
                     width: '50%',
@@ -323,7 +323,7 @@ export const CaseStudies: CollectionConfig = {
                   label: 'Engagement line',
                   admin: {
                     width: '70%',
-                    description: 'e.g. "Build + engine, 12 months · Hardgoods retail, 3 locations".',
+                    description: 'e.g. "Build + marketing, 12 months · Hardgoods retail, 3 locations".',
                   },
                 },
               ],

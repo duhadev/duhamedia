@@ -4054,7 +4054,7 @@ The submit-side data model (forms, submissions, delivery fields) is documented i
 - Schema change: `pnpm payload migrate:create <name>` (scratch DB), review, commit with `pnpm generate:types` output.
 - Migration workflow details (from C1):
   - Generate against a scratch DB migrated to HEAD (all committed migrations applied), never the push-managed dev DB.
-  - **Known gap (not a fix): migrate-from-zero currently fails at the 2026-10-28 seed migration.** Workaround used to bring a scratch DB to HEAD: mark the 11 data-only migrations as applied in the `payload_migrations` table (insert their names), then run `migrate`. This leaves those migrations' data steps unexecuted on that scratch DB.
+  - **Known gap (not a fix): migrate-from-zero currently fails at the 2026-10-28 seed migration.** Workaround used to bring a scratch DB to HEAD: mark the 12 data-only migrations (as of 2026-11-09) as applied in the `payload_migrations` table (insert their names), then run `migrate`. This leaves those migrations' data steps unexecuted on that scratch DB.
   - `migrate:create` is interactive on enum/column renames (drizzle create-vs-rename prompts). Run it under a pty and answer each prompt explicitly.
   - Hand-edited data steps (e.g. the C1 admin-preserving `UPDATE`) must be applied to the dev DB by running the migration's SQL before the next push, because push cannot run them.
   - Whenever a migration adds a collection, Payload's generated `down()` emits `DROP TABLE … CASCADE` before the `DROP CONSTRAINT` for the new `payload_locked_documents_rels_*_fk`, so `down` fails (the CASCADE already removed the FK). Hand-reorder `down()` to drop those FKs first (done in C2 and C3–C6).

@@ -27,7 +27,7 @@ import { POST_LABEL_DEFAULTS } from '../lib/postLabels'
  * headings.
  *
  * Real facts only (MERGED §10 R5): the only code defaults that are facts are
- * Lombard, IL (location). Legal name, contact email, socials, GBP link,
+ * Chicago, IL (location). Legal name, contact email, socials, GBP link,
  * coordinates, postal address and rating have NO code default: their values
  * are content, entered in the admin or by the seed. The legal name, contact
  * email and map coordinates are set there now (human-confirmed values,
@@ -190,7 +190,7 @@ export const SiteSettings: GlobalConfig = {
               maxLength: 120,
               admin: {
                 description:
-                  'The short line under the logo in the main footer, e.g. "One team. Store, engine, then yours to run. Chicago."',
+                  'The short line under the logo in the main footer, e.g. "Made by hand. Then made known."',
               },
             },
             {
@@ -283,7 +283,7 @@ export const SiteSettings: GlobalConfig = {
                       type: 'text',
                       label: 'Town / city',
                       required: true,
-                      defaultValue: 'Lombard',
+                      defaultValue: 'Chicago',
                       admin: { width: '40%' },
                     },
                     {
@@ -307,8 +307,8 @@ export const SiteSettings: GlobalConfig = {
                   name: 'displayLine',
                   type: 'text',
                   label: 'Short location line',
-                  defaultValue: 'Lombard, IL',
-                  admin: { description: 'How the location reads on the site, e.g. "Lombard, IL".' },
+                  defaultValue: 'Chicago, IL',
+                  admin: { description: 'How the location reads on the site, e.g. "Chicago, IL".' },
                 },
                 {
                   type: 'row',
@@ -320,7 +320,7 @@ export const SiteSettings: GlobalConfig = {
                       defaultValue: 'Chicago',
                       admin: {
                         width: '50%',
-                        description: 'The metro area named in the brand line, e.g. "Chicago" in "Integrated ecommerce growth partner — Chicago".',
+                        description: 'The metro area named in the brand line, e.g. "Chicago" in "Custom Shopify stores · Chicago".',
                       },
                     },
                     {

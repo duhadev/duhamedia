@@ -36,7 +36,7 @@ export const MiniCTAStrip: Block = {
         if (variant === 'button') return true
         return typeof value === 'string' && value.trim() ? true : 'Add the one-line statement.'
       }) satisfies TextFieldSingleValidation,
-      admin: { description: 'The one-line statement on the strip. Band: e.g. "One team. One dashboard. A handover date." (shown in capitals). Inline: the lead-in before the link, e.g. "Have a quick question first?" (shown as written). Button: optional short line above the button (shown as written); leave empty for the button alone.' },
+      admin: { description: 'The one-line statement on the strip. Band: e.g. "No templates. No middlemen. One person accountable." (shown in capitals). Inline: the lead-in before the link, e.g. "Have a quick question first?" (shown as written). Button: optional short line above the button (shown as written); leave empty for the button alone.' },
     },
     linkField({
       name: 'link',

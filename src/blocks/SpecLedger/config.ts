@@ -52,7 +52,7 @@ export const SpecLedger: Block = {
       options: [
         { label: 'Cards (framed cards with a picture each)', value: 'cards' },
         { label: 'Expandable rows (coded rows that open: what we do / how you will know)', value: 'expandable' },
-        { label: 'Signal flow (coded tiles feeding into one dashboard card)', value: 'signal-flow' },
+        { label: 'Signal flow (coded tiles feeding into one summary card)', value: 'signal-flow' },
         { label: 'Check list (a short column of ticked bullets, e.g. "What\'s inside")', value: 'list' },
         { label: 'Tools row (a row of tool logos and names, e.g. "Preferred tools")', value: 'tools' },
       ],
@@ -145,7 +145,7 @@ export const SpecLedger: Block = {
               name: 'title',
               type: 'text',
               required: true,
-              admin: { width: '75%', description: 'The item name, e.g. "Conversion build". Shown in capitals. In the check list it is the bullet sentence, shown as written.' },
+              admin: { width: '75%', description: 'The item name, e.g. "Custom theme". Shown in capitals. In the check list it is the bullet sentence, shown as written.' },
             },
           ],
         },
@@ -234,7 +234,7 @@ export const SpecLedger: Block = {
           label: 'Second detail label',
           admin: {
             condition: isExpandable,
-            description: 'Small label above the second detail, e.g. "How you\'ll know it worked" or "What you\'ll see on the dashboard".',
+            description: 'Small label above the second detail, e.g. "How you\'ll know it worked" or "What you\'ll see".',
           },
         },
         {
@@ -258,7 +258,7 @@ export const SpecLedger: Block = {
     {
       name: 'hub',
       type: 'group',
-      label: 'Dashboard card',
+      label: 'Summary card',
       admin: {
         condition: variantIs('signal-flow'),
         description: 'The card the tiles feed into. Leave empty to show only the tiles.',
@@ -270,7 +270,7 @@ export const SpecLedger: Block = {
           label: 'Small caption',
           admin: { description: 'e.g. "Everything reports here".' },
         },
-        { name: 'heading', type: 'text', admin: { description: 'The card headline, e.g. "One dashboard. You see what we see."' } },
+        { name: 'heading', type: 'text', admin: { description: 'The card headline, e.g. "You see what we see."' } },
         { name: 'body', type: 'textarea', admin: { description: 'The supporting paragraph.' } },
         { name: 'note', type: 'text', label: 'Quiet line', admin: { description: 'Optional small grey line under the paragraph (desktop only).' } },
         {
@@ -278,8 +278,8 @@ export const SpecLedger: Block = {
           type: 'upload',
           relationTo: 'media',
           maxDepth: 1,
-          label: 'Dashboard picture',
-          admin: { description: 'A screenshot of the dashboard. The card keeps its shape if left empty.' },
+          label: 'Summary picture',
+          admin: { description: 'A picture for the summary card, e.g. a screenshot of a report. The card keeps its shape if left empty.' },
         },
       ],
     },

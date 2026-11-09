@@ -42,9 +42,9 @@ const bookACall = () => L('Book a Call', '/book-a-call')
 /** Ledger fallback rows (F61 proposal: capacity numbers only; prices only in the small pricing note). */
 const ledgerRows = [
   { value: '[7]', label: 'Client cap', sub: 'Capacity is the quality gate, not a countdown.', accent: true },
-  { value: '3', label: 'Phases, one team', sub: 'Build the foundation. Operate the engine. Build independence.' },
+  { value: '2', label: 'Phases, one team', sub: 'Build your store. Then grow it.' },
 ]
-const BOTH_PRICES = 'Builds start at $5K. Engines start at $1K/mo.'
+const BOTH_PRICES = 'Builds start at $7K. Marketing: three plans, settled quarterly. Ad spend is separate.'
 
 const counsel = (extra = '') => p(`[Placeholder — counsel-provided content.${extra}]`)
 
@@ -73,21 +73,21 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
     /* ---------------- p1 Homepage ---------------- */
     {
       slug: 'home',
-      title: 'Integrated ecommerce growth partner, Chicago',
-      description: 'One team builds your Shopify store, runs the growth engine, then trains your team to take over. Builds start at $5K. Chicago.',
+      title: 'Custom Shopify stores, Chicago',
+      description: 'We design and build custom Shopify stores from scratch, then run the marketing that brings in customers. No templates. Chicago. Builds start at $7K.',
       layout: [
         {
           blockType: 'hero',
           variant: 'typographic',
-          eyebrow: 'Integrated ecommerce growth partner — Chicago',
+          eyebrow: 'Custom Shopify stores · Chicago',
           eyebrowTick: true,
-          heading: ph("Your ecommerce growth team, until you don't need one."),
-          accentPhrase: "until you don't need one.",
+          heading: ph('Your store, built and grown.'),
+          accentPhrase: 'built and grown.',
           badge: { show: true, text: '[$X.XM client revenue tracked]' },
-          body: phSub('One team builds your store, runs your marketing, and trains yours to take over.'),
+          body: phSub('We design and build your Shopify store from scratch, with no templates. Then we run the marketing that brings in customers.'),
           pricingNote: BOTH_PRICES,
           ctas: [{ link: bookACall() }, { link: L('See the Work', '/work') }],
-          verticalMicrocopy: 'Build · Operate · Hand over',
+          verticalMicrocopy: 'Build · Grow',
           geometry: true,
         },
         {
@@ -97,7 +97,7 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
             { number: '3', label: 'Projects ongoing' },
             { number: '7', label: 'Max client capacity' },
           ],
-          pricingNote: 'Builds start at $5K',
+          pricingNote: 'Builds start at $7K',
           logos: { show: true, eyebrow: "Stores we've run numbers for", source: 'flagged' },
         },
         {
@@ -118,7 +118,7 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
           fallbackMetrics: ledgerRows,
           pricingNote: BOTH_PRICES,
         },
-        { blockType: 'miniCTAStrip', variant: 'band', text: 'One team. One dashboard. A handover date.', link: bookACall() },
+        { blockType: 'miniCTAStrip', variant: 'band', text: 'No templates. No middlemen. One person accountable.', link: bookACall() },
         {
           blockType: 'twoTrackPanels',
           variant: 'equal',
@@ -127,14 +127,14 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
           panels: [
             {
               title: 'First, we build it.',
-              body: 'A Shopify store that converts, built from scratch or rebuilt. [Placeholder copy.]',
-              pricingNote: 'Builds start at $5K.',
+              body: 'A Shopify store built from scratch, around your brand and your products. No templates.',
+              pricingNote: 'Builds start at $7K.',
               link: L('How the build works →', '/services/shopify-theme-development'),
             },
             {
               title: 'Then we grow it.',
               accentTitle: true,
-              body: 'Email, ads, content, SEO, GBP and CRM run by one team. [Placeholder copy.]',
+              body: 'Marketing, run by the same team that built your store. Every plan includes the full toolkit.',
               services: [
                 { label: 'Organic social' },
                 { label: 'Influencer collabs' },
@@ -142,7 +142,7 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
                 { label: 'GEO' },
                 { label: 'Google Business Profile' },
               ],
-              pricingNote: 'Engines start at $1K/mo.',
+              pricingNote: 'Marketing: three plans, settled quarterly. Ad spend is separate.',
               link: L('What we run →', '/services/marketing'),
             },
           ],
@@ -151,23 +151,22 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
           blockType: 'phaseTimeline',
           variant: 'accordion',
           eyebrow: 'How it runs',
-          heading: 'Three phases. The last one is the point.',
-          accentPhrase: 'the point.',
-          intro: 'Eight steps, one calendar. You approve at dated checkpoints and finish owning the whole thing.',
+          heading: 'Your project, start to finish.',
+          accentPhrase: 'start to finish.',
+          intro: 'Eight steps in two phases, so you always know what comes next. Marketing is optional.',
           phases: [
-            { number: 'Phase 1', title: 'Build the foundation' },
-            { number: 'Phase 2', title: 'Operate the engine' },
-            { number: 'Phase 3', title: 'Build independence' },
+            { number: 'Phase 1', title: 'Build your store' },
+            { number: 'Phase 2', title: 'Grow (optional)' },
           ],
           steps: [
-            { number: '01', title: 'Intake', phase: '1', detail: 'We start from your P&L, not your homepage. Margins, repeat rate, and what actually sells.' },
-            { number: '02', title: 'Research', phase: '1', detail: 'Competitors, category language, and the one objection that stalls your buyer.' },
-            { number: '03', title: 'Branding', phase: '1', detail: 'Positioning is decided before a single visual. The look follows the claim.' },
-            { number: '04', title: 'Design', phase: '1', detail: 'Every screen is drawn against the funnel step it has to carry.' },
-            { number: '05', title: 'Development', phase: '1', detail: 'Analytics and server events go live before the theme, so launch has a baseline.' },
-            { number: '06', title: 'Onboarding', phase: '2', detail: 'Your team meets the dashboard they will own, while we are still on the hook.' },
-            { number: '07', title: 'Engine launch', phase: '2', detail: 'Content and acquisition run on one calendar with one owner of the number.' },
-            { number: '08', title: 'Handover', phase: '3', detail: 'Documentation, training, and the keys. The goal is your team running this without us.' },
+            { number: '01', title: 'Discovery', phase: '1', detail: 'Your business, your customers and your goals.' },
+            { number: '02', title: 'Research', phase: '1', detail: 'Your competitors and who is winning in your market.' },
+            { number: '03', title: 'Brand', phase: '1', detail: 'One meeting to set colors, typography and look.' },
+            { number: '04', title: 'Design', phase: '1', detail: "Every screen, revised with you until it's right." },
+            { number: '05', title: 'Build', phase: '1', detail: 'The approved design, coded into a custom theme.' },
+            { number: '06', title: 'Launch', phase: '1', detail: "Shops connected, store live. It's yours." },
+            { number: '07', title: 'Marketing plan', phase: '2', detail: 'Ads first, then whatever fits your store.' },
+            { number: '08', title: 'Run and refine', phase: '2', detail: 'We run the marketing and keep improving the store.' },
           ],
         },
         {
@@ -217,7 +216,7 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
       slug: 'work',
       metaTitle: 'Ecommerce Case Studies and Results — Duha Media',
       title: 'Work',
-      description: 'Case studies from stores we built, ran and handed over — published as clients sign off on the figures.',
+      description: "Custom Shopify stores we've designed and built from scratch for Chicago businesses. Case studies are published once each client approves them.",
       layout: [
         {
           blockType: 'hero',
@@ -226,7 +225,7 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
           eyebrowTick: true,
           heading: ph('The work, in numbers'),
           accentPhrase: 'in numbers',
-          body: phSub('One team built the store, ran the engine, then handed it over.'),
+          body: phSub('One team built the store, then grew it.'),
           geometry: true,
           stats: [
             { value: '$[X.X]M', label: 'Client revenue added' },
@@ -285,7 +284,7 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
       slug: 'services',
       metaTitle: 'Shopify Development and Ecommerce Marketing — Duha Media',
       title: 'Services',
-      description: 'Two tracks, one team: Shopify theme development and a marketing engine, ending in a handover to your team.',
+      description: 'Two jobs, one team. We build your custom Shopify store from scratch, then grow it with ads, social content and search. Based in Chicago.',
       layout: [
         {
           blockType: 'hero',
@@ -296,9 +295,9 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
           ctas: [{ link: bookACall() }],
           geometry: true,
           phaseStrip: [
-            { number: '01', label: 'Build the foundation' },
-            { number: '02', label: 'Operate the engine' },
-            { number: '03', label: 'Build independence' },
+            { number: '01', label: 'Build your store' },
+            { number: '02', label: 'Grow your store' },
+            { number: '03', label: 'You own it' },
           ],
         },
         {
@@ -308,16 +307,16 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
           panels: [
             {
               title: 'Shopify Theme Development',
-              body: "For no store, or one that isn't working. Conversion-focused theme, tracking that tells the truth, SEO groundwork. Fixed scope. [Placeholder copy.]",
-              pricingNote: 'Builds start at $5K.',
+              body: "For a business with no online store, or one that doesn't show what you make. A custom Shopify theme built from scratch, connected to TikTok, Instagram and Facebook Shop. Yours from launch.",
+              pricingNote: 'Builds start at $7K.',
               link: L('See the build →', '/services/shopify-theme-development'),
             },
             {
               title: 'Marketing',
               accentTitle: true,
-              body: 'For a store with no growth plan. Email, ads, content, SEO, GBP, CRM, one team on one dashboard. [Placeholder copy.]',
-              pricingNote: 'Engines start at $1K/mo.',
-              link: L('See the engine →', '/services/marketing'),
+              body: "For a store that isn't reaching new customers. Paid ads first, then social content, collaborations, search and a newsletter, run by one team.",
+              pricingNote: 'Three plans, settled quarterly.',
+              link: L('See the marketing →', '/services/marketing'),
             },
           ],
         },
@@ -328,10 +327,10 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
           eyebrowTick: true,
           heading: "Half an offer is why it didn't work.",
           panels: [
-            { label: 'Sold to you as', claim: '"We\'ll build you a beautiful store."', title: 'A build with no engine is a parked car.', link: noLink },
+            { label: 'Sold to you as', claim: '"We\'ll build you a beautiful store."', title: "A store nobody visits doesn't sell.", link: noLink },
             { label: 'Sold to you as', claim: '"Just hire a specialist for each channel."', title: 'You became the manager you were paying to avoid.', link: noLink },
           ],
-          conclusion: 'One team through both phases, and a handover date set at the start. [Placeholder copy.]',
+          conclusion: 'One team through both phases, so the person who built your store is the one marketing it.',
         },
         { blockType: 'newsletterBand', variant: 'band' },
         {
@@ -341,20 +340,20 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
           phases: [
             {
               number: 'Phase 01',
-              title: 'Build the foundation',
-              body: 'A Shopify theme built around the questions buyers actually ask, analytics wired so the numbers mean something, and the SEO groundwork. [Placeholder — final copy TBD.]',
+              title: 'Build your store',
+              body: 'A Shopify theme designed and coded from scratch around your brand and products, with Shopify Analytics and Microsoft Clarity set up so you can see what visitors do.',
               link: L('See Phase 01 →', '/services/shopify-theme-development'),
             },
             {
               number: 'Phase 02',
-              title: 'Operate the engine',
-              body: 'Email, ads, content, SEO, Google Business Profile and CRM, run by the same people who built the store, reporting into one dashboard. [Placeholder — final copy TBD.]',
+              title: 'Grow your store',
+              body: 'Paid ads, social content filmed in person each month, collaborations, Google Business Profile, SEO and a newsletter, run by the people who built your store.',
               link: L('See Phase 02 →', '/services/marketing'),
             },
             {
               number: 'Phase 03',
-              title: 'Build independence',
-              body: 'Your team takes the engine over on a date set at the start. We document the systems, train the person who will own them, and hand over the accounts. [Placeholder — final copy TBD.]',
+              title: 'You own it.',
+              body: 'The store, the theme code and the domain are yours from launch. Every ad, post, landing page and account is in your name too. Nothing is held back, and nothing is rented to you.',
             },
           ],
         },
@@ -364,8 +363,8 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
           heading: 'Either door starts the same way.',
           steps: [
             { number: 'Step 01', title: 'A call, 30 minutes', tag: '[Day 0]', detail: "Your numbers and what's leaking. We say which door fits — including “neither, yet.”", outcomes: [{ text: 'An honest read on which phase you need' }] },
-            { number: 'Step 02', title: 'A dated plan', tag: '[Within N days]', detail: 'Scope, price and the calendar in writing — deliverables, sign-off points, and the handover date.', outcomes: [{ text: 'A fixed scope and a price, before you commit' }] },
-            { number: 'Step 03', title: 'Work starts', tag: '[Week 1]', detail: 'Same team through both phases, no account-manager layer. You see the dashboard we see.', outcomes: [{ text: 'Dashboard access and a named contact' }] },
+            { number: 'Step 02', title: 'A dated plan', tag: '[Within N days]', detail: "Scope and price in writing, with the steps and what you'll approve along the way.", outcomes: [{ text: 'A written scope and price, before you commit' }] },
+            { number: 'Step 03', title: 'Work starts', tag: '[Week 1]', detail: 'The same person through both phases. No account managers, no middlemen.', outcomes: [{ text: 'A direct line to the person doing the work' }] },
           ],
           closingLine: "Nothing is signed before step 02. If the plan doesn't fit, that's where it stops. [Placeholder]",
           cta: bookACall(),
@@ -403,19 +402,19 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
       slug: 'services/shopify-theme-development',
       metaTitle: 'Shopify Theme Development, Chicago — Duha Media',
       title: 'Shopify Theme Development',
-      description: 'Shopify theme builds and revisions with tracking and SEO shipped inside the build. Builds start at $5K, scoped in writing.',
+      description: 'A Shopify store designed and coded from scratch, around your brand and products. No templates. You own the store, code and domain. Builds start at $7K.',
       layout: [
         {
           blockType: 'hero',
           variant: 'service',
-          eyebrow: 'Phase 01 of three — build the foundation',
+          eyebrow: 'Phase 01 — build your store',
           eyebrowTick: true,
           heading: ph('The store build'),
-          body: phSub('Six steps from a broken store to a foundation that converts, with tracking and SEO shipped inside the build.'),
-          pricingNote: 'Builds start at $5K',
+          body: phSub('Six steps from first call to launch. Designed with you screen by screen, coded from scratch, and yours from day one.'),
+          pricingNote: 'Builds start at $7K',
           subNote: '[Placeholder — typical revision length]',
           ctas: [{ link: L('Book a call', '/book-a-call') }],
-          breadcrumb: [{ label: 'Services', url: '/services' }, { label: 'Shopify theme development' }, { label: 'Phase 01 — build the foundation' }],
+          breadcrumb: [{ label: 'Services', url: '/services' }, { label: 'Shopify theme development' }, { label: 'Phase 01 — build your store' }],
           stats: [{ value: '[N weeks]', label: 'Typical revision' }],
         },
         {
@@ -429,8 +428,8 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
             {
               label: 'Default starting point',
               title: 'Revision',
-              body: 'Keep what converts, fix what leaks. [Placeholder copy.]',
-              pricingNote: 'Builds start at $5K.',
+              body: 'Keep your products, customers and domain. We redesign the store around them and rebuild the theme from scratch.',
+              pricingNote: 'Builds start at $7K.',
               link: L('Start with a revision', '/book-a-call'),
             },
             {
@@ -463,14 +462,14 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
           eyebrow: 'Specification — what every build ships with',
           firstOpen: true,
           items: [
-            ['D-01', 'Conversion build', 'Templates around buyer questions, speed as a feature.', 'The four templates above, laid out around what buyers arrive asking. Speed budgeted before features are added.', 'Conversion and add-to-cart by template, against the store you had.'],
+            ['D-01', 'Custom theme', 'Templates around buyer questions, speed as a feature.', 'Every template designed and coded from scratch around your products and the questions your buyers ask.', 'Every page works on phone and desktop at launch.'],
             ['D-02', 'Brand positioning', "What the store says and who it's for. Before design.", 'Category read, buyer read, and the sentence the homepage has to earn — signed off before a screen is designed.', 'A stranger describes your store the way your team does.'],
             ['D-03', 'UX', "Navigation and checkout paths that don't leak demand.", 'Menu structure, filtering, product page order — the handful of decisions that turn a visit into an order.', 'Drop-off by step, before and after. Leaks get named.'],
             ['D-04', 'Analytics + tracking', 'In before launch, so the numbers tell the truth.', 'Analytics, ecommerce events and ad attribution wired and tested on the live theme.', 'Store revenue reconciles with the ad accounts.'],
             ['D-05', 'SEO foundations', 'Structure, speed and metadata at build time.', 'Crawlable structure, clean templates, titles and schema, plus a speed pass.', 'Indexation and Core Web Vitals pass at launch.'],
             ['D-06', 'Launch support', "We're there when it goes live.", 'A launch checklist, a monitored first stretch, and a walkthrough of the theme your team now owns.', 'Nothing silently breaks in week one. [Placeholder copy.]'],
           ].map(([code, title, line, what, proof]) => ({ code, title, line, whatLabel: 'What we build', what, proofLabel: "How you'll know it worked", proof })),
-          pricingNote: 'Builds start at $5K. Exact scope is priced on the call.',
+          pricingNote: 'Builds start at $7K. Exact scope is priced on the call.',
         },
         {
           blockType: 'phaseTimeline',
@@ -498,8 +497,8 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
           limit: 2,
           fallbackMode: 'testimonials',
           fallbackEyebrow: 'What clients say',
-          fallbackHeading: 'Proof it converts.',
-          fallbackAccentPhrase: 'converts.',
+          fallbackHeading: 'Proof it works.',
+          fallbackAccentPhrase: 'works.',
           fallbackTestimonials: [t.quote, t.handover],
         },
         {
@@ -519,33 +518,33 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
     /* ---------------- p6 Marketing ---------------- */
     {
       slug: 'services/marketing',
-      metaTitle: 'Ecommerce Marketing Engine, Chicago — Duha Media',
+      metaTitle: 'Shopify Marketing in Chicago | Duha Media',
       title: 'Marketing',
-      description: 'Email, ads, content, SEO, Google Business Profile and CRM run by one team on one dashboard. Engines start at $1K/mo.',
+      description: 'Paid ads, social content filmed in person, collaborations, SEO and a newsletter, run by the team that built your store. Three plans, settled quarterly.',
       layout: [
         {
           blockType: 'hero',
           variant: 'service',
-          eyebrow: 'Phase 02 of three — operate the engine',
+          eyebrow: 'Phase 02 — grow your store',
           eyebrowTick: true,
-          heading: ph('The marketing engine'),
-          body: phSub('Six channels wired into one dashboard and run by one team.'),
-          pricingNote: 'Engines start at $1K/mo',
-          subNote: '[Placeholder minimum-term note]',
+          heading: ph('Then we grow it.'),
+          body: phSub('Paid ads, social content, collaborations, search and a newsletter, run by the team that built your store. Every plan includes all of it.'),
+          pricingNote: 'Three plans, settled quarterly. Ad spend is separate.',
+          subNote: 'Two-quarter terms that renew. Cancel with notice before the next term.',
           ctas: [{ link: L('Book a call', '/book-a-call') }],
-          breadcrumb: [{ label: 'Services', url: '/services' }, { label: 'Marketing' }, { label: 'Phase 02 — operate the engine' }],
+          breadcrumb: [{ label: 'Services', url: '/services' }, { label: 'Marketing' }, { label: 'Phase 02 — grow your store' }],
         },
         {
           blockType: 'specLedger',
           variant: 'signal-flow',
           eyebrow: 'How the signal moves',
           eyebrowTick: true,
-          items: ['Email', 'Ads', 'Content', 'SEO', 'GBP', 'CRM'].map((title, i) => ({ code: `E-0${i + 1}`, title })),
+          items: ['Paid ads', 'Social content', 'Collaborations', 'Google Business Profile', 'SEO and GEO', 'Newsletter'].map((title, i) => ({ code: `E-0${i + 1}`, title })),
           hub: {
-            kicker: 'Everything reports here',
-            heading: 'One dashboard. You see what we see.',
-            body: "Every channel writes to the same place, plus a monthly written readout: what we did, what it returned, what's next. [Placeholder copy.]",
-            note: 'No deck theatre. No assembling five reports yourself.',
+            kicker: 'Every quarter',
+            heading: 'You see what we see.',
+            body: "Every quarter you get the numbers your plan is settled on, what we ran, what it returned and what we'll change next. The ad and shop accounts are in your name, so you can check any of it yourself.",
+            note: 'One readout, from the person who ran the work.',
             image: img,
           },
         },
@@ -555,13 +554,12 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
           eyebrow: 'Specification — what each channel is for',
           firstOpen: true,
           items: [
-            ['E-01', 'Email', 'The list you already own — built first because it pays for the rest.', 'Welcome, browse-abandon, cart, post-purchase and win-back flows, plus a campaign calendar built around what actually sells.', 'Revenue per send, flow revenue split from campaign revenue, list growth and churn.'],
-            ['E-02', 'Paid ads', 'Spend scales only on tracking that tells the truth.', 'Meta and Google, structured around your margins. If attribution is broken we fix it before a dollar moves.', "Spend, blended return, and cost per new customer next to repeat revenue — so a good ROAS can't hide an unprofitable account."],
-            ['E-03', 'Social / content', 'We show up with a camera — shot at your business, not stock.', 'Shoot days on site: product, place, people. One shoot feeds organic posts, ad creative, email and product pages.', 'Which assets earned attention and which earned money.'],
-            ['E-04', 'SEO', 'Compounding capture on the Phase 01 foundations.', 'Category and product page work first, then the articles that answer what buyers actually ask.', 'Non-brand traffic and the revenue behind it, tracked monthly.'],
-            ['E-05', 'GBP', 'For hybrid businesses the profile is a storefront. Run like one.', 'Categories, hours, products and photos kept current, posts on a schedule, and a review routine your staff can keep.', 'Calls, direction requests and profile-driven visits alongside online orders.'],
-            ['E-06', 'CRM', 'Repeat purchase decides whether ads are profitable.', 'One customer record wired to the store, email and ads: segments, lifecycle stages, and the lists every other channel targets from.', 'Repeat rate, time between orders and lifetime value by cohort. [Placeholder copy.]'],
-          ].map(([code, title, line, what, proof]) => ({ code, title, line, whatLabel: 'What we run', what, proofLabel: "What you'll see on the dashboard", proof })),
+            ['E-01', 'Newsletter', 'Your customers, in their inbox.', 'Regular emails to the customers who already know you, sent through Shopify Email.', '[STRATEGIC PLACEHOLDER — final copy TBD]'],
+            ['E-02', 'Paid ads', 'Spend scales only on tracking that tells the truth.', 'Meta ads on Facebook and Instagram, with a landing page built for each campaign, so the ad and the store say the same thing. This is where we start.', 'What you spent, what it brought in, and what each new customer cost.'],
+            ['E-03', 'Social content and collaborations', 'We show up with a camera — shot at your business, not stock.', 'We film with you in person each month, then post to Facebook, Instagram, Reels and TikTok. We also scout and manage influencer collaborations; nothing is sent without your approval.', '[STRATEGIC PLACEHOLDER — final copy TBD]'],
+            ['E-04', 'SEO and GEO', 'Found in search, and recommended by AI tools.', 'Showing up when people search for what you sell, and getting recommended when they ask AI tools like ChatGPT.', '[STRATEGIC PLACEHOLDER — final copy TBD]'],
+            ['E-05', 'Google Business Profile', 'For hybrid businesses the profile is a storefront. Run like one.', 'Your listing on Google Search and Maps, kept current, with review growth and prompt replies.', '[STRATEGIC PLACEHOLDER — final copy TBD]'],
+          ].map(([code, title, line, what, proof]) => ({ code, title, line, whatLabel: 'What we run', what, proofLabel: "What you'll see", proof })),
           pricingNote: "You can't buy ads alone: the mix is priced on the call.",
         },
         {
@@ -572,13 +570,13 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
           heading: 'Order matters more than effort',
           steps: [
             { number: '01', title: 'Audit', tag: '[Week 1–2]', detail: 'Tracking, list, spend history.' },
-            { number: '02', title: 'Foundations', tag: 'Before spend', detail: 'Attribution and CRM wired — before any spend.' },
-            { number: '03', title: 'Email flows', tag: '[Month 1]', detail: 'The owned channel goes first.' },
+            { number: '02', title: 'Foundations', tag: 'Before spend', detail: 'Tracking set up before any spend.' },
+            { number: '03', title: 'Film', tag: '[Month 1]', detail: 'Three to four hours in person. Scripts and articles are written in the same session.' },
             { number: '04', title: 'Ads live', tag: '[Month 1–2]', detail: 'Budget follows evidence.' },
-            { number: '05', title: 'Content + SEO', tag: '[Month 2+]', detail: 'The compounding layers.' },
-            { number: '06', title: 'Independence', tag: 'Phase 03', detail: 'Phase 03 — your team takes over.' },
+            { number: '05', title: 'Search and newsletter', tag: '[Month 2+]', detail: 'SEO, GEO and the newsletter, building over time.' },
+            { number: '06', title: 'Run and refine', tag: 'Ongoing', detail: 'We run the marketing and keep improving the store.' },
           ],
-          closingLine: 'It ends the same way every time: your team running it without us.',
+          closingLine: 'Everything we run stays in your name.',
         },
         {
           blockType: 'specLedger',
@@ -598,15 +596,15 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
           limit: 2,
           fallbackMode: 'metric-strip',
           fallbackEyebrow: 'The numbers we can show',
-          fallbackHeading: 'The engine, in numbers.',
+          fallbackHeading: 'Marketing, in numbers.',
           fallbackAccentPhrase: 'in numbers.',
           fallbackBody: 'Studies publish here as clients sign off.',
           fallbackMetrics: [
-            { value: '6', label: 'Channels, one team', sub: 'Email, ads, content, SEO, GBP, CRM', accent: true },
-            { value: '1', label: 'Dashboard', sub: 'You see what we see, always' },
-            { value: '[N] MO', label: 'Minimum term', sub: '[The honest window to judge an engine]' },
+            { value: '6', label: 'Channels, one team', sub: 'Ads, social, collaborations, GBP, search, newsletter', accent: true },
+            { value: '1', label: 'Person accountable', sub: 'The founder runs the work himself' },
+            { value: '6 MO', label: 'Minimum term', sub: 'Two quarters: long enough to film, run ads and see what works.' },
           ],
-          pricingNote: 'Engines start at $1K/mo.',
+          pricingNote: 'Three plans, settled quarterly. Ad spend is separate.',
         },
         {
           blockType: 'accordionFAQ',
@@ -618,7 +616,7 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
           limit: 6,
           allLink: L('All questions, answered straight →', '/faq'),
         },
-        { blockType: 'finalCTA', heading: 'One engine. One owner of the number.', capacity: 'engines-line', buttons: [{ link: bookACall() }] },
+        { blockType: 'finalCTA', heading: 'One team. One person accountable.', capacity: 'engines-line', buttons: [{ link: bookACall() }] },
       ],
     },
 
@@ -659,22 +657,22 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
     /* ---------------- p8 About ---------------- */
     {
       slug: 'about',
-      metaTitle: 'About Duha Media — One Team, Store to Handover',
+      metaTitle: 'About Duha Media: Chicago Shopify Developer',
       title: 'About',
       readingProgress: true,
-      description: 'Duha Media is one accountable team: we build the store, operate the growth engine, then hand it over. Lombard, IL — serving Chicagoland.',
+      description: 'One founder, no layers. Abdurrahman Choudhary designs, builds and markets custom Shopify stores for owner-operated businesses in Chicago.',
       layout: [
         {
           blockType: 'hero',
           variant: 'article',
           eyebrow: 'About',
           eyebrowTick: true,
-          heading: ph('One team. Store, engine, then yours to run.'),
-          accentPhrase: 'then yours to run.',
-          body: phSub('Lombard, IL — serving the greater Chicagoland area.'),
+          heading: ph('One founder. Your store, built and grown.'),
+          accentPhrase: 'built and grown.',
+          body: phSub('Based in Chicago. We work with businesses in Chicago and across the United States.'),
           stats: [
-            { value: 'Lombard, IL', label: 'Based' },
-            { value: 'Build · Operate · Hand over', label: 'Scope' },
+            { value: 'Chicago, Illinois', label: 'Based' },
+            { value: 'Build · Grow', label: 'Scope' },
             { value: '[7] clients', label: 'Capacity' },
           ],
           media: img,
@@ -688,8 +686,8 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
             h('h2', 'Story'),
             p("[Placeholder — the founder's story, in his own words. Nothing here is invented; final copy comes from the founder.]"),
             h('h2', 'How we work'),
-            p('Three phases, one team. Phase 1 builds the foundation: the store, the tracking, the SEO groundwork. Phase 2 operates the engine: email, ads, content, SEO, GBP and CRM on one dashboard. [Placeholder copy.]'),
-            p('Phase 3 is the point: we build independence. Your team takes the engine over on a date set at the start — documentation, training and the keys. [Placeholder copy.]'),
+            p('Two phases, one team. First we build your store: discovery, research, brand, design, build and launch, with you approving the design screen by screen. The store, the theme code and the domain are yours from launch.'),
+            p('Then, if you want it, we grow it. Paid ads come first, then social content filmed with you each month, collaborations, search and a newsletter. We shift effort to whatever the numbers show is working. Marketing is optional, and everything we run stays in your name.'),
             h('h2', 'Values'),
             p('[Placeholder — the values and approach, final copy TBD.]'),
           ),
@@ -702,7 +700,7 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
             { label: 'Concurrent clients, capped', value: '[N]', accent: true },
             { label: 'Builds in progress today', value: '[N]' },
             { label: 'Client revenue band we serve', value: '$500K–$5M' },
-            { label: 'Typical handover', value: '[Month N]' },
+            { label: 'Hands-on hours per build', value: '~55' },
           ],
           note: '[Founding year, headcount and engagement counts fill in from client-approved records — no estimates published.]',
         },
@@ -845,7 +843,7 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
       metaTitle: 'FAQ: Pricing, Builds and Marketing — Duha Media',
       title: 'FAQ',
       readingProgress: true,
-      description: 'Straight answers on pricing, builds, marketing and how we work. Builds start at $5K; engines start at $1K/mo.',
+      description: 'Straight answers on cost, ownership, contracts and timelines for a custom Shopify store and marketing from Duha Media in Chicago.',
       layout: [
         {
           blockType: 'hero',
@@ -947,7 +945,7 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
             { value: '[N]', label: '[Count]', sub: '[sub]' },
           ],
           capacityStatement: 'capacity',
-          pricingNote: 'Builds start at $5K · Engines start at $1K/mo',
+          pricingNote: 'Builds start at $7K · Marketing: three plans, settled quarterly',
           logos: { show: false },
         },
         { blockType: 'miniCTAStrip', variant: 'button', text: 'Ready when you are.', link: bookACall() },
@@ -1055,7 +1053,7 @@ export function pageSpecs(ids: LibraryIds): PageSpec[] {
       layout: [
         {
           blockType: 'linkStack',
-          identity: { showStudyMetric: true, fallbackLine: '[STRATEGIC PLACEHOLDER] Integrated ecommerce growth partner — Chicago' },
+          identity: { showStudyMetric: true, fallbackLine: '[STRATEGIC PLACEHOLDER] Custom Shopify stores · Chicago' },
           primary: { link: L('Book a call', '/book-a-call'), capacity: 'slots-line' },
           showSocials: true,
           followLabel: 'Follow',

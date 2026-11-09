@@ -7,7 +7,7 @@ import { SEED_CONTEXT, ensureGlobal, link, omit, type SeedCtx } from './lib'
  * its arrays is empty — the human's edits always win.
  *
  * Values: approved facts from the Decision log (F1 legal name, F2 contact
- * email, F4 Lombard map point, F5 copy), SCHEMA §7 defaults, and the design's
+ * email, F4 map point (Chicago since 2026-11-07), F5 copy), SCHEMA §7 defaults, and the design's
  * nav labels (MERGED §4.2). Booking URL stays empty (no Nextcloud URL yet →
  * BookingEmbed's designed no-URL state). Socials = the human's real profiles (2026-10-27).
  * Postal address = the LLC's mailing address (human 2026-10-27). `localBusiness.type` stays unset (F103: plain Organization).
@@ -21,7 +21,7 @@ export async function seedGlobals(ctx: SeedCtx, ids: LibraryIds) {
       slug: 'site-settings',
       data: {
         legalName: 'Al-Amanah LLC',
-        footerTagline: 'First we build. Then we scale.',
+        footerTagline: 'Made by hand. Then made known.',
         contactEmail: 'hello@duhamedia.com',
         responseTimeNote: 'We reply within 1 business day',
         socials: [
@@ -32,14 +32,14 @@ export async function seedGlobals(ctx: SeedCtx, ids: LibraryIds) {
           { platform: 'facebook', handle: 'Duha Media', url: 'https://www.facebook.com/profile.php?id=61591931455408' },
         ],
         location: {
-          locality: 'Lombard',
+          locality: 'Chicago',
           region: 'IL',
           country: 'US',
-          displayLine: 'Lombard, IL',
+          displayLine: 'Chicago, IL',
           marketArea: 'Chicago',
           serviceRadiusMiles: 30,
-          latitude: 41.88,
-          longitude: -88.008,
+          latitude: 41.8781,
+          longitude: -87.6298,
         },
         gbpUrl: 'https://maps.app.goo.gl/wpBhDHuhh5XmmYvg6',
         bookingUrl: '',
@@ -66,7 +66,7 @@ export async function seedGlobals(ctx: SeedCtx, ids: LibraryIds) {
   )
 
   // SCHEMA §7.2 seed rows (F52, F120: slots-line uses {open}). Counts are the design's demonstrative
-  // values were the design's; real counts + reasons confirmed by the human 2026-10-27 (3 active, each runs build + engine).
+  // values were the design's; real counts + reasons confirmed by the human 2026-10-27 (3 active, each runs a build and marketing).
   await ensureGlobal(ctx, 'scarcity', () =>
     payload.updateGlobal({
       slug: 'scarcity',
@@ -85,8 +85,8 @@ export async function seedGlobals(ctx: SeedCtx, ids: LibraryIds) {
           },
           {
             key: 'engines-line',
-            statistic: '{engines} engines running. We cap at {capacity}.',
-            reason: 'Every client runs a build and an engine together, under the same cap.',
+            statistic: 'We cap at {capacity} clients.',
+            reason: 'The founder does the work himself, so every store gets the hours it needs.',
           },
           { key: 'slots-line', statistic: 'Slots open {open}/{capacity}', reason: 'Each build gets about 55 hands-on hours: design, build, revision. No templates.' },
           { key: 'offer-line', statistic: '{active} of {capacity} slots filled', reason: 'Each build gets about 55 hands-on hours: design, build, revision. No templates.' },
@@ -175,7 +175,7 @@ export async function seedGlobals(ctx: SeedCtx, ids: LibraryIds) {
       data: {
         titleTemplate: '%s — Duha Media',
         defaultDescription:
-          '[Placeholder] One team builds your Shopify store, runs the growth engine, then trains your team to take over. Chicago.',
+          '[Placeholder] We design and build custom Shopify stores from scratch, then run the marketing that brings in customers. Chicago.',
         defaultOgImage: og,
         organization: { name: 'Duha Media' },
         localBusiness: { areaServed: 'Chicago metropolitan area' },

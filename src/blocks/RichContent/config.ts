@@ -221,7 +221,7 @@ export const RichContent: Block = {
         ...pricingNote().admin,
         condition: forVariants('band'),
         description:
-          "Optional small quiet line under the facts (or the text), e.g. 'Builds start at $5K'. The only place a price may appear in this band.",
+          "Optional small quiet line under the facts (or the text), e.g. 'Builds start at $7K'. The only place a price may appear in this band.",
       },
     },
     {

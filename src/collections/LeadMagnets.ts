@@ -238,7 +238,7 @@ export const LeadMagnets: CollectionConfig = {
                   name: 'text',
                   type: 'text',
                   required: true,
-                  admin: { description: 'e.g. "The benchmark conversion rate for your store size".' },
+                  admin: { description: 'e.g. "The numbers to check before you redesign your store".' },
                 },
               ],
             },

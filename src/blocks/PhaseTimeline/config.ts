@@ -52,7 +52,7 @@ export const PhaseTimeline: Block = {
         { label: 'Arc (up to three phases, each with a description and a link)', value: 'arc' },
         { label: 'Step cards (numbered cards with "You leave with" outcomes and a button)', value: 'steps' },
         { label: 'Build run (dark band of numbered steps, sign-offs marked)', value: 'build-run' },
-        { label: 'Engine rollout (dark band, one row of steps with timings)', value: 'engine-rollout' },
+        { label: 'Marketing rollout (dark band, one row of steps with timings)', value: 'engine-rollout' },
         { label: 'Grid (numbered cells in rows of four under phase bars, as the brochure)', value: 'grid' },
       ],
       admin: {
@@ -94,7 +94,7 @@ export const PhaseTimeline: Block = {
     },
     // Accent shows in wine on every layout except Accordion (ink on ink there).
     ...headlineFields({
-      description: 'The section headline, e.g. "Three phases. The last one is the point."',
+      description: 'The section headline, e.g. "Your project, start to finish."',
       accent: onlyFor('arc', 'steps', 'build-run', 'engine-rollout', 'grid'),
     }),
     {
@@ -114,7 +114,7 @@ export const PhaseTimeline: Block = {
         initCollapsed: false,
         condition: onlyFor('accordion', 'arc', 'grid'),
         description:
-          'Up to three, in order. Accordion: each phase is a labelled bar its steps sit under. Arc: each phase is a row with its description and link. The LAST phase is always shown in the accent colour (the independence handover); that cannot be switched off.',
+          'Up to three, in order. Accordion: each phase is a labelled bar its steps sit under. Arc: each phase is a row with its description and link. The LAST phase is always shown in the accent colour (e.g. "You own it"); that cannot be switched off.',
       },
       fields: [
         {
@@ -178,7 +178,7 @@ export const PhaseTimeline: Block = {
         initCollapsed: true,
         condition: onlyFor('accordion', 'steps', 'build-run', 'engine-rollout', 'grid'),
         description:
-          'In order. Grid: four per row on wide screens, each under its phase bar. Accordion: each step sits under the phase you pick; the first starts open. Step cards: three or four fit side by side. Build run: three per row. Engine rollout: one row (six fit). The LAST step is the handover and always shows at full weight.',
+          'In order. Grid: four per row on wide screens, each under its phase bar. Accordion: each step sits under the phase you pick; the first starts open. Step cards: three or four fit side by side. Build run: three per row. Marketing rollout: one row (six fit). The LAST step always shows at full weight.',
       },
       fields: [
         {
@@ -223,7 +223,7 @@ export const PhaseTimeline: Block = {
           type: 'textarea',
           admin: {
             description:
-              'Accordion: shown when the step is open (about 160 characters). Step cards: the sentence under the title. Build run / Engine rollout: the line under the title on phones (computers show the tag instead).',
+              'Accordion: shown when the step is open (about 160 characters). Step cards: the sentence under the title. Build run / Marketing rollout: the line under the title on phones (computers show the tag instead).',
           },
         },
         {
@@ -236,7 +236,7 @@ export const PhaseTimeline: Block = {
                 width: '70%',
                 condition: onlyFor('steps', 'build-run', 'engine-rollout', 'grid'),
                 description:
-                  'Short label, e.g. a timing ("Week one") or "Your sign-off". Grid: the small grey label over a phase-0 step ("Day 0"). Step cards: the boxed tag. Build run / Engine rollout: the line under the title on computers.',
+                  'Short label, e.g. a timing ("Week one") or "Your sign-off". Grid: the small grey label over a phase-0 step ("Day 0"). Step cards: the boxed tag. Build run / Marketing rollout: the line under the title on computers.',
               },
             },
             {
