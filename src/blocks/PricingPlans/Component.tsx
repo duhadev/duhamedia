@@ -182,7 +182,7 @@ export function PricingPlansBlock({ anchorId, eyebrow, eyebrowTick, heading, acc
         ) : null}
 
         {termRows.length ? (
-          <div className={cx('max-w-[760px]', has(statement) ? 'mt-7 md:mt-8' : 'mt-12')}>
+          <div className={cx(has(statement) ? 'mt-7 md:mt-8' : 'mt-12')}>
             {termRows.map((t, i) => (
               <details key={t.id ?? i} className="group border-t border-divider last:border-b">
                 <summary className="flex min-h-target cursor-pointer list-none items-center justify-between gap-4 py-2 text-left font-bold [&::-webkit-details-marker]:hidden">
