@@ -14,6 +14,8 @@ import { eyebrowField, headlineFields, linkField } from '../../fields'
 
 const isIntro = (_data: unknown, siblingData: { variant?: string } | undefined): boolean =>
   (siblingData?.variant ?? 'intro') === 'intro'
+const isFounderSection = (_data: unknown, siblingData: { variant?: string; presentation?: string } | undefined): boolean =>
+  siblingData?.variant === 'founder-card' && siblingData?.presentation === 'section'
 const isFounderCard = (_data: unknown, siblingData: { variant?: string } | undefined): boolean =>
   siblingData?.variant === 'founder-card'
 
@@ -32,6 +34,20 @@ export const TeamIntro: Block = {
         { label: 'Founder card (headline, text and a person card with social links)', value: 'founder-card' },
       ],
       admin: { description: 'Which layout to use.' },
+    },
+    {
+      name: 'presentation',
+      type: 'select',
+      required: true,
+      defaultValue: 'standard',
+      options: [
+        { label: 'Standard (About, FAQ: first paragraph + "Read more", pull quote, wine button)', value: 'standard' },
+        { label: 'Homepage section (all paragraphs, no pull quote, ink button + "more" link, card without bio)', value: 'section' },
+      ],
+      admin: {
+        condition: isFounderCard,
+        description: 'How the founder card is presented. Leave on Standard for About and FAQ.',
+      },
     },
     eyebrowField({
       defaultTick: false,
@@ -74,6 +90,14 @@ export const TeamIntro: Block = {
           'The person shown on the card (photo, name, role, social links come from their Team members entry). They must be published, otherwise the card does not appear.',
       },
     },
+    (() => {
+      const f = linkField({
+        name: 'moreLink',
+        label: 'More link',
+        description: 'Optional text link beside the button, e.g. "More about us →". Homepage section presentation only. Leave empty for none.',
+      })
+      return { ...f, admin: { ...f.admin, condition: isFounderSection } } satisfies typeof f
+    })(),
     linkField({
       name: 'link',
       label: 'Link',

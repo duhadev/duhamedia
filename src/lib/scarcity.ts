@@ -9,6 +9,7 @@
 export const SCARCITY_KEYS = [
   { label: 'Projects ongoing (big number)', value: 'ongoing' },
   { label: 'Client cap (big number)', value: 'capacity' },
+  { label: 'Client spots in use (homepage strip)', value: 'spots' },
   { label: 'Builds line (Final CTA)', value: 'builds-line' },
   { label: 'Engines line (Marketing / MKT-SEO Final CTA)', value: 'engines-line' },
   { label: 'Slots line (Link-in-Bio)', value: 'slots-line' },

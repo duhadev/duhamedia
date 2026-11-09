@@ -1,15 +1,20 @@
 import type { Block } from 'payload'
 
-import { eyebrowField, headlineFields, linkField, pricingNote } from '../../fields'
+import {
+  accentPhraseAdminField,
+  eyebrowField,
+  headlineFields,
+  linkField,
+  pricingNote,
+  validateAccentPhrase,
+} from '../../fields'
 import { rowLabel } from '../../components/admin/rowLabel'
 
 /**
  * TwoTrackPanels block (SCHEMA §8.3 item 10). Variants: `equal` (homepage
- * "Two jobs. One team."; two text columns under rules since 2026-11-08, with
- * number tags, paragraph + **bold** body, optional service list and a price
- * footer; the price tag
- * is a human-approved exception to the small-inline-pricing rule for this
- * variant only), `contrast` (Services Hub "Why both together":
+ * "Two jobs. One team."; Home B redesign 2026-11-09: header with lede, two
+ * text columns split by a hairline, big numeral, one-line lede, 3-stat row,
+ * bullet points, link + small grey pricing note; no price tag), `contrast` (Services Hub "Why both together":
  * struck claim + reality line per panel, then a conclusion) and
  * `primary-secondary` (Shopify page "Where people usually start": first panel
  * full weight, second visibly softer). New fields are optional / variant
@@ -39,11 +44,20 @@ export const TwoTrackPanels: Block = {
       admin: { description: 'The panel layout. Equal = two paragraphs; Contrast = two "sold to you as" cards; Primary / secondary = a lead option plus a quieter alternative.' },
     },
     eyebrowField({ description: 'Optional small uppercase line above the headline.', defaultTick: false }),
-    // Accent shows only in Contrast (wine); the other layouts render it ink on ink.
+    // Accent shows in Contrast and Equal (wine); the other layouts render it ink on ink.
     ...headlineFields({
       description: 'The section headline, e.g. "What we actually do".',
-      accent: (_data, siblingData) => siblingData?.variant === 'contrast',
+      accent: (_data, siblingData) => siblingData?.variant === 'contrast' || siblingData?.variant === 'equal',
     }),
+    {
+      name: 'intro',
+      type: 'textarea',
+      label: 'Intro line',
+      admin: {
+        description: 'Short lede shown on the right of the headline (Equal layout only). Leave empty to hide.',
+        condition: (_data, siblingData) => siblingData?.variant === 'equal',
+      },
+    },
     {
       name: 'panels',
       type: 'array',
@@ -84,12 +98,23 @@ export const TwoTrackPanels: Block = {
           },
         },
         {
+          name: 'accentPhrase',
+          type: 'text',
+          label: 'Accent phrase',
+          validate: validateAccentPhrase('title'),
+          admin: {
+            components: { Field: accentPhraseAdminField('title') },
+            description: 'Optional (Equal layout): one word or phrase copied from the title to show in wine, e.g. "grow it."',
+            condition: isVariant('equal'),
+          },
+        },
+        {
           name: 'accentTitle',
           type: 'checkbox',
           label: 'Show the title in the accent colour',
           defaultValue: false,
           admin: {
-            description: 'In the Equal layout this also makes the rule above the track and the price amount wine.',
+            description: 'In the Equal layout this makes the big 01/02 numeral wine (use the accent phrase below to colour part of the title).',
             condition: isVariant('equal', 'primary-secondary', 'doors'),
           },
         },
@@ -117,17 +142,53 @@ export const TwoTrackPanels: Block = {
           admin: {
             components: { RowLabel: rowLabel(['label'], 'Service') },
             description: 'Optional short items listed under the paragraph, e.g. "SEO". Drag to reorder. Leave empty to hide.',
-            condition: isVariant('equal'),
+            // Hidden since the Home B redesign (the Equal layout no longer renders chips); column kept, no migration.
+            condition: () => false,
             initCollapsed: true,
           },
           fields: [{ name: 'label', type: 'text', required: true, maxLength: 40 }],
+        },
+        {
+          name: 'stats',
+          type: 'array',
+          label: 'Stats (3-across row)',
+          maxRows: 3,
+          labels: { singular: 'Stat', plural: 'Stats' },
+          admin: {
+            components: { RowLabel: rowLabel(['value', 'label'], 'Stat') },
+            description: 'Up to three figures between hairlines, e.g. "55hrs" / "Hands-on, per build". Leave empty to hide the row.',
+            condition: isVariant('equal'),
+            initCollapsed: true,
+          },
+          fields: [
+            { name: 'value', type: 'text', required: true, maxLength: 12, admin: { description: 'The figure as it shows, e.g. "$7K", "3–4hrs".' } },
+            { name: 'label', type: 'text', required: true, maxLength: 48, admin: { description: 'Small caption under the figure.' } },
+            { name: 'accent', type: 'checkbox', label: 'Show the figure in wine', defaultValue: false },
+          ],
+        },
+        {
+          name: 'points',
+          type: 'array',
+          label: 'Points (bullets)',
+          maxRows: 6,
+          labels: { singular: 'Point', plural: 'Points' },
+          admin: {
+            components: { RowLabel: rowLabel(['lead', 'text'], 'Point') },
+            description: 'Short bullets with a bold lead-in. Drag to reorder. Leave empty to hide.',
+            condition: isVariant('equal'),
+            initCollapsed: true,
+          },
+          fields: [
+            { name: 'lead', type: 'text', required: true, maxLength: 80, admin: { description: 'Bold opening words, e.g. "Custom Shopify theme."' } },
+            { name: 'text', type: 'text', maxLength: 160, admin: { description: 'The rest of the line (optional).' } },
+          ],
         },
         {
           ...pricingNote(),
           admin: {
             ...pricingNote().admin,
             description:
-              "Short note, e.g. 'Builds start at $5K'. In the Equal layout it shows at the foot of the track with the amount ($7K) enlarged; elsewhere it is a small inline note.",
+              "Short note, e.g. 'Builds start at $7K'. A small grey inline note: beside the link in the Equal layout, under the text elsewhere.",
             condition: isVariant('equal', 'primary-secondary', 'doors'),
           },
         },

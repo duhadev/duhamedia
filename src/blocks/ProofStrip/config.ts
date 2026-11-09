@@ -22,8 +22,12 @@ export const ProofStrip: Block = {
       options: [
         { label: 'Numbers (big number + label, plus client logos)', value: 'scarcity' },
         { label: 'Metrics (up to three metrics + capacity + client logos, Campaign LP)', value: 'metrics' },
+        { label: 'Capacity (one capacity line with its reason, beside client names; homepage)', value: 'capacity' },
       ],
-      admin: { description: 'The strip layout. Numbers is the homepage strip; Metrics is the compact Campaign LP strip.' },
+      admin: {
+        description:
+          'The strip layout. Numbers is the older homepage strip; Metrics is the compact Campaign LP strip; Capacity is the slim homepage strip (capacity line left, client names right).',
+      },
     },
     {
       // Stored name stays `statements` (table `pages_blocks_proof_strip_statements`); since
@@ -35,7 +39,7 @@ export const ProofStrip: Block = {
       maxRows: 4,
       labels: { singular: 'Number', plural: 'Numbers' },
       admin: {
-        condition: (_data, siblingData) => siblingData?.variant !== 'metrics',
+        condition: (_data, siblingData) => siblingData?.variant !== 'metrics' && siblingData?.variant !== 'capacity',
         components: { RowLabel: rowLabel(['number', 'label'], 'Number') },
         description:
           'The big numbers, side by side (two fit best; up to four). Each is a big number with its big text underneath. Add, remove or drag to reorder. The first number is shown in the accent colour.',
@@ -86,9 +90,12 @@ export const ProofStrip: Block = {
         name: 'capacityStatement',
         label: 'Capacity statement',
         description:
-          'Optional capacity tile beside the metrics: a big line with its reason quietly beneath, both from "Capacity & scarcity". Edit the numbers and wording there. Choose "None" to hide it.',
+          'The capacity line: a big line with its reason quietly beneath, both from "Capacity & scarcity". Edit the numbers and wording there. Metrics: optional tile beside the metrics ("None" hides it). Capacity: choose "Client spots in use (homepage strip)"; without a reason nothing is shown.',
       })
-      return { ...f, admin: { ...f.admin, condition: (_data, siblingData) => siblingData?.variant === 'metrics' } } satisfies typeof f
+      return {
+        ...f,
+        admin: { ...f.admin, condition: (_data, siblingData) => siblingData?.variant === 'metrics' || siblingData?.variant === 'capacity' },
+      } satisfies typeof f
     })(),
     pricingNote(),
     {
@@ -97,7 +104,7 @@ export const ProofStrip: Block = {
       label: 'Client logos',
       admin: { description: 'The row of client names / monochrome logos under the numbers.' },
       fields: [
-        { name: 'show', type: 'checkbox', label: 'Show the logo row', defaultValue: true },
+        { name: 'show', type: 'checkbox', label: 'Show the logo row (client names)', defaultValue: true },
         {
           name: 'eyebrow',
           type: 'text',

@@ -3,6 +3,7 @@ import React from 'react'
 import type { BlockData } from '@/blocks/types'
 import { Caption, DiamondHeading } from '@/components/BrochureParts'
 import { AccentHeadline, Container, Eyebrow, Media, Section } from '@/components/ui'
+import { CMSLink, resolveLinkHref } from '@/components/ui/CMSLink'
 import { cx } from '@/lib/cx'
 
 import { TOOL_LOGOS, type ToolLogo, type ToolLogoDef } from './toolLogos'
@@ -322,8 +323,8 @@ function ToolLogoMark({ item }: { item: Item }) {
 }
 
 /** Tiles layout mark: a built-in file, a built-in inline icon (ink), or an upload. */
-function TileMark({ item }: { item: Item }) {
-  const box = 'relative block size-7 shrink-0 md:size-8'
+function TileMark({ item, size = 'size-7 md:size-8' }: { item: Item; size?: string }) {
+  const box = cx('relative block shrink-0', size)
   if (item.logoImage && typeof item.logoImage === 'object') {
     return (
       <span className={box}>
@@ -362,7 +363,7 @@ function ToolsTiles({ props, items }: { props: SpecLedgerData; items: Item[] }) 
             {items.map((item, i) => (
               <li
                 key={item.id ?? i}
-                className="flex min-h-target flex-col items-start gap-2.5 border border-divider bg-white p-3.5 md:min-h-16 md:flex-row md:items-center md:gap-3.5 md:px-4 md:py-3"
+                className="flex min-h-target flex-col items-start gap-2.5 border border-divider bg-cream p-3.5 md:min-h-16 md:flex-row md:items-center md:gap-3.5 md:px-4 md:py-3"
               >
                 <TileMark item={item} />
                 <div>
@@ -374,6 +375,92 @@ function ToolsTiles({ props, items }: { props: SpecLedgerData; items: Item[] }) 
           </ul>
           {hasText(footnote) ? <p className="m-0 mt-4 text-[0.8125rem] leading-[1.5] text-gray-warm">{footnote}</p> : null}
         </div>
+      </Container>
+    </Section>
+  )
+}
+
+/** Phosphor Bold "arrow-right" (256 viewBox, square caps), drawn inside a 2px white square outline. */
+function ArrowIcon() {
+  return (
+    <span aria-hidden="true" className="inline-flex size-11 shrink-0 items-center justify-center border-2 border-cream">
+      <svg width="22" height="22" viewBox="0 0 256 256" fill="none" stroke="currentColor" strokeWidth="24" strokeLinecap="square" strokeLinejoin="miter">
+        <path d="M40 128h168M144 64l64 64-64 64" />
+      </svg>
+    </span>
+  )
+}
+
+/**
+ * `tools` layout `grid` (home B 2026-11-09 "The toolkit"): eyebrow + big
+ * headline (accent wine) with the note as lede, a hairline grid (1px gaps on
+ * the divider colour; tiles are not cards): 2 columns on phones with no tags,
+ * 4 from md. The last cell is an ink link tile.
+ */
+function ToolsGrid({ props, items }: { props: SpecLedgerData; items: Item[] }) {
+  const { eyebrow, eyebrowTick, heading, accentPhrase, note, footnote, linkTile } = props
+  const tileHref = resolveLinkHref(linkTile?.link)
+  const tileLabel = linkTile?.link?.label?.trim()
+  const short = linkTile?.shortLabel?.trim()
+  return (
+    <Section tone={props.tone === 'grey' ? 'grey' : 'light'} pad="none" className="border-t border-divider py-14 md:py-18">
+      <Container>
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-12">
+          <div className="md:min-w-0 md:flex-1">
+            {hasText(eyebrow) ? (
+              <Eyebrow tick={eyebrowTick === true} muted>
+                {eyebrow}
+              </Eyebrow>
+            ) : null}
+            {hasText(heading) ? (
+              <AccentHeadline text={heading} accent={accentPhrase} accentColor="ground" level="section" className={cx(hasText(eyebrow) && 'mt-4')} />
+            ) : null}
+          </div>
+          {hasText(note) ? <p className="m-0 text-body-mobile text-gray-warm md:w-88 md:shrink-0 md:text-body">{note}</p> : null}
+        </div>
+        <ul className="m-0 mt-6 grid list-none grid-cols-2 gap-px border border-divider bg-divider p-0 md:mt-8 md:grid-cols-3 lg:grid-cols-4">
+          {items.map((item, i) => (
+            <li key={item.id ?? i} className="flex min-h-12 items-center gap-2.5 bg-cream p-3.5 md:gap-3.5 md:px-5 md:py-4.5">
+              <TileMark item={item} size="size-6 md:size-7" />
+              <span className="min-w-0 flex-1">
+                <strong className="block text-[0.875rem] leading-tight md:text-[0.9375rem]">{item.title}</strong>
+                {hasText(item.line) ? <span className="block text-[0.75rem] leading-[1.35] text-gray-warm md:text-[0.8125rem]">{item.line}</span> : null}
+              </span>
+              {item.tag === 'build' || item.tag === 'grow' ? (
+                <span
+                  className={cx(
+                    'max-lg:hidden text-[0.625rem] font-bold uppercase tracking-[0.12em]',
+                    item.tag === 'grow' ? 'text-ground-accent' : 'text-gray-warm',
+                  )}
+                >
+                  {item.tag}
+                </span>
+              ) : null}
+            </li>
+          ))}
+          {tileHref && tileLabel ? (
+            <li className="flex min-h-12 bg-ink text-cream">
+              <CMSLink
+                link={linkTile?.link}
+                aria-label={tileLabel}
+                className="flex h-full min-h-12 w-full items-center justify-between gap-3 p-3.5 text-cream no-underline focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-cream md:px-5 md:py-4.5"
+              >
+                <span className="font-display text-[0.8125rem] uppercase leading-[1.2] md:text-[0.9375rem]">
+                  {short ? (
+                    <>
+                      <span className="md:hidden">{short}</span>
+                      <span className="max-md:hidden">{tileLabel}</span>
+                    </>
+                  ) : (
+                    tileLabel
+                  )}
+                </span>
+                <ArrowIcon />
+              </CMSLink>
+            </li>
+          ) : null}
+        </ul>
+        {hasText(footnote) ? <p className="m-0 mt-4 text-[0.75rem] leading-[1.5] text-gray-warm md:mt-6">{footnote}</p> : null}
       </Container>
     </Section>
   )
@@ -427,7 +514,7 @@ export function SpecLedgerBlock(props: SpecLedgerData) {
     return null
   }
   if (variant === 'list') return items.length === 0 ? null : <ListVariant props={props} items={items} />
-  if (variant === 'tools') return items.length === 0 ? null : props.toolsLayout === 'tiles' ? <ToolsTiles props={props} items={items} /> : <ToolsVariant props={props} items={items} />
+  if (variant === 'tools') return items.length === 0 ? null : props.toolsLayout === 'grid' ? <ToolsGrid props={props} items={items} /> : props.toolsLayout === 'tiles' ? <ToolsTiles props={props} items={items} /> : <ToolsVariant props={props} items={items} />
   if (items.length === 0 && !hasText(heading) && !hasText(eyebrow)) return null
 
   const defaultTone = variant === 'expandable' || (variant === 'cards' && layout === 'feature') ? 'light' : 'grey'

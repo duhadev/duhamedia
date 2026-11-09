@@ -1,6 +1,6 @@
 import type { Block, Condition } from 'payload'
 
-import { eyebrowField, headlineFields, pricingNote } from '../../fields'
+import { eyebrowField, headlineFields, linkField, pricingNote } from '../../fields'
 import { rowLabel } from '../../components/admin/rowLabel'
 import { toolLogoOptions } from './toolLogos'
 
@@ -35,6 +35,9 @@ const isExpandable = variantIs('expandable')
 
 const isAnatomyCards: Condition = (_data, _sibling, { blockData }: { blockData?: { variant?: string; cardLayout?: string } } = {}) =>
   (blockData?.variant ?? 'cards') === 'cards' && (blockData?.cardLayout ?? 'anatomy') === 'anatomy'
+
+type ToolsCtx = { blockData?: { variant?: string; toolsLayout?: string } }
+const isToolsGrid: Condition = (_d, _s, { blockData }: ToolsCtx = {}) => blockData?.variant === 'tools' && blockData?.toolsLayout === 'grid'
 
 export const SpecLedger: Block = {
   slug: 'specLedger',
@@ -77,8 +80,13 @@ export const SpecLedger: Block = {
       options: [
         { label: 'Row (logos over names, ruled top and bottom)', value: 'row' },
         { label: 'Tiles (bordered tiles: logo left, name and what it is for)', value: 'tiles' },
+        { label: 'Grid (hairline grid of tools with a BUILD / GROW tag each and a dark link tile last, big headline)', value: 'grid' },
       ],
-      admin: { condition: variantIs('tools'), isClearable: false, description: 'Tiles show the heading as a small grey caption.' },
+      admin: {
+        condition: variantIs('tools'),
+        isClearable: false,
+        description: 'Tiles show the heading as a small grey caption. Grid shows it as a big headline with the side note beside it.',
+      },
     },
     {
       name: 'tone',
@@ -100,7 +108,7 @@ export const SpecLedger: Block = {
     ...headlineFields({
       required: false,
       description: 'Optional headline above the caption. The designs use only the small caption, so leave this empty unless you need a full headline.',
-      accent: false, // rendered in --accent-primary = ink, same as the headline
+      accent: isToolsGrid, // ink everywhere except the tools grid, where the accent phrase is wine
     }),
     {
       name: 'note',
@@ -109,7 +117,7 @@ export const SpecLedger: Block = {
       admin: {
         condition: (data, sibling, ctx) => isAnatomyCards(data, sibling, ctx) || variantIs('tools')(data, sibling, ctx),
         description:
-          'Short grey line beside the caption (under the cards on mobile), e.g. "Four templates carry almost every order." Tools row: the line under the heading, e.g. "A small, proven stack."',
+          'Short grey line beside the caption (under the cards on mobile), e.g. "Four templates carry almost every order." Tools row: the line under the heading, e.g. "A small, proven stack." Tools grid: the lede beside the headline.',
       },
     },
     {
@@ -178,6 +186,22 @@ export const SpecLedger: Block = {
               },
             },
           ],
+        },
+        {
+          name: 'tag',
+          type: 'select',
+          label: 'Tag',
+          defaultValue: 'none',
+          options: [
+            { label: 'None', value: 'none' },
+            { label: 'BUILD (grey)', value: 'build' },
+            { label: 'GROW (wine)', value: 'grow' },
+          ],
+          admin: {
+            condition: isToolsGrid,
+            isClearable: false,
+            description: 'Tools grid: the small tag at the right of the tile. Shown on computers only.',
+          },
         },
         {
           name: 'image',
@@ -256,6 +280,24 @@ export const SpecLedger: Block = {
           maxDepth: 1,
           label: 'Dashboard picture',
           admin: { description: 'A screenshot of the dashboard. The card keeps its shape if left empty.' },
+        },
+      ],
+    },
+    {
+      name: 'linkTile',
+      type: 'group',
+      label: 'Link tile (last cell)',
+      admin: {
+        condition: isToolsGrid,
+        description: 'The dark cell after the last tool, e.g. "See every tool on Services". Leave the link text empty for no link tile.',
+      },
+      fields: [
+        linkField({ name: 'link', label: 'Link', description: 'Where the tile goes. The link text is the tile label, e.g. "See every tool on Services".' }),
+        {
+          name: 'shortLabel',
+          type: 'text',
+          label: 'Short label (phones)',
+          admin: { description: 'The label on phones, e.g. "Every tool". Leave empty to use the link text.' },
         },
       ],
     },

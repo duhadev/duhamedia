@@ -1829,7 +1829,8 @@ export interface FinalCTABlock {
   /**
    * Which capacity statement to show under the headline (big line with its reason quietly beneath). Numbers and wording are edited once, in "Capacity & scarcity". Choose "None" to hide it.
    */
-  capacity?: ('none' | 'ongoing' | 'capacity' | 'builds-line' | 'engines-line' | 'slots-line' | 'offer-line') | null;
+  capacity?:
+    ('none' | 'ongoing' | 'capacity' | 'spots' | 'builds-line' | 'engines-line' | 'slots-line' | 'offer-line') | null;
   /**
    * One or two buttons; at least one is required. The first is the main one.
    */
@@ -1939,7 +1940,8 @@ export interface OfferBlockBlock {
   /**
    * The capacity statement beside the button: a big line with its reason quietly beneath. Numbers and wording are edited once, in "Capacity & scarcity". Choose "None" to hide it.
    */
-  capacity?: ('none' | 'ongoing' | 'capacity' | 'builds-line' | 'engines-line' | 'slots-line' | 'offer-line') | null;
+  capacity?:
+    ('none' | 'ongoing' | 'capacity' | 'spots' | 'builds-line' | 'engines-line' | 'slots-line' | 'offer-line') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'offerBlock';
@@ -1950,9 +1952,9 @@ export interface OfferBlockBlock {
  */
 export interface ProofStripBlock {
   /**
-   * The strip layout. Numbers is the homepage strip; Metrics is the compact Campaign LP strip.
+   * The strip layout. Numbers is the older homepage strip; Metrics is the compact Campaign LP strip; Capacity is the slim homepage strip (capacity line left, client names right).
    */
-  variant: 'scarcity' | 'metrics';
+  variant: 'scarcity' | 'metrics' | 'capacity';
   /**
    * The big numbers, side by side (two fit best; up to four). Each is a big number with its big text underneath. Add, remove or drag to reorder. The first number is shown in the accent colour.
    */
@@ -1994,10 +1996,10 @@ export interface ProofStripBlock {
       }[]
     | null;
   /**
-   * Optional capacity tile beside the metrics: a big line with its reason quietly beneath, both from "Capacity & scarcity". Edit the numbers and wording there. Choose "None" to hide it.
+   * The capacity line: a big line with its reason quietly beneath, both from "Capacity & scarcity". Edit the numbers and wording there. Metrics: optional tile beside the metrics ("None" hides it). Capacity: choose "Client spots in use (homepage strip)"; without a reason nothing is shown.
    */
   capacityStatement?:
-    ('none' | 'ongoing' | 'capacity' | 'builds-line' | 'engines-line' | 'slots-line' | 'offer-line') | null;
+    ('none' | 'ongoing' | 'capacity' | 'spots' | 'builds-line' | 'engines-line' | 'slots-line' | 'offer-line') | null;
   /**
    * Small inline note only, e.g. 'Builds start at $5K'. Never put a price in a headline or metric.
    */
@@ -2391,7 +2393,8 @@ export interface ReviewWallBlock {
          * Which statement from "Capacity & scarcity" to show. The number and its reason are always shown together; edit them there, not here.
          */
         statement?:
-          ('none' | 'ongoing' | 'capacity' | 'builds-line' | 'engines-line' | 'slots-line' | 'offer-line') | null;
+          | ('none' | 'ongoing' | 'capacity' | 'spots' | 'builds-line' | 'engines-line' | 'slots-line' | 'offer-line')
+          | null;
         /**
          * 0 puts the tile first, 2 puts it after the second review card. A number past the last card puts it at the end.
          */
@@ -2638,6 +2641,10 @@ export interface TwoTrackPanelsBlock {
    */
   accentPhrase?: string | null;
   /**
+   * Short lede shown on the right of the headline (Equal layout only). Leave empty to hide.
+   */
+  intro?: string | null;
+  /**
    * Exactly two tracks, shown in this order.
    */
   panels?:
@@ -2655,7 +2662,11 @@ export interface TwoTrackPanelsBlock {
          */
         title: string;
         /**
-         * In the Equal layout this also makes the rule above the track and the price amount wine.
+         * Optional (Equal layout): one word or phrase copied from the title to show in wine, e.g. "grow it."
+         */
+        accentPhrase?: string | null;
+        /**
+         * In the Equal layout this makes the big 01/02 numeral wine (use the accent phrase below to colour part of the title).
          */
         accentTitle?: boolean | null;
         /**
@@ -2672,7 +2683,40 @@ export interface TwoTrackPanelsBlock {
             }[]
           | null;
         /**
-         * Short note, e.g. 'Builds start at $5K'. In the Equal layout it shows at the foot of the track with the amount ($7K) enlarged; elsewhere it is a small inline note.
+         * Up to three figures between hairlines, e.g. "55hrs" / "Hands-on, per build". Leave empty to hide the row.
+         */
+        stats?:
+          | {
+              /**
+               * The figure as it shows, e.g. "$7K", "3–4hrs".
+               */
+              value: string;
+              /**
+               * Small caption under the figure.
+               */
+              label: string;
+              accent?: boolean | null;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Short bullets with a bold lead-in. Drag to reorder. Leave empty to hide.
+         */
+        points?:
+          | {
+              /**
+               * Bold opening words, e.g. "Custom Shopify theme."
+               */
+              lead: string;
+              /**
+               * The rest of the line (optional).
+               */
+              text?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Short note, e.g. 'Builds start at $7K'. A small grey inline note: beside the link in the Equal layout, under the text elsewhere.
          */
         pricingNote?: string | null;
         /**
@@ -2724,6 +2768,14 @@ export interface PhaseTimelineBlock {
    * The timeline layout. Each layout shows only the fields it uses.
    */
   variant: 'accordion' | 'arc' | 'steps' | 'build-run' | 'engine-rollout' | 'grid';
+  /**
+   * One row: from 1280px wide the steps sit side by side, each phase bar spanning its steps. Narrower screens use the stacked layout. One row also shows the closing line and link below.
+   */
+  gridLayout?: ('stacked' | 'row') | null;
+  /**
+   * Lets other pages link straight to this section, e.g. "process" → /services#process. Letters, numbers and dashes only. Optional.
+   */
+  anchorId?: string | null;
   /**
    * Small uppercase line above the headline, e.g. "How it runs".
    */
@@ -2851,7 +2903,7 @@ export interface PhaseTimelineBlock {
    */
   swipeHint?: string | null;
   /**
-   * Optional button under the cards, e.g. "Book a Call". Leave the text empty for no button.
+   * Optional button under the cards, e.g. "Book a Call". Grid (one row only): a bold underlined text link at the right of the closing line, e.g. "The full process →". Leave the text empty for none.
    */
   cta?: {
     type: 'internal' | 'custom';
@@ -2893,6 +2945,10 @@ export interface TeamIntroBlock {
    */
   variant: 'intro' | 'founder-card';
   /**
+   * How the founder card is presented. Leave on Standard for About and FAQ.
+   */
+  presentation?: ('standard' | 'section') | null;
+  /**
    * Small grey uppercase line above the headline, e.g. "Who you'd work with". Optional.
    */
   eyebrow?: string | null;
@@ -2924,6 +2980,35 @@ export interface TeamIntroBlock {
    * The person shown on the card (photo, name, role, social links come from their Team members entry). They must be published, otherwise the card does not appear.
    */
   member?: (number | null) | TeamMember;
+  /**
+   * Optional text link beside the button, e.g. "More about us →". Homepage section presentation only. Leave empty for none.
+   */
+  moreLink?: {
+    type: 'internal' | 'custom';
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'case-studies';
+          value: number | CaseStudy;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null)
+      | ({
+          relationTo: 'lead-magnets';
+          value: number | LeadMagnet;
+        } | null);
+    /**
+     * https://…, mailto:…, or a site path like /book-a-call.
+     */
+    url?: string | null;
+    label?: string | null;
+  };
   /**
    * Optional link under the text, e.g. "More about us →". On the founder card it shows as a button, e.g. "Book a call with me →". Leave empty for none.
    */
@@ -3142,9 +3227,9 @@ export interface SpecLedgerBlock {
    */
   cardLayout?: ('anatomy' | 'feature') | null;
   /**
-   * Tiles show the heading as a small grey caption.
+   * Tiles show the heading as a small grey caption. Grid shows it as a big headline with the side note beside it.
    */
-  toolsLayout?: ('row' | 'tiles') | null;
+  toolsLayout?: ('row' | 'tiles' | 'grid') | null;
   /**
    * Automatic: grey for template cards and signal flow, white for the others.
    */
@@ -3166,7 +3251,7 @@ export interface SpecLedgerBlock {
    */
   accentPhrase?: string | null;
   /**
-   * Short grey line beside the caption (under the cards on mobile), e.g. "Four templates carry almost every order." Tools row: the line under the heading, e.g. "A small, proven stack."
+   * Short grey line beside the caption (under the cards on mobile), e.g. "Four templates carry almost every order." Tools row: the line under the heading, e.g. "A small, proven stack." Tools grid: the lede beside the headline.
    */
   note?: string | null;
   /**
@@ -3208,6 +3293,10 @@ export interface SpecLedgerBlock {
          * Only for a tool not in the list. A square logo, ideally SVG or PNG on transparent. Used instead of the picked logo.
          */
         logoImage?: (number | null) | Media;
+        /**
+         * Tools grid: the small tag at the right of the tile. Shown on computers only.
+         */
+        tag?: ('none' | 'build' | 'grow') | null;
         /**
          * The picture for this card (template cards 4:3, feature cards wide). The card keeps its shape if left empty.
          */
@@ -3259,6 +3348,44 @@ export interface SpecLedgerBlock {
      * A screenshot of the dashboard. The card keeps its shape if left empty.
      */
     image?: (number | null) | Media;
+  };
+  /**
+   * The dark cell after the last tool, e.g. "See every tool on Services". Leave the link text empty for no link tile.
+   */
+  linkTile?: {
+    /**
+     * Where the tile goes. The link text is the tile label, e.g. "See every tool on Services".
+     */
+    link: {
+      type: 'internal' | 'custom';
+      newTab?: boolean | null;
+      reference?:
+        | ({
+            relationTo: 'pages';
+            value: number | Page;
+          } | null)
+        | ({
+            relationTo: 'case-studies';
+            value: number | CaseStudy;
+          } | null)
+        | ({
+            relationTo: 'posts';
+            value: number | Post;
+          } | null)
+        | ({
+            relationTo: 'lead-magnets';
+            value: number | LeadMagnet;
+          } | null);
+      /**
+       * https://…, mailto:…, or a site path like /book-a-call.
+       */
+      url?: string | null;
+      label?: string | null;
+    };
+    /**
+     * The label on phones, e.g. "Every tool". Leave empty to use the link text.
+     */
+    shortLabel?: string | null;
   };
   /**
    * Small grey line under the row, e.g. "Product names are trademarks of their respective owners and are shown to identify the tools we work with." Optional.
@@ -4304,7 +4431,8 @@ export interface LinkStackBlock {
     /**
      * Shown under the button: the statement in large type with its reason quietly beneath. Numbers and wording are edited once, in "Capacity & scarcity". Choose "None" to hide it.
      */
-    capacity?: ('none' | 'ongoing' | 'capacity' | 'builds-line' | 'engines-line' | 'slots-line' | 'offer-line') | null;
+    capacity?:
+      ('none' | 'ongoing' | 'capacity' | 'spots' | 'builds-line' | 'engines-line' | 'slots-line' | 'offer-line') | null;
   };
   /**
    * Profiles come from Site settings > Brand & contact > Social profiles, in that order.
@@ -5464,18 +5592,35 @@ export interface TwoTrackPanelsBlockSelect<T extends boolean = true> {
   eyebrowTick?: T;
   heading?: T;
   accentPhrase?: T;
+  intro?: T;
   panels?:
     | T
     | {
         label?: T;
         claim?: T;
         title?: T;
+        accentPhrase?: T;
         accentTitle?: T;
         body?: T;
         services?:
           | T
           | {
               label?: T;
+              id?: T;
+            };
+        stats?:
+          | T
+          | {
+              value?: T;
+              label?: T;
+              accent?: T;
+              id?: T;
+            };
+        points?:
+          | T
+          | {
+              lead?: T;
+              text?: T;
               id?: T;
             };
         pricingNote?: T;
@@ -5500,6 +5645,8 @@ export interface TwoTrackPanelsBlockSelect<T extends boolean = true> {
  */
 export interface PhaseTimelineBlockSelect<T extends boolean = true> {
   variant?: T;
+  gridLayout?: T;
+  anchorId?: T;
   eyebrow?: T;
   eyebrowTick?: T;
   heading?: T;
@@ -5561,6 +5708,7 @@ export interface PhaseTimelineBlockSelect<T extends boolean = true> {
  */
 export interface TeamIntroBlockSelect<T extends boolean = true> {
   variant?: T;
+  presentation?: T;
   eyebrow?: T;
   eyebrowTick?: T;
   heading?: T;
@@ -5569,6 +5717,15 @@ export interface TeamIntroBlockSelect<T extends boolean = true> {
   pullQuote?: T;
   photo?: T;
   member?: T;
+  moreLink?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+      };
   link?:
     | T
     | {
@@ -5658,6 +5815,7 @@ export interface SpecLedgerBlockSelect<T extends boolean = true> {
         line?: T;
         logo?: T;
         logoImage?: T;
+        tag?: T;
         image?: T;
         whatLabel?: T;
         what?: T;
@@ -5674,6 +5832,20 @@ export interface SpecLedgerBlockSelect<T extends boolean = true> {
         body?: T;
         note?: T;
         image?: T;
+      };
+  linkTile?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+        shortLabel?: T;
       };
   footnote?: T;
   pricingNote?: T;
@@ -7225,7 +7397,7 @@ export interface Scarcity {
     /**
      * Where this statement is used. Each type once.
      */
-    key: 'ongoing' | 'capacity' | 'builds-line' | 'engines-line' | 'slots-line' | 'offer-line';
+    key: 'ongoing' | 'capacity' | 'spots' | 'builds-line' | 'engines-line' | 'slots-line' | 'offer-line';
     /**
      * Optional small caption next to a big number, e.g. "Projects ongoing".
      */

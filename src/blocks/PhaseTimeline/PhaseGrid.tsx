@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { AccentHeadline, Container, Eyebrow, Section } from '@/components/ui'
+import { CMSLink, resolveLinkHref } from '@/components/ui/CMSLink'
 import { cx } from '@/lib/cx'
 
 import { titledSteps, type PhaseTimelineProps, type Step } from './shared'
@@ -22,7 +23,22 @@ const ROWS_REST = '[&>li:nth-child(n+3)]:border-t'
  * numbers) is wine, per the standing PhaseTimeline rule; no field turns that
  * off. `continuedLabel` is no longer used (the bar is never split).
  */
-export function PhaseGrid({ eyebrow, eyebrowTick, heading, accentPhrase, intro, phases, steps, closingLine }: PhaseTimelineProps) {
+const ROWS_REST_ROW = 'max-xl:[&>li:nth-child(n+3)]:border-t'
+
+export function PhaseGrid({
+  eyebrow,
+  eyebrowTick,
+  heading,
+  accentPhrase,
+  intro,
+  phases,
+  steps,
+  closingLine,
+  cta,
+  gridLayout,
+  anchorId,
+}: PhaseTimelineProps) {
+  const row = gridLayout === 'row'
   const phaseRows = (phases ?? []).filter((p) => p?.title?.trim())
   const rows = titledSteps(steps, 'grid')
 
@@ -39,7 +55,7 @@ export function PhaseGrid({ eyebrow, eyebrowTick, heading, accentPhrase, intro, 
   const filled = groups.filter((g) => g.steps.length)
 
   return (
-    <Section tone="grey" pad="none" className="py-12 md:py-24">
+    <Section id={anchorId || undefined} tone="grey" pad="none" className="scroll-mt-31 py-12 md:scroll-mt-34 md:py-24">
       <Container>
         {eyebrow ? <Eyebrow tick={eyebrowTick === true}>{eyebrow}</Eyebrow> : null}
         <AccentHeadline text={heading} accent={accentPhrase} accentColor="ground" level="section" className={cx(eyebrow && 'mt-4')} />
@@ -62,38 +78,84 @@ export function PhaseGrid({ eyebrow, eyebrowTick, heading, accentPhrase, intro, 
           </ol>
         ) : null}
 
-        {filled.map((g, gi) => {
-          const last = gi === filled.length - 1 && g.phase !== null
-          const first = gi === 0
-          const name = g.phase ? [g.phase.number?.trim(), g.phase.title.trim()].filter(Boolean).join(' · ') : ''
-          return (
-            <div key={g.phase?.id ?? gi} className={cx(gi === 0 ? (strip.length ? 'mt-8' : 'mt-8 md:mt-10') : 'mt-4')}>
-              {name ? (
-                <p
+        {(() => {
+          const total = filled.reduce((n, g) => n + g.steps.length, 0)
+          const groupsEl = filled.map((g, gi) => {
+            const last = gi === filled.length - 1 && g.phase !== null
+            const first = gi === 0
+            const name = g.phase ? [g.phase.number?.trim(), g.phase.title.trim()].filter(Boolean).join(' · ') : ''
+            return (
+              <div
+                key={g.phase?.id ?? gi}
+                className={cx(row ? (gi === 0 ? '' : 'mt-4') : gi === 0 ? (strip.length ? 'mt-8' : 'mt-8 md:mt-10') : 'mt-4', row && 'xl:contents')}
+              >
+                {name ? (
+                  <p
+                    style={row ? ({ '--span': g.steps.length } as React.CSSProperties) : undefined}
+                    className={cx(
+                      'px-4.5 py-3 text-[0.75rem] leading-none font-bold uppercase tracking-[0.16em] text-cream',
+                      last ? 'bg-ground-accent' : 'bg-ink',
+                      row && 'xl:row-start-1 xl:col-span-(--span) xl:px-5 xl:text-[0.6875rem] xl:tracking-[0.12em]',
+                    )}
+                  >
+                    {name}
+                  </p>
+                ) : null}
+                <ol
+                  role={row ? 'list' : undefined}
                   className={cx(
-                    'px-4.5 py-3 text-[0.75rem] leading-none font-bold uppercase tracking-[0.16em] text-cream',
-                    last ? 'bg-ground-accent' : 'bg-ink',
+                    'grid list-none bg-cream p-0',
+                    first ? COLS_FIRST : COLS_REST,
+                    first ? ROWS_FIRST : row ? ROWS_REST_ROW : ROWS_REST,
+                    '[&>li]:border-divider',
+                    row && 'xl:contents',
                   )}
                 >
-                  {name}
-                </p>
-              ) : null}
-              <ol className={cx('grid list-none bg-cream p-0', first ? COLS_FIRST : COLS_REST, first ? ROWS_FIRST : ROWS_REST, '[&>li]:border-divider')}>
-                {g.steps.map((step, si) => (
-                  <li key={step.id ?? si} className="border-l border-divider p-5">
-                    {step.number?.trim() ? (
-                      <span className={cx('block font-display text-[1.75rem] leading-none', last && 'text-ground-accent')}>{step.number.trim()}</span>
-                    ) : null}
-                    <h3 className="mt-3 mb-1 text-[1rem] font-bold">{step.title.trim()}</h3>
-                    {step.detail?.trim() ? <p className="text-[0.875rem] leading-[1.45] md:text-[0.9375rem] md:leading-[1.5]">{step.detail.trim()}</p> : null}
-                  </li>
-                ))}
-              </ol>
+                  {g.steps.map((step, si) => (
+                    <li
+                      key={step.id ?? si}
+                      role={row ? 'listitem' : undefined}
+                      className={cx(
+                        'border-l border-divider p-5',
+                        row && 'xl:row-start-2 xl:px-3.5 xl:pt-4.5 xl:pb-5.5',
+                        row && gi === 0 && si === 0 && 'xl:border-l-0',
+                      )}
+                    >
+                      {step.number?.trim() ? (
+                        <span className={cx('block font-display text-[1.75rem] leading-none', last && 'text-ground-accent')}>{step.number.trim()}</span>
+                      ) : null}
+                      <h3 className={cx('mt-3 mb-1 text-[1rem] font-bold', row && 'xl:mt-3.5 xl:mb-1.5 xl:text-[0.9375rem]')}>{step.title.trim()}</h3>
+                      {step.detail?.trim() ? (
+                        <p className={cx('text-[0.875rem] leading-[1.45] md:text-[0.9375rem] md:leading-[1.5]', row && 'xl:text-[0.8125rem] xl:leading-[1.4]')}>{step.detail.trim()}</p>
+                      ) : null}
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )
+          })
+          return row ? (
+            <div
+              style={{ '--cols': total } as React.CSSProperties}
+              className={cx('xl:grid xl:grid-cols-[repeat(var(--cols),minmax(0,1fr))] xl:border xl:border-divider xl:bg-cream', strip.length ? 'mt-8' : 'mt-8 md:mt-10')}
+            >
+              {groupsEl}
             </div>
+          ) : (
+            groupsEl
           )
-        })}
+        })()}
 
-        {closingLine ? <p className="mt-6 text-small-mobile text-gray-warm md:text-small">{closingLine}</p> : null}
+        {row && (closingLine || (resolveLinkHref(cta) && cta?.label?.trim())) ? (
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-x-6 gap-y-1">
+            {closingLine ? <p className="text-small-mobile text-gray-warm md:text-small">{closingLine}</p> : <span />}
+            <CMSLink
+              link={cta}
+              className="inline-flex min-h-target items-center border-b-2 border-ink text-[0.9375rem] font-bold text-ink no-underline hover:border-ground-accent hover:text-ground-accent"
+            />
+          </div>
+        ) : null}
+        {!row && closingLine ? <p className="mt-6 text-small-mobile text-gray-warm md:text-small">{closingLine}</p> : null}
       </Container>
     </Section>
   )

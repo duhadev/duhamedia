@@ -1044,3 +1044,11 @@ Not yet built: `cross-sell` variant (p18).
 - TestimonialRow: `studyCard.centerFacts`.
 - AccordionFAQ: `layout` (stacked / split), `intro`.
 
+
+## Delta 2026-11-09 (homepage "home B"; owner-approved, additive)
+- ProofStrip: variant `capacity` (capacityStatement + logos; no numbers rows, no pricing note).
+- Scarcity: statement key `spots` ("Client spots in use"), offered in every scarcityRef picker.
+- TwoTrackPanels (equal): `intro`; panel `accentPhrase`, `stats[]` {value, label, accent} max 3, `points[]` {lead, text} max 6; panel `services` hidden in admin (column kept).
+- PhaseTimeline (grid): `gridLayout` (stacked / row), `anchorId`; `closingLine` + `cta` also on grid.
+- TeamIntro (founder-card): `presentation` (standard / section), `moreLink`.
+- SpecLedger (tools): `toolsLayout` option `grid`; item `tag` (none / build / grow); `linkTile` {link, shortLabel}; accent phrase shown on the tools grid.

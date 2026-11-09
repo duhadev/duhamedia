@@ -1,4 +1,4 @@
-import type { Block, Condition } from 'payload'
+import type { Block, Condition, TextFieldSingleValidation } from 'payload'
 
 import { eyebrowField, headlineFields, linkField } from '../../fields'
 import { rowLabel } from '../../components/admin/rowLabel'
@@ -59,6 +59,31 @@ export const PhaseTimeline: Block = {
         isClearable: false,
         description: 'The timeline layout. Each layout shows only the fields it uses.',
       },
+    },
+    {
+      name: 'gridLayout',
+      type: 'select',
+      label: 'Grid layout',
+      defaultValue: 'stacked',
+      options: [
+        { label: 'Stacked (each phase bar over its own block of cells, as on Services)', value: 'stacked' },
+        { label: 'One row (all steps in one row under the phase bars on wide screens, stacked below)', value: 'row' },
+      ],
+      admin: {
+        condition: onlyFor('grid'),
+        isClearable: false,
+        description: 'One row: from 1280px wide the steps sit side by side, each phase bar spanning its steps. Narrower screens use the stacked layout. One row also shows the closing line and link below.',
+      },
+    },
+    {
+      name: 'anchorId',
+      type: 'text',
+      label: 'Section link name',
+      admin: {
+        condition: onlyFor('grid'),
+        description: 'Lets other pages link straight to this section, e.g. "process" → /services#process. Letters, numbers and dashes only. Optional.',
+      },
+      validate: ((v) => !v || /^[a-z0-9-]+$/.test(String(v)) || 'Use lowercase letters, numbers and dashes only.') as TextFieldSingleValidation,
     },
     {
       ...eyebrowField({
@@ -247,7 +272,7 @@ export const PhaseTimeline: Block = {
       type: 'text',
       label: 'Closing line',
       admin: {
-        condition: onlyFor('accordion', 'steps', 'build-run', 'engine-rollout'),
+        condition: onlyFor('accordion', 'steps', 'build-run', 'engine-rollout', 'grid'),
         description: 'Optional quiet line under the timeline, e.g. "Then Phase 02, if the numbers say it fits."',
       },
     },
@@ -278,8 +303,8 @@ export const PhaseTimeline: Block = {
         description: 'Optional button under the cards, e.g. "Book a Call". Leave the text empty for no button.',
       }),
       admin: {
-        condition: onlyFor('steps'),
-        description: 'Optional button under the cards, e.g. "Book a Call". Leave the text empty for no button.',
+        condition: onlyFor('steps', 'grid'),
+        description: 'Optional button under the cards, e.g. "Book a Call". Grid (one row only): a bold underlined text link at the right of the closing line, e.g. "The full process →". Leave the text empty for none.',
       },
     },
   ],

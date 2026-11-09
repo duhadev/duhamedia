@@ -2,6 +2,7 @@ import type { BookingSettingsOverride } from '@/blocks/BookingEmbed/Component'
 import type { CategoryTab } from '@/blocks/CategoryTabs/Component'
 import type { LinkStackData } from '@/blocks/LinkStack/Component'
 import type { PostItem, PostListData } from '@/blocks/PostList/Component'
+import type { PreviewScarcity } from '@/blocks/ProofStrip/Component'
 import type { BlockData, PageBlockType } from '@/blocks/types'
 import type { CaseStudy, Client, Faq, Media, TeamMember, Testimonial } from '@/payload-types'
 import { PRICING, PROCESS_GRID, SHEET_BUILD, SHEET_GROW, TOOLS } from '@/lib/brochureCopy'
@@ -10,6 +11,7 @@ import * as SVC from '@/lib/servicesCopy'
 /** A brochure block constant without its `blockType` (the showcase entry carries it as `block`). */
 const noType = <T extends { blockType: string }>({ blockType: _b, ...rest }: T): Omit<T, 'blockType'> => rest
 
+import { homeBEntries } from './homeB'
 import { customLink, figure, h, hr, internalLink, p, quote, root, text, ul } from './lexical'
 
 /**
@@ -52,13 +54,20 @@ type ShowcaseEntryFor<K extends PageBlockType> = {
  *   for "the latest published case study" (LinkStack/Component.tsx).
  * - `postList.previewPosts` / `previewTotal` (big step 6): static published
  *   stand-ins for the posts query; `[]` forces the empty state.
+ * - `proofStrip.previewScarcity` (home B): a static scarcity row + counts standing
+ *   in for the `scarcity` global, so the `capacity` variant renders without a DB
+ *   row for its key (ProofStrip/Component.tsx).
  */
 type ShowcaseExtras = {
   bookingEmbed: { settingsOverride?: BookingSettingsOverride }
   categoryTabs: { tabs?: CategoryTab[] }
   linkStack: Pick<LinkStackData, 'previewStudy'>
   postList: Pick<PostListData, 'previewPosts' | 'previewTotal'>
+  proofStrip: { previewScarcity?: PreviewScarcity }
 }
+
+/** The `data` of a showcase entry for block `K` (row without `blockType`, plus showcase-only props). */
+export type ShowcaseData<K extends PageBlockType> = ShowcaseEntryFor<K>['data']
 
 export type ShowcaseEntry = { [K in PageBlockType]: ShowcaseEntryFor<K> }[PageBlockType]
 
@@ -3167,4 +3176,5 @@ export const showcaseEntries: ShowcaseEntry[] = [
       ],
     },
   },
+  ...homeBEntries,
 ]

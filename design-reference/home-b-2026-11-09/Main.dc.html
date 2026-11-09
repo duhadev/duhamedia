@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Capacity strip</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&amp;family=DM+Sans:wght@500;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#111}a:hover{color:#C20E59}
+</style>
+</helmet>
+<div style="width: 1440px; min-height: 220px; box-sizing: border-box; background: #FFFFFF; font-family: 'DM Sans', sans-serif; color: #111111; display: flex; align-items: center;">
+<section aria-label="Capacity" style="width: 100%; background: #F5F5F4; border-top: 1px solid rgba(138,133,125,.35); border-bottom: 1px solid rgba(138,133,125,.35); padding: 32px 0;">
+<div style="max-width: 1200px; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center;">
+<div style="display: flex; align-items: center; justify-content: flex-end; gap: 20px; padding-right: 48px;">
+<p style="margin: 0; font-family: 'Archivo Black', sans-serif; font-size: 56px; line-height: 1; white-space: nowrap;"><span style="color: #C20E59;">{{used}}</span><span style="color: #111111;"> / {{cap}}</span></p>
+<div>
+<p style="margin: 0; font-family: 'Archivo Black', sans-serif; font-size: 16px; text-transform: uppercase; letter-spacing: .02em;">Client spots in use</p>
+<p style="margin: 4px 0 0; font-size: 14px; line-height: 1.45; color: #5F5A53;">We cap at {{cap}}, so every store gets our full attention.</p>
+</div>
+</div>
+<div style="border-left: 1px solid rgba(138,133,125,.35); padding-left: 48px; align-self: stretch; display: flex; flex-direction: column; justify-content: center;">
+<p style="margin: 0; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #5F5A53;">Stores we've built</p>
+<p style="margin: 6px 0 0; font-family: 'Archivo Black', sans-serif; font-size: 24px; letter-spacing: .02em; color: rgba(17,17,17,.6);">ABU OUD</p>
+</div>
+</div>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"used":{"editor":"int","default":3,"min":0,"max":12},"cap":{"editor":"int","default":7,"min":1,"max":12},"$preview":{"width":1440,"height":220}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const cap = this.props.cap ?? 7;
+    const used = Math.min(this.props.used ?? 3, cap);
+    const base = 'display:block;width:32px;height:32px;box-sizing:border-box;';
+    const slots = [];
+    for (let i = 0; i < cap; i++) {
+      slots.push({ style: base + (i < used ? 'background:#C20E59;' : 'border:2px solid #111111;background:#FFFFFF;') });
+    }
+    return { used, cap, open: cap - used, slots };
+  }
+}
+</script>
+</body>
+</html>

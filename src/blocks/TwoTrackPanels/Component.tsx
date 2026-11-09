@@ -1,7 +1,7 @@
 import React from 'react'
 
 import type { BlockData } from '@/blocks/types'
-import { AccentHeadline, ArrowText, ButtonLink, CMSLink, Container, DotMatrix, Eyebrow, Section } from '@/components/ui'
+import { AccentHeadline, ArrowText, ButtonLink, CMSLink, Container, Eyebrow, Section } from '@/components/ui'
 import { splitAccentPhrase } from '@/lib/accentPhrase'
 import { resolveLinkHref } from '@/components/ui/CMSLink'
 
@@ -16,142 +16,127 @@ export function TwoTrackPanelsBlock(props: BlockData<'twoTrackPanels'>) {
 }
 
 type Props = BlockData<'twoTrackPanels'>
-type Panel = NonNullable<Props['panels']>[number]
 
 /**
- * `**phrase**` -> <strong>. Splits on the literal `**`; odd segments are bold.
- * An unmatched trailing `**` is put back as text. Output is React text nodes
- * only (escaped), so editor input can never inject markup.
+ * `equal` (homepage "Two jobs. One team."), Home B redesign 2026-11-09
+ * (design-reference/home-b-2026-11-09/TwoJobs.dc.html + Mobile.dc.html).
+ * Header: eyebrow, headline (accent phrase in wine) and a right-aligned lede
+ * (`intro`). Then a 2px ink rule and two columns split by a 1px hairline, no
+ * cards. Each panel: micro label, title (optional wine accent phrase), a big
+ * numeral from position ("01"/"02"; wine when the panel's `accentTitle` is
+ * ticked), a one-line lede (`body`), a 3-stat row between hairlines, bullets
+ * (8px wine squares, bold lead), then the link (bold, 2px ink underline, 44px
+ * target) and the pricing note as a small grey inline note (never a price
+ * block). Stacks below `lg`; stats stay three across at every width.
  */
-function InlineBold({ text }: { text: string }) {
-  const parts = text.split('**')
-  // An even part count means an odd number of markers: the last one is unmatched.
-  if (parts.length % 2 === 0) parts.splice(-2, 2, `${parts[parts.length - 2]}**${parts[parts.length - 1]}`)
-  return (
-    <>
-      {parts.map((part, i) => (i % 2 === 1 ? part ? <strong key={i}>{part}</strong> : null : part))}
-    </>
-  )
-}
-
-/**
- * First money token in a pricing note: `$`, digits (with `.`/`,` groups), an
- * optional K/M suffix and an optional `/unit` ("$5K", "$7k", "$1K/mo",
- * "$1,500"). A trailing sentence period is not part of it.
- */
-const MONEY = /\$\d+(?:[.,]\d+)*[kKmM]?(?:\/[a-zA-Z]+)?/
-
-function PriceTag({ note, accent }: { note: string; accent: boolean }) {
-  const m = MONEY.exec(note)
-  return (
-    // No filled box (human 2026-10-29: "remove the black box"): plain note, amount enlarged;
-    // the accent track's amount is wine.
-    <span className="inline-flex items-baseline text-small-mobile text-ink md:text-small">
-      {m ? (
-        <span>
-          {note.slice(0, m.index)}
-          <strong className={`text-body-mobile leading-none font-bold md:text-body md:leading-none ${accent ? 'text-ground-accent' : ''}`}>{m[0]}</strong>
-          {note.slice(m.index + m[0].length)}
-        </span>
-      ) : (
-        note
-      )}
-    </span>
-  )
-}
-
-/**
- * `equal` (homepage "Two jobs. One team."). Text-led since 2026-11-08 (owner:
- * "not cardy, more text-based"), after the brochure p1 pair ("Made by hand. /
- * BUILD" - "Then made known. / GROW": two text columns under thin rules) and
- * the /services label-rows. Each track: a 2px ink rule, number tag 01/02 from
- * position, optional label, title, body paragraphs (blank line = new
- * paragraph, `**bold**`), optional service chips, then a hairline footer row
- * with the price note and the text link. No box, fill or shadow. The accent
- * track (`accentTitle`) gets a wine rule, wine title and wine price amount.
- * Two columns from `lg` (at `md` a column would hold ~35ch of body); stacked
- * below.
- *
- * PRICING: the price note's amount is enlarged + bold, which overrides the
- * locked "pricing only as small inline notes" rule (CLAUDE.md rule 5 / R13)
- * FOR THIS VARIANT ONLY. Human-approved 2026-10-29. Do not copy it to other blocks.
- */
-function Equal({ eyebrow, eyebrowTick, heading, accentPhrase, panels }: Props) {
-  const rows = (panels ?? []).filter((p): p is Panel => Boolean(p && p.title?.trim() && p.body?.trim()))
+function Equal(props: Props) {
+  const { eyebrow, eyebrowTick, heading, accentPhrase, intro } = props
+  const { panels } = props
+  const rows = (panels ?? []).filter((p) => Boolean(p && p.title?.trim() && p.body?.trim()))
   if ((panels ?? []).length !== rows.length) {
     console.error('[TwoTrackPanels] a track is missing its title or body and was skipped.')
   }
+  const lede = intro?.trim()
 
   return (
-    <Section tone="light" pad="none" className="relative overflow-hidden py-12 md:py-16">
-      <DotMatrix fade="edges" />
-      <Container className="relative z-10">
-        <div className="flex flex-col gap-5 md:gap-6">
-          {eyebrow ? <Eyebrow tick={eyebrowTick === true}>{eyebrow}</Eyebrow> : null}
-          <AccentHeadline text={heading} accent={accentPhrase} level="section" />
+    <Section tone="light" pad="none" className="py-14 md:py-24">
+      <Container>
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between lg:gap-12">
+          <div className="flex flex-col gap-4 md:gap-4">
+            {eyebrow ? <Eyebrow tick={eyebrowTick === true} muted>{eyebrow}</Eyebrow> : null}
+            <AccentHeadline text={heading} accent={accentPhrase} level={2} accentColor="ground" />
+          </div>
+          {lede ? <p className="max-w-[40ch] text-body-mobile leading-[1.6] whitespace-pre-line text-ink/80 md:text-body">{lede}</p> : null}
         </div>
         {rows.length ? (
-          <div className="mt-8 grid gap-10 md:mt-10 lg:grid-cols-2 lg:items-stretch lg:gap-16">
+          <div className="mt-8 grid gap-y-4 border-ink md:mt-12 lg:grid-cols-2 lg:border-t-2">
             {rows.map((p, i) => {
-              const accent = p.accentTitle === true
+              const wine = p.accentTitle === true
               const linkText = resolveLinkHref(p.link) ? p.link?.label?.trim() : ''
               const note = p.pricingNote?.trim()
-              const paragraphs = (p.body ?? '')
-                .split(/\n[ \t]*\n/)
-                .map((t) => t.trim())
-                .filter(Boolean)
-              const chips = (p.services ?? []).filter((c) => c?.label?.trim())
+              const stats = (p.stats ?? []).filter((s) => s?.value?.trim() && s?.label?.trim()).slice(0, 3)
+              const points = (p.points ?? []).filter((pt) => pt?.lead?.trim())
+              const parts = splitAccentPhrase(p.title, p.accentPhrase)
               return (
-                <div key={p.id ?? i} className={`flex flex-col border-t-2 pt-5 md:pt-6 ${accent ? 'border-ground-accent' : 'border-ink'}`}>
-                  <div className="flex items-baseline gap-3">
-                    <span className="font-mono text-[15px] leading-normal font-bold tracking-[0.08em] text-gray-warm md:text-[17px]">
+                <article
+                  key={p.id ?? i}
+                  className={`flex min-w-0 flex-col gap-4.5 border-t-2 border-ink pt-6 lg:gap-6 lg:border-t-0 lg:pt-8 ${
+                    i === 0 ? 'lg:border-r lg:border-divider lg:pr-12' : 'lg:pl-12'
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      {p.label ? (
+                        <p className="mb-2 text-[0.6875rem] leading-normal font-bold tracking-eyebrow text-gray-warm uppercase lg:mb-2.5">{p.label}</p>
+                      ) : null}
+                      <h3 className="font-display text-[1.5rem] leading-[1.1] font-normal uppercase lg:text-[2rem]">
+                        {parts ? (
+                          <>
+                            {parts[0]}
+                            <span className="text-ground-accent">{parts[1]}</span>
+                            {parts[2]}
+                          </>
+                        ) : (
+                          p.title
+                        )}
+                      </h3>
+                    </div>
+                    <p
+                      aria-hidden="true"
+                      className={`font-display text-[3.5rem] leading-[0.85] lg:text-[5.5rem] ${wine ? 'text-ground-accent' : 'text-ink'}`}
+                    >
                       {String(i + 1).padStart(2, '0')}
-                    </span>
-                    {p.label ? (
-                      <Eyebrow muted as="span">
-                        {p.label}
-                      </Eyebrow>
-                    ) : null}
+                    </p>
                   </div>
-                  <h3
-                    className={`mt-3 font-display text-xl leading-[1.12] font-normal uppercase md:text-2xl ${accent ? 'text-ground-accent' : ''}`}
-                  >
-                    {p.title}
-                  </h3>
-                  <div className="mt-4 max-w-[60ch] text-body-mobile leading-[1.6] md:text-body md:leading-[1.6]">
-                    {paragraphs.map((para, pi) => (
-                      <p key={pi} className={`whitespace-pre-line ${pi > 0 ? 'mt-3' : ''}`}>
-                        <InlineBold text={para} />
-                      </p>
-                    ))}
-                  </div>
-                  {chips.length ? (
-                    // Text list, not chips-as-boxes: middot-separated, bold.
-                    <ul className="mt-4 flex flex-wrap gap-x-2 text-small-mobile font-bold md:text-small">
-                      {chips.map((c, ci) => (
-                        <li key={c.id ?? ci} className="flex gap-2">
-                          {ci > 0 ? <span aria-hidden="true" className="text-gray-warm">·</span> : null}
-                          {c.label.trim()}
+                  <p className="text-body-mobile leading-[1.6] whitespace-pre-line text-ink/80 md:text-body">{p.body?.trim()}</p>
+                  {stats.length ? (
+                    <dl
+                      className="grid border-y border-divider"
+                      style={{ gridTemplateColumns: `repeat(${stats.length}, minmax(0, 1fr))` }}
+                    >
+                      {stats.map((st, si) => (
+                        <div
+                          key={st.id ?? si}
+                          className={`flex min-w-0 flex-col-reverse py-3.5 lg:py-4.5 ${si > 0 ? 'border-l border-divider pl-3 lg:pl-5' : ''}`}
+                        >
+                          <dt className="mt-1.5 text-[0.75rem] leading-[1.35] text-gray-warm lg:text-[0.75rem] lg:leading-[1.4]">{st.label.trim()}</dt>
+                          <dd
+                            className={`m-0 font-display text-[1.5rem] leading-none whitespace-nowrap lg:text-[2.25rem] ${st.accent ? 'text-ground-accent' : ''}`}
+                          >
+                            {st.value.trim()}
+                          </dd>
+                        </div>
+                      ))}
+                    </dl>
+                  ) : null}
+                  {points.length ? (
+                    <ul className="flex flex-col gap-2.5 text-[0.9375rem] leading-[1.5] lg:gap-3">
+                      {points.map((pt, pi) => (
+                        <li key={pt.id ?? pi} className="flex gap-3">
+                          <span aria-hidden="true" className="mt-[7px] size-2 shrink-0 bg-ground-accent" />
+                          <span>
+                            <strong className="font-bold">{pt.lead.trim()}</strong>
+                            {pt.text?.trim() ? ` ${pt.text.trim()}` : ''}
+                          </span>
                         </li>
                       ))}
                     </ul>
                   ) : null}
                   {note || linkText ? (
-                    <div className="mt-auto pt-6">
-                      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-divider pt-3">
-                        {note ? <PriceTag note={note} accent={accent} /> : <span />}
-                        {linkText ? (
-                          // Site text-link grammar: bold, 2px ix-rule hugging the text, 44px tap area.
-                          <CMSLink link={p.link} className="inline-flex min-h-target items-center font-bold text-ink no-underline">
-                            <span className="ix-rule">
-                              <KeepArrow label={linkText} />
-                            </span>
-                          </CMSLink>
-                        ) : null}
-                      </div>
+                    <div className="mt-auto flex flex-wrap items-center justify-between gap-x-6 gap-y-1">
+                      {linkText ? (
+                        <CMSLink link={p.link} className="inline-flex min-h-target items-center font-bold text-ink no-underline">
+                          <span className="ix-rule">
+                            <KeepArrow label={linkText} />
+                          </span>
+                        </CMSLink>
+                      ) : (
+                        <span />
+                      )}
+                      {note ? <p className="text-[0.8125rem] leading-[1.4] text-gray-warm lg:text-right">{note}</p> : null}
                     </div>
                   ) : null}
-                </div>
+                </article>
               )
             })}
           </div>

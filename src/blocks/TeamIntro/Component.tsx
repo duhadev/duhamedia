@@ -1,5 +1,6 @@
 import React from 'react'
 
+import { cx } from '@/lib/cx'
 import type { BlockData } from '@/blocks/types'
 import { AccentHeadline, ButtonLink, CMSLink, Container, Eyebrow, Media, Section } from '@/components/ui'
 import { resolveLinkHref } from '@/components/ui/CMSLink'
@@ -94,6 +95,8 @@ function FounderStory({ body }: { body: string }) {
 
 export function TeamIntroBlock({
   variant,
+  presentation,
+  moreLink,
   eyebrow,
   eyebrowTick,
   heading,
@@ -115,7 +118,10 @@ export function TeamIntroBlock({
     const socials = (person.socials ?? []).filter((s) => s.url && SOCIAL[s.platform])
     const portrait = person.photo && typeof person.photo === 'object' ? person.photo : null
     const bio = person.bio?.trim()
-    const quote = pullQuote?.trim()
+    const section = presentation === 'section'
+    const quote = section ? undefined : pullQuote?.trim()
+    const paragraphs = section && body ? body.split(/\n[ \t]*\n/).map((p) => p.trim()).filter(Boolean) : []
+    const moreLabel = section && resolveLinkHref(moreLink) ? moreLink?.label?.trim() : ''
 
     // lg, not md, for two columns: at md a 300px card leaves the text ~45ch; at lg it is ~62ch.
     return (
@@ -127,8 +133,21 @@ export function TeamIntroBlock({
                 {eyebrow}
               </Eyebrow>
             ) : null}
-            <AccentHeadline text={heading} accent={accentPhrase} level={2} accentColor="ground" className="mb-5 md:mb-4.5" />
-            {body ? <FounderStory body={body} /> : null}
+            <AccentHeadline text={heading} accent={accentPhrase} level={2} accentColor="ground" className={cx('mb-5 md:mb-4.5', section && 'text-balance!')} />
+            {section ? (
+              // Homepage section: every paragraph shown, no "Read more".
+              paragraphs.length ? (
+                <div className="flex flex-col gap-4">
+                  {paragraphs.map((p, i) => (
+                    <p key={i} className={STORY_P}>
+                      {p}
+                    </p>
+                  ))}
+                </div>
+              ) : null
+            ) : body ? (
+              <FounderStory body={body} />
+            ) : null}
             {/* Pull quote: RichContent's quote grammar (4px accent rule, display caps) in the
                 accent colour at the h3 size. A <p>, not <blockquote>: it is the section's own
                 line, not a quotation from a source. */}
@@ -137,7 +156,21 @@ export function TeamIntroBlock({
                 {quote}
               </p>
             ) : null}
-            <ButtonLink link={link} variant="wine" className="mt-7 md:mt-8" />
+            {section ? (
+              <div className="mt-7 flex flex-wrap items-center gap-x-4 gap-y-1 md:mt-8">
+                <ButtonLink link={link} variant="dark" />
+                {moreLabel ? (
+                  <CMSLink
+                    link={moreLink}
+                    className="inline-flex min-h-target items-center border-b-2 border-ink text-[15px] font-bold text-ink no-underline"
+                  >
+                    {moreLabel}
+                  </CMSLink>
+                ) : null}
+              </div>
+            ) : (
+              <ButtonLink link={link} variant="wine" className="mt-7 md:mt-8" />
+            )}
           </div>
           <div className="mt-9 border-2 border-ink bg-cream p-5 shadow-card md:p-6 lg:mt-0">
             {portrait ? (
@@ -156,9 +189,9 @@ export function TeamIntroBlock({
                 <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-gray-warm">{person.role}</span>
               </div>
             </div>
-            {bio ? <p className="mt-3.5 whitespace-pre-line text-small-mobile text-[#3A3630] md:text-small">{bio}</p> : null}
+            {bio && !section ? <p className="mt-3.5 whitespace-pre-line text-small-mobile text-[#3A3630] md:text-small">{bio}</p> : null}
             {socials.length ? (
-              <ul className="mt-2 -mb-2 flex flex-wrap gap-x-4">
+              <ul className={section ? 'mt-3 -mb-2 flex flex-nowrap justify-between' : 'mt-2 -mb-2 flex flex-wrap gap-x-4'}>
                 {socials.map((s, i) => (
                   <li key={s.id ?? i}>
                     <a
@@ -166,9 +199,12 @@ export function TeamIntroBlock({
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`${person.name} on ${SOCIAL[s.platform].label} (opens in a new tab)`}
-                      className="inline-flex min-h-target items-center gap-1.5 text-[13px] font-bold text-ink no-underline md:gap-2 md:text-sm"
+                      className={cx(
+                        'inline-flex min-h-target items-center gap-1.5 text-[13px] font-bold text-ink no-underline',
+                        !section && 'md:gap-2 md:text-sm',
+                      )}
                     >
-                      <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" className="size-4 md:size-4.5">
+                      <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" className={cx('size-4', !section && 'md:size-4.5')}>
                         <path d={SOCIAL[s.platform].path} />
                       </svg>
                       {SOCIAL[s.platform].label}
