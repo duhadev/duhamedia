@@ -31,6 +31,7 @@ Sections are added here as each part of the site is finished and approved.
 | Create a lead magnet (free download page) | Upload the file first: **Admin → Collections → Downloads → Create New**. Then **Admin → Collections → Lead magnets → Create New** → fill the **Capture**, **What's inside**, **Asset & email** and **Delivered state** tabs → **Publish changes**. See [Lead magnets](#lead-magnets-the-collection). |
 | Review and publish a pipeline draft (article) | **Admin → Collections → Posts** → filter **Status: Draft** → open the draft → check the copy, set **Author** and **Hero image** → **Publish changes**. See [Posts](#posts-articles-and-newsletter-issues). |
 | Create a page, or change its header/footer | **Admin → Collections → Pages → Create New** (or open the page) → set **Header** and **Footer** in the right-hand sidebar → **Publish changes**. See [Pages](#pages-site-pages). |
+| Change plan prices or the build price (Services page) | **Admin → Collections → Pages → Services → Content tab → Sections → Pricing plans** → build price: **Build box → Price**; marketing plans: **Marketing plans → Plans → (plan) → First-quarter figures / After that** → **Publish changes**. Also update the banner's **Proof line** (Hero) if it quotes the price. See [Pricing](#pricing-pricing-plans). |
 | Delete something that's in use | The admin refuses and lists where it is used. Change those places first, then delete again. See [Why can't I delete this?](#why-cant-i-delete-this). |
 | Someone is locked out after wrong passwords | Wait 10 minutes, or ask an Admin to open **Admin → Collections → Users → (person) → Force Unlock**. See [Users and roles](#users-and-roles). |
 
@@ -69,7 +70,15 @@ Sections are added here as each part of the site is finished and approved.
    - [Newsletter band](#newsletter-band-newsletter-band-band)
    - [Closing call to action on the Work page](#closing-call-to-action-on-the-work-page)
 4. [Services Hub](#4-services-hub)
-   - [Heading banner (Hero with a phase strip)](#heading-banner-hero-typographic-with-a-phase-strip)
+   - [Heading banner (Hero with a proof line)](#heading-banner-hero-typographic-with-a-proof-line)
+   - [Build and Grow sections (Service sheet)](#build-and-grow-sections-service-sheet-section)
+   - [Preferred tools (Spec ledger, "Tools row")](#preferred-tools-spec-ledger-tools-row)
+   - [How we work (Phase timeline, "Grid")](#how-we-work-phase-timeline-grid)
+   - [Pricing (Pricing plans)](#pricing-pricing-plans)
+   - [The work, up close](#the-work-up-close-testimonial-row-study-preview)
+   - [FAQ, "Straight answers."](#faq-straight-answers-faq-accordion-mini-split)
+   - [Closing band](#closing-band)
+   - [Older sections no longer on the page](#older-sections-no-longer-on-the-live-services-page)
    - [Two doors (Two Track Panels, "Doors")](#two-doors-two-track-panels-doors)
    - [Why both together (Two Track Panels, "Contrast")](#why-both-together-two-track-panels-contrast)
    - [Phase arc (Phase timeline, "Arc")](#phase-arc-phase-timeline-arc)
@@ -773,13 +782,109 @@ The last section is the **Final call to action** block; see [Closing call to act
 
 ## 4. Services Hub
 
-Page order, as built: heading banner with a three-step strip → two doors (the two services) → "Why both together" → newsletter band → "Where both doors end" (the three phases) → "Either door starts the same way" (three step cards) → featured proof → routing questions (FAQ) → closing "book a call" section → footer. Edit at **Admin → Collections → Pages → Services → Content tab → Sections**. The page address is `/services`. Add, remove and reorder sections as described under [Pages](#pages-site-pages).
+Page order, as redesigned on 2026-11-09 (the owner approved this order, which replaces the earlier one): heading banner ("We build it. Then we grow it.") → Build (service 01) with its preferred tools → Grow (service 02) with its preferred tools → "How we work" (grey band) → Pricing → "The work, up close" → FAQ ("Straight answers.") → closing "start with a call" band → footer. The newsletter band, the "Either door starts the same way" section and the stand-alone "Preferred tools" section are no longer on this page. Edit at **Admin → Collections → Pages → Services → Content tab → Sections**. The page address is `/services`. Add, remove and reorder sections as described under [Pages](#pages-site-pages).
 
-### Heading banner (Hero, "Typographic" with a phase strip)
+Words used below: a **section** (or **block**) is one band of the page; an **array** is a list you can add to, remove from and reorder (look for the **Add …** button, the drag handle on the left of each row, and the row's menu for removing); a **tick box** is a simple on/off switch. Changes appear on the live site after **Publish changes**.
+
+### Heading banner (Hero, "Typographic" with a proof line)
 
 Same **Hero** block as the Homepage; see [Hero, typographic layout](#hero-typographic-layout-hero). Specific to this page:
-- **Phase strip** (up to 3 rows): the compact "01 Build the foundation / 02 Operate the engine / 03 Build independence" strip under the button. Each row has **Number** and **Label**. **Add:** **Add Phase**; **reorder:** drag; **remove:** the row's menu. The last step is always shown at full weight, with no setting to change that.
-- **Buttons:** one button here (Book a Call).
+- **Headline and the second line:** type the first line ("We build it.") in the headline box and the second ("Then we grow it.") in the **Accent phrase** box. Tick **Accent on its own line** to put the accent phrase on a line of its own, in the wine colour, at every screen width. Untick it and the phrase runs on after the headline.
+- **Proof line:** one plain sentence under a thin line below the buttons, e.g. "Builds start at **$7K**. About **55 hands-on hours** per build. **7 clients** at most, at once." Put **double asterisks** around a figure to show it in dark ink; the rest of the sentence is grey. Leave the box empty to hide the line. Keep prices and counts here in step with [Pricing](#pricing-pricing-plans) and [Capacity & scarcity](#capacity--scarcity).
+- **Buttons:** two, Book a Call (solid) and See pricing (outlined, linking to the pricing section `#pricing`).
+- **Small logo disc:** the small round logo mark in front of the label ("Services") is added automatically to every subpage banner. There is nothing to switch on or edit. The large corner disc behind the banner is the existing **Show the wine logo shape** tick box.
+- The old three-step phase strip is no longer used on this page.
+
+**Forms & leads:** n/a. **Social share:** n/a (page-level: the [SEO tab](#seo-tab-pages-case-studies-articles-free-downloads)).
+
+### Build and Grow sections (Service sheet, "Section")
+
+Services 01 ("First, we build it.") and 02 ("Then we grow it.") are two **Service sheet** blocks. Each has a head (small line, heading, intro, big number) and then two columns.
+
+**SEO:** the heading is a section heading (not the page's main heading). Nothing to set.
+
+**Editable by marketing** (**Sections → Service sheet**)
+- **Presentation** must be **Section (heading, lede and big number on top, a rule, then the two columns)** for the head to show. (The other choice, "Page body", is what the two service pages use.)
+- **Section head fields** (only visible in Section mode):
+  - **Eyebrow**: the small capital line above the heading, e.g. "Service 01 · Build your store".
+  - **Heading** and **Accent phrase**: e.g. "First, we build it."
+  - **Lede**: the grey line under the heading.
+  - **Numeral**: the big number at the right of the head, e.g. "01" (up to 4 characters). Shown on computers only and purely decorative.
+  - **Accent colour** (tick box): draws the rule under the heading and the big number in wine instead of dark ink. Grow uses it; Build does not.
+- **Left column:** **why it matters** (heading and paragraphs); the grey **numbers card** (a caption, then **Numbers** rows with a value such as "~55" or "1 hr", an optional bold lead and a line; a " / " in the line starts a new line); an outlined **box** (caption, text and an optional link, e.g. "You own it" or "How it's paid"); and an optional **next step** link.
+- **Right column:** **what's included** (a heading, then **Groups** with a title and **Bullets**, each with an optional bold lead-in) and **key differentiators** (**Rows**, each a label and a line). Build has one row ("No templates"); Grow has one ("One person accountable"). **Add / reorder / remove** groups, bullets and rows with their **Add …** buttons, the drag handle and the row menu.
+
+**Forms & leads:** n/a. **Social share:** n/a.
+
+### Preferred tools (Spec ledger, "Tools row")
+
+A row of tiles under each service: one for Build (Claude Design, Shopify, Instagram Shop, Facebook Shop, TikTok Shop) and one for Grow (accounts in your name, with a trademark footnote under it). Each is a **Spec ledger** block.
+
+**Editable by marketing** (**Sections → Spec ledger**, **Variant** = **Tools row**)
+- **Tools layout:** **Tiles** (bordered tiles: logo, name and what it is for) is the one used here. **Row** is the older plain look.
+- **Eyebrow** (shown as a small grey caption), **Side note** (optional line under it), **Background** (automatic, white or light grey).
+- **Items** (up to 12 tools): each has:
+  - **Title**: the tool's name.
+  - **One-line summary**: the grey "what for" line, e.g. "Paid ads", "Search and Maps".
+  - **Logo**: pick from the built-in list (Shopify, Instagram, Facebook, TikTok, Meta, Microsoft Clarity, Google, Google Search Console, Claude). These show in their brand colours. For something with no product, such as **Collaborations** or **GEO**, pick **Handshake (icon)** or **Sparkle (icon)**, which show as a dark icon tile.
+  - **Other logo (upload)**: only for a tool that is not in the list; upload a square logo (SVG or PNG on transparent). It is used instead of the picked logo. Choose it from the [Media library](#media-library-images).
+  - **Add:** **Add Item**; **reorder:** drag the row; **remove:** the row's menu.
+- **Footnote:** the small grey line under the tiles (the trademark wording). Say it once per row; leave it empty on the Build row if you prefer.
+
+**Forms & leads:** n/a. **Social share:** n/a. **Other:** the built-in logos are fixed files on the site, so a brand-new tool needs the upload field or a developer to add it to the list.
+
+### How we work (Phase timeline, "Grid")
+
+A grey band: a strip for "step 0" (before the work starts), then a bar for Phase 1 with steps 1 to 6 and a wine bar for Phase 2 with steps 7 and 8.
+
+**Editable by marketing** (**Sections → Phase timeline**, **Variant** = **Grid**)
+- **Eyebrow**, **Heading** (with **Accent phrase**), **Intro**.
+- **Phases** (up to 3): **Number**, **Title**, and **Bar text when the phase continues** (the label over a phase's second row on wide screens; leave empty to repeat the name). The last phase is always shown in the accent colour.
+- **Steps** (up to 12): **Number**, **Title**, **Phase** (pick **0 - before the phases** for the opening strip, otherwise Phase 1 or 2), **Detail** (the sentence) and **Tag**. For a step 0 row the **Tag** is its small grey label, e.g. "Day 0", "Within 72 hours", "After you sign off". Step 0 rows sit in a strip above the first bar; on phones the strip stacks and the other steps sit two per row. **Add:** **Add Step**; **reorder:** drag; **remove:** the row's menu.
+
+**Forms & leads:** n/a. **Social share:** n/a.
+
+### Pricing (Pricing plans)
+
+The `#pricing` section: the build price box (dark outline), the "Grow your store" plans box (wine outline), a promise line, and three closed "terms" rows. The old "At $100K a year, every plan moves to a fixed rate" line under the plans was removed because the first term says the same thing.
+
+**SEO:** nothing to set; the "See pricing" button links here through the **Section link name** `pricing`.
+
+**Editable by marketing** (**Sections → Pricing plans**)
+- **Section link name:** leave as `pricing` so the banner's "See pricing" button works. **Eyebrow**, **Heading**, **Intro**.
+- **Build box:** **Caption**, **Words above the price** ("Builds start at"), **Price** (change the build price here, e.g. "$7K"), **Bullets** (add, drag, remove), and the button: **Next step caption** and **Next step link** (e.g. "Book a call about a build" to `/book-a-call`).
+- **Marketing plans:** **Caption**, **Intro**, the two column captions (**First quarter label** / **After that label**), and **Plans** (up to 4). Each plan has **Name**, **Tag**, **Body** (wrap words in **double stars** to bold them), **After that** (shown bold, e.g. "$1,500 a quarter") and **First-quarter figures**: up to two big numbers, each a **Value** (e.g. "20%", "$1,000") with a **Unit** (e.g. "of online revenue", "flat"). Two figures show side by side with "or" between them (Standard shows 20% of revenue or 30% of profit). If you leave the figures empty, the plain **First quarter** text is shown instead. On phones each plan turns into its own card.
+- **Boxed note**, the **Marketing link (outlined button)** (e.g. "Book a call about marketing"; leave empty for no button) and the **Small print**.
+- **Closing statement** (the promise line) and **Statement accent** (a sentence copied from it, shown in wine).
+- **Terms** (up to 3): each a **Label** (e.g. "At $100,000 a year", "Switching early", "The agreement") and **Body**. They are closed until a visitor clicks. **Add:** **Add Term**; **reorder:** drag; **remove:** the row's menu.
+- Pricing facts come from the owner's brochure; do not change figures without the owner's approval.
+
+**Forms & leads:** n/a. **Social share:** n/a.
+
+### The work, up close (Testimonial row, study preview)
+
+A framed preview of a real case study, with real screenshots and up to three facts underneath. It appears once a study is published and is chosen as the featured one; until then the section shows its designed fallback (see [Testimonials](#testimonials-testimonial-row-row)).
+
+**Editable by marketing** (**Sections → Testimonial row → the study preview settings**)
+- **Label** (small line above, default "A study in full"), **Source** (**The featured case study** = the newest published study ticked **Featured**, or **A case study I choose**), **Link text** (default "Read the study").
+- **Centre the study facts** (tick box): shows the facts as equal columns with each label and number centred. This page has it on; untick it for the left-aligned look.
+
+**Forms & leads:** n/a. **Social share:** n/a.
+
+### FAQ, "Straight answers." (FAQ accordion, "Mini", Split)
+
+**Editable by marketing** (**Sections → FAQ accordion**, **Variant** = **Mini**). Same fields as [Routing questions](#routing-questions-faq-accordion-mini), plus:
+- **Layout:** **Stacked** (heading above the questions) or **Split** (heading, intro and the "all questions" link in a left column, questions on the right). This page uses Split. On phones it becomes one column and the "All questions" link sits below the last question.
+- **Intro** (Split only): a short grey line under the heading.
+- Questions are written under [FAQs](#faqs) and only published ones show.
+
+### Closing band
+
+The dark closing section ("Start with a call, leave with a plan.") is the [Final call to action](#closing-call-to-action-final-call-to-action): edit the headline, capacity line and Book a Call button there.
+
+### Older sections (no longer on the live /services page)
+
+The entries below describe blocks that the earlier Services page used. They are still available if you want to add one back (and a few are used on other pages), but they are not part of the redesigned order above.
 
 ### Two doors (Two Track Panels, "Doors")
 

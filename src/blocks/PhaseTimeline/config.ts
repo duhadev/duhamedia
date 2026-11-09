@@ -146,7 +146,7 @@ export const PhaseTimeline: Block = {
       type: 'array',
       label: 'Steps',
       minRows: 1,
-      maxRows: 10,
+      maxRows: 12,
       labels: { singular: 'Step', plural: 'Steps' },
       admin: {
         components: { RowLabel: rowLabel(['number', 'title'], 'Step') },
@@ -179,6 +179,7 @@ export const PhaseTimeline: Block = {
               required: true,
               defaultValue: '1',
               options: [
+                { label: '0 — before the phases (grid only)', value: '0' },
                 { label: 'Phase 1 (first phase)', value: '1' },
                 { label: 'Phase 2 (second phase)', value: '2' },
                 { label: 'Phase 3 (third phase)', value: '3' },
@@ -187,7 +188,7 @@ export const PhaseTimeline: Block = {
                 width: '30%',
                 isClearable: false,
                 condition: onlyFor('accordion', 'grid'),
-                description: 'Which phase bar this step sits under.',
+                description: 'Which phase bar this step sits under. "0" (grid only) puts the step in the strip above the first phase bar.',
               },
             },
           ],
@@ -208,9 +209,9 @@ export const PhaseTimeline: Block = {
               type: 'text',
               admin: {
                 width: '70%',
-                condition: onlyFor('steps', 'build-run', 'engine-rollout'),
+                condition: onlyFor('steps', 'build-run', 'engine-rollout', 'grid'),
                 description:
-                  'Short label, e.g. a timing ("Week one") or "Your sign-off". Step cards: the boxed tag. Build run / Engine rollout: the line under the title on computers.',
+                  'Short label, e.g. a timing ("Week one") or "Your sign-off". Grid: the small grey label over a phase-0 step ("Day 0"). Step cards: the boxed tag. Build run / Engine rollout: the line under the title on computers.',
               },
             },
             {

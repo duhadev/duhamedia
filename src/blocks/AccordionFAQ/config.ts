@@ -104,12 +104,33 @@ export const AccordionFAQ: Block = {
         condition: isGroup,
       },
     },
+    {
+      name: 'layout',
+      type: 'select',
+      defaultValue: 'stacked',
+      options: [
+        { label: 'Stacked (heading above the questions)', value: 'stacked' },
+        { label: 'Split (heading, intro and link left; questions right)', value: 'split' },
+      ],
+      admin: {
+        description: 'Mini only. Split puts the heading, intro and "all questions" link in a left column and the questions on the right (one column on mobile).',
+        condition: (_data, siblingData) => siblingData?.variant !== 'group',
+      },
+    },
     eyebrowField({ description: 'Optional small uppercase line above the heading.' }),
     {
       name: 'heading',
       type: 'text',
       required: true,
       admin: { description: 'Section heading, e.g. "Routing questions". Shown in capitals.' },
+    },
+    {
+      name: 'intro',
+      type: 'textarea',
+      admin: {
+        description: 'Split layout only. A short grey lede under the heading.',
+        condition: (_data, siblingData) => siblingData?.variant !== 'group' && siblingData?.layout === 'split',
+      },
     },
     {
       name: 'source',

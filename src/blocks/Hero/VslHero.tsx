@@ -1,10 +1,11 @@
 import React from 'react'
 
 import type { BlockData } from '@/blocks/types'
-import { AccentHeadline, ButtonLink, DotMatrix, Eyebrow, Media, Section } from '@/components/ui'
+import { AccentHeadline, ButtonLink, DotMatrix, Media, Section } from '@/components/ui'
 import { VideoFacade } from '@/components/VideoFacade'
 import { youtubeVideoId } from '@/lib/youtube'
 
+import { HeroEyebrow } from './HeroEyebrow'
 import { LOGO_MASK } from './logoMask'
 
 /**
@@ -40,7 +41,7 @@ export function VslHero({ eyebrow, heading, video, ctas, geometry }: BlockData<'
         />
       ) : null}
       <div className="relative z-10 mx-auto w-full max-w-205 px-container-mobile pt-11 pb-12 md:px-container md:py-16">
-        {eyebrow ? <Eyebrow muted>{eyebrow}</Eyebrow> : null}
+        {eyebrow ? <HeroEyebrow>{eyebrow}</HeroEyebrow> : null}
         <AccentHeadline
           text={heading}
           level={2}

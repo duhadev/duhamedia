@@ -36,7 +36,7 @@ export const PricingPlans: Block = {
     {
       name: 'build',
       type: 'group',
-      label: 'Build card (outlined)',
+      label: 'Build box (ink outline)',
       fields: [
         {
           type: 'row',
@@ -61,7 +61,7 @@ export const PricingPlans: Block = {
     {
       name: 'marketing',
       type: 'group',
-      label: 'Marketing plans',
+      label: 'Marketing plans (wine outline)',
       fields: [
         { name: 'label', type: 'text', admin: { description: 'Caption, e.g. "Marketing plan".' } },
         { name: 'intro', type: 'text', admin: { description: 'e.g. "Three plans, settled quarterly. Every plan includes the full toolkit."' } },
@@ -94,8 +94,30 @@ export const PricingPlans: Block = {
             {
               type: 'row',
               fields: [
-                { name: 'first', type: 'text', label: 'First quarter', admin: { width: '50%', description: 'e.g. "$1,000 flat".' } },
-                { name: 'after', type: 'text', label: 'After that', admin: { width: '50%', description: 'e.g. "$1,500 a quarter".' } },
+                { name: 'first', type: 'text', label: 'First quarter', admin: { width: '50%', description: 'Plain-text fallback, shown only when "First-quarter figures" below is empty. e.g. "$1,000 flat".' } },
+                { name: 'after', type: 'text', label: 'After that', admin: { width: '50%', description: 'Shown in bold, e.g. "$1,500 a quarter".' } },
+              ],
+            },
+            {
+              name: 'figures',
+              type: 'array',
+              label: 'First-quarter figures',
+              dbName: 'pp_plan_figures',
+              maxRows: 2,
+              labels: { singular: 'Figure', plural: 'Figures' },
+              admin: {
+                components: { RowLabel: rowLabel(['value', 'unit'], 'Figure') },
+                description:
+                  'Big numbers for the "First quarter" cell, each with a small unit under it, e.g. "20%" + "of online revenue". Two figures show side by side with "or" between. Leave empty to show the plain "First quarter" text instead.',
+              },
+              fields: [
+                {
+                  type: 'row',
+                  fields: [
+                    { name: 'value', type: 'text', required: true, admin: { width: '40%', description: 'e.g. "$1,000" or "20%".' } },
+                    { name: 'unit', type: 'text', admin: { width: '60%', description: 'e.g. "flat" or "of online revenue".' } },
+                  ],
+                },
               ],
             },
           ],
@@ -106,6 +128,7 @@ export const PricingPlans: Block = {
           label: 'Boxed note',
           admin: { description: 'The outlined line under the plans. **Double stars** for bold.' },
         },
+        linkField({ name: 'nextLink', label: 'Marketing link (outlined button)', description: 'e.g. "Book a call about marketing" to /book-a-call. Leave empty for no button.' }),
         { name: 'finePrint', type: 'textarea', label: 'Small print', admin: { rows: 3 } },
       ],
     },
@@ -124,12 +147,12 @@ export const PricingPlans: Block = {
     {
       name: 'terms',
       type: 'array',
-      label: 'Terms row',
+      label: 'Terms',
       maxRows: 3,
       labels: { singular: 'Term', plural: 'Terms' },
       admin: {
         components: { RowLabel: rowLabel(['label'], 'Term') },
-        description: 'Up to three captioned paragraphs side by side, e.g. "Switching early". Add, remove and drag to reorder.',
+        description: 'Up to three closed-by-default rows (click to open), e.g. "Switching early". Add, remove and drag to reorder.',
       },
       fields: [
         { name: 'label', type: 'text', required: true },

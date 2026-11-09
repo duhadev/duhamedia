@@ -96,13 +96,27 @@ export const Hero: Block = {
         description: 'Small grey uppercase line above the headline, e.g. "Work", "About".',
       }),
     ),
-    // Accent phrase only where it shows: service + article recolour it wine.
-    // Typographic (incl. compact / form card) renders it in --accent-primary =
-    // ink on ink, and the video layout has none (Campaign LP.dc.html "Hero variant A — VSL").
+    // Accent phrase only where it shows: service + article recolour it wine, and typographic does when
+    // "Accent on its own line" is on. Otherwise typographic (incl. compact / form card) renders it in
+    // --accent-primary = ink on ink, and the video layout has none (Campaign LP.dc.html "Hero variant A — VSL").
     ...headlineFields({
       description: 'The page headline (the only h1 on the page). Shown in capitals.',
-      accent: forVariants('service', 'article'),
+      accent: (_data, siblingData) => {
+        const variant = (siblingData?.variant as string | undefined) ?? 'typographic'
+        return variant === 'service' || variant === 'article' || (variant === 'typographic' && siblingData?.accentLine === true)
+      },
     }),
+    {
+      name: 'accentLine',
+      type: 'checkbox',
+      label: 'Accent on its own line',
+      defaultValue: false,
+      admin: {
+        description:
+          'Puts the accent phrase (below the headline) in wine on its own line at every screen width, e.g. "We build it." then "Then we grow it." Only for the typographic layout.',
+        condition: forVariants('typographic'),
+      },
+    },
     {
       name: 'badge',
       type: 'group',
@@ -188,6 +202,16 @@ export const Hero: Block = {
       admin: {
         description:
           'Adds the average star rating and count to the line above the headline (e.g. "Testimonials · 5.0 avg · 12 ratings"). Calculated from published testimonials that have a rating; if none do, nothing is shown.',
+        condition: forVariants('typographic'),
+      },
+    },
+    {
+      name: 'proofLine',
+      type: 'textarea',
+      label: 'Proof line',
+      admin: {
+        description:
+          'One plain line under the buttons, set below a thin rule, e.g. "Builds start at **$7K**. About **55 hands-on hours** per build." Wrap figures in **double asterisks** to show them in ink; the rest is grey. Leave empty to hide it.',
         condition: forVariants('typographic'),
       },
     },

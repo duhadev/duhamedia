@@ -1,10 +1,11 @@
 import React from 'react'
 
 import type { BlockData } from '@/blocks/types'
-import { AccentHeadline, ButtonLink, Container, Eyebrow, Section } from '@/components/ui'
+import { AccentHeadline, ButtonLink, Container, Section } from '@/components/ui'
 import { cx } from '@/lib/cx'
 
 import { Breadcrumb } from './Breadcrumb'
+import { HeroEyebrow } from './HeroEyebrow'
 
 /**
  * Hero, `service` variant (Shopify Theme Development.dc.html "Breadcrumb" +
@@ -47,8 +48,8 @@ export function ServiceHero({
       <Section tone="dark" pad="none" className="border-t border-cream/20">
         <Container className={cx('lg:pt-14 lg:pb-13', hasAside && 'lg:grid lg:grid-cols-[1fr_300px] lg:items-end lg:gap-14')}>
           <div className={cx('pt-8', hasAside ? 'pb-5' : 'pb-8', 'lg:py-0')}>
-            {/* hero eyebrow style (grey caps, no diamond), in light grey for the ink ground */}
-            {eyebrow ? <Eyebrow className="text-gray-light/65">{eyebrow}</Eyebrow> : null}
+            {/* hero eyebrow style (grey caps), led by the 28px logo disc (cream on ink), in light grey for the ink ground */}
+            {eyebrow ? <HeroEyebrow tone="dark">{eyebrow}</HeroEyebrow> : null}
             <AccentHeadline
               text={heading}
               accent={accentPhrase}

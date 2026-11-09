@@ -1,11 +1,11 @@
 import React from 'react'
 
 import type { BlockData } from '@/blocks/types'
-import { DiamondHeading } from '@/components/BrochureParts'
+import { Caption, DiamondHeading } from '@/components/BrochureParts'
 import { AccentHeadline, Container, Eyebrow, Media, Section } from '@/components/ui'
 import { cx } from '@/lib/cx'
 
-import { TOOL_LOGOS, type ToolLogo } from './toolLogos'
+import { TOOL_LOGOS, type ToolLogo, type ToolLogoDef } from './toolLogos'
 
 export type SpecLedgerData = BlockData<'specLedger'>
 
@@ -301,14 +301,81 @@ function ToolLogoMark({ item }: { item: Item }) {
       </span>
     )
   }
-  const builtIn = item.logo ? TOOL_LOGOS[item.logo as ToolLogo] : undefined
+  const builtIn: ToolLogoDef | undefined = item.logo ? TOOL_LOGOS[item.logo as ToolLogo] : undefined
   if (!builtIn) return null
+  if (builtIn.icon) {
+    return (
+      <span className={cx(box, 'text-ink')}>
+        <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true" className="size-full">
+          <path d={builtIn.icon} />
+        </svg>
+      </span>
+    )
+  }
   return (
     <span className={box}>
       {/* A static file from /public: next/image adds nothing for an SVG this size. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={builtIn.src} alt="" width={48} height={48} loading="lazy" className="size-full object-contain" />
     </span>
+  )
+}
+
+/** Tiles layout mark: a built-in file, a built-in inline icon (ink), or an upload. */
+function TileMark({ item }: { item: Item }) {
+  const box = 'relative block size-7 shrink-0 md:size-8'
+  if (item.logoImage && typeof item.logoImage === 'object') {
+    return (
+      <span className={box}>
+        <Media resource={item.logoImage} fill sizes="32px" alt="" className="!object-contain" />
+      </span>
+    )
+  }
+  const builtIn: ToolLogoDef | undefined = item.logo ? TOOL_LOGOS[item.logo as ToolLogo] : undefined
+  if (!builtIn) return null
+  if (builtIn.icon) {
+    return (
+      <span className={cx(box, 'text-ink')}>
+        <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true" className="size-full">
+          <path d={builtIn.icon} />
+        </svg>
+      </span>
+    )
+  }
+  return (
+    <span className={box}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={builtIn.src} alt="" width={32} height={32} loading="lazy" className="size-full object-contain" />
+    </span>
+  )
+}
+
+function ToolsTiles({ props, items }: { props: SpecLedgerData; items: Item[] }) {
+  const { heading, note, footnote } = props
+  return (
+    <Section tone={props.tone === 'grey' ? 'grey' : 'light'} pad="none" className="pb-16 md:pb-24">
+      <Container>
+        <div className="border-t border-divider pt-6">
+          {hasText(heading) ? <Caption className="mb-4">{heading}</Caption> : null}
+          {hasText(note) ? <p className="-mt-2 mb-4 text-small text-gray-warm">{note}</p> : null}
+          <ul className="m-0 grid list-none grid-cols-2 gap-2 p-0 md:grid-cols-[repeat(auto-fill,minmax(min(100%,200px),1fr))] md:gap-3">
+            {items.map((item, i) => (
+              <li
+                key={item.id ?? i}
+                className="flex min-h-target flex-col items-start gap-2.5 border border-divider bg-white p-3.5 md:min-h-16 md:flex-row md:items-center md:gap-3.5 md:px-4 md:py-3"
+              >
+                <TileMark item={item} />
+                <div>
+                  <div className="text-[0.9375rem] font-bold leading-tight">{item.title}</div>
+                  {hasText(item.line) ? <div className="mt-0.5 text-[0.8125rem] leading-[1.35] text-gray-warm">{item.line}</div> : null}
+                </div>
+              </li>
+            ))}
+          </ul>
+          {hasText(footnote) ? <p className="m-0 mt-4 text-[0.8125rem] leading-[1.5] text-gray-warm">{footnote}</p> : null}
+        </div>
+      </Container>
+    </Section>
   )
 }
 
@@ -360,7 +427,7 @@ export function SpecLedgerBlock(props: SpecLedgerData) {
     return null
   }
   if (variant === 'list') return items.length === 0 ? null : <ListVariant props={props} items={items} />
-  if (variant === 'tools') return items.length === 0 ? null : <ToolsVariant props={props} items={items} />
+  if (variant === 'tools') return items.length === 0 ? null : props.toolsLayout === 'tiles' ? <ToolsTiles props={props} items={items} /> : <ToolsVariant props={props} items={items} />
   if (items.length === 0 && !hasText(heading) && !hasText(eyebrow)) return null
 
   const defaultTone = variant === 'expandable' || (variant === 'cards' && layout === 'feature') ? 'light' : 'grey'

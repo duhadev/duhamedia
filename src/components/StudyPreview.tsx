@@ -158,11 +158,14 @@ export function StudyFacts({
   facts,
   variant,
   withContext = false,
+  align = 'start',
   className,
 }: {
   facts: StudyFact[]
   variant: 'panel' | 'inline'
   withContext?: boolean
+  /** `inline` only: `center` = equal columns with label and number centred. */
+  align?: 'start' | 'center'
   className?: string
 }) {
   if (facts.length === 0) return null
@@ -184,6 +187,23 @@ export function StudyFacts({
             </dd>
             {f.context?.trim() ? (
               <dd className="m-0 max-w-[36ch] whitespace-pre-line text-small-mobile leading-[1.55] md:text-small">{f.context}</dd>
+            ) : null}
+          </div>
+        ))}
+      </dl>
+    )
+  }
+  if (align === 'center') {
+    return (
+      <dl className={cx('m-0 grid border-t border-divider pt-4 text-center', facts.length === 1 ? 'grid-cols-1' : facts.length === 2 ? 'grid-cols-2' : 'grid-cols-3', 'gap-x-3 gap-y-4 md:gap-x-6', className)}>
+        {facts.map((f, i) => (
+          <div key={f.id ?? i} className="flex min-w-0 flex-col items-center gap-1">
+            <dt className="flex flex-1 items-end justify-center text-[10px] font-bold uppercase tracking-[0.12em] text-gray-warm">{f.label}</dt>
+            <dd className="m-0 font-display text-[1.25rem] leading-none md:text-[1.75rem]">
+              <FactValue fact={f} />
+            </dd>
+            {withContext && f.context?.trim() ? (
+              <dd className="m-0 text-small-mobile leading-[1.5] text-gray-warm">{f.context}</dd>
             ) : null}
           </div>
         ))}
@@ -262,6 +282,7 @@ export function StudyPreview({
   linkLabel,
   headingAs = 'h3',
   label,
+  factsAlign = 'start',
   preload = false,
 }: {
   study: CaseStudy
@@ -271,6 +292,8 @@ export function StudyPreview({
   headingAs?: 'h2' | 'h3'
   /** Optional small label above everything (e.g. "A study in full"). */
   label?: string | null
+  /** `center`: the inline facts (row / card) render as equal centred columns. */
+  factsAlign?: 'start' | 'center'
   preload?: boolean
 }) {
   const href = docPath('case-studies', study)
@@ -316,7 +339,7 @@ export function StudyPreview({
           {summary}
         </p>
       ) : null}
-      {size !== 'feature' ? <StudyFacts facts={size === 'card' ? facts.slice(0, 2) : facts} variant="inline" className="mt-1" /> : null}
+      {size !== 'feature' ? <StudyFacts facts={size === 'card' ? facts.slice(0, 2) : facts} variant="inline" align={factsAlign} className="mt-1" /> : null}
       <StudyLinks href={href} label={linkLabel} client={client} site={site} />
     </div>
   )

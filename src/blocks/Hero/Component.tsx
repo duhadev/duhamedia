@@ -3,11 +3,12 @@ import { getPayload } from 'payload'
 import React from 'react'
 
 import type { BlockData } from '@/blocks/types'
-import { AccentHeadline, ButtonLink, Container, DotMatrix, Eyebrow, Section } from '@/components/ui'
+import { AccentHeadline, ButtonLink, Container, DotMatrix, Section } from '@/components/ui'
 import { cx } from '@/lib/cx'
 
 import { ArticleHero } from './ArticleHero'
 import { FormCardHero } from './FormCardHero'
+import { HeroEyebrow } from './HeroEyebrow'
 import { HeroMotion } from './HeroMotion'
 import { HeroInlineForm, resolveHeroForm, type HeroFormSlot } from './HeroForm'
 import { LOGO_MASK } from './logoMask'
@@ -76,6 +77,8 @@ function TypographicHero({
   eyebrow,
   heading,
   accentPhrase,
+  accentLine,
+  proofLine,
   badge,
   body,
   pricingNote,
@@ -112,6 +115,8 @@ function TypographicHero({
   const pairs = (callouts ?? []).filter((c) => c.label?.trim() && c.text?.trim()).slice(0, 2)
   const ratingText = rating ? `${rating.average} avg · ${rating.count} ${rating.count === 1 ? 'rating' : 'ratings'}` : ''
   const eyebrowText = [eyebrow?.trim(), ratingText].filter(Boolean).join(' · ')
+  const proof = proofLine?.trim()
+  const accentOwnLine = accentLine === true && Boolean(accentPhrase?.trim())
 
   // Load-in regiment (heroMotion.css): every item under the h1 takes the next
   // slot by position, so a missing badge/body/CTA closes the gap.
@@ -125,20 +130,24 @@ function TypographicHero({
   // the mobile-only microcopy line sits right above the CTAs and moves with them
   const microSlot = buttonsSlot ?? ({ '--r': `${regimentDelay(slotIndex)}ms` } as React.CSSProperties)
   const subNoteSlot = subNote ? nextSlot() : undefined
+  const proofSlot = proof ? nextSlot() : undefined
   const phasesSlot = phases.length ? nextSlot() : undefined
 
   const copy = (
     <>
         {eyebrowText ? (
           // Hero eyebrows: grey caps, no diamond (owner, 2026-11-08), the TeamIntro "Work with us" label style.
-          // `eyebrowTick` is kept in the schema but no longer read by any hero.
-          <Eyebrow muted className="hm-eyebrow">
-            <span className="hm-eyebrow-t">{ratingText ? eyebrowText : eyebrow}</span>
-          </Eyebrow>
+          // Since the subpage logo standard (owner, 2026-11-09) the label is led by the 28px logo disc on every
+          // subpage hero; the homepage (featureShape) is excluded. `eyebrowTick` is kept in the schema but no longer read.
+          <HeroEyebrow motion disc={!featureShape}>
+            {ratingText ? eyebrowText : eyebrow}
+          </HeroEyebrow>
         ) : null}
         <AccentHeadline
           text={capture ? slashBreaks(heading) : heading}
           accent={capture && accentPhrase ? slashBreaks(accentPhrase) : accentPhrase}
+          accentColor={accentOwnLine ? 'ground' : 'primary'}
+          accentBreak={accentOwnLine}
           level={1}
           as="h1"
           words
@@ -204,6 +213,13 @@ function TypographicHero({
           </div>
         ) : null}
         {subNote ? <p style={subNoteSlot} className="hm-enter mt-4 text-small-mobile text-gray-warm md:text-small">{subNote}</p> : null}
+        {proof ? (
+          <div style={proofSlot} className="hm-enter mt-8 border-t border-divider pt-4 md:mt-10">
+            <p className="max-w-[60ch] text-[15px] leading-[1.6] text-gray-warm">
+              {proof.split(/\*\*(.+?)\*\*/g).map((seg, i) => (i % 2 ? <b key={i} className="font-bold text-ink">{seg}</b> : seg))}
+            </p>
+          </div>
+        ) : null}
       {phases.length ? (
         <ol style={phasesSlot} className="hm-enter mt-8 grid grid-cols-3 gap-3 md:mt-10 md:gap-6 lg:max-w-190">
           {phases.map((phase, i) => {
@@ -246,7 +262,7 @@ function TypographicHero({
               : featureShape
               ? 'pointer-events-none absolute -right-30 -top-49 z-0 size-60 md:-right-35 md:-top-54 md:size-75 lg:right-[8%] lg:top-[46%] lg:size-115 lg:-translate-y-1/2'
               : // top-level heroes at lg+: park the shape in the corner (Work.dc.html: 300px, right -140, top -60)
-                'pointer-events-none absolute -right-30 -top-49 z-0 size-60 md:-right-35 md:-top-54 md:size-75 lg:-right-35 lg:-top-15 lg:size-75',
+                'pointer-events-none absolute -right-15 top-3 z-0 size-35 md:-right-20 md:top-8 md:size-60 lg:-right-20 lg:top-8 lg:size-60',
           )}
         >
           {/* the masked mark, split into its four bands (heroMotion.css) so each can move */}

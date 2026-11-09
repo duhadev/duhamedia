@@ -5,6 +5,7 @@ import type { PostItem, PostListData } from '@/blocks/PostList/Component'
 import type { BlockData, PageBlockType } from '@/blocks/types'
 import type { CaseStudy, Client, Faq, Media, TeamMember, Testimonial } from '@/payload-types'
 import { PRICING, PROCESS_GRID, SHEET_BUILD, SHEET_GROW, TOOLS } from '@/lib/brochureCopy'
+import * as SVC from '@/lib/servicesCopy'
 
 /** A brochure block constant without its `blockType` (the showcase entry carries it as `block`). */
 const noType = <T extends { blockType: string }>({ blockType: _b, ...rest }: T): Omit<T, 'blockType'> => rest
@@ -2956,8 +2957,174 @@ export const showcaseEntries: ShowcaseEntry[] = [
   {
     block: 'pricingPlans',
     variant: 'default',
-    label: 'Brochure p5: build card, three plan cards, boxed note, small print, statement, terms row',
-    data: noType(PRICING),
+    label: 'Brochure p5: build card, three plan cards, boxed note, small print, statement, terms row (no figures: plain "First quarter" text fallback; no marketing button)',
+    data: { ...noType(PRICING), marketing: { ...PRICING.marketing, nextLink: { type: 'custom' } } },
+  },
+
+  /* ---- /services redesign A (2026-11-09) ---- */
+  {
+    block: 'hero',
+    variant: 'typographic — accent line + proof line',
+    label: '/services hero: accent phrase in wine on its own line, two buttons (Book a Call + See pricing), proof line (**bold** = ink) under a hairline',
+    data: {
+      variant: 'typographic',
+      eyebrow: 'Services',
+      eyebrowTick: true,
+      heading: SVC.HERO.heading,
+      accentPhrase: SVC.HERO.accentPhrase,
+      accentLine: true,
+      body: SVC.HERO.body,
+      badge: { show: false },
+      geometry: true,
+      ctas: [{ id: 'fx-svc-h1', link: L('Book a Call') }, { id: 'fx-svc-h2', link: SVC.HERO.pricingCta }],
+      proofLine: SVC.HERO.proofLine,
+    },
+  },
+  {
+    block: 'hero',
+    variant: 'typographic — proof line only',
+    label: 'accentLine off (accent phrase in ink, inline) + proof line, one button',
+    data: {
+      variant: 'typographic',
+      eyebrow: 'Services',
+      heading: SVC.HERO.heading,
+      accentPhrase: SVC.HERO.accentPhrase,
+      accentLine: false,
+      body: SVC.HERO.body,
+      badge: { show: false },
+      ctas: [{ id: 'fx-svc-h3', link: L('Book a Call') }],
+      proofLine: 'Builds start at **$7K**.',
+    },
+  },
+  {
+    block: 'serviceSheet',
+    variant: 'section (ink)',
+    label: '/services Build: section head (eyebrow, heading, lede, numeral 01 desktop-only), 2px ink rule, " / " caption breaks, "Lead." bullets, one differentiator, link at the end of the right column',
+    data: noType(SVC.BUILD_SECTION),
+  },
+  {
+    block: 'serviceSheet',
+    variant: 'section (accent)',
+    label: '/services Grow: accent on (wine rule + numeral 02), heading accent phrase, numbers as rows, "How it\'s paid" box with a link',
+    data: noType(SVC.GROW_SECTION),
+  },
+  {
+    block: 'serviceSheet',
+    variant: 'section — head only fields empty',
+    label: 'section with no eyebrow/heading/lede/numeral: no head row, no rule; just the columns with a top hairline',
+    data: { presentation: 'section', why: { body: 'One paragraph.' }, box: { link: { type: 'custom' } }, nextStep: { link: { type: 'custom' } } },
+  },
+  {
+    block: 'specLedger',
+    variant: 'tools — tiles (Build, 5)',
+    label: '/services Build tools: tiles layout, grey caption heading, brand logos (Claude, Shopify, Instagram, Facebook, TikTok), no footnote; mobile 2 per row, logo above name',
+    data: noType(SVC.BUILD_TOOLS),
+  },
+  {
+    block: 'specLedger',
+    variant: 'tools — tiles (Grow, 11, icon tiles)',
+    label: '/services Grow tools: 11 tiles incl. ink icon tiles (handshake, sparkle) + Google, Google Search Console, Microsoft Clarity logos, trademark footnote',
+    data: { variant: 'tools', ...SVC.GROW_TOOLS },
+  },
+  {
+    block: 'specLedger',
+    variant: 'tools — tiles, no logo',
+    label: 'tiles fallback: items without a logo (name + line only), one without a line',
+    data: { variant: 'tools', toolsLayout: 'tiles', heading: 'Preferred tools', items: [{ id: 'fx-svc-t1', title: 'A tool', line: 'What it is for' }, { id: 'fx-svc-t2', title: 'Another tool' }] },
+  },
+  {
+    block: 'phaseTimeline',
+    variant: 'grid — step 0 strip',
+    label: '/services How we work: three phase-0 steps (tag label) in the 2px ink strip, then Phase 1 (ink bar, 6 at xl / 3 at lg / 2 on mobile) and Phase 2 (wine bar, 2)',
+    data: {
+      ...noType(PROCESS_GRID),
+      intro: SVC.PROCESS.intro,
+      steps: [
+        ...SVC.PROCESS.stepZero.map((s, i) => ({ ...s, id: `fx-svc-p0-${i}` })),
+        ...PROCESS_GRID.steps.map((s, i) => ({ ...s, id: `fx-svc-p-${i}`, detail: SVC.PROCESS.details[s.number] ?? s.detail })),
+      ],
+    },
+  },
+  {
+    block: 'pricingPlans',
+    variant: 'figures + buttons',
+    label: '/services pricing: ink build box with solid button, wine "Grow your store" box, table (desktop) / one card per plan (mobile), big first-quarter figures ("or" between two), bold "After that", ghost marketing button, closed terms',
+    data: {
+      ...noType(PRICING),
+      build: {
+        ...PRICING.build,
+        bullets: SVC.PRICING.build.bullets.map((text, i) => ({ id: `fx-svc-b${i}`, text })),
+        nextLabel: null,
+        nextLink: SVC.PRICING.build.nextLink,
+      },
+      marketing: {
+        ...PRICING.marketing,
+        label: SVC.PRICING.marketing.label,
+        threshold: null,
+        nextLink: SVC.PRICING.marketing.nextLink,
+        plans: PRICING.marketing.plans.map((p, i) => {
+          const next = SVC.PRICING.marketing.plans[p.name]
+          return {
+            ...p,
+            id: `fx-svc-pl${i}`,
+            body: null,
+            after: next?.after ?? p.after,
+            figures: (next?.figures ?? []).map((f, fi) => ({ ...f, id: `fx-svc-pl${i}-${fi}` })),
+          }
+        }),
+      },
+      terms: SVC.PRICING.terms.map((t, i) => ({ ...t, id: `fx-svc-tm${i}` })),
+    },
+  },
+  {
+    block: 'testimonialRow',
+    variant: 'row — eyebrow as heading, centred facts (fixture)',
+    label: '/services "The work, up close": no heading, eyebrow with tick takes the heading slot, study title as h2, facts centred in three equal columns (published fixture study)',
+    data: {
+      variant: 'row',
+      eyebrow: SVC.PROOF.eyebrow,
+      eyebrowTick: true,
+      heading: null,
+      testimonials: [],
+      studyCard: { show: true, label: 'A study in full', source: 'manual', caseStudy: fixtureStudies[0], readLabel: 'Read the study', centerFacts: true },
+    },
+  },
+  {
+    block: 'testimonialRow',
+    variant: 'row — centred facts, featured study (DB)',
+    label: 'same, study source featured from the database (the live /services state)',
+    data: {
+      variant: 'row',
+      eyebrow: SVC.PROOF.eyebrow,
+      eyebrowTick: true,
+      heading: null,
+      testimonials: [],
+      studyCard: { show: true, label: 'A study in full', source: 'featured', readLabel: 'Read the study', centerFacts: true, fallbackMetric: {} },
+    },
+  },
+  {
+    block: 'accordionFAQ',
+    variant: 'mini — split',
+    label: '/services FAQ: split layout (eyebrow, heading, intro and link left; questions right; mobile: link below the last question)',
+    data: {
+      variant: 'mini',
+      layout: 'split',
+      eyebrow: SVC.FAQ.eyebrow,
+      eyebrowTick: true,
+      heading: SVC.FAQ.heading,
+      intro: SVC.FAQ.intro,
+      source: 'selected',
+      faqs: [faqPricing, faqBuilds, faqRetainers],
+      openFirst: true,
+      limit: 6,
+      allLink: SVC.FAQ.allLink,
+    },
+  },
+  {
+    block: 'accordionFAQ',
+    variant: 'mini — split, no intro or link',
+    label: 'split without intro and without the all-questions link',
+    data: { variant: 'mini', layout: 'split', heading: 'Straight answers.', source: 'selected', faqs: [faqPricing, faqBuilds], allLink: { type: 'custom' } },
   },
   {
     block: 'metricEvent',

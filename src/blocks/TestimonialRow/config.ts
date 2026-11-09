@@ -130,6 +130,16 @@ export const TestimonialRow: Block = {
           admin: { description: 'Underlined text at the bottom of the card.', condition: (_d, s) => s?.show !== false },
         },
         {
+          name: 'centerFacts',
+          type: 'checkbox',
+          label: 'Centre the study facts',
+          defaultValue: false,
+          admin: {
+            description: 'Shows the study facts (up to three) as equal columns with label and number centred.',
+            condition: (_d, s) => s?.show !== false,
+          },
+        },
+        {
           name: 'fallbackMetric',
           type: 'group',
           label: 'Quiet figure while no study is published',

@@ -1,6 +1,6 @@
-import type { Block } from 'payload'
+import type { Block, Condition, Field } from 'payload'
 
-import { linkField } from '../../fields'
+import { eyebrowField, headlineFields, linkField } from '../../fields'
 import { rowLabel } from '../../components/admin/rowLabel'
 
 /**
@@ -12,15 +12,66 @@ import { rowLabel } from '../../components/admin/rowLabel'
  * lead-ins) and "Key differentiators" (label + line rows). Two columns from
  * `lg`, stacked below. Every part is optional; an empty part renders nothing.
  *
+ * `presentation` picks the wrapper: `page` (default, the original brochure
+ * body) or `section` (the /services redesign: head row with eyebrow, heading,
+ * lede and a big numeral, a 2px rule, then the same two columns).
+ *
  * New block (not a variant): no existing block holds grouped lead-in bullets
  * or label rows beside a paragraph column; used by both service pages, which
  * differ only in content (`numbers.layout` columns vs rows).
  */
+type BlockDataArg = { blockData?: { presentation?: string } }
+
+const isSection: Condition = (_data, _sibling, { blockData }: BlockDataArg = {}) => blockData?.presentation === 'section'
+
+/** Adds the section-only condition to a field (a row's children included). */
+const sectionOnly = (fields: Field[]): Field[] =>
+  fields.map((f) => {
+    if (f.type === 'row') return { ...f, fields: sectionOnly(f.fields) } as Field
+    if ('admin' in f || 'name' in f) {
+      const admin = (f as { admin?: { condition?: Condition } }).admin ?? {}
+      const prev = admin.condition
+      return {
+        ...f,
+        admin: { ...admin, condition: prev ? (d, sib, ctx) => isSection(d, sib, ctx) && prev(d, sib, ctx) : isSection },
+      } as Field
+    }
+    return f
+  })
+
 export const ServiceSheet: Block = {
   slug: 'serviceSheet',
   interfaceName: 'ServiceSheetBlock',
   labels: { singular: 'Service sheet', plural: 'Service sheets' },
   fields: [
+    {
+      name: 'presentation',
+      type: 'select',
+      defaultValue: 'page',
+      options: [
+        { label: 'Page body (the two columns only)', value: 'page' },
+        { label: 'Section (heading, lede and big number on top, a rule, then the two columns)', value: 'section' },
+      ],
+      admin: { isClearable: false, description: 'Page body is what the two service pages use. Section adds the head row used on /services.' },
+    },
+    ...sectionOnly([
+      eyebrowField({ defaultTick: true, description: 'Small uppercase line above the heading, e.g. "Service 01 · Build your store".' }),
+      ...headlineFields({ required: false, description: 'The section headline, e.g. "First, we build it."' }),
+      { name: 'intro', type: 'textarea', label: 'Lede', admin: { rows: 2, description: 'The grey line under the heading.' } },
+      {
+        name: 'numeral',
+        type: 'text',
+        maxLength: 4,
+        admin: { description: 'The big number at the right of the head, e.g. "01". Desktop only, decorative.' },
+      },
+      {
+        name: 'accent',
+        type: 'checkbox',
+        label: 'Accent colour',
+        defaultValue: false,
+        admin: { description: 'Draws the rule and the big number in wine instead of ink.' },
+      },
+    ]),
     {
       name: 'why',
       type: 'group',
@@ -93,7 +144,7 @@ export const ServiceSheet: Block = {
                 },
               ],
             },
-            { name: 'text', type: 'textarea', admin: { rows: 2, description: 'The line under (or beside) the number.' } },
+            { name: 'text', type: 'textarea', admin: { rows: 2, description: 'The line under (or beside) the number. Section: " / " starts a new line.' } },
           ],
         },
       ],
@@ -118,7 +169,7 @@ export const ServiceSheet: Block = {
         linkField({
           name: 'link',
           label: 'Next step link',
-          description: 'The bold line, as a link, e.g. "Book a call to talk through your build." to /book-a-call.',
+          description: 'The bold line, as a link (Section: a plain underlined link at the end of the right column), e.g. "Book a call to talk through your build." to /book-a-call.',
         }),
       ],
     },
@@ -153,7 +204,7 @@ export const ServiceSheet: Block = {
                 {
                   type: 'row',
                   fields: [
-                    { name: 'lead', type: 'text', admin: { width: '30%', description: 'Bold lead-in, e.g. "Discovery". Optional.' } },
+                    { name: 'lead', type: 'text', admin: { width: '30%', description: 'Bold lead-in, e.g. "Discovery". Optional. Section shows it as "Discovery." in bold, then the text.' } },
                     { name: 'text', type: 'textarea', required: true, admin: { width: '70%', rows: 2 } },
                   ],
                 },

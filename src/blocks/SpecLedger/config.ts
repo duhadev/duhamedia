@@ -70,6 +70,17 @@ export const SpecLedger: Block = {
       },
     },
     {
+      name: 'toolsLayout',
+      type: 'select',
+      defaultValue: 'row',
+      label: 'Tools layout',
+      options: [
+        { label: 'Row (logos over names, ruled top and bottom)', value: 'row' },
+        { label: 'Tiles (bordered tiles: logo left, name and what it is for)', value: 'tiles' },
+      ],
+      admin: { condition: variantIs('tools'), isClearable: false, description: 'Tiles show the heading as a small grey caption.' },
+    },
+    {
       name: 'tone',
       type: 'select',
       defaultValue: 'auto',
@@ -105,7 +116,7 @@ export const SpecLedger: Block = {
       name: 'items',
       type: 'array',
       label: 'Items',
-      maxRows: 10,
+      maxRows: 12,
       labels: { singular: 'Item', plural: 'Items' },
       admin: {
         components: { RowLabel: rowLabel(['code', 'title'], 'Item') },
@@ -136,7 +147,7 @@ export const SpecLedger: Block = {
           label: 'One-line summary',
           admin: {
             description:
-              'The short line beside the title (rows), under the picture (template cards), or under the title (feature cards). Not used by signal flow tiles.',
+              'Tools tiles: what the tool is for, e.g. "Paid ads". The short line beside the title (rows), under the picture (template cards), or under the title (feature cards). Not used by signal flow tiles.',
             condition: variantIs('cards', 'expandable', 'tools'),
           },
         },
@@ -151,7 +162,7 @@ export const SpecLedger: Block = {
               admin: {
                 width: '50%',
                 condition: variantIs('tools'),
-                description: 'Pick the tool\'s logo (built in, in its brand colours). Leave empty for no logo, or upload one on the right for a tool not in the list.',
+                description: 'Pick the tool\'s logo (built in, in its brand colours; the two icons are drawn in ink). Leave empty for no logo, or upload one on the right for a tool not in the list.',
               },
             },
             {

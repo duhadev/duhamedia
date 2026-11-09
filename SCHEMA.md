@@ -1034,3 +1034,13 @@ Not yet built: `cross-sell` variant (p18).
 | C9 | `src/blocks/DirectContact/Component.tsx:129,131` | §8.4: values come from `site-settings` | hard fallbacks `'Lombard'` and radius `30` when settings are empty | Accept as a safety net, or render no map when location is empty |
 
 **Delta S5 count: 68 table rows awaiting sign-off (H23 23 · H22 3 · NF 42), 12 n/s rows listed for completeness, 9 contradictions (C1–C9) to decide, 1 §9 mapping change (p4 row 2 → TwoTrackPanels · doors).**
+
+## Delta 2026-11-09 (/services direction A; owner-approved, additive)
+- Hero: `accentLine` (checkbox, typographic), `proofLine` (textarea, typographic); accent phrase also shown on typographic when `accentLine` is on.
+- ServiceSheet: `presentation` (page / section) + section-only `eyebrow`, `eyebrowTick`, `heading`, `accentPhrase`, `intro`, `numeral`, `accent`.
+- SpecLedger: `toolsLayout` (row / tiles); items `maxRows` 12; logo options `google`, `google-search-console`, `claude`, `handshake`, `sparkle`.
+- PhaseTimeline: step `phase` option `'0'` (grid strip); `tag` shown on grid; steps `maxRows` 12.
+- PricingPlans: `marketing.plans[].figures` (value + unit, max 2, dbName `pp_plan_figures`); `marketing.nextLink`.
+- TestimonialRow: `studyCard.centerFacts`.
+- AccordionFAQ: `layout` (stacked / split), `intro`.
+

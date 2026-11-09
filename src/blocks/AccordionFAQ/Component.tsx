@@ -4,7 +4,7 @@ import React from 'react'
 
 import type { BlockData } from '@/blocks/types'
 import { RichText } from '@/components/RichText'
-import { ArrowText, CMSLink, Eyebrow, Section } from '@/components/ui'
+import { ArrowText, CMSLink, Container, Eyebrow, Section } from '@/components/ui'
 import type { Faq } from '@/payload-types'
 
 type AccordionFAQProps = BlockData<'accordionFAQ'> & {
@@ -157,7 +157,7 @@ function GroupFaq({ heading, items, openFirst, allLink, anchorId, spacing, eyebr
  * published question is available. Emits FAQPage JSON-LD for exactly the
  * rendered items.
  */
-export async function AccordionFAQBlock({ variant, eyebrow, eyebrowTick, heading, source, category, faqs, limit, openFirst, allLink, anchorId, spacing, emitJsonLd = true }: AccordionFAQProps) {
+export async function AccordionFAQBlock({ variant, layout, intro, eyebrow, eyebrowTick, heading, source, category, faqs, limit, openFirst, allLink, anchorId, spacing, emitJsonLd = true }: AccordionFAQProps) {
   const items = await loadFaqs(source, faqs, category, variant === 'group' ? null : clampLimit(limit))
 
   if (items.length === 0) {
@@ -169,7 +169,7 @@ export async function AccordionFAQBlock({ variant, eyebrow, eyebrowTick, heading
     return <GroupFaq {...{ heading, items, openFirst, allLink, anchorId, spacing, eyebrow, eyebrowTick }} />
   }
 
-  return <AccordionFAQItemsView {...{ eyebrow, eyebrowTick, heading, items, openFirst, allLink, emitJsonLd }} />
+  return <AccordionFAQItemsView {...{ layout, intro, eyebrow, eyebrowTick, heading, items, openFirst, allLink, emitJsonLd }} />
 }
 
 /**
@@ -180,6 +180,8 @@ export async function AccordionFAQBlock({ variant, eyebrow, eyebrowTick, heading
  * omitted (post templates). Renders nothing for an empty list.
  */
 export function AccordionFAQItemsView({
+  layout,
+  intro,
   eyebrow,
   eyebrowTick,
   heading,
@@ -188,6 +190,8 @@ export function AccordionFAQItemsView({
   allLink,
   emitJsonLd = true,
 }: {
+  layout?: 'stacked' | 'split' | null
+  intro?: string | null
   eyebrow?: string | null
   eyebrowTick?: boolean | null
   heading?: string | null
@@ -198,6 +202,45 @@ export function AccordionFAQItemsView({
 }) {
   if (items.length === 0) return null
   const jsonLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqJsonLdItems(items) }
+  const ld = emitJsonLd ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }} /> : null
+
+  if (layout === 'split') {
+    const hasLink = Boolean(allLink?.label?.trim())
+    // One markup: on mobile the grid orders head, questions, link; from md the head and link share the left column.
+    return (
+      <Section tone="light" divider="top">
+        <Container className="grid md:grid-cols-2 md:gap-x-14 md:[grid-template-rows:auto_1fr]">
+          <div className="md:col-start-1 md:row-start-1">
+            {eyebrow ? (
+              <Eyebrow tick={eyebrowTick !== false} className="mb-3">
+                {eyebrow}
+              </Eyebrow>
+            ) : null}
+            {heading ? (
+              <h2 className="font-display text-[1.875rem] font-normal uppercase leading-[1.02] md:text-[2.25rem] md:leading-[1.05]">{heading}</h2>
+            ) : null}
+            {intro?.trim() ? <p className="mt-4 max-w-[44ch] whitespace-pre-line text-body-mobile text-gray-warm md:text-body">{intro}</p> : null}
+          </div>
+          <div className="mt-6 md:col-start-2 md:row-span-2 md:row-start-1 md:mt-0">
+            {items.map((f, i) => (
+              <FaqRow key={f.id ?? i} f={f} open={Boolean(openFirst) && i === 0} />
+            ))}
+            <div className="border-t border-divider" />
+          </div>
+          {hasLink ? (
+            <div className="md:col-start-1 md:row-start-2 md:self-start">
+              <CMSLink link={allLink} className="mt-3 inline-flex min-h-target items-center text-[15px] font-bold no-underline md:mt-5">
+                <span className="ix-rule">
+                  <ArrowText text={allLink?.label ?? ''} />
+                </span>
+              </CMSLink>
+            </div>
+          ) : null}
+          {ld}
+        </Container>
+      </Section>
+    )
+  }
 
   return (
     <Section tone="light">

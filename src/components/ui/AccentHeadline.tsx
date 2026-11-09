@@ -45,6 +45,7 @@ export function AccentHeadline({
   className,
   id,
   words = false,
+  accentBreak = false,
 }: {
   text: string
   accent?: string | null
@@ -59,16 +60,18 @@ export function AccentHeadline({
    * Same text content and colours; off everywhere else.
    */
   words?: boolean
+  /** Accent phrase on its own line (block-level span) at every width. Off everywhere except the Hero's "Accent on its own line". */
+  accentBreak?: boolean
 }) {
   const parts = splitAccentPhrase(text, accent)
   return (
     <Tag id={id} className={cx('font-display font-normal uppercase tracking-headline text-pretty md:text-balance', LEVELS[level], className)}>
       {words ? (
-        splitWords(text, parts, ACCENTS[accentColor])
+        splitWords(text, parts, ACCENTS[accentColor], accentBreak)
       ) : parts ? (
         <>
-          {parts[0]}
-          <span className={ACCENTS[accentColor]}>{parts[1]}</span>
+          {accentBreak ? parts[0].trimEnd() : parts[0]}
+          <span className={cx(ACCENTS[accentColor], accentBreak && parts[0].trim() && 'block')}>{parts[1]}</span>
           {parts[2]}
         </>
       ) : (
@@ -89,6 +92,7 @@ function splitWords(
   text: string,
   parts: [string, string, string] | null,
   accentClass: string,
+  accentBreak = false,
 ): React.ReactNode[] {
   const start = parts ? parts[0].length : -1
   const end = parts ? start + parts[1].length : -1
@@ -104,6 +108,7 @@ function splitWords(
       continue
     }
     const to = from + token.length
+    if (accentBreak && parts && parts[0].trim() && from === start) nodes.push(<br key={`br${from}`} />)
     const a = Math.min(Math.max(start, from), to)
     const b = Math.max(Math.min(end, to), a)
     const word =

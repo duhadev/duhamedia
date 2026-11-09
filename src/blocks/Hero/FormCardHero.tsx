@@ -1,8 +1,9 @@
 import React from 'react'
 
 import type { BlockData } from '@/blocks/types'
-import { AccentHeadline, ButtonLink, Container, DotMatrix, Eyebrow, Section } from '@/components/ui'
+import { AccentHeadline, ButtonLink, Container, DotMatrix, Section } from '@/components/ui'
 
+import { HeroEyebrow } from './HeroEyebrow'
 import { HeroFormCard, type HeroFormSlot } from './HeroForm'
 import { LOGO_MASK } from './logoMask'
 
@@ -56,7 +57,7 @@ export function FormCardHero({
       <Container className="relative z-10 pt-12 pb-11 md:pt-24 md:pb-20">
         <div className="flex flex-col lg:grid lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:grid-rows-[auto_1fr] lg:items-start lg:gap-x-14">
           <div className="lg:col-start-1 lg:row-start-1">
-            {eyebrowText ? <Eyebrow muted>{eyebrowText}</Eyebrow> : null}
+            {eyebrowText ? <HeroEyebrow>{eyebrowText}</HeroEyebrow> : null}
             <AccentHeadline
               text={heading}
               accent={accentPhrase}

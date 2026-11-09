@@ -1,10 +1,11 @@
 import React from 'react'
 
 import type { BlockData } from '@/blocks/types'
-import { AccentHeadline, DotMatrix, Eyebrow, Media, Section } from '@/components/ui'
+import { AccentHeadline, DotMatrix, Media, Section } from '@/components/ui'
 import { cx } from '@/lib/cx'
 
 import { Breadcrumb } from './Breadcrumb'
+import { HeroEyebrow } from './HeroEyebrow'
 import { LOGO_MASK } from './logoMask'
 
 const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
@@ -79,9 +80,7 @@ export function ArticleHero({
       <div className="relative z-10 mx-auto max-w-205 px-container-mobile md:px-container">
         {breadcrumb?.length ? <Breadcrumb items={breadcrumb} tone="light" /> : null}
         {eyebrow ? (
-          <Eyebrow muted className="mt-4">
-            {eyebrow}
-          </Eyebrow>
+          <HeroEyebrow className="mt-4">{eyebrow}</HeroEyebrow>
         ) : null}
         <AccentHeadline
           text={heading}

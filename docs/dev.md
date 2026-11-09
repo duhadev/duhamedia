@@ -44,9 +44,19 @@ Entry format for every unit: **Files** / **Fields & schema** / **Wiring** (regis
    - [CaseStudyCards, ledger layout and Load More (S4-2)](#casestudycards-ledger-layout-and-load-more-unit-s4-2)
 4. [Services Hub](#4-services-hub)
    - [Hero, phaseStrip (S4-1)](#hero-phasestrip-unit-s4-1)
-   - [TwoTrackPanels, doors and contrast variants (S4-3)](#twotrackpanels-doors-and-contrast-variants-unit-s4-3)
-   - [PhaseTimeline, arc and steps variants (S4-4)](#phasetimeline-arc-and-steps-variants-unit-s4-4)
+   - [Hero, accentLine, proofLine and the subpage logo disc (SVC-A)](#hero-accentline-proofline-and-the-subpage-logo-disc-unit-svc-a)
+   - [ServiceSheet, section presentation (SVC-A)](#servicesheet-section-presentation-unit-svc-a)
+   - [SpecLedger, tools variant: tiles layout (SVC-A)](#specledger-tools-variant-tiles-layout-unit-svc-a)
+   - [PhaseTimeline, grid variant and step-0 strip (SVC-A)](#phasetimeline-grid-variant-and-step-0-strip-unit-svc-a)
+   - [PricingPlans (SVC-A)](#pricingplans-unit-svc-a)
+   - [TestimonialRow, centerFacts and eyebrow-as-heading (SVC-A)](#testimonialrow-centerfacts-and-eyebrow-as-heading-unit-svc-a)
+   - [AccordionFAQ, split layout and intro (SVC-A)](#accordionfaq-split-layout-and-intro-unit-svc-a)
    - [AccordionFAQ, mini variant (S4-6)](#accordionfaq-mini-variant-unit-s4-6)
+   - [Final CTA](#final-cta)
+   - [Services redesign: migrations and layout (SVC-A)](#services-redesign-migrations-and-layout-svc-a)
+   - [TwoTrackPanels, doors and contrast variants (S4-3), `doors` orphan](#twotrackpanels-doors-and-contrast-variants-unit-s4-3)
+   - [Newsletter CTA (orphan)](#newsletter-cta-orphan-on-this-page)
+   - [PhaseTimeline, arc and steps variants (S4-4), `steps` orphan](#phasetimeline-arc-and-steps-variants-unit-s4-4)
 5. [Shopify Theme Development](#5-shopify-theme-development)
    - [Hero, service variant (S4-1)](#hero-service-variant-unit-s4-1)
    - [TwoTrackPanels, primary-secondary variant (S4-3)](#twotrackpanels-primary-secondary-variant-unit-s4-3)
@@ -570,6 +580,7 @@ Section: Hero. Variant built now: `typographic`. Later units append `service`, `
 **Notes**
 - The only block that renders an `h1` (via `AccentHeadline level={1} as="h1"`).
 - Every optional field renders nothing when empty. Mobile-first; desktop build from `md`.
+- Since 2026-11-09 the homepage hero is excluded from the subpage logo disc and the 240/140 corner disc; see [Hero, accentLine, proofLine and the subpage logo disc](#hero-accentline-proofline-and-the-subpage-logo-disc-unit-svc-a) (page 4).
 
 ### ProofStrip (unit B3)
 
@@ -1067,7 +1078,7 @@ Section: Study ledger (case study grid). Extends [CaseStudyCards](#casestudycard
 
 ## 4. Services Hub
 
-Pages doc `services`. Order (SCHEMA §9 p4): Hero → Two doors → Why both together → Newsletter CTA → The arc → How it starts → Featured proof → FAQ mini → Final CTA → Footer.
+Pages doc `services`. Live order since the 2026-11-09 redesign (direction A): Hero → Build (ServiceSheet) → Build tools (SpecLedger tiles) → Grow (ServiceSheet) → Grow tools (SpecLedger tiles) → How we work (PhaseTimeline `grid`) → Pricing → Featured proof (TestimonialRow) → FAQ (split) → Final CTA → Footer. The earlier SCHEMA §9 p4 order (Hero → Two doors → Why both together → Newsletter CTA → The arc → How it starts → Featured proof → FAQ mini → Final CTA) is superseded; its `doors` and `steps` entries below are orphan variants.
 
 ### Hero, phaseStrip (unit S4-1)
 
@@ -1083,7 +1094,203 @@ Variant `typographic` with `phaseStrip`. Same block and files as [Hero, article 
 **Notes**
 - Rendered as a three-column ordered list under the buttons. The last step is always at full weight (ink top rule, accent number, trailing arrow).
 
+### Hero, accentLine, proofLine and the subpage logo disc (unit SVC-A)
+
+Services redesign, direction A (owner-approved 2026-11-09; spec `design-reference/services-a-2026-11-09/README.md` and `IMPLEMENTATION.md`). Same block and files as the [homepage Hero](#hero-unit-b3).
+
+**Files**
+- `src/blocks/Hero/config.ts`, `Component.tsx`, `ServiceHero.tsx`, `ArticleHero.tsx`, `FormCardHero.tsx`, `VslHero.tsx`.
+- New `src/blocks/Hero/HeroEyebrow.tsx`. `src/components/ui/AccentHeadline.tsx` (new `accentBreak` prop).
+
+**Fields & schema**
+- `accentLine`: checkbox, default false, `typographic` only. The accent phrase renders in wine on its own line at every width (`AccentHeadline` `accentBreak`, a block-level span). The `accentPhrase` field is now offered for `typographic` when `accentLine` is on (it was already offered for `service` and `article`).
+- `proofLine`: textarea, `typographic` only, optional. One line under the buttons, under a hairline. `**double asterisks**` render in ink; the rest is grey.
+
+**Wiring**
+- `HeroEyebrow({ children, disc = true, tone = 'light' | 'dark', motion, className })` is the eyebrow for every subpage hero: a 28px (`size-7`) logo disc (`LOGO_MASK`, the SiteLogo mark) before the grey-caps `<Eyebrow>`. Wine disc on light grounds, cream on ink (`tone="dark"`, used by `ServiceHero`). Used by the typographic hero (`motion` on, so the disc pops and the text wipes in), `ServiceHero`, `ArticleHero`, `FormCardHero` and `VslHero`.
+- Homepage excluded: the typographic hero passes `disc={!featureShape}`, where `featureShape` = no aside and non-blank `verticalMicrocopy`.
+- Corner disc on default-size typographic heroes (not `compact`, not `featureShape`): `size-35` (140px) on mobile, `size-60` (240px) from `md`. The compact and `featureShape` sizes are unchanged. Services, About and Work share the rule.
+- Showcase: `hero` / `typographic — accent line + proof line`, `typographic — proof line only`.
+- Migration: `20261109_045545_services_redesign_schema` (`accent_line` boolean default false and `proof_line` varchar on `pages_blocks_hero`, `_pages_v_blocks_hero`).
+
+**Notes**
+- `eyebrowTick` stays in the schema and is no longer read by the typographic hero (the disc replaces the tick).
+- Live `/services` hero data (from the data migration): `accentLine` on, `accentPhrase` "Then we grow it.", buttons Book a Call + custom link `/services#pricing` "See pricing", `proofLine` set. Copy in `src/lib/servicesCopy.ts` (`HERO`).
+- Server components.
+
+### ServiceSheet, section presentation (unit SVC-A)
+
+Sections: Build ("First, we build it.") and Grow, each followed by its tools block. First page (in site order) to use the block; also used on pages 5 and 6 in `page` presentation.
+
+**Files**
+- `src/blocks/ServiceSheet/config.ts`, `src/blocks/ServiceSheet/Component.tsx`.
+
+**Fields & schema** (slug `serviceSheet`, `interfaceName: 'ServiceSheetBlock'`)
+- `presentation`: select, default `page`, not clearable: `page` (the two columns only; pages 5 and 6) or `section` (head row, rule, then the two columns).
+- Section-only fields (shown when `presentation = section`, via `admin.condition` on `blockData`): `eyebrow` / `eyebrowTick` (tick default true), `heading` / `accentPhrase` (`headlineFields({ required: false })`), `intro` (textarea, the lede), `numeral` (text, max 4, desktop only, decorative), `accent` (checkbox, default false: wine rule and numeral).
+- Columns (both presentations): `why` {`heading`, `body`}; `numbers` {`label`, `layout` (`columns` | `rows`), `items` (max 3: `value` required, `lead`, `accent`, `text`)}; `box` {`label`, `body`, `link`}; `nextStep` {`label`, `link`}; `included` {`heading`, `groups` (max 6, `dbName: ss_incl_groups`, each `title` + `items` max 10, `dbName: ss_incl_items`, `lead` + `text`)}; `differentiators` {`heading`, `rows` (max 6, `dbName: ss_diff_rows`, `label` + `line`)}.
+
+**Wiring**
+- Registered in `pageBlocks`; component key `serviceSheet`. Showcase: `serviceSheet` / `section (ink)`, `section (accent)`, `section — head only fields empty`, plus the earlier `page` entries.
+- Reads no collection or global.
+- Migration: `20261109_045545_services_redesign_schema` (columns `presentation` (enum, default `page`), `eyebrow`, `eyebrow_tick`, `heading`, `accent_phrase`, `intro`, `numeral`, `accent` on `pages_blocks_service_sheet` and `_pages_v_blocks_service_sheet`). Defaults keep the existing `page` blocks unchanged.
+
+**Notes**
+- `section` rendering: a 2px rule under the head (wine when `accent`); a top hairline; bullet `lead` renders as bold "Discovery." then the text; " / " in `numbers.items[].text` renders as a line break; `nextStep.link` renders as a plain underlined link at the end of the right column. With no head fields there is no head row and no rule.
+- Live `/services` uses two section blocks: Build (numeral 01, only the "No templates" differentiator, link "See the build →") and Grow (accent, numeral 02, box "How it's paid" with link "See plans" to `/services#pricing`, only "One person accountable", link "See the marketing →"). Copy in `src/lib/servicesCopy.ts` (`BUILD_SECTION`, `GROW_SECTION`).
+- Server component.
+
+### SpecLedger, tools variant: tiles layout (unit SVC-A)
+
+Sections: Build tools ("Preferred tools · Build", 5 tiles) and Grow tools ("Preferred tools · Grow · accounts in your name", 11 tiles, with trademark footnote). Same block and files as [SpecLedger (page 5)](#specledger-cards-anatomy-and-expandable-variants-unit-s4-5).
+
+**Files**
+- `src/blocks/SpecLedger/config.ts`, `Component.tsx` (`ToolsTiles`, `ToolsVariant`), `toolLogos.ts`.
+- New `public/brand/tools/google.svg`, `googlesearchconsole.svg`, `claude.svg` (sources and licences in `public/brand/tools/README.md`).
+
+**Fields & schema**
+- `variant` `tools` (added earlier by the brochure work; options `cards`, `expandable`, `signal-flow`, `list`, `tools`; `list` is documented on [page 18](#specledger-list-variant-unit-s6-10)): `eyebrow` / `heading` (tiles show the heading as a small grey caption), `note` (row layout), `footnote` (text, `tools` only), `items`.
+- `toolsLayout`: select, default `row`, not clearable, `tools` only: `row` (logos over names, ruled top and bottom) or `tiles` (bordered tiles: logo left, name and the grey `line`).
+- `items`: `maxRows` raised from 10 to 12. `line` (text) is shown for `cards`, `expandable` and `tools`; in tiles it is the "what for" text. `logo` select (tools only) options now: `shopify`, `instagram`, `facebook`, `tiktok`, `meta`, `microsoft-clarity`, `google`, `google-search-console`, `claude`, `handshake`, `sparkle`. `logoImage` (upload, `maxDepth: 1`) overrides `logo`.
+
+**Wiring**
+- Showcase: `specLedger` / `tools — tiles (Build, 5)`, `tools — tiles (Grow, 11, icon tiles)`, `tools — tiles, no logo`.
+- Migration: `20261109_045545_services_redesign_schema` (enum `tools_layout` default `row`; `ADD VALUE` of `google`, `google-search-console`, `claude`, `handshake`, `sparkle` on `enum_pages_blocks_spec_ledger_items_logo` and the `_pages_v` enum; `_pages_v_*` equivalents).
+
+**Notes**
+- `google`, `google-search-console`, `claude` are brand SVG files. `handshake` and `sparkle` are inline Phosphor Bold paths (MIT, 256-unit viewBox) drawn in `currentColor`, so ink.
+- Tiles: `auto-fill` columns of at least 200px from `md`; on mobile 2 per row, logo above name. An item without a logo renders name and line only.
+- Server component.
+
+### PhaseTimeline, grid variant and step-0 strip (unit SVC-A)
+
+Section: How we work. Same block and files as [PhaseTimeline, arc and steps](#phasetimeline-arc-and-steps-variants-unit-s4-4); `grid` is used only on `/services` and was restyled in place.
+
+**Files**
+- `src/blocks/PhaseTimeline/config.ts`, `PhaseGrid.tsx`, `shared.tsx` (`titledSteps`).
+
+**Fields & schema**
+- `steps[].phase`: new option `0` ("before the phases (grid only)"); the field is shown for `accordion` and `grid`.
+- `steps[].tag`: now also shown for `grid` (the small grey caps label over a phase-0 step, e.g. "Day 0").
+- `steps`: `maxRows` raised from 10 to 12; the admin condition now includes `grid`.
+
+**Wiring**
+- Showcase: `phaseTimeline` / `grid — step 0 strip`.
+- Migration: `20261109_045545_services_redesign_schema` (`ALTER TYPE … ADD VALUE '0' BEFORE '1'` on `enum_pages_blocks_phase_timeline_steps_phase` and the `_pages_v` enum).
+- Data migration `20261109_050000_services_redesign` prepends three phase-0 steps (`PROCESS.stepZero`) and replaces step `detail` text by step number (`PROCESS.details`), and sets `intro`.
+
+**Notes**
+- Grid rendering: phase-0 steps sit in a strip with a 2px ink border above the phases; Phase 1 gets an ink bar and Phase 2 a wine bar; columns are explicit (Phase 1: 6 at `xl`, 3 at `lg`, 2 below; Phase 2: 2); cream cells on a grey band with 1px divider gaps.
+- The `accordion`, `steps`, `build-run` and `engine-rollout` variants are unchanged.
+- Server component.
+
+### PricingPlans (unit SVC-A)
+
+Section: Pricing (anchor `#pricing`). Used only on `/services`. New block (brochure 2026-11-07 p5); no earlier entry in this doc.
+
+**Files**
+- `src/blocks/PricingPlans/config.ts`, `src/blocks/PricingPlans/Component.tsx`.
+
+**Fields & schema** (slug `pricingPlans`, `interfaceName: 'PricingPlansBlock'`)
+- `anchorId` (default `pricing`, lowercase letters, digits and dashes validated), `eyebrow` / `eyebrowTick`, `heading` / `accentPhrase` (not required), `intro`.
+- `build` (group, ink outline): `label`, `lead`, `price`, `bullets` (max 8), `nextLabel`, `nextLink` (renders as a solid button).
+- `marketing` (group, wine outline): `label`, `intro`, `firstLabel` / `afterLabel` (defaults `First quarter` / `After that`), `plans` (max 4: `name` required, `tag`, `body`, `first`, `after`, `figures`), `threshold` (boxed note), `nextLink` (new; renders as a ghost button; empty = no button), `finePrint`.
+- `plans[].figures`: new array, max 2, `dbName: 'pp_plan_figures'`, each `value` (required) + `unit`. Two figures render side by side with "or" between. When empty the cell falls back to the plain `first` text.
+- `statement`, `statementAccent`, `terms` (max 3: `label`, `body`).
+
+**Wiring**
+- Registered in `pageBlocks`; component key `pricingPlans`. Showcase: `pricingPlans` entries from the brochure work plus `figures + buttons`.
+- Reads no collection or global.
+- Migration: `20261109_045545_services_redesign_schema` (tables `pp_plan_figures` and `_pp_plan_figures_v`, FK to `pages_blocks_pricing_plans_marketing_plans` and `_pages_v_blocks_pricing_plans_marketing_plans`; `marketing_next_link_*` columns and their enums on `pages_blocks_pricing_plans` and `_pages_v_*`). The `dbName` keeps identifiers within Postgres's 63-character limit.
+
+**Notes**
+- Plans are one semantic `<table>` with explicit ARIA roles on its elements (`table`, `rowgroup`, `row`, `columnheader`, `rowheader`, `cell`). Below `md` the table is restyled with CSS (`display: block`) into one grey card per plan with a 4px ink top bar; the header row is `sr-only`.
+- "After that" renders bold. `terms` render as native `<details>` (closed by default), max width 760.
+- Data migration `20261109_050000_services_redesign` sets figures and `after` per plan by plan name (an unknown plan name keeps its row, clears `body`, and is logged), clears `threshold`, replaces `build.bullets`, sets both `nextLink`s and the marketing label `Grow your store`, and rewrites `terms` (keeping row ids for matching labels). It does not touch `finePrint` (live online-profit definition preserved).
+- Server component.
+
+### TestimonialRow, centerFacts and eyebrow-as-heading (unit SVC-A)
+
+Section: Featured proof ("The work, up close"). Extends the [homepage TestimonialRow](#testimonialrow-unit-b3); the SCHEMA §9 p4 `row` placement is unchanged.
+
+**Files**
+- `src/blocks/TestimonialRow/config.ts`, `Component.tsx` (`StudyColumn`, `TestimonialRowView`), `src/components/StudyPreview.tsx` (`factsAlign`).
+
+**Fields & schema**
+- `studyCard.centerFacts`: checkbox, default false, shown while `studyCard.show` is not false. When on, `StudyPreview` gets `factsAlign="center"`: up to three facts as equal columns, label and number centred.
+
+**Wiring**
+- Migration: `20261109_045545_services_redesign_schema` (`study_card_center_facts` boolean default false on `pages_blocks_testimonial_row` and `_pages_v_*`).
+- Data migration `20261109_050000_services_redesign` sets `heading` and `accentPhrase` to null, `eyebrow` "The work, up close" with tick, and `centerFacts` on.
+
+**Notes**
+- Eyebrow-as-heading: when `heading` is empty, an `eyebrow` is set, there are no testimonial cards and a study is present, the eyebrow renders in the heading slot and the study title is the section's `h2` (otherwise `h3`).
+- Other pages using the block render as before (`centerFacts` defaults off).
+- Server component.
+
+### AccordionFAQ, split layout and intro (unit SVC-A)
+
+Section: FAQ mini on `/services`. Extends [AccordionFAQ, mini variant](#accordionfaq-mini-variant-unit-s4-6) (below).
+
+**Files**
+- `src/blocks/AccordionFAQ/config.ts`, `Component.tsx`.
+
+**Fields & schema**
+- `layout`: select, default `stacked`: `stacked` or `split`. Shown unless `variant = group`.
+- `intro`: textarea, shown when `layout = split` (and not `group`): a short grey lede under the heading.
+
+**Wiring**
+- Migration: `20261109_045545_services_redesign_schema` (`layout` enum default `stacked` and `intro` varchar on `pages_blocks_accordion_f_a_q` and `_pages_v_*`).
+- Data migration `20261109_050000_services_redesign` sets `layout: split`, eyebrow "Questions" with tick, heading "Straight answers.", the intro, `source: selected`, the four FAQs (cost, just the build, who pays for ads, guarantee), found by question text, and `allLink` "All questions →". FAQ answers are not edited (shared with `/faq`).
+
+**Notes**
+- Split: left column = eyebrow, heading, intro, link; right = the questions. On mobile the link moves below the last question. Layout `stacked` is the previous rendering.
+
+### AccordionFAQ, mini variant (unit S4-6)
+
+Section: FAQ mini (also pages 5 and 6; later pages link here).
+
+**Files**
+- `src/blocks/AccordionFAQ/config.ts`, `src/blocks/AccordionFAQ/Component.tsx` (`AccordionFAQBlock`, async server component).
+
+**Fields & schema** (slug `accordionFAQ`, `interfaceName: 'AccordionFAQBlock'`)
+- `variant`: select, required, default `mini` (only option; `group` for page 11 is added later).
+- `eyebrow` / `eyebrowTick`: `eyebrowField()`, optional.
+- `heading`: text, required; the section `h2`, shown in capitals.
+- `source`: select `selected` (default) | `category`.
+- `category`: select, options taken from `Faqs` (`pricing-contracts`, `builds`, `marketing`, `process-trust`), shown for `category`.
+- `faqs`: relationship to `faqs`, `hasMany`, `maxDepth: 1`, shown for `selected`.
+- `limit`: number 1 to 12, default 6. `openFirst`: checkbox, default false.
+- `allLink`: `linkField`, optional underlined link under the list.
+- `layout`, `intro`: added 2026-11-09, see [split layout](#accordionfaq-split-layout-and-intro-unit-svc-a).
+
+**Wiring**
+- Registered in `pageBlocks` (last); component key `accordionFAQ`. Showcase: `accordionFAQ` / `mini`, `mini — category (DB)`, `mini — empty`.
+- Data: `selected` uses the page-populated `faqs`, keeping only populated objects with `_status = published`, in the editor's order. `category` runs `find` on `faqs` (`draft: false`, `overrideAccess: false`, `depth: 1`, sort `sortOrder`, published and category filter). A failed read is logged and renders nothing.
+- JSON-LD: a `FAQPage` script for exactly the rendered items (`Question` name, `Answer` text = plain text of the Lexical answer), `<` escaped.
+- Migration: `20261022_052303_b4_pages_2_6_blocks` (table `pages_blocks_accordion_f_a_q`, `_pages_v_*`, enums `…_variant`, `…_source`, `…_category`, `…_all_link_type`).
+
+**Notes**
+- Native `<details>` / `<summary>` (works without JS; answers crawlable). Answers render through the shared [RichText wrapper](#richtext-wrapper-srccomponentsrichtexttsx).
+- No published question: renders nothing, with one server-side `console.warn`.
+- Server component; no client island.
+
+### Final CTA
+
+[FinalCTA (B3)](#finalcta-unit-b3). The data migration changes only the heading ("Start with a call, leave with a plan."); the button keeps its wine-filled style.
+
+### Services redesign: migrations and layout (SVC-A)
+
+- `src/migrations/20261109_045545_services_redesign_schema.ts` (+ `.json` snapshot): additive schema (tables, columns, `ADD VALUE` enum changes) for `pages` and `_pages_v`. Its `down` drops the new tables and rebuilds the `phase` and `logo` enums, so it fails while any row still uses the new enum values; it never deletes content.
+- `src/migrations/20261109_050000_services_redesign.ts`: data. Uses `patchPage` (`src/lib/contentPatch.ts`) on page slug `services`; copy in `src/lib/servicesCopy.ts`. Guarded on the exact previous layout (10 blocks: hero `typographic`, twoTrackPanels `doors`, phaseTimeline `grid`, specLedger `tools`, pricingPlans, phaseTimeline `steps`, testimonialRow, newsletterBand, accordionFAQ `mini`, finalCTA); any other shape is skipped and logged, so a second run is a no-op. Its `down` is empty (version history holds the previous versions). It sorts after the schema file. Both are registered in `src/migrations/index.ts`.
+- New layout order: Hero → ServiceSheet (Build) → SpecLedger tools tiles (Build) → ServiceSheet (Grow) → SpecLedger tools tiles (Grow) → PhaseTimeline `grid` → PricingPlans → TestimonialRow → AccordionFAQ (split) → FinalCTA.
+- `src/seed/pages.ts` is not updated for `/services` (already stale; the data migration is the source of truth).
+
+**Orphan variants** (kept in the schema, nothing dropped; no live page uses them since 2026-11-09): TwoTrackPanels `doors` and PhaseTimeline `steps` (the latter is still referenced by [page 9](#9-book-a-call)); the NewsletterBand block left the `/services` layout too. They stay in version history of the `services` page.
+
 ### TwoTrackPanels, doors and contrast variants (unit S4-3)
+
+**Orphan variant `doors` (since 2026-11-09):** no live page uses it; the `/services` data migration removed the block from the layout. The schema keeps it.
 
 Sections: Two doors (track split) and Why both together. Extends the [homepage TwoTrackPanels](#twotrackpanels-unit-b3).
 
@@ -1110,11 +1317,13 @@ Sections: Two doors (track split) and Why both together. Extends the [homepage T
 - Equal-variant pixel regression was not proven by the coder; QA re-shoots the `equal` entries against the earlier captures.
 - Server component.
 
-### Newsletter CTA
+### Newsletter CTA (orphan on this page)
 
-[NewsletterBand](#newsletterband-unit-s4-11) with `spacing: roomy`.
+[NewsletterBand](#newsletterband-unit-s4-11) with `spacing: roomy`. Removed from the `/services` layout on 2026-11-09.
 
 ### PhaseTimeline, arc and steps variants (unit S4-4)
+
+**Orphan variant `steps` on this page (since 2026-11-09):** `/services` no longer carries the "How it starts" `steps` block (page 9 still uses `steps`). `arc` is not used by the live layout either. The [`grid` variant](#phasetimeline-grid-variant-and-step-0-strip-unit-svc-a) is what `/services` renders now.
 
 Sections: The arc and How it starts. Extends the [homepage PhaseTimeline](#phasetimeline-unit-b3).
 
@@ -1138,42 +1347,6 @@ Sections: The arc and How it starts. Extends the [homepage PhaseTimeline](#phase
 - `steps`: numbered cards with the number, a boxed `tag`, title, sentence, then a grey "You leave with" foot listing `outcomes`. Stacked below `lg`; one row with arrows between from `lg`. Closing line and button: the line first on desktop, the full-width button first on phones. Every card has the same full weight, the last included; there is no field to reduce it. With no steps only the heading renders.
 - The design's endless tag-flash animation (7.5 s) is not ported (WCAG 2.2.2).
 - Server components; the `accordion` variant is unchanged (regression script identical at 390, 1009 and 1440 px).
-
-### Featured proof
-
-[TestimonialRow `row`](#testimonialrow-unit-b3) (SCHEMA §9 p4 row 7). No new fields.
-
-### AccordionFAQ, mini variant (unit S4-6)
-
-Section: FAQ mini (also pages 5 and 6; later pages link here).
-
-**Files**
-- `src/blocks/AccordionFAQ/config.ts`, `src/blocks/AccordionFAQ/Component.tsx` (`AccordionFAQBlock`, async server component).
-
-**Fields & schema** (slug `accordionFAQ`, `interfaceName: 'AccordionFAQBlock'`)
-- `variant`: select, required, default `mini` (only option; `group` for page 11 is added later).
-- `eyebrow` / `eyebrowTick`: `eyebrowField()`, optional.
-- `heading`: text, required; the section `h2`, shown in capitals.
-- `source`: select `selected` (default) | `category`.
-- `category`: select, options taken from `Faqs` (`pricing-contracts`, `builds`, `marketing`, `process-trust`), shown for `category`.
-- `faqs`: relationship to `faqs`, `hasMany`, `maxDepth: 1`, shown for `selected`.
-- `limit`: number 1 to 12, default 6. `openFirst`: checkbox, default false.
-- `allLink`: `linkField`, optional underlined link under the list.
-
-**Wiring**
-- Registered in `pageBlocks` (last); component key `accordionFAQ`. Showcase: `accordionFAQ` / `mini`, `mini — category (DB)`, `mini — empty`.
-- Data: `selected` uses the page-populated `faqs`, keeping only populated objects with `_status = published`, in the editor's order. `category` runs `find` on `faqs` (`draft: false`, `overrideAccess: false`, `depth: 1`, sort `sortOrder`, published and category filter). A failed read is logged and renders nothing.
-- JSON-LD: a `FAQPage` script for exactly the rendered items (`Question` name, `Answer` text = plain text of the Lexical answer), `<` escaped.
-- Migration: `20261022_052303_b4_pages_2_6_blocks` (table `pages_blocks_accordion_f_a_q`, `_pages_v_*`, enums `…_variant`, `…_source`, `…_category`, `…_all_link_type`).
-
-**Notes**
-- Native `<details>` / `<summary>` (works without JS; answers crawlable). Answers render through the shared [RichText wrapper](#richtext-wrapper-srccomponentsrichtexttsx).
-- No published question: renders nothing, with one server-side `console.warn`.
-- Server component; no client island.
-
-### Final CTA
-
-[FinalCTA (B3)](#finalcta-unit-b3).
 
 ## 5. Shopify Theme Development
 
@@ -3817,3 +3990,13 @@ Commits `25dcb07`, `ec3a47c`.
 - Cloudflare Access service-token headers for `SITE_EVENT_URL` (`SITE_EVENT_ACCESS_CLIENT_ID`, `SITE_EVENT_ACCESS_CLIENT_SECRET`).
 
 **Kept**: `docker-compose.yml` (local-dev Postgres).
+
+### 2026-11-09: /services redesign, direction A (owner-approved)
+
+**Removed from the `/services` layout** (data migration `20261109_050000_services_redesign`; the page's version history keeps them): TwoTrackPanels `doors`, PhaseTimeline `steps` ("How it starts"), NewsletterBand. The `doors` and `steps` variants stay in the schema as orphans (nothing dropped); `steps` is still used on page 9.
+
+**Replaced in place**: the old PhaseTimeline `grid` and PricingPlans look (restyled; the blocks and data are kept), the old hero eyebrow tick (replaced by the 28px logo disc on every subpage hero; the homepage is excluded).
+
+**Kept**: the live online-profit pricing definition in `finePrint`, all FAQ answers in the `faqs` collection (shared with `/faq`), the FinalCTA button style, `src/seed/pages.ts` (not updated; stale for `/services`).
+
+**Added**: schema migration `20261109_045545_services_redesign_schema`, data migration `20261109_050000_services_redesign`, `src/lib/servicesCopy.ts`, `src/blocks/Hero/HeroEyebrow.tsx`, `public/brand/tools/{google,googlesearchconsole,claude}.svg`. Details under [4. Services Hub](#4-services-hub).

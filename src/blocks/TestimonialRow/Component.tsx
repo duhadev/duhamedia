@@ -192,10 +192,26 @@ function FigureText({ figure, label }: { figure: FallbackFigure; label?: string 
  * preview; beside testimonials the stacked `card`. The `text` presentation
  * sets it under the same 2px ink rule as the quotes (no box).
  */
-function StudyColumn({ doc, readLabel, label, text, wide }: { doc: CaseStudy; readLabel: string; label?: string; text: boolean; wide: boolean }) {
+function StudyColumn({
+  doc,
+  readLabel,
+  label,
+  text,
+  wide,
+  centerFacts,
+  headingAs,
+}: {
+  doc: CaseStudy
+  readLabel: string
+  label?: string
+  text: boolean
+  wide: boolean
+  centerFacts: boolean
+  headingAs: 'h2' | 'h3'
+}) {
   return (
     <div className={text ? 'border-t-2 border-ink pt-5' : undefined}>
-      <StudyPreview study={doc} size={wide ? 'row' : 'card'} linkLabel={readLabel || 'Read the case study'} label={label} />
+      <StudyPreview study={doc} size={wide ? 'row' : 'card'} linkLabel={readLabel || 'Read the case study'} label={label} headingAs={headingAs} factsAlign={centerFacts ? 'center' : 'start'} />
     </div>
   )
 }
@@ -242,6 +258,9 @@ export function TestimonialRowView({
   const mixedFormats = cards.some((t) => t.format === 'video') && cards.some((t) => t.format !== 'video')
   const studyLabel = studyCard?.label?.trim()
   const text = presentation === 'text'
+
+  // No heading, an eyebrow and no cards: the eyebrow takes the heading slot and the study title is the section's h2.
+  const eyebrowAsHeading = !heading && Boolean(eyebrow) && cards.length === 0 && study !== null
 
   const eyebrowEl = eyebrow ? (
     <span className={cx(SMALL_LABEL, eyebrowTick && 'flex items-center gap-2.5')}>
@@ -299,6 +318,8 @@ export function TestimonialRowView({
       <Container>
         {heading ? (
           <AccentHeadline text={heading} accent={accentPhrase} level={2} className="mb-6 md:mb-10" />
+        ) : eyebrowAsHeading ? (
+          <div className="mb-6 md:mb-8">{eyebrowEl}</div>
         ) : null}
         <div className={cx('grid items-start gap-7 md:gap-14', twoCol && 'md:grid-cols-2')}>
           {cards.length > 0 ? (
@@ -323,6 +344,8 @@ export function TestimonialRowView({
                   label={text && !twoCol ? studyLabel : undefined}
                   text={text}
                   wide={!twoCol}
+                  centerFacts={studyCard?.centerFacts === true}
+                  headingAs={eyebrowAsHeading ? 'h2' : 'h3'}
                 />
               ) : text ? (
                 <FigureText figure={study} label={twoCol ? undefined : studyLabel} />

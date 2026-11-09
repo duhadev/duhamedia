@@ -12,6 +12,13 @@ Chosen per item in the admin: Pages → layout → Spec ledger (Tools row) → i
 | tiktok.svg | TikTok | Simple Icons 16.37.0, icons/tiktok.svg (hex #000000; upstream https://tiktok.com) | CC0 1.0 (Simple Icons) |
 | meta.svg | Meta | Simple Icons 16.37.0, icons/meta.svg (hex #0467DF; upstream https://www.meta.com) | CC0 1.0 (Simple Icons) |
 | microsoft-clarity.png | Microsoft Clarity | Not in Simple Icons. Microsoft's own Clarity site icon, https://claritystatic.azureedge.net/images/logo.ico (256 px frame, linked from https://clarity.microsoft.com/), resized to 128 px PNG | Microsoft trademark; used nominatively to identify the tool, unmodified apart from resizing |
+| google.svg | Google | Simple Icons 16.37.0, icons/google.svg (hex #4285F4; upstream https://about.google/brand-resource-center/) | CC0 1.0 (Simple Icons) |
+| googlesearchconsole.svg | Google Search Console | Simple Icons 16.37.0, icons/googlesearchconsole.svg (hex #458CF5; upstream https://about.google/brand-resource-center/) | CC0 1.0 (Simple Icons) |
+| claude.svg | Claude | Simple Icons 16.37.0, icons/claude.svg (hex #D97757; upstream https://claude.ai) | CC0 1.0 (Simple Icons) |
+
+The `handshake` and `sparkle` icons are not files: they are Phosphor Icons (Bold weight,
+https://phosphoricons.com, MIT) drawn inline from path data in
+`src/blocks/SpecLedger/toolLogos.ts`, in the text colour (ink).
 
 Simple Icons files are unmodified except for a `fill` attribute set to the brand
 hex and the `role` attribute removed (the page supplies the alt text).

@@ -13,6 +13,7 @@ export type Op =
   | ['set', string, unknown]
   | ['remove', string]
   | ['insert', string, number, unknown]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- path walker over untyped migration JSON
   | ['fn', (doc: any) => void]
 
 export type PagePatch = {
@@ -33,6 +34,7 @@ const tokens = (path: string): (string | number)[] =>
     return [m[1], ...[...m[2].matchAll(/\[(\d+)\]/g)].map((i) => Number(i[1]))]
   })
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- path walker over untyped migration JSON
 const parentOf = (obj: any, path: string): [any, string | number] => {
   const t = tokens(path)
   let cur = obj
@@ -43,6 +45,7 @@ const parentOf = (obj: any, path: string): [any, string | number] => {
   return [cur, t[t.length - 1]]
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- path walker over untyped migration JSON
 export const applyOp = (doc: any, op: Op): void => {
   if (op[0] === 'fn') return op[1](doc)
   const [parent, key] = parentOf(doc, op[1])
@@ -74,6 +77,7 @@ export const guard = async (c: PatchCtx, what: string, run: () => Promise<unknow
 export async function patchPage(c: PatchCtx, patch: PagePatch): Promise<void> {
   const { payload, req, context } = c
   const found = await payload.find({ collection: 'pages', where: { slug: { equals: patch.slug } }, limit: 1, depth: 0, req, overrideAccess: true })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- path walker over untyped migration JSON
   const doc = found.docs[0] as any
   if (!doc) return void c.skipped.push(`page ${patch.slug}: not found`)
 
