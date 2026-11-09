@@ -452,7 +452,7 @@ The Homepage is a Page with the web address `home` (it is shown at `duhamedia.co
 **Fields you will meet in almost every block** (explained once here):
 - **Eyebrow**: the small uppercase line above a headline. The **Show the diamond marker** tick box next to it adds the small wine diamond before it.
 - **Heading** and **Accent phrase**: the headline, and one word or phrase *copied from the headline* that is shown in the accent colour. If the phrase is not found in the heading, the admin refuses it when you **Publish**.
-- **Pricing note**: a small quiet line for a price, such as "Builds start at $5K". It is the **only** place a price may appear: never put one in a headline, figure or metric. Up to 80 characters.
+- **Pricing note**: a small quiet line for a price, such as "Builds start at $7K". On most pages this is where a price belongs: keep prices out of headlines, figures and metrics. Two places are the approved exceptions: the full pricing table on the Services page ([Pricing](#pricing-pricing-plans), `/services#pricing`) and the "$7K" figure in the homepage "Two jobs. One team." section. Up to 80 characters.
 - **Link / Button** groups: **Link type** is **Page on this site** (pick a page, case study, article or lead magnet from a list; a link to something unpublished is simply not shown) or **Custom address** (`https://…`, `mailto:…`, or a site path such as `/book-a-call`). Then **Link text** and **Open in a new tab**. An optional link may be left completely empty; once any part is filled, both the link text and the destination are needed.
 - **Placeholders:** the seeded text on these pages is demonstration copy. Headlines carry the label `[STRATEGIC PLACEHOLDER — final copy TBD]` and other gaps are in square brackets (for example `[N]%`). Replace them with final copy; never publish a bracketed placeholder as if it were real.
 
@@ -470,10 +470,10 @@ The big opening banner. The same **Hero** block, in its **Typographic** layout, 
 - **Eyebrow** (with the diamond tick box), **Heading** (shown in capitals) and **Accent phrase**, **Body** (the paragraph under the headline).
 - **Authority badge:** **Show the badge** (tick box) and **Text**, the dark pill under the headline, for example "$X.XM client revenue tracked". Leave the text empty to hide it. The seeded text is a placeholder: only state a figure that is true.
 - **Pricing note** (small line under the paragraph), **Buttons** (up to 2: the first is the solid main button, the second the outlined one; **Add:** **Add Button**; **reorder:** drag; **remove:** the row's menu), **Small note under the buttons** (a quiet line, for example a minimum term).
-- **Side microcopy:** a short uppercase line such as "Build · Operate · Hand over". It runs vertically down the left on desktop and sits under the paragraph on phones.
+- **Side microcopy:** a short uppercase line such as "Build · Grow" (what the homepage reads). It runs vertically down the left on desktop and sits under the paragraph on phones.
 - **Show the wine logo shape** (tick box): the large decorative logo silhouette behind the headline.
 - **Key figures** (up to 5 rows, **Value** and **Label**): facts beside the headline on desktop and in a strip on phones; used on the [Work hub](#heading-banner-hero-typographic-with-key-figures). Results or counts only, **never a price**.
-- **Phase strip** (up to 3 rows, **Number** and **Label**): a compact "01 Build / 02 Operate / 03 Independence" strip; used on the [Services Hub](#heading-banner-hero-typographic-with-a-phase-strip). The last step always shows at full weight.
+- **Phase strip** (up to 3 rows, **Number** and **Label**): a compact strip of numbered phase labels (the earlier Services page used "Build your store / Grow your store / You own it"; the redesigned Services page no longer shows it, see [Services Hub](#heading-banner-hero-typographic-with-a-proof-line)). The last step always shows at full weight.
 - **Two-up callouts** (up to 2) and **Show the average rating**: used on [Book a Call](#hero-callouts) and [Testimonials](#hero-compact-heading-banner-average-rating).
 - Fields for other layouts are hidden while **Typographic** is selected.
 
@@ -481,7 +481,7 @@ The big opening banner. The same **Hero** block, in its **Typographic** layout, 
 
 **Social share:** n/a (set per page in the SEO tab).
 
-**Other:** the homepage Hero is seeded with both prices in its **Pricing note** ("Builds start at $5K. Engines start at $1K/mo."). Keep them there as a small note.
+**Other:** the live homepage Hero (checked 2026-11-09) shows no price; the "Builds start at $7K" fact sits in the "Two jobs. One team." stats instead. If you add a **Pricing note** here, keep it to the current facts: "Builds start at $7K" and "Marketing: three plans, settled quarterly. Ad spend is separate."
 
 ### Capacity strip (Proof strip, "Capacity" layout)
 
@@ -537,7 +537,7 @@ A dark strip with one short line and an outlined button; the whole strip is clic
 
 **Editable by marketing**
 - **Sections → Mini CTA strip**, **Variant** = **Band (dark strip with an outlined button)**.
-- **Text** (required): the one-line statement, shown in capitals, for example "One team. One dashboard. A handover date."
+- **Text** (required): the one-line statement, shown in capitals, for example "No templates. No middlemen. One person accountable." (what the homepage reads)
 - **Button** (required): **Link type**, the page or address, **Link text**, **Open in a new tab**. The Homepage points it at Book a Call.
 - The other two layouts: **Inline** is on [Book a Call](#quick-question-line-mini-cta-strip-inline); **Button** (one centred button, with an optional short line above it) is the repeated call to action on [campaign pages](#15-campaign-lp-template); its **Text** is optional.
 
@@ -630,7 +630,7 @@ The dark closing band before the footer, with the capacity line and one or two b
 - **Sections → Final call to action**.
 - **Heading** (with **Accent phrase**): **leave empty to use the default** from **Admin → Globals → Site settings → Newsletter & closers tab → Default closing sections → Final call-to-action heading** (and its button).
 - **Body:** an optional supporting line.
-- **Capacity line:** which capacity statement to show under the headline, from [Capacity & scarcity](#capacity--scarcity): **Builds line (Final CTA)** (the default) or **Engines line (Marketing / MKT-SEO Final CTA)** or another type, or **None (hide)**. The number and its reason line are edited only in **Admin → Globals → Capacity & scarcity**. If the chosen statement has no reason or a blank count it is left out, never shown as a bare number.
+- **Capacity line:** which capacity statement to show under the headline, from [Capacity & scarcity](#capacity--scarcity): **Builds line (Final CTA)** (the default) or **Engines line (Marketing / MKT-SEO Final CTA)** (the option keeps its old "engines" name in the admin; it is the marketing version of the capacity line) or another type, or **None (hide)**. The number and its reason line are edited only in **Admin → Globals → Capacity & scarcity**. If the chosen statement has no reason or a blank count it is left out, never shown as a bare number.
 - **Buttons** (1 to 2; at least one is required): the first is the main button. **Add:** **Add Button**; **reorder:** drag; **remove:** the row's menu. Each is a **Link** (see the list of fields above). The Homepage has Book a Call and Contact us.
 
 **Forms & leads:** the button usually goes to the [Book a Call](#9-book-a-call) page; bookings are made in the booking calendar, not on this site.
@@ -683,9 +683,9 @@ The edit screen has five **tabs** (the headings across the top of the form: Summ
 - **Title** (required): the study's headline, shown largest at the top of the page, e.g. "The demand was already there. The store was leaking it."
 - **Accent phrase** (optional): a word or phrase to show in the accent colour. It must be copied from the title exactly as it appears there (capital letters do not matter); anything not found in the title is rejected.
 - **Client** (required): pick the brand from [Clients](#clients-logo-strips). Add the client there first if it is missing.
-- **Track** (required): the kind of engagement, which decides which service pages show this study as proof: **Build**, **Growth engine**, **Build + engine** or **Handover complete**.
+- **Track** (required): the kind of engagement, which decides which service pages show this study as proof: **Build**, **Growth engine**, **Build + engine** or **Handover complete**. These four names are fixed in the admin and still use the old wording; in plain terms: **Build** is a store build, **Growth engine** is marketing ("Grow your store"), and **Build + engine** is both. **Handover complete** belongs to the old three-phase model (the site now has no handover phase; clients own everything from launch), so avoid it unless the owner says otherwise.
 - **Study number** (optional): a whole number, shown as "Study 01" / "№ 01".
-- **Engagement line** (optional), e.g. "Build + engine, 12 months · Hardgoods retail, 3 locations".
+- **Engagement line** (optional), e.g. "Build and marketing, 12 months · Hardgoods retail, 3 locations".
 - **Headline metric**: the oversized result shown on the study and on every study card.
   - **Value** (required), e.g. "+212%". Always a result or a count, **never a price**.
   - **Label** (required): what the number measures, e.g. "Revenue, 12 months".
@@ -758,7 +758,7 @@ A case study page is assembled automatically from the study, in this fixed order
 | Client voice and "What we'd do differently" | Study → **Client voice & closing tab**. This is the **Testimonial row** block, "Client voice" layout. A video testimonial plays first; a text one shows as a quote. If the study has nothing in this tab, the section is left out. Its small number and heading ("04", "What we'd do differently") and the phases box label are in [Template labels](#template-labels-case-study-pages-article-pages). |
 | Next study | Automatic: a boxed line linking to the next published study (by published date). It is the **Case study cards** block, "Next study" layout. With no other published study, **nothing shows** (there is no "coming soon"). Its two labels are **Next study: label** and **Next study: link words** in [Template labels](#template-labels-case-study-pages-article-pages). |
 | Newsletter band | Heading: study → **Client voice & closing tab → Closing → Newsletter heading** (empty = the site default). See [Newsletter band](#newsletter-band-newsletter-band-band). |
-| Closing "book a call" section | Heading: study → **Closing → Final CTA heading** (empty = the site default). Its capacity line follows the study's **Track**: a **Growth engine** study uses the engines line, all others the builds line. See [Closing call to action](#closing-call-to-action-final-call-to-action). |
+| Closing "book a call" section | Heading: study → **Closing → Final CTA heading** (empty = the site default). Its capacity line follows the study's **Track**: a **Growth engine** study (marketing-only) uses the marketing capacity line (the option still called "engines line" in the admin), all others the builds line. See [Closing call to action](#closing-call-to-action-final-call-to-action). |
 
 The page also has a thin reading-progress bar (part of the design, no field).
 
@@ -939,7 +939,7 @@ Two linked cards side by side, one per service (Shopify Theme Development and Ma
 **Editable by marketing**
 - **Sections → Two Track Panels**, **Variant** = **Doors (two linked cards: title, paragraph, button)**.
 - **Eyebrow** (optional) and **Heading** (with **Accent phrase**).
-- **Tracks:** exactly two rows, shown in this order (you can drag to swap them; you cannot add or remove). Each row has **Title**, **Show the title in the accent colour** (tick box), **Body** (required), **Pricing note** and **Link**. Keep prices to the **Pricing note** ("Builds start at $5K." / "Engines start at $1K/mo."), never in the title or body. **Link** is the card's button (**Link type**: **Page on this site** or **Custom address**, then **Link text**).
+- **Tracks:** exactly two rows, shown in this order (you can drag to swap them; you cannot add or remove). Each row has **Title**, **Show the title in the accent colour** (tick box), **Body** (required), **Pricing note** and **Link**. Keep prices to the **Pricing note** ("Builds start at $7K." / "Marketing: three plans, settled quarterly. Ad spend is separate."), never in the title or body. (The full pricing table lives on the Services page, [Pricing](#pricing-pricing-plans).) **Link** is the card's button (**Link type**: **Page on this site** or **Custom address**, then **Link text**).
 - **Conclusion:** an optional closing line under the cards; leave empty to hide.
 
 **Forms & leads:** n/a. **Social share:** n/a.
@@ -958,13 +958,13 @@ Two cards that each strike out a claim buyers have heard, then state the reality
 
 ### Phase arc (Phase timeline, "Arc")
 
-The three phases (build, operate, independence) as rows, each with a short description and a link.
+The phases as rows (up to three allowed by the block; the site's story is two: Build your store, then Grow your store, optional), each with a short description and a link. Not used on the current Services page.
 
 **Editable by marketing**
 - **Sections → Phase timeline**, **Variant** = **Arc (up to three phases, each with a description and a link)**. Each layout shows only its own fields.
 - **Heading** and **Accent phrase**.
 - **Phases** (1 to 3 rows): **Number** (for example "Phase 01"), **Title** (keep it short), **Body** (two to four sentences) and **Link** (optional, for example "See Phase 01 →"; leave the link text empty for no link). **Add:** **Add Phase**; **reorder:** drag; **remove:** the row's menu.
-- **The last phase (independence, the handover) is always shown in the accent colour at full weight. There is no setting to turn that off.**
+- **The last phase is always shown in the accent colour at full weight. There is no setting to turn that off.**
 
 **Forms & leads:** n/a. **Social share:** n/a.
 
@@ -1009,7 +1009,7 @@ The "Featured proof" row is the **Testimonial row** with **Show this card** on; 
 
 Page order: heading banner with a trail of links (breadcrumb) → "Where people usually start" (revision or scratch build) → "What gets built, template by template" (four template cards) → "Specification" (rows that open) → "How a build runs" (dark band of six steps) → proof → build questions (FAQ) → closing "book a call" section → footer. Edit at **Admin → Collections → Pages → Shopify Theme Development → Content tab → Sections**. The address is `/services/shopify-theme-development`.
 
-"Builds start at $5K" appears only as a small note (the **Pricing note** fields), never as a pricing block or a headline.
+"Builds start at $7K" appears here only as a small note (the **Pricing note** fields), never as a headline. Full pricing lives on the Services page ([Pricing](#pricing-pricing-plans)). Note: the 2026-11-08 brochure update reshaped this page (it now uses a **Service sheet** block, and the template cards and specification rows below were removed). The order and entries on this page describe the earlier layout [check in admin: open Pages → Shopify Theme Development → Content tab → Sections to see the current sections].
 
 ### Hero, "Service" layout
 
@@ -1053,7 +1053,7 @@ The **Spec ledger** is a coded list of deliverables (codes such as T-01 or D-01)
 - **Layout "Expandable rows" (coded rows that open: what we do / how you will know)**:
   - **Items**: **Code**, **Title**, **One-line summary** (shown beside the title), then the two details shown when the row is open: **First detail label** and **First detail** (for example "What we build"), **Second detail label** and **Second detail** (for example "How you'll know it worked").
   - **Open the first row** (tick box, on): the first row starts open. Visitors can open and close any number of rows.
-  - **Pricing note** (up to 80 characters): a small line under the rows, for example "Builds start at $5K. Exact scope is priced on the call."
+  - **Pricing note** (up to 80 characters): a small line under the rows, for example "Builds start at $7K. Exact scope is priced on the call."
 - The other two layouts: **Signal flow** and the **Feature cards** style are under [Marketing](#signal-flow-and-feature-cards-spec-ledger); the **Check list** is under [Lead Magnet](#page-sections-on-a-lead-magnet-page-hero-form-whats-inside-cross-sell).
 
 **Forms & leads:** n/a. **Social share:** n/a.
@@ -1068,7 +1068,7 @@ A dark band of six numbered steps, with the steps the client approves marked as 
 - **Sections → Phase timeline**, **Variant** = **Build run (dark band of numbered steps, sign-offs marked)**.
 - **Eyebrow** (and diamond tick), **Heading**, **Accent phrase**.
 - **Steps** (1 to 10; three per row): **Number**, **Title**, **Detail** (the line under the title on phones), **Tag** (the line under the title on computers, for example "Dated plan" or "Your sign-off") and **Client sign-off step** (tick box: on phones the tag is then shown with a diamond). **Add:** **Add Step**; **reorder:** drag; **remove:** the row's menu. **The last step always shows at full weight; there is no setting to change that.**
-- **Closing line:** an optional quiet line under the band, for example "Then Phase 02, if the numbers say it fits."
+- **Closing line:** an optional quiet line under the band, for example "Then Phase 2, if you want us to grow the store."
 - **Swipe hint** (starts "Swipe →"): the small hint above the swipe row on phones.
 
 **Forms & leads:** n/a. **Social share:** n/a.
@@ -1088,17 +1088,17 @@ The "Build questions" list is the [FAQ accordion, "Mini"](#routing-questions-faq
 
 ## 6. Marketing
 
-Page order: heading banner with breadcrumb → "How the signal moves" (six channels feeding one dashboard) → "Specification" (rows that open, one per channel) → "Rollout after signing" (dark band of six steps) → camera and Google Business Profile cards → proof → marketing questions (FAQ) → closing "book a call" section → footer. Edit at **Admin → Collections → Pages → Marketing → Content tab → Sections**. The address is `/services/marketing`.
+Page order: heading banner with breadcrumb → "How the signal moves" (six channels feeding one card) → "Specification" (rows that open, one per channel) → "Rollout after signing" (dark band of six steps) → camera and Google Business Profile cards → proof → marketing questions (FAQ) → closing "book a call" section → footer. Edit at **Admin → Collections → Pages → Marketing → Content tab → Sections**. The address is `/services/marketing`.
 
-"Engines start at $1K/mo" appears only as a small note, never as a pricing block.
+The marketing price is not "from $X a month" any more: marketing is three plans, settled quarterly, with ad spend separate (inline note: "Marketing: three plans, settled quarterly. Ad spend is separate."). Full plan figures live on the Services page ([Pricing](#pricing-pricing-plans)); on this page keep it to a small note. Note: the 2026-11-08 brochure update reshaped this page (it now uses a **Service sheet** block; the signal-flow tiles, specification rows, rollout band and image cards were removed). The page order above and the entries below describe the earlier layout [check in admin: open Pages → Marketing → Content tab → Sections to see the current sections].
 
 ### Heading banner (Hero, "Service" layout)
 
-Same block as [Shopify Theme Development](#hero-service-layout). Here the **Pricing note** reads "Engines start at $1K/mo", the **Small note under the buttons** holds a placeholder minimum-term note (`[Placeholder minimum-term note]`, to be replaced with the real term), and the breadcrumb is Services / Marketing / Phase 02.
+Same block as [Shopify Theme Development](#hero-service-layout). Here the **Pricing note** carries the marketing plans note ("Marketing: three plans, settled quarterly. Ad spend is separate."), the **Small note under the buttons** holds a placeholder minimum-term note (`[Placeholder minimum-term note]`, to be replaced with the real term), and the breadcrumb is Services / Marketing / Phase 2.
 
 ### Signal flow and feature cards (Spec ledger)
 
-Both are layouts of the **Spec ledger** block (first described under [Shopify Theme Development](#template-cards-and-specification-rows-spec-ledger)). The "Specification" rows on this page are its **Expandable rows** layout, with the labels "What we run" and "What you'll see on the dashboard"; fields are the same as described there, and the **Pricing note** here carries the mix-priced-on-the-call line.
+Both are layouts of the **Spec ledger** block (first described under [Shopify Theme Development](#template-cards-and-specification-rows-spec-ledger)). The "Specification" rows on this page are its **Expandable rows** layout, with the labels "What we run" and a second label for what the client will see (earlier layout, since removed from the page); fields are the same as described there, and the **Pricing note** here carries the mix-priced-on-the-call line.
 
 **Editable by marketing**
 - **Signal flow (coded tiles feeding into one dashboard card):**
@@ -1114,12 +1114,12 @@ Both are layouts of the **Spec ledger** block (first described under [Shopify Th
 
 ### Engine rollout (Phase timeline, "Engine rollout")
 
-A dark band with one row of numbered steps and timing tags.
+A dark band with one row of numbered steps and timing tags. (The layout keeps its old name, "Engine rollout", in the admin; in plain words it is the one-row dark band of steps with timings. It is not on the current Marketing page.)
 
 **Editable by marketing**
 - **Sections → Phase timeline**, **Variant** = **Engine rollout (dark band, one row of steps with timings)**.
 - **Eyebrow** (and diamond tick), **Heading**, **Accent phrase**.
-- **Steps** (up to 10; six fit in one row): **Number**, **Title**, **Detail** (the line under the title on phones), **Tag** (the timing or label under the title on computers, for example "[Week 1–2]" or "Before spend"). **Add:** **Add Step**; **reorder:** drag; **remove:** the row's menu. **The last step (independence, the handover) always shows at full weight.**
+- **Steps** (up to 10; six fit in one row): **Number**, **Title**, **Detail** (the line under the title on phones), **Tag** (the timing or label under the title on computers, for example "[Week 1–2]" or "Before spend"). **Add:** **Add Step**; **reorder:** drag; **remove:** the row's menu. **The last step always shows at full weight.**
 - **Closing line** and **Swipe hint** work as under [Build run](#build-run-phase-timeline-build-run).
 
 **Forms & leads:** n/a. **Social share:** n/a.
@@ -1130,14 +1130,14 @@ A dark band with one row of numbered steps and timing tags.
 
 **Editable by marketing**
 - **Sections → Case study cards**, **Layout** = **Cards**, **Source** = **Studies of one or more engagement types**, **Engagement types** = **Growth engine** and **Build + engine**.
-- **While no study is published (the launch state):** **When no study is published** = **Metric strip: the text block, then a grey strip of up to three facts**. The visitor sees **Fallback eyebrow**, **Fallback headline** and **Fallback text**, then up to three **Fallback facts** (**Value**, **Label**, optional **Sub-line**, **Accent colour** tick). **Add:** **Add Fact**; **reorder:** drag; **remove:** the row's menu. Only real, approved figures or plain counts; never a price (the **Pricing note** carries "Engines start at $1K/mo.").
+- **While no study is published (the launch state):** **When no study is published** = **Metric strip: the text block, then a grey strip of up to three facts**. The visitor sees **Fallback eyebrow**, **Fallback headline** and **Fallback text**, then up to three **Fallback facts** (**Value**, **Label**, optional **Sub-line**, **Accent colour** tick). **Add:** **Add Fact**; **reorder:** drag; **remove:** the row's menu. Only real, approved figures or plain counts; never a price (the **Pricing note** carries the marketing plans note: "Marketing: three plans, settled quarterly. Ad spend is separate.").
 - When a matching case study is published and approved, the section switches to the study cards on its own.
 
 **Forms & leads:** n/a. **Social share:** n/a.
 
 ### FAQ and closing section
 
-The "Marketing questions" list is the [FAQ accordion, "Mini"](#routing-questions-faq-accordion-mini) with **Source** = **All questions from one category** and **Category** = **Marketing**. The closing section is the [Final call to action](#closing-call-to-action-final-call-to-action) with its **Capacity line** set to **Engines line (Marketing / MKT-SEO Final CTA)**, the engines version of the capacity statement (edit the numbers once, in [Capacity & scarcity](#capacity--scarcity)).
+The "Marketing questions" list is the [FAQ accordion, "Mini"](#routing-questions-faq-accordion-mini) with **Source** = **All questions from one category** and **Category** = **Marketing**. The closing section is the [Final call to action](#closing-call-to-action-final-call-to-action) with its **Capacity line** set to **Engines line (Marketing / MKT-SEO Final CTA)**, the marketing version of the capacity statement (the option still carries its old "engines" name in the admin; edit the numbers once, in [Capacity & scarcity](#capacity--scarcity)).
 
 ## 7. Testimonials
 
@@ -1388,7 +1388,7 @@ Page order: compact banner (routing line) → contact form → direct details an
   - **Small line above the details** (starts "Skip the form", phones only; empty hides it).
   - **Row labels**: the small words in front of each row (**Email**, **Socials**, **Location**, **Reply time**).
   - **Service-area map**: **Show the map** (tick), **Caption** and **Zoom** (0.5 zoomed out to 2 zoomed in; 1 shows the whole ring).
-- **Map caption builds itself when left empty.** From Site settings it reads like "Based in Lombard, IL, serving clients within about 30 miles." (town and state, then the **Service radius (miles)**). Type your own caption to replace it. The caption is also read aloud to screen-reader users.
+- **Map caption builds itself when left empty.** From Site settings it reads like "Based in Chicago, IL, serving clients within about 30 miles." (the example uses Chicago, the only location the site names; the radius is whatever is set in Site settings) (town and state, then the **Service radius (miles)**). Type your own caption to replace it. The caption is also read aloud to screen-reader users.
 - The map is a simple black-and-white drawing made by the site (no outside map service): it centres on **Latitude / Longitude** and draws the service ring. Move the pin or resize the ring in **Site settings → Location**.
 - A row with no value in Site settings (for example no social profiles yet) is left out rather than shown empty.
 
@@ -1512,7 +1512,7 @@ The **Rich content** block is the block that sets text on the page. An article p
   - **Band (eyebrow, heading, short text, up to three facts and a link)**: a short section on a grey or white background.
     - **Eyebrow**, **Heading**, **Accent phrase**, **Body** as above.
     - **Facts** (up to 3 big numbers in a strip under the text; counts, timelines or results, never a price): **Add:** click **Add Fact**, fill **Value** (e.g. "4–6"), **Label** (e.g. "Weeks"), optional **Sub-line**, and tick **Accent colour** to show the number in the accent colour. **Reorder:** drag by the handle. **Remove:** the row's menu. Leave empty for no strip.
-    - **Pricing note** (up to 80 characters): optional quiet line, e.g. "Builds start at $5K". The only place a price may appear in a band.
+    - **Pricing note** (up to 80 characters): optional quiet line, e.g. "Builds start at $7K". Keep a price here, not in the band's headline or body.
     - **Link**: optional button under the text.
     - **Background**: **Grey band** or **White**. **Draw a box around the content** (tick box): the black-outlined "How we do it" look, normally with White.
   - **Legal document**: see [20](#20-legal-template).
@@ -1568,7 +1568,7 @@ A thin band of up to three proof numbers, an optional capacity line and an optio
 - Open **Admin → Collections → Pages → (page) → Content tab → Sections → Proof strip** and set **Variant** to **Metrics (up to three metrics + capacity + client logos, Campaign LP)**. (The other layout, **Scarcity**, is the capacity-statements strip for the Homepage.)
 - **Metrics** (up to 3): **Add:** **Add Metric**, then **Value** (e.g. "+212%"), **Label** (what it measures, e.g. "Revenue, 12 months"), optional **Sub-line**, and **Accent colour** to show the number in the accent colour. **Reorder:** drag by the handle. **Remove:** the row's menu. Results or counts only, never a price.
 - **Capacity statement**: pick which statement from [Capacity & scarcity](#capacity--scarcity) to show beside the metrics (the big line with its reason quietly underneath), or **None (hide)**. You cannot type the number here; edit it in Capacity & scarcity.
-- **Pricing note** (up to 80 characters): optional small inline note, e.g. "Builds start at $5K".
+- **Pricing note** (up to 80 characters): optional small inline note, e.g. "Builds start at $7K".
 - **Client logos** group: **Show the logo row** (tick box), **Eyebrow** (small line above), and **Source**: **Clients marked "show in logo strip"** (automatic; see [Clients](#clients-logo-strips)) or **Pick clients by hand** (then choose **Clients** in display order). Unpublished clients are skipped; with none left the row is hidden.
 
 **Forms & leads:** n/a. **Social share:** n/a.
@@ -1839,8 +1839,8 @@ Facts the whole site shares: the company name in the footer, contact email, soci
   - **Remove:** use the row's menu (the **⋯** or trash icon on the row), then Save.
 
 *Location tab* (the Contact page map and Google search results)
-- **Town / city**, **State** and **Country** (town and state are required; use two-letter codes for state and country, e.g. IL and US). The facts already filled in are Lombard, IL, US.
-- **Short location line**: how the location reads on the site, e.g. "Lombard, IL".
+- **Town / city**, **State** and **Country** (town and state are required; use two-letter codes for state and country, e.g. IL and US). The site's location is Chicago only. The live site reads Chicago everywhere (checked 2026-11-09). If you ever see "Lombard" in this tab, change it to Chicago.
+- **Short location line**: how the location reads on the site, e.g. "Chicago, IL".
 - **Market area**: the metro area named in the brand line, e.g. "Chicago" in "Integrated ecommerce growth partner — Chicago".
 - **Service radius (miles)**: drawn as the ring on the Contact page map (0 to 500).
 - **Latitude** and **Longitude**: the map pin position. In Google Maps, right-click the spot; the first number is latitude and the second is longitude. Latitude is between -90 and 90, longitude between -180 and 180.
@@ -1871,7 +1871,7 @@ Facts the whole site shares: the company name in the footer, contact email, soci
 
 **Other**
 - Defaults are filled in the first time the screen is saved; until the first save some fields show their placeholders only.
-- Never enter invented facts. Leave a field empty rather than guess. The legal company name, contact email, reply-time note, footer brand line and map position (centred on Lombard) are filled in with real values; the social profiles, Google link, postal address and rating are still filled in only when you have the real details.
+- Never enter invented facts. Leave a field empty rather than guess. The legal company name, contact email, reply-time note, footer brand line and map position are filled in with real values; the social profiles, Google link, postal address and rating are still filled in only when you have the real details.
 - Marketing and Admins can edit this screen; ordinary visitors only see the results.
 
 ### Capacity & scarcity
@@ -1890,9 +1890,9 @@ How busy we are, kept in one place. The site uses these numbers in several spots
 - **Client cap**: the most clients we take at once ("We cap at 7"). It starts at **7**, which is the real cap; change it only if the cap itself changes.
 - **Active clients**: clients we are working with now ("Slots open 3/7"). **It can never be more than the Client cap.** If you type a bigger number, Save is refused with a message saying so. Raise the cap first, or lower the number.
 - **Builds in progress**: store builds running now ("3 builds in progress"). **Also can never be more than the Client cap.**
-- **Engines running**: growth engines running now ("3 engines running"). **Also can never be more than the Client cap.**
+- **Engines running**: the field keeps its old name; it is the count of marketing ("Grow your store") clients running now. **Also can never be more than the Client cap.** [check in admin: confirm with the owner exactly what this count should mean before filling it in.]
 - If any of the three live counts is above the cap, Save is refused and the message names which number to lower (or raise the cap if it has really changed).
-- The three live counts (Active clients, Builds in progress, Engines running) start empty on purpose, so no made-up number can ever appear. Fill in the real ones.
+- The three live counts (Active clients, Builds in progress, and the "Engines running" count) start empty on purpose, so no made-up number can ever appear. Fill in the real ones.
 
 *Statements* (the wording the site shows)
 - Each statement has a **loud** part and a **quiet** part. The **loud** part is the big line or number ("3 builds in progress. We cap at 7."). The **quiet** part is the one-line **reason** underneath, in small text ("The cap keeps every build senior-staffed.").
@@ -1908,13 +1908,13 @@ How busy we are, kept in one place. The site uses these numbers in several spots
 - **Client spots in use (homepage strip)**: the loud "3 / 7" and its reason in the Homepage [Capacity strip](#capacity-strip-proof-strip-capacity-layout). **Use it only in that strip.** Other blocks' capacity drop-downs also list it, but only the homepage strip fills in the numbers there; chosen anywhere else, visitors would see a raw "{capacity}" instead of a number.
 - **Projects ongoing (big number)** and **Client cap (big number)**: the older homepage scarcity-strip layout (no longer used on the Homepage; still available to other pages).
 - **Builds line (Final CTA)**: the capacity line above the closing call-to-action on most pages.
-- **Engines line (Marketing / MKT-SEO Final CTA)**: the same line, but about engines, on the Marketing page and MKT-SEO articles.
+- **Engines line (Marketing / MKT-SEO Final CTA)**: the same line, but about marketing clients (the option keeps its old "engines" name), on the Marketing page and MKT-SEO articles.
 - **Slots line (Link-in-Bio)**: the slots line on the Link-in-Bio page.
 - **Offer line (Campaign LP offer)**: the offer section on campaign landing pages.
 
 *Placeholders that fill in the numbers*
 - A **placeholder** is a word in curly brackets that the site swaps for the real number. Write it inside the loud statement, e.g. `{builds} builds in progress. We cap at {capacity}.`
-- The ones that exist: `{active}` (Active clients), `{capacity}` (Client cap), `{builds}` (Builds in progress), `{engines}` (Engines running), and `{open}` (cap minus active clients, worked out for you, never below 0).
+- The ones that exist: `{active}` (Active clients), `{capacity}` (Client cap), `{builds}` (Builds in progress), `{engines}` (the "Engines running" count; the placeholder keeps its old name and must be typed exactly like that), and `{open}` (cap minus active clients, worked out for you, never below 0).
 - Using placeholders means you only change a number once, in the four counts, and every statement stays in step.
 - **An unknown placeholder** (for example `{slots}` or a typo like `{buidls}`) is refused when you Save, with a message naming it and listing the valid ones. Fix the spelling or type the number as plain text. If a placeholder's count is missing, the site leaves that statement out rather than print half a sentence.
 
