@@ -54,6 +54,8 @@ import * as migration_20261109_050000_services_redesign from './20261109_050000_
 import * as migration_20261109_150019_home_b_schema from './20261109_150019_home_b_schema';
 import * as migration_20261109_151000_home_b from './20261109_151000_home_b';
 import * as migration_20261109_163910_admin_wording_defaults from './20261109_163910_admin_wording_defaults';
+import * as migration_20261110_025312_service_pages_schema from './20261110_025312_service_pages_schema';
+import * as migration_20261110_030000_service_pages from './20261110_030000_service_pages';
 
 export const migrations = [
   {
@@ -335,5 +337,15 @@ export const migrations = [
     up: migration_20261109_163910_admin_wording_defaults.up,
     down: migration_20261109_163910_admin_wording_defaults.down,
     name: '20261109_163910_admin_wording_defaults',
+  },
+  {
+    up: migration_20261110_025312_service_pages_schema.up,
+    down: migration_20261110_025312_service_pages_schema.down,
+    name: '20261110_025312_service_pages_schema',
+  },
+  {
+    up: migration_20261110_030000_service_pages.up,
+    down: migration_20261110_030000_service_pages.down,
+    name: '20261110_030000_service_pages',
   },
 ];

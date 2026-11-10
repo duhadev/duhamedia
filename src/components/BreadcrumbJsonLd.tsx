@@ -14,9 +14,9 @@ const hrefOf = (crumb: HeroCrumb): string | null => {
   return resolveLinkHref({ type: 'custom', url: crumb.url })
 }
 
-/** The trail of the FIRST Hero block that shows one (service / article variants), or `null`. */
+/** The trail of the FIRST Hero block that shows one (typographic / service / article variants), or `null`. */
 export const heroCrumbs = (layout: readonly PageLayoutBlock[] | null | undefined): Crumb[] | null => {
-  const hero = (layout ?? []).filter(isHero).find((h) => (h.variant === 'service' || h.variant === 'article') && h.breadcrumb?.length)
+  const hero = (layout ?? []).filter(isHero).find((h) => (h.variant === 'service' || h.variant === 'article' || h.variant === 'typographic') && h.breadcrumb?.length)
   return hero?.breadcrumb ? hero.breadcrumb.map((c) => ({ label: c.label ?? '', href: hrefOf(c) })) : null
 }
 

@@ -5,10 +5,15 @@ import { AccentHeadline, ArrowText, ButtonLink, CMSLink, Container, Eyebrow, Sec
 import { splitAccentPhrase } from '@/lib/accentPhrase'
 import { resolveLinkHref } from '@/components/ui/CMSLink'
 
+import { Compare } from './Compare'
+import { HoursBar } from './HoursBar'
+
 /**
  * TwoTrackPanels. Server component: no interactivity in any variant.
  */
 export function TwoTrackPanelsBlock(props: BlockData<'twoTrackPanels'>) {
+  if (props.variant === 'compare') return <Compare {...props} />
+  if (props.variant === 'bar') return <HoursBar {...props} />
   if (props.variant === 'contrast') return <Contrast {...props} />
   if (props.variant === 'primary-secondary') return <PrimarySecondary {...props} />
   if (props.variant === 'doors') return <Doors {...props} />
@@ -99,7 +104,7 @@ function Equal(props: Props) {
                           key={st.id ?? si}
                           className={`flex min-w-0 flex-col-reverse py-3.5 lg:py-4.5 ${si > 0 ? 'border-l border-divider pl-3 lg:pl-5' : ''}`}
                         >
-                          <dt className="mt-1.5 text-[0.75rem] leading-[1.35] text-gray-warm lg:text-[0.75rem] lg:leading-[1.4]">{st.label.trim()}</dt>
+                          <dt className="mt-1.5 text-[0.75rem] leading-[1.35] text-gray-warm lg:text-[0.75rem] lg:leading-[1.4]">{st.label?.trim()}</dt>
                           <dd
                             className={`m-0 font-display text-[1.5rem] leading-none whitespace-nowrap lg:text-[2.25rem] ${st.accent ? 'text-ground-accent' : ''}`}
                           >

@@ -1,5 +1,6 @@
 import type { Block } from 'payload'
 
+import { anchorIdField } from '../../fields/anchorId'
 import {
   accentPhraseAdminField,
   eyebrowField,
@@ -40,22 +41,31 @@ export const TwoTrackPanels: Block = {
         { label: 'Contrast (struck claim vs reality, then a conclusion)', value: 'contrast' },
         { label: 'Primary / secondary (first track full weight, second softer)', value: 'primary-secondary' },
         { label: 'Doors (one reading column: title, paragraph with price note, link)', value: 'doors' },
+        { label: 'Compare (a two-column comparison table, first track shaded)', value: 'compare' },
+        { label: 'Bar (one proportional bar of two segments, a caption under each)', value: 'bar' },
       ],
-      admin: { description: 'The panel layout. Equal = two paragraphs; Contrast = two "sold to you as" cards; Primary / secondary = a lead option plus a quieter alternative.' },
+      admin: {
+        description:
+          'The panel layout. Equal = two paragraphs; Contrast = two "sold to you as" cards; Primary / secondary = a lead option plus a quieter alternative; Compare = a table comparing the two tracks row by row; Bar = a proportional two-part bar (e.g. where the hours go).',
+      },
     },
+    anchorIdField({
+      description:
+        'Lets other pages and the "Jump to" bar link straight to this section, e.g. "start" → /services/shopify-theme-development#start. Lowercase letters, numbers and single hyphens. Must be unique on the page. Optional.',
+    }),
     eyebrowField({ description: 'Optional small uppercase line above the headline.', defaultTick: false }),
-    // Accent shows in Contrast and Equal (wine); the other layouts render it ink on ink.
+    // Accent shows in Contrast, Equal, Compare and Bar (wine); the other layouts render it ink on ink.
     ...headlineFields({
       description: 'The section headline, e.g. "What we actually do".',
-      accent: (_data, siblingData) => siblingData?.variant === 'contrast' || siblingData?.variant === 'equal',
+      accent: (_data, siblingData) => ['contrast', 'equal', 'compare', 'bar'].includes(String(siblingData?.variant)),
     }),
     {
       name: 'intro',
       type: 'textarea',
       label: 'Intro line',
       admin: {
-        description: 'Short lede shown on the right of the headline (Equal layout only). Leave empty to hide.',
-        condition: (_data, siblingData) => siblingData?.variant === 'equal',
+        description: 'Short lede shown on the right of the headline (Equal, Compare and Bar layouts). Leave empty to hide.',
+        condition: (_data, siblingData) => ['equal', 'compare', 'bar'].includes(String(siblingData?.variant)),
       },
     },
     {
@@ -76,8 +86,8 @@ export const TwoTrackPanels: Block = {
           type: 'text',
           admin: {
             description:
-              'Optional small uppercase tag above the track, e.g. "Phase 1". In the Contrast layout this is the small label above the struck claim (e.g. "Sold to you as").',
-            condition: isVariant('equal', 'contrast', 'primary-secondary'),
+              'Optional small uppercase tag above the track, e.g. "Phase 1". In the Contrast layout this is the small label above the struck claim (e.g. "Sold to you as"). In the Compare layout it is the small line under the column title (e.g. "The default").',
+            condition: isVariant('equal', 'contrast', 'primary-secondary', 'compare'),
           },
         },
         {
@@ -94,7 +104,7 @@ export const TwoTrackPanels: Block = {
           required: true,
           admin: {
             description:
-              'The track lead-in, shown in capitals, e.g. "First, we build it." In the Contrast layout this is the reality line under the struck claim.',
+              'The track lead-in, shown in capitals, e.g. "First, we build it." In the Contrast layout this is the reality line under the struck claim. In the Compare layout it is the column heading; in the Bar layout it is the segment label (e.g. "hrs on design").',
           },
         },
         {
@@ -114,8 +124,9 @@ export const TwoTrackPanels: Block = {
           label: 'Show the title in the accent colour',
           defaultValue: false,
           admin: {
-            description: 'In the Equal layout this makes the big 01/02 numeral wine (use the accent phrase below to colour part of the title).',
-            condition: isVariant('equal', 'primary-secondary', 'doors'),
+            description:
+              'In the Equal layout this makes the big 01/02 numeral wine (use the accent phrase below to colour part of the title). In the Bar layout it makes this track the wine segment (the other stays light grey).',
+            condition: isVariant('equal', 'primary-secondary', 'doors', 'bar'),
           },
         },
         {
@@ -124,13 +135,13 @@ export const TwoTrackPanels: Block = {
           // Not `required: true`: that would make the DB column NOT NULL, and the Contrast
           // layout has no body. Required for the other two layouts via validate.
           validate: (value: string | null | undefined, { blockData }: { blockData?: { variant?: unknown } }) =>
-            blockData?.variant === 'contrast' || (typeof value === 'string' && value.trim() !== '')
+            blockData?.variant === 'contrast' || blockData?.variant === 'compare' || (typeof value === 'string' && value.trim() !== '')
               ? true
               : 'This field is required.',
           admin: {
             description:
-              'What this track is. Leave a blank line between paragraphs to start a new paragraph. Wrap a phrase in **double asterisks** to make it bold.',
-            condition: isVariant('equal', 'primary-secondary', 'doors'),
+              'What this track is. Leave a blank line between paragraphs to start a new paragraph. Wrap a phrase in **double asterisks** to make it bold. In the Bar layout this is the caption under the segment.',
+            condition: isVariant('equal', 'primary-secondary', 'doors', 'bar'),
           },
         },
         {
@@ -149,6 +160,19 @@ export const TwoTrackPanels: Block = {
           fields: [{ name: 'label', type: 'text', required: true, maxLength: 40 }],
         },
         {
+          name: 'share',
+          type: 'number',
+          label: 'Bar share',
+          min: 1,
+          max: 1000,
+          admin: {
+            step: 1,
+            description:
+              'Bar layout: this segment\'s weight. Segments are sized in proportion, e.g. 30 and 25 for "~30" and "~25" hours. Empty counts as 1.',
+            condition: isVariant('bar'),
+          },
+        },
+        {
           name: 'stats',
           type: 'array',
           label: 'Stats (3-across row)',
@@ -156,13 +180,23 @@ export const TwoTrackPanels: Block = {
           labels: { singular: 'Stat', plural: 'Stats' },
           admin: {
             components: { RowLabel: rowLabel(['value', 'label'], 'Stat') },
-            description: 'Up to three figures between hairlines, e.g. "55hrs" / "Hands-on, per build". Leave empty to hide the row.',
-            condition: isVariant('equal'),
+            description:
+              'Up to three figures between hairlines, e.g. "55hrs" / "Hands-on, per build". Leave empty to hide the row. In the Bar layout only the first figure is used: the big number in the segment (e.g. "~30"); its caption is the track title.',
+            condition: isVariant('equal', 'bar'),
             initCollapsed: true,
           },
           fields: [
             { name: 'value', type: 'text', required: true, maxLength: 12, admin: { description: 'The figure as it shows, e.g. "$7K", "3–4hrs".' } },
-            { name: 'label', type: 'text', required: true, maxLength: 48, admin: { description: 'Small caption under the figure.' } },
+            {
+              name: 'label',
+              type: 'text',
+              maxLength: 48,
+              // Not `required: true` (would be NOT NULL in the DB): the Bar layout takes its single caption
+              // from the track title, so it has no per-figure label. Required for Equal via validate.
+              validate: (value: string | null | undefined, { blockData }: { blockData?: { variant?: unknown } }) =>
+                blockData?.variant === 'bar' || (typeof value === 'string' && value.trim() !== '') ? true : 'This field is required.',
+              admin: { description: 'Small caption under the figure. Not used in the Bar layout (the track title is the label there).' },
+            },
             { name: 'accent', type: 'checkbox', label: 'Show the figure in wine', defaultValue: false },
           ],
         },
@@ -206,11 +240,51 @@ export const TwoTrackPanels: Block = {
       ],
     },
     {
+      name: 'rowsLabel',
+      type: 'text',
+      label: 'Table corner label',
+      defaultValue: 'Compare',
+      admin: {
+        description: 'Compare layout: the small uppercase heading of the first (row-label) column, e.g. "Compare".',
+        condition: isVariant('compare'),
+      },
+    },
+    {
+      name: 'rows',
+      type: 'array',
+      label: 'Table rows',
+      dbName: 'ttp_compare_rows',
+      minRows: 1,
+      maxRows: 10,
+      labels: { singular: 'Row', plural: 'Rows' },
+      admin: {
+        components: { RowLabel: rowLabel(['label'], 'Row') },
+        description: 'Compare layout: one row per thing compared. Drag to reorder.',
+        condition: isVariant('compare'),
+        initCollapsed: false,
+      },
+      fields: [
+        { name: 'label', type: 'text', required: true, maxLength: 60, admin: { description: 'The row heading, e.g. "You start from".' } },
+        {
+          name: 'first',
+          type: 'textarea',
+          required: true,
+          admin: { description: 'The cell under the FIRST track (the shaded column). Wrap a phrase in **double asterisks** for bold.' },
+        },
+        {
+          name: 'second',
+          type: 'textarea',
+          required: true,
+          admin: { description: 'The cell under the SECOND track. Wrap a phrase in **double asterisks** for bold.' },
+        },
+      ],
+    },
+    {
       name: 'conclusion',
       type: 'textarea',
       admin: {
-        description: 'Closing statement under the two tracks (Contrast and Primary / secondary layouts). Leave empty to hide.',
-        condition: isVariant('contrast', 'primary-secondary', 'doors'),
+        description: 'Closing statement under the two tracks or the table (Contrast, Primary / secondary, Doors and Compare layouts). Leave empty to hide.',
+        condition: isVariant('contrast', 'primary-secondary', 'doors', 'compare'),
       },
     },
   ],

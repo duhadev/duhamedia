@@ -1,10 +1,11 @@
 import config from '@payload-config'
 import { getPayload } from 'payload'
-import React from 'react'
+import React, { useId } from 'react'
 
 import type { BlockData } from '@/blocks/types'
 import { RichText } from '@/components/RichText'
 import { ArrowText, CMSLink, Container, Eyebrow, Section } from '@/components/ui'
+import { splitAccentPhrase } from '@/lib/accentPhrase'
 import type { Faq } from '@/payload-types'
 
 type AccordionFAQProps = BlockData<'accordionFAQ'> & {
@@ -90,23 +91,43 @@ export const faqJsonLdItems = (faqs: FaqItem[]) =>
     acceptedAnswer: { '@type': 'Answer' as const, text: plainText(f.answer) },
   }))
 
-/** One question row (shared by `mini` and `group`; markup unchanged from `mini`). */
-function FaqRow({ f, open }: { f: FaqItem; open: boolean }) {
+/**
+ * One question row (shared by `mini` and `group`; markup unchanged from `mini`).
+ * `name` joins the row to its list's exclusive group (native <details name>:
+ * opening one closes the others, no JS). Icon: + closed, – open, via CSS only.
+ */
+function FaqRow({ f, open, name }: { f: FaqItem; open: boolean; name: string }) {
   return (
-    <details open={open ? true : undefined} className="group border-t border-divider">
+    <details name={name} open={open ? true : undefined} className="group border-t border-divider">
       <summary className="-mx-3 flex min-h-target cursor-pointer list-none items-center justify-between gap-4 px-3 py-4.5 text-left text-[1.125rem] font-bold transition-colors duration-180 ease-out hover:bg-gray-light focus-visible:bg-gray-light [&::-webkit-details-marker]:hidden">
         {f.question}
-        <span
-          aria-hidden="true"
-          className="font-display text-[20px] leading-none transition-transform duration-180 ease-out group-open:rotate-45 group-open:text-accent-primary"
-        >
-          +
+        <span aria-hidden="true" className="w-5 shrink-0 text-center font-display text-[20px] leading-none group-open:text-accent-primary">
+          <span className="group-open:hidden">+</span>
+          <span className="hidden group-open:inline">–</span>
         </span>
       </summary>
       <div className="max-w-[62ch] pb-5 text-[1rem] leading-[1.6] font-medium [&_ol]:list-decimal [&_ol]:pl-5 [&_p+p]:mt-3 [&_ul]:list-disc [&_ul]:pl-5">
         <RichText data={f.answer} linkClassName="ix-rule no-underline" disableContainer />
       </div>
     </details>
+  )
+}
+
+/** Mini heading: the same h2 as before; with an `accentPhrase` that matches the heading, those words are wine. */
+function MiniHeading({ heading, accentPhrase }: { heading: string; accentPhrase?: string | null }) {
+  const parts = splitAccentPhrase(heading, accentPhrase)
+  return (
+    <h2 className="font-display text-[1.875rem] font-normal uppercase leading-[1.02] md:text-[2.25rem] md:leading-[1.05]">
+      {parts ? (
+        <>
+          {parts[0]}
+          <span className="text-ground-accent">{parts[1]}</span>
+          {parts[2]}
+        </>
+      ) : (
+        heading
+      )}
+    </h2>
   )
 }
 
@@ -125,6 +146,8 @@ const GROUP_SPACING = {
  * sticky category bar (~56px). Emits no JSON-LD (see `emitJsonLd`).
  */
 function GroupFaq({ heading, items, openFirst, allLink, anchorId, spacing, eyebrow, eyebrowTick }: Pick<AccordionFAQProps, 'heading' | 'openFirst' | 'allLink' | 'anchorId' | 'spacing' | 'eyebrow' | 'eyebrowTick'> & { items: Faq[] }) {
+  // One exclusive group per category section. useId is legal here: this component is synchronous.
+  const groupName = useId()
   return (
     <Section id={anchorId || undefined} tone="light" pad="none" className={`scroll-mt-31 md:scroll-mt-34 ${GROUP_SPACING[spacing ?? 'middle']}`}>
       <div className="mx-auto w-full max-w-205 px-container-mobile md:px-container">
@@ -136,7 +159,7 @@ function GroupFaq({ heading, items, openFirst, allLink, anchorId, spacing, eyebr
         <h2 className="mb-3.5 font-display text-h3-mobile font-normal uppercase md:mb-4 md:text-h3">{heading}</h2>
         <div>
           {items.map((f, i) => (
-            <FaqRow key={f.id} f={f} open={Boolean(openFirst) && i === 0} />
+            <FaqRow key={f.id} f={f} name={groupName} open={Boolean(openFirst) && i === 0} />
           ))}
         </div>
         <CMSLink link={allLink} className="mt-3 inline-flex min-h-target items-center text-[15px] font-bold no-underline md:mt-4">
@@ -157,7 +180,7 @@ function GroupFaq({ heading, items, openFirst, allLink, anchorId, spacing, eyebr
  * published question is available. Emits FAQPage JSON-LD for exactly the
  * rendered items.
  */
-export async function AccordionFAQBlock({ variant, layout, intro, eyebrow, eyebrowTick, heading, source, category, faqs, limit, openFirst, allLink, anchorId, spacing, emitJsonLd = true }: AccordionFAQProps) {
+export async function AccordionFAQBlock({ variant, layout, intro, eyebrow, eyebrowTick, heading, accentPhrase, source, category, faqs, limit, openFirst, allLink, anchorId, spacing, emitJsonLd = true }: AccordionFAQProps) {
   const items = await loadFaqs(source, faqs, category, variant === 'group' ? null : clampLimit(limit))
 
   if (items.length === 0) {
@@ -169,7 +192,7 @@ export async function AccordionFAQBlock({ variant, layout, intro, eyebrow, eyebr
     return <GroupFaq {...{ heading, items, openFirst, allLink, anchorId, spacing, eyebrow, eyebrowTick }} />
   }
 
-  return <AccordionFAQItemsView {...{ layout, intro, eyebrow, eyebrowTick, heading, items, openFirst, allLink, emitJsonLd }} />
+  return <AccordionFAQItemsView {...{ layout, intro, eyebrow, eyebrowTick, heading, accentPhrase, anchorId, items, openFirst, allLink, emitJsonLd }} />
 }
 
 /**
@@ -185,6 +208,8 @@ export function AccordionFAQItemsView({
   eyebrow,
   eyebrowTick,
   heading,
+  accentPhrase,
+  anchorId,
   items,
   openFirst,
   allLink,
@@ -195,11 +220,15 @@ export function AccordionFAQItemsView({
   eyebrow?: string | null
   eyebrowTick?: boolean | null
   heading?: string | null
+  accentPhrase?: string | null
+  anchorId?: string | null
   items: FaqItem[]
   openFirst?: boolean | null
   allLink?: AccordionFAQProps['allLink']
   emitJsonLd?: boolean
 }) {
+  // One exclusive group per list. useId is legal here: this component is synchronous.
+  const groupName = useId()
   if (items.length === 0) return null
   const jsonLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqJsonLdItems(items) }
   const ld = emitJsonLd ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }} /> : null
@@ -208,7 +237,7 @@ export function AccordionFAQItemsView({
     const hasLink = Boolean(allLink?.label?.trim())
     // One markup: on mobile the grid orders head, questions, link; from md the head and link share the left column.
     return (
-      <Section tone="light" divider="top">
+      <Section id={anchorId || undefined} tone="light" divider="top" className="scroll-mt-31 md:scroll-mt-34">
         <Container className="grid md:grid-cols-2 md:gap-x-14 md:[grid-template-rows:auto_1fr]">
           <div className="md:col-start-1 md:row-start-1">
             {eyebrow ? (
@@ -216,14 +245,12 @@ export function AccordionFAQItemsView({
                 {eyebrow}
               </Eyebrow>
             ) : null}
-            {heading ? (
-              <h2 className="font-display text-[1.875rem] font-normal uppercase leading-[1.02] md:text-[2.25rem] md:leading-[1.05]">{heading}</h2>
-            ) : null}
+            {heading ? <MiniHeading heading={heading} accentPhrase={accentPhrase} /> : null}
             {intro?.trim() ? <p className="mt-4 max-w-[44ch] whitespace-pre-line text-body-mobile text-gray-warm md:text-body">{intro}</p> : null}
           </div>
           <div className="mt-6 md:col-start-2 md:row-span-2 md:row-start-1 md:mt-0">
             {items.map((f, i) => (
-              <FaqRow key={f.id ?? i} f={f} open={Boolean(openFirst) && i === 0} />
+              <FaqRow key={f.id ?? i} f={f} name={groupName} open={Boolean(openFirst) && i === 0} />
             ))}
             <div className="border-t border-divider" />
           </div>
@@ -243,19 +270,17 @@ export function AccordionFAQItemsView({
   }
 
   return (
-    <Section tone="light">
+    <Section id={anchorId || undefined} tone="light" className="scroll-mt-31 md:scroll-mt-34">
       <div className="mx-auto w-full max-w-205 px-container-mobile md:px-container">
         {eyebrow ? (
           <Eyebrow tick={eyebrowTick !== false} className="mb-3">
             {eyebrow}
           </Eyebrow>
         ) : null}
-        {heading ? (
-          <h2 className="font-display text-[1.875rem] font-normal uppercase leading-[1.02] md:text-[2.25rem] md:leading-[1.05]">{heading}</h2>
-        ) : null}
+        {heading ? <MiniHeading heading={heading} accentPhrase={accentPhrase} /> : null}
         <div className={heading ? 'mt-5 md:mt-6' : undefined}>
           {items.map((f, i) => (
-            <FaqRow key={f.id ?? i} f={f} open={Boolean(openFirst) && i === 0} />
+            <FaqRow key={f.id ?? i} f={f} name={groupName} open={Boolean(openFirst) && i === 0} />
           ))}
         </div>
         <CMSLink link={allLink} className="mt-3 inline-flex min-h-target items-center text-[15px] font-bold no-underline md:mt-4">

@@ -103,7 +103,11 @@ export const Hero: Block = {
       description: 'The page headline (the only h1 on the page). Shown in capitals.',
       accent: (_data, siblingData) => {
         const variant = (siblingData?.variant as string | undefined) ?? 'typographic'
-        return variant === 'service' || variant === 'article' || (variant === 'typographic' && siblingData?.accentLine === true)
+        return (
+          variant === 'service' ||
+          variant === 'article' ||
+          (variant === 'typographic' && (siblingData?.accentLine === true || siblingData?.accentWine === true))
+        )
       },
     }),
     {
@@ -114,6 +118,17 @@ export const Hero: Block = {
       admin: {
         description:
           'Puts the accent phrase (below the headline) in wine on its own line at every screen width, e.g. "We build it." then "Then we grow it." Only for the typographic layout.',
+        condition: forVariants('typographic'),
+      },
+    },
+    {
+      name: 'accentWine',
+      type: 'checkbox',
+      label: 'Accent in wine, inline',
+      defaultValue: false,
+      admin: {
+        description:
+          'Shows the accent phrase (below the headline) in wine inside the headline, without moving it to its own line, e.g. "Your custom Shopify store." with "Shopify store." in wine. Only for the typographic layout.',
         condition: forVariants('typographic'),
       },
     },
@@ -358,9 +373,9 @@ export const Hero: Block = {
       admin: {
         components: { RowLabel: rowLabel(['label'], 'Crumb') },
         description:
-          'The trail above the headline, e.g. Services / Shopify theme development / Phase 01. The LAST crumb is the current page and never links. Leave a middle crumb without a destination to show it as plain text.',
+          'The trail above the headline, e.g. Services / Shopify theme development. On the typographic layout it is a small grey line above the label. The LAST crumb is the current page and never links. Leave a middle crumb without a destination to show it as plain text.',
         initCollapsed: false,
-        condition: forVariants('service', 'article'),
+        condition: forVariants('typographic', 'service', 'article'),
       },
       fields: [
         { name: 'label', type: 'text', required: true, admin: { description: 'The crumb text.' } },
@@ -407,6 +422,42 @@ export const Hero: Block = {
             { name: 'label', type: 'text', required: true, admin: { width: '60%', description: 'What it measures.' } },
           ],
         },
+      ],
+    },
+    {
+      name: 'glance',
+      type: 'group',
+      label: 'At-a-glance card',
+      admin: {
+        description:
+          'A card beside the headline on desktop (under the buttons on a phone), e.g. "The build at a glance": up to five label / value rows and a grey footer line. When filled it replaces the key figures. Leave the rows empty to hide the card.',
+        condition: forVariants('typographic'),
+      },
+      fields: [
+        { name: 'title', type: 'text', label: 'Card title', admin: { description: 'Small grey uppercase line at the top, also read by screen readers as the card name.' } },
+        {
+          name: 'rows',
+          type: 'array',
+          label: 'Rows',
+          maxRows: 5,
+          labels: { singular: 'Row', plural: 'Rows' },
+          admin: {
+            components: { RowLabel: rowLabel(['label', 'value'], 'Row') },
+            description: 'Bold label on the left, large value on the right. Add, remove and drag to reorder.',
+            initCollapsed: false,
+          },
+          fields: [
+            {
+              type: 'row',
+              fields: [
+                { name: 'label', type: 'text', required: true, admin: { width: '45%', description: 'e.g. "First call to launch".' } },
+                { name: 'value', type: 'text', required: true, admin: { width: '35%', description: 'The large value, e.g. "~5wks".' } },
+                { name: 'accent', type: 'checkbox', label: 'Wine', defaultValue: false, admin: { width: '20%', description: 'Show this value in wine.' } },
+              ],
+            },
+          ],
+        },
+        { name: 'footer', type: 'text', label: 'Footer line', admin: { description: 'Quiet line on the grey band at the bottom of the card, e.g. "No templates. Yours from launch day." Leave empty to hide the band.' } },
       ],
     },
     {

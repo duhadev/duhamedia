@@ -1,5 +1,6 @@
-import type { Block, TextFieldSingleValidation } from 'payload'
+import type { Block } from 'payload'
 
+import { anchorIdField } from '../../fields/anchorId'
 import { eyebrowField, headlineFields, linkField } from '../../fields'
 import { rowLabel } from '../../components/admin/rowLabel'
 
@@ -20,15 +21,23 @@ export const PricingPlans: Block = {
   interfaceName: 'PricingPlansBlock',
   labels: { singular: 'Pricing plans', plural: 'Pricing plans' },
   fields: [
-    {
-      name: 'anchorId',
-      type: 'text',
-      label: 'Section link name',
+    anchorIdField({
       defaultValue: 'pricing',
+      description: 'Lets other pages link straight to this section, e.g. "pricing" → /services#pricing. Lowercase letters, numbers and single hyphens. Must be unique on the page.',
+    }),
+    {
+      name: 'layout',
+      type: 'select',
+      defaultValue: 'overview',
+      options: [
+        { label: 'Overview (build box and marketing plans side by side, with terms)', value: 'overview' },
+        { label: 'Build (headline left, build box with price rows right)', value: 'build' },
+        { label: 'Plans (full-width marketing plans box, terms left, statement and button right)', value: 'plans' },
+      ],
       admin: {
-        description: 'Lets other pages link straight to this section, e.g. "pricing" → /services#pricing. Letters, numbers and dashes only.',
+        description:
+          'Overview is the /services pricing section. Build shows only the build box (and the headline beside it). Plans shows only the marketing plans box, then the terms and closing statement.',
       },
-      validate: ((v) => !v || /^[a-z0-9-]+$/.test(String(v)) || 'Use lowercase letters, numbers and dashes only.') as TextFieldSingleValidation,
     },
     eyebrowField({ defaultTick: true, description: 'Small uppercase line above the headline, e.g. "Pricing".' }),
     ...headlineFields({ required: false, description: 'e.g. "Two jobs. Two ways to pay."' }),
@@ -53,6 +62,28 @@ export const PricingPlans: Block = {
           labels: { singular: 'Bullet', plural: 'Bullets' },
           admin: { components: { RowLabel: rowLabel(['text'], 'Bullet') }, description: 'Add, remove and drag to reorder.' },
           fields: [{ name: 'text', type: 'textarea', required: true, admin: { rows: 2 } }],
+        },
+        {
+          name: 'rows',
+          type: 'array',
+          dbName: 'pp_build_rows',
+          maxRows: 6,
+          labels: { singular: 'Price row', plural: 'Price rows' },
+          admin: {
+            components: { RowLabel: rowLabel(['label', 'value'], 'Price row') },
+            description:
+              'Optional label / value lines under the price, e.g. "Scratch build" / "From $7K". The optional link shows after the value, e.g. "Optional," + a "separate plans" link. Add, remove and drag to reorder.',
+          },
+          fields: [
+            {
+              type: 'row',
+              fields: [
+                { name: 'label', type: 'text', required: true, admin: { width: '50%', description: 'Left side, e.g. "Revision".' } },
+                { name: 'value', type: 'text', required: true, admin: { width: '50%', description: 'Right side, bold, e.g. "Priced on the call".' } },
+              ],
+            },
+            linkField({ name: 'link', label: 'Link after the value', description: 'Optional. Shown right after the value text, e.g. "separate plans" to /services/marketing.' }),
+          ],
         },
         { name: 'nextLabel', type: 'text', label: 'Next step caption', admin: { description: 'e.g. "Next step".' } },
         linkField({ name: 'nextLink', label: 'Next step link', description: 'e.g. "Book a call to talk through your build." to /book-a-call.' }),

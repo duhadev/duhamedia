@@ -1,6 +1,7 @@
-import type { Block, Condition, TextFieldSingleValidation } from 'payload'
+import type { Block, Condition } from 'payload'
 
 import { eyebrowField, headlineFields, linkField } from '../../fields'
+import { anchorIdField } from '../../fields/anchorId'
 import { rowLabel } from '../../components/admin/rowLabel'
 
 /**
@@ -15,6 +16,13 @@ import { rowLabel } from '../../components/admin/rowLabel'
  *   a short tag; sign-off steps carry a diamond on phones.
  * - `engine-rollout` (S4, p6 Marketing "Engine rollout"): ink band, one row of
  *   numbered steps with timing tags.
+ * - `detail` (service pages, Build "The six steps"): a hairline strip (phase-0
+ *   steps), a schedule line, then numbered rows with sign-off line and a
+ *   You / You get list.
+ * - `cells` (Marketing "How a month runs"): grey band, a hairline grid of cells.
+ * - `ruled` (Marketing "Your first two quarters"): white band, a ruled row.
+ * - `flow` (Marketing "Ads first, then the numbers decide"): grey panels with
+ *   arrows into an outcomes column.
  * Each variant shows only its own fields (`admin.condition`).
  *
  * Binding rule (CLAUDE.md, SCHEMA §8.3): the LAST phase/step (the independence
@@ -22,7 +30,7 @@ import { rowLabel } from '../../components/admin/rowLabel'
  * field to turn that off.
  */
 
-type Variant = 'accordion' | 'arc' | 'steps' | 'build-run' | 'engine-rollout' | 'grid'
+type Variant = 'accordion' | 'arc' | 'steps' | 'build-run' | 'engine-rollout' | 'grid' | 'detail' | 'cells' | 'ruled' | 'flow'
 
 /** Admin condition: show the field only for the listed variants. */
 const onlyFor =
@@ -54,6 +62,10 @@ export const PhaseTimeline: Block = {
         { label: 'Build run (dark band of numbered steps, sign-offs marked)', value: 'build-run' },
         { label: 'Marketing rollout (dark band, one row of steps with timings)', value: 'engine-rollout' },
         { label: 'Grid (numbered cells in rows of four under phase bars, as the brochure)', value: 'grid' },
+        { label: 'Detail rows (hairline strip, then numbered rows with "You" and "You get")', value: 'detail' },
+        { label: 'Cells (grey band, a hairline grid of short cells)', value: 'cells' },
+        { label: 'Ruled row (white band, a ruled row of short steps)', value: 'ruled' },
+        { label: 'Flow (two panels with arrows into an outcomes column)', value: 'flow' },
       ],
       admin: {
         isClearable: false,
@@ -75,32 +87,23 @@ export const PhaseTimeline: Block = {
         description: 'One row: from 1280px wide the steps sit side by side, each phase bar spanning its steps. Narrower screens use the stacked layout. One row also shows the closing line and link below.',
       },
     },
-    {
-      name: 'anchorId',
-      type: 'text',
-      label: 'Section link name',
-      admin: {
-        condition: onlyFor('grid'),
-        description: 'Lets other pages link straight to this section, e.g. "process" → /services#process. Letters, numbers and dashes only. Optional.',
-      },
-      validate: ((v) => !v || /^[a-z0-9-]+$/.test(String(v)) || 'Use lowercase letters, numbers and dashes only.') as TextFieldSingleValidation,
-    },
+    anchorIdField({ condition: onlyFor('grid', 'detail', 'cells', 'ruled', 'flow') }),
     {
       ...eyebrowField({
         defaultTick: false,
         description: 'Small uppercase line above the headline, e.g. "How it runs".',
       }),
-      admin: { condition: onlyFor('accordion', 'build-run', 'engine-rollout', 'grid') },
+      admin: { condition: onlyFor('accordion', 'build-run', 'engine-rollout', 'grid', 'detail', 'cells', 'ruled', 'flow') },
     },
     // Accent shows in wine on every layout except Accordion (ink on ink there).
     ...headlineFields({
       description: 'The section headline, e.g. "Your project, start to finish."',
-      accent: onlyFor('arc', 'steps', 'build-run', 'engine-rollout', 'grid'),
+      accent: onlyFor('arc', 'steps', 'build-run', 'engine-rollout', 'grid', 'detail', 'cells', 'ruled', 'flow'),
     }),
     {
       name: 'intro',
       type: 'textarea',
-      admin: { condition: onlyFor('accordion', 'grid'), description: 'Optional short paragraph under the headline.' },
+      admin: { condition: onlyFor('accordion', 'grid', 'detail', 'cells', 'ruled', 'flow'), description: 'Optional short paragraph under the headline (Cells: beside it).' },
     },
     {
       name: 'phases',
@@ -176,9 +179,9 @@ export const PhaseTimeline: Block = {
       admin: {
         components: { RowLabel: rowLabel(['number', 'title'], 'Step') },
         initCollapsed: true,
-        condition: onlyFor('accordion', 'steps', 'build-run', 'engine-rollout', 'grid'),
+        condition: onlyFor('accordion', 'steps', 'build-run', 'engine-rollout', 'grid', 'detail', 'cells', 'ruled', 'flow'),
         description:
-          'In order. Grid: four per row on wide screens, each under its phase bar. Accordion: each step sits under the phase you pick; the first starts open. Step cards: three or four fit side by side. Build run: three per row. Marketing rollout: one row (six fit). The LAST step always shows at full weight.',
+          'In order. Detail: "0" steps form the strip, the rest are the rows. Cells: four fit across. Ruled: four fit across. Flow: phase 1 = the panels, phase 2 = the outcomes column. Grid: four per row on wide screens, each under its phase bar. Accordion: each step sits under the phase you pick; the first starts open. Step cards: three or four fit side by side. Build run: three per row. Marketing rollout: one row (six fit). The LAST step always shows at full weight.',
       },
       fields: [
         {
@@ -204,7 +207,7 @@ export const PhaseTimeline: Block = {
               required: true,
               defaultValue: '1',
               options: [
-                { label: '0 — before the phases (grid only)', value: '0' },
+                { label: '0 — before the phases (grid and detail rows: the strip)', value: '0' },
                 { label: 'Phase 1 (first phase)', value: '1' },
                 { label: 'Phase 2 (second phase)', value: '2' },
                 { label: 'Phase 3 (third phase)', value: '3' },
@@ -212,8 +215,9 @@ export const PhaseTimeline: Block = {
               admin: {
                 width: '30%',
                 isClearable: false,
-                condition: onlyFor('accordion', 'grid'),
-                description: 'Which phase bar this step sits under. "0" (grid only) puts the step in the strip above the first phase bar.',
+                condition: onlyFor('accordion', 'grid', 'detail', 'flow'),
+                description:
+                  'Which phase bar this step sits under. "0" (grid and detail) puts the step in the strip above. Flow: 1 = a panel, 2 = an outcome.',
               },
             },
           ],
@@ -234,9 +238,9 @@ export const PhaseTimeline: Block = {
               type: 'text',
               admin: {
                 width: '70%',
-                condition: onlyFor('steps', 'build-run', 'engine-rollout', 'grid'),
+                condition: onlyFor('steps', 'build-run', 'engine-rollout', 'grid', 'detail', 'cells', 'ruled', 'flow'),
                 description:
-                  'Short label, e.g. a timing ("Week one") or "Your sign-off". Grid: the small grey label over a phase-0 step ("Day 0"). Step cards: the boxed tag. Build run / Marketing rollout: the line under the title on computers.',
+                  'Short label, e.g. a timing ("Week one") or "Your sign-off". Detail: the micro label over a strip step, and the bold sign-off line under a row (when "Client sign-off step" is on). Cells: after the number, e.g. "With you". Ruled / Flow: the small caps label. Grid: the small grey label over a phase-0 step ("Day 0"). Step cards: the boxed tag. Build run / Marketing rollout: the line under the title on computers.',
               },
             },
             {
@@ -246,8 +250,36 @@ export const PhaseTimeline: Block = {
               defaultValue: false,
               admin: {
                 width: '30%',
-                condition: onlyFor('build-run'),
-                description: 'Marks a step the client approves: on phones it shows the tag with a diamond.',
+                condition: onlyFor('build-run', 'detail'),
+                description: 'Marks a step the client approves. Build run: on phones it shows the tag with a diamond. Detail: the tag shows as a bold line under the text.',
+              },
+            },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'you',
+              type: 'text',
+              label: 'You',
+              admin: { width: '40%', condition: onlyFor('detail'), description: 'What the client does in this step.' },
+            },
+            {
+              name: 'youGet',
+              type: 'text',
+              label: 'You get',
+              admin: { width: '40%', condition: onlyFor('detail'), description: 'What the client has at the end of this step.' },
+            },
+            {
+              name: 'accent',
+              type: 'checkbox',
+              label: 'Highlight in wine',
+              defaultValue: false,
+              admin: {
+                width: '20%',
+                condition: onlyFor('detail', 'cells'),
+                description: 'Detail: the numeral turns wine. Cells: the label turns wine. Use on one step only.',
               },
             },
           ],
@@ -272,7 +304,7 @@ export const PhaseTimeline: Block = {
       type: 'text',
       label: 'Closing line',
       admin: {
-        condition: onlyFor('accordion', 'steps', 'build-run', 'engine-rollout', 'grid'),
+        condition: onlyFor('accordion', 'steps', 'build-run', 'engine-rollout', 'grid', 'detail', 'cells', 'ruled', 'flow'),
         description: 'Optional quiet line under the timeline, e.g. "Then Phase 02, if the numbers say it fits."',
       },
     },
@@ -285,6 +317,20 @@ export const PhaseTimeline: Block = {
         condition: onlyFor('steps'),
         description: 'Small uppercase label above the bullets at the foot of each card. Leave empty to use "You leave with".',
       },
+    },
+    {
+      name: 'youLabel',
+      type: 'text',
+      label: '"You" label',
+      defaultValue: 'You',
+      admin: { condition: onlyFor('detail'), description: 'Small caps label over what the client does. Leave empty to use "You".' },
+    },
+    {
+      name: 'youGetLabel',
+      type: 'text',
+      label: '"You get" label',
+      defaultValue: 'You get',
+      admin: { condition: onlyFor('detail'), description: 'Small caps label over what the client has afterwards. Leave empty to use "You get".' },
     },
     {
       name: 'swipeHint',

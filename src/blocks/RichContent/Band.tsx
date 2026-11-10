@@ -2,7 +2,8 @@ import type { JSXConvertersFunction } from '@payloadcms/richtext-lexical/react'
 import React from 'react'
 
 import { RichText } from '@/components/RichText'
-import { AccentHeadline, ButtonLink, Eyebrow, resolveLinkHref, Section } from '@/components/ui'
+import { AccentHeadline, ButtonLink, Container, Eyebrow, resolveLinkHref, Section } from '@/components/ui'
+import { splitAccentPhrase } from '@/lib/accentPhrase'
 import { cx } from '@/lib/cx'
 
 import type { RichContentProps } from './Component'
@@ -104,7 +105,66 @@ function FactsStrip({ facts }: { facts: Fact[] }) {
  * `framed`: everything sits in the 2px ink "How we do it" box of the article
  * body (DERIVED for p14 "How Duha does it" — flag). Server component.
  */
-export function RichContentBand({
+export function RichContentBand(props: RichContentProps) {
+  if (props.bandLayout === 'split') return <SplitBand {...props} />
+  return <StackedBand {...props} />
+}
+
+/**
+ * `bandLayout: split` (service pages 2026-11-09, Build.dc.html "Then we grow it" / Marketing.dc.html
+ * "No store yet? First, we build it."): a slim next-step band at full SITE width (not the 820px reading
+ * column). Text block on the left (muted eyebrow, 28px/36px display heading with the accent phrase in WINE,
+ * prose capped at 60ch), the ghost button on the right (under the text, full width, on phones). The grey
+ * ground carries a top hairline. The facts strip, price note and `framed` box are not part of this layout.
+ * Server component.
+ */
+function SplitBand({ eyebrow, heading, accentPhrase, body, link, tone }: RichContentProps) {
+  const hasBody = Array.isArray(body?.root?.children) && body.root.children.length > 0
+  const title = heading?.trim()
+  const hasLink = Boolean(resolveLinkHref(link) && link?.label?.trim())
+  if (!hasBody && !title && !eyebrow?.trim()) {
+    console.warn('[RichContent band] block has no content; rendering nothing')
+    return null
+  }
+  const parts = title ? splitAccentPhrase(title, accentPhrase) : null
+  return (
+    <Section tone={tone === 'light' ? 'light' : 'grey'} pad="none" divider="top" className="py-12 md:py-14">
+      <Container>
+        <div className="grid items-center gap-6 md:grid-cols-[minmax(0,1fr)_auto] md:gap-8">
+          <div className="min-w-0">
+            {eyebrow?.trim() ? <Eyebrow muted>{eyebrow}</Eyebrow> : null}
+            {title ? (
+              <h2
+                className={cx(
+                  'font-display text-h3 font-normal uppercase leading-[1.05] tracking-headline text-pretty md:text-[2.25rem]',
+                  eyebrow?.trim() && 'mt-2.5',
+                )}
+              >
+                {parts ? (
+                  <>
+                    {parts[0]}
+                    <span className="text-ground-accent">{parts[1]}</span>
+                    {parts[2]}
+                  </>
+                ) : (
+                  title
+                )}
+              </h2>
+            ) : null}
+            {hasBody ? (
+              <div className={cx('max-w-[60ch]', eyebrow?.trim() || title ? 'mt-3' : undefined)}>
+                <BandProse data={body} compact={false} hasTitle={Boolean(title)} />
+              </div>
+            ) : null}
+          </div>
+          {hasLink ? <ButtonLink link={link} variant="ghost" size="md" className="w-full md:w-auto" /> : null}
+        </div>
+      </Container>
+    </Section>
+  )
+}
+
+function StackedBand({
   eyebrow,
   heading,
   accentPhrase,

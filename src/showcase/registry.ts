@@ -12,6 +12,7 @@ import * as SVC from '@/lib/servicesCopy'
 const noType = <T extends { blockType: string }>({ blockType: _b, ...rest }: T): Omit<T, 'blockType'> => rest
 
 import { homeBEntries } from './homeB'
+import { servicePagesEntries } from './servicePages'
 import { customLink, figure, h, hr, internalLink, p, quote, root, text, ul } from './lexical'
 
 /**
@@ -3177,4 +3178,5 @@ export const showcaseEntries: ShowcaseEntry[] = [
     },
   },
   ...homeBEntries,
+  ...servicePagesEntries,
 ]

@@ -22,7 +22,17 @@ type CaseStudyCardsData = BlockData<'caseStudyCards'>
  */
 export type CurrentStudy = Pick<CaseStudy, 'id'> & Partial<Pick<CaseStudy, 'studyNumber' | 'publishedAt'>>
 
-type CaseStudyCardsProps = CaseStudyCardsData & { currentStudy?: CurrentStudy | null }
+type CaseStudyCardsProps = CaseStudyCardsData & {
+  currentStudy?: CurrentStudy | null
+}
+
+/**
+ * `spacing: tight` = 64px above / 40px below from `md` (Build.dc.html "The work, up close"; Marketing proof
+ * slot), phones keep the 56px default. Returns the Section `pad` + `className` pair; `default` returns the
+ * caller's own pad so every existing render is byte-identical.
+ */
+const tightPad = (props: CaseStudyCardsProps, pad: 'default' | 'tight'): { pad: 'default' | 'tight' | 'none'; className?: string } =>
+  props.spacing === 'tight' ? { pad: 'none', className: 'py-section-mobile md:pt-16 md:pb-10' } : { pad }
 
 const clampLimit = (n: number | null | undefined): number => Math.min(3, Math.max(1, Math.round(n ?? 3)))
 const clampPageSize = (n: number | null | undefined): number => Math.min(24, Math.max(1, Math.round(n ?? 6)))
@@ -175,7 +185,7 @@ async function StudyCards(props: CaseStudyCardsProps) {
     const single = studies.length === 1
     const linkLabel = cardLinkLabel?.trim() || 'Read the case study'
     return (
-      <Section tone={tone}>
+      <Section tone={tone} {...tightPad(props, 'default')}>
         <Container>
           {eyebrow ? (
             <Eyebrow tick={eyebrowTick !== false} className="mb-4.5">
@@ -185,7 +195,13 @@ async function StudyCards(props: CaseStudyCardsProps) {
           {heading ? <AccentHeadline text={heading} accent={accentPhrase} level="section" /> : null}
           {single ? (
             <div className={heading || eyebrow ? 'pt-7 md:pt-10' : undefined}>
-              <StudyPreview study={studies[0]} size="row" linkLabel={linkLabel} headingAs={heading ? 'h3' : 'h2'} />
+              <StudyPreview
+                study={studies[0]}
+                size="row"
+                linkLabel={linkLabel}
+                headingAs={heading ? 'h3' : 'h2'}
+                factsAlign={props.centerFacts === true ? 'center' : 'start'}
+              />
             </div>
           ) : (
             <ul
@@ -197,7 +213,13 @@ async function StudyCards(props: CaseStudyCardsProps) {
             >
               {studies.map((study) => (
                 <li key={study.id}>
-                  <StudyPreview study={study} size="card" linkLabel={linkLabel} headingAs={heading ? 'h3' : 'h2'} />
+                  <StudyPreview
+                    study={study}
+                    size="card"
+                    linkLabel={linkLabel}
+                    headingAs={heading ? 'h3' : 'h2'}
+                    factsAlign={props.centerFacts === true ? 'center' : 'start'}
+                  />
                 </li>
               ))}
             </ul>
@@ -555,7 +577,7 @@ function Fallback(props: CaseStudyCardsProps) {
   const showLedger = mode === 'ledger' && metrics.length > 0
 
   return (
-    <Section tone={tone}>
+    <Section tone={tone} {...tightPad(props, 'default')}>
       <Container>
         <div className={cx('grid grid-cols-1 items-start gap-6', showLedger && 'md:grid-cols-2 md:gap-16')}>
           <div>
@@ -620,19 +642,12 @@ function Fallback(props: CaseStudyCardsProps) {
 type Tone = NonNullable<CaseStudyCardsData['tone']>
 
 /** p5 Shopify Theme Development.dc.html "Proof" `csFallback` (desktop + mobile builds), without the study card. */
-function TestimonialsFallback({
-  tone,
-  quotes,
-  fallbackEyebrow,
-  fallbackHeading,
-  fallbackAccentPhrase,
-  fallbackBody,
-  pricingNote,
-}: CaseStudyCardsProps & { tone: Tone; quotes: Testimonial[] }) {
+function TestimonialsFallback(props: CaseStudyCardsProps & { tone: Tone; quotes: Testimonial[] }) {
+  const { tone, quotes, fallbackEyebrow, fallbackHeading, fallbackAccentPhrase, fallbackBody, pricingNote } = props
   const cols = quotes.length === 1 ? '' : quotes.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-3'
   const note = pricingNote?.trim()
   return (
-    <Section tone={tone} pad="tight">
+    <Section tone={tone} {...tightPad(props, 'tight')}>
       <Container>
         {fallbackHeading ? (
           <AccentHeadline
@@ -729,19 +744,12 @@ function QuoteCard({ t }: { t: Testimonial }) {
  * visible. FLAG: MetricEvent `strip` (SCHEMA §8.2 item 7) is the shared strip
  * component; it is being built in parallel and is not composable yet.
  */
-function MetricStripFallback({
-  tone,
-  fallbackEyebrow,
-  fallbackHeading,
-  fallbackAccentPhrase,
-  fallbackBody,
-  fallbackMetrics,
-  pricingNote,
-}: CaseStudyCardsProps & { tone: Tone }) {
+function MetricStripFallback(props: CaseStudyCardsProps & { tone: Tone }) {
+  const { tone, fallbackEyebrow, fallbackHeading, fallbackAccentPhrase, fallbackBody, fallbackMetrics, pricingNote } = props
   const metrics = (fallbackMetrics ?? []).slice(0, 3)
   const note = pricingNote?.trim()
   return (
-    <Section tone={tone} pad="tight">
+    <Section tone={tone} {...tightPad(props, 'tight')}>
       <Container>
         {fallbackEyebrow ? <Eyebrow muted>{fallbackEyebrow}</Eyebrow> : null}
         {fallbackHeading ? (
@@ -845,7 +853,7 @@ async function LogoStripFallback({ tone, ...props }: CaseStudyCardsProps & { ton
   if (clients.length === 0) return <Fallback {...props} tone={tone} fallbackMode="note" />
   const note = pricingNote?.trim()
   return (
-    <Section tone={tone} pad="tight">
+    <Section tone={tone} {...tightPad(props, 'tight')}>
       <Container>
         {fallbackEyebrow ? <Eyebrow muted>{fallbackEyebrow}</Eyebrow> : null}
         {fallbackHeading ? (

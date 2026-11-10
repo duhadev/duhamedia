@@ -6,6 +6,9 @@ import { cx } from '@/lib/cx'
 
 import { AccordionSteps, type TrackGroup } from './AccordionSteps'
 import { ArcPhases } from './ArcPhases'
+import { PhaseCells } from './PhaseCells'
+import { PhaseDetail } from './PhaseDetail'
+import { PhaseFlow } from './PhaseFlow'
 import { PhaseGrid } from './PhaseGrid'
 import { StepCards } from './StepCards'
 import { StepRun } from './StepRun'
@@ -32,6 +35,13 @@ export function PhaseTimelineBlock(props: PhaseTimelineProps) {
       return <StepCards {...props} />
     case 'grid':
       return <PhaseGrid {...props} />
+    case 'detail':
+      return <PhaseDetail {...props} />
+    case 'cells':
+    case 'ruled':
+      return <PhaseCells {...props} />
+    case 'flow':
+      return <PhaseFlow {...props} />
     case 'build-run':
     case 'engine-rollout':
       return <StepRun {...props} />

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useId } from 'react'
 
 import type { BlockData } from '@/blocks/types'
 import { Caption, SquareBullet } from '@/components/BrochureParts'
@@ -36,38 +36,52 @@ function Figure({ value, unit }: { value: string; unit?: string | null }) {
 
 /**
  * PricingPlans (brochure p5, services redesign A 2026-11-09). Server component.
+ * Layouts: `overview` (today), `build` (headline + build box with price rows), `plans` (full-width wine plans box, terms, statement).
  * Build box (2px ink) and Grow box (2px wine) side by side from `lg`.
  * Plans are ONE semantic <table>: a real table from `md`; below that the same
  * markup is restyled with CSS into one grey card per plan (4px ink top bar,
  * 16px apart), the column headers hidden and re-created from `data-label`.
  * Terms are native <details>, closed by default.
  */
-export function PricingPlansBlock({ anchorId, eyebrow, eyebrowTick, heading, accentPhrase, intro, build, marketing, statement, statementAccent, terms }: Props) {
+export function PricingPlansBlock({ anchorId, layout, eyebrow, eyebrowTick, heading, accentPhrase, intro, build, marketing, statement, statementAccent, terms }: Props) {
+  const isBuild = layout === 'build'
+  const isPlans = layout === 'plans'
   const bullets = (build?.bullets ?? []).filter((b) => has(b?.text))
+  const buildRows = (build?.rows ?? []).filter((r) => has(r?.label) && has(r?.value))
   const plans = (marketing?.plans ?? []).filter((p) => has(p?.name))
   const termRows = (terms ?? []).filter((t) => has(t?.label) && has(t?.body))
   const firstLabel = marketing?.firstLabel?.trim() || 'First quarter'
   const afterLabel = marketing?.afterLabel?.trim() || 'After that'
   const nextOk = resolveLinkHref(build?.nextLink) && has(build?.nextLink?.label)
   const mktOk = resolveLinkHref(marketing?.nextLink) && has(marketing?.nextLink?.label)
+  // One exclusive group for the Terms (native <details name>). useId is legal here: this component is synchronous.
+  const termsName = useId()
 
-  return (
-    <Section id={anchorId || undefined} tone="light" pad="none" className="scroll-mt-31 py-12 md:scroll-mt-34 md:py-24">
-      <Container>
-        {has(eyebrow) || has(heading) ? (
-          <div className="border-b-2 border-ink pb-6 md:pb-8">
-            {has(eyebrow) ? <Eyebrow tick={eyebrowTick === true}>{eyebrow}</Eyebrow> : null}
-            {has(heading) ? <AccentHeadline text={heading} accent={accentPhrase} accentColor="ground" level="section" className={cx(has(eyebrow) && 'mt-4')} /> : null}
-            {has(intro) ? <p className="mt-3 max-w-[64ch] text-body-mobile text-gray-warm md:text-body">{intro}</p> : null}
-          </div>
-        ) : null}
-
-        <div className="mt-8 grid items-start gap-12 md:mt-10 lg:grid-cols-2">
-          {has(build?.price) ? (
-            <div className="flex flex-col border-2 border-ink p-5.5 md:p-7">
+  const buildBox = has(build?.price) ? (
+    <div className={cx('flex min-w-0 flex-col border-2 border-ink p-5.5', isBuild ? 'md:p-9' : 'md:p-7')}>
               {has(build?.label) ? <Caption className="text-ink">{build.label}</Caption> : null}
               {has(build?.lead) ? <p className="mt-3 text-[1rem]">{build.lead}</p> : null}
-              <p className="mt-1 font-display text-[3rem] leading-none md:text-[4rem]">{build.price}</p>
+              <p className={cx('mt-1 font-display leading-none', isBuild ? 'text-[4rem] md:text-[6rem]' : 'text-[3rem] md:text-[4rem]')}>{build.price}</p>
+              {buildRows.length ? (
+                <ul className="mt-7 border-t border-divider md:mt-7">
+                  {buildRows.map((r, i) => (
+                    <li key={r.id ?? i} className="flex flex-wrap justify-between gap-x-4 gap-y-1 border-b border-divider py-3.5 last:border-b-0">
+                      <span>{r.label}</span>
+                      <b className="font-bold">
+                        {r.value}
+                        {resolveLinkHref(r.link) && has(r.link?.label) ? (
+                          <>
+                            {' '}
+                            <CMSLink link={r.link} className="-my-2.5 inline-flex min-h-target items-center font-bold no-underline">
+                              <span className="ix-rule">{r.link?.label}</span>
+                            </CMSLink>
+                          </>
+                        ) : null}
+                      </b>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
               {bullets.length ? (
                 <ul className="mt-6 flex flex-col gap-2.5 text-[1rem] leading-[1.55]">
                   {bullets.map((b, i) => (
@@ -81,16 +95,16 @@ export function PricingPlansBlock({ anchorId, eyebrow, eyebrowTick, heading, acc
               {nextOk ? (
                 <div className="mt-6">
                   {has(build?.nextLabel) ? <Caption className="mb-2">{build.nextLabel}</Caption> : null}
-                  <CMSLink link={build?.nextLink} className={buttonClasses({ variant: 'dark', className: 'max-md:flex max-md:w-full' })}>
+                  <CMSLink link={build?.nextLink} className={buttonClasses({ variant: 'dark', className: 'max-md:flex max-md:w-full max-md:whitespace-normal! max-md:py-3 max-md:text-center max-md:leading-tight' })}>
                     {build?.nextLink?.label}
                   </CMSLink>
                 </div>
               ) : null}
             </div>
-          ) : null}
+  ) : null
 
-          {plans.length ? (
-            <div className="border-2 border-ground-accent p-5.5 md:p-7">
+  const plansBox = plans.length ? (
+    <div className="min-w-0 border-2 border-ground-accent p-5.5 md:p-7">
               {has(marketing?.label) ? <Caption className="text-ground-accent">{marketing.label}</Caption> : null}
               {has(marketing?.intro) ? <p className="mt-3 text-[1rem]">{marketing.intro}</p> : null}
               <table role="table" className="mt-5 w-full border-collapse text-[0.9375rem] leading-[1.5] max-md:block">
@@ -163,16 +177,97 @@ export function PricingPlansBlock({ anchorId, eyebrow, eyebrowTick, heading, acc
                   <InlineBold text={marketing.threshold} />
                 </p>
               ) : null}
-              {mktOk ? (
-                <CMSLink link={marketing?.nextLink} className={buttonClasses({ variant: 'ghost', className: 'mt-6 max-md:mt-2 max-md:flex max-md:w-full' })}>
+              {!isPlans && mktOk ? (
+                <CMSLink link={marketing?.nextLink} className={buttonClasses({ variant: 'ghost', className: 'mt-6 max-md:mt-2 max-md:flex max-md:w-full max-md:whitespace-normal! max-md:py-3 max-md:text-center max-md:leading-tight' })}>
                   {marketing?.nextLink?.label}
                 </CMSLink>
               ) : null}
-              {has(marketing?.finePrint) ? (
+              {!isPlans && has(marketing?.finePrint) ? (
                 <p className="mt-4 whitespace-pre-line text-[0.8125rem] leading-[1.5] text-gray-warm">{marketing.finePrint}</p>
               ) : null}
             </div>
+  ) : null
+
+  const headBlock = (
+    <>
+      {has(eyebrow) ? <Eyebrow tick={eyebrowTick === true}>{eyebrow}</Eyebrow> : null}
+      {has(heading) ? <AccentHeadline text={heading} accent={accentPhrase} accentColor="ground" level="section" className={cx(has(eyebrow) && 'mt-4')} /> : null}
+      {has(intro) ? <p className={cx('max-w-[64ch] text-body-mobile text-gray-warm md:text-body', isBuild || isPlans ? 'mt-5 md:mt-6' : 'mt-3')}>{intro}</p> : null}
+    </>
+  )
+  const hasHead = has(eyebrow) || has(heading)
+
+  const termsEl = termRows.length ? (
+    <div className={isPlans ? undefined : cx(has(statement) ? 'mt-7 md:mt-8' : 'mt-12')}>
+      {termRows.map((t, i) => (
+        <details key={t.id ?? i} name={termsName} className="group border-t border-divider last:border-b">
+          <summary className="flex min-h-target cursor-pointer list-none items-center justify-between gap-4 py-2 text-left font-bold [&::-webkit-details-marker]:hidden">
+            {t.label}
+            <span aria-hidden="true" className="w-5 shrink-0 text-center font-display text-[20px] leading-none group-open:text-accent-primary">
+              <span className="group-open:hidden">+</span>
+              <span className="hidden group-open:inline">–</span>
+            </span>
+          </summary>
+          <p className="pt-1 pb-4 text-[0.9375rem] leading-[1.6] md:text-[1rem]">{t.body}</p>
+        </details>
+      ))}
+    </div>
+  ) : null
+
+  const sectionClass = 'scroll-mt-31 py-12 md:scroll-mt-34 md:py-24'
+
+  if (isBuild) {
+    return (
+      <Section id={anchorId || undefined} tone="light" pad="none" className={sectionClass}>
+        <Container className="grid grid-cols-1 items-center gap-8 md:gap-10 lg:grid-cols-2 lg:gap-14">
+          {hasHead ? <div>{headBlock}</div> : null}
+          {buildBox}
+        </Container>
+      </Section>
+    )
+  }
+
+  if (isPlans) {
+    return (
+      <Section id={anchorId || undefined} tone="light" pad="none" className={sectionClass}>
+        <Container>
+          {hasHead ? <div>{headBlock}</div> : null}
+          {plansBox ? <div className={cx(hasHead && 'mt-8 md:mt-12')}>{plansBox}</div> : null}
+          {has(marketing?.finePrint) ? (
+            <p className="mt-4 max-w-[90ch] whitespace-pre-line text-[0.875rem] leading-[1.5] text-gray-warm">{marketing.finePrint}</p>
           ) : null}
+          {termRows.length || has(statement) || mktOk ? (
+            <div className="mt-10 grid grid-cols-1 items-start gap-8 md:gap-12 lg:grid-cols-2">
+              {termsEl}
+              {has(statement) || mktOk ? (
+                <div>
+                  {has(statement) ? (
+                    <p className="font-display text-[1.25rem] leading-[1.15] md:text-[1.625rem]">
+                      <Statement text={statement} accent={statementAccent} />
+                    </p>
+                  ) : null}
+                  {mktOk ? (
+                    <CMSLink link={marketing?.nextLink} className={buttonClasses({ variant: 'ghost', className: cx(has(statement) && 'mt-7', 'max-md:flex max-md:w-full max-md:whitespace-normal! max-md:py-3 max-md:text-center max-md:leading-tight') })}>
+                      {marketing?.nextLink?.label}
+                    </CMSLink>
+                  ) : null}
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+        </Container>
+      </Section>
+    )
+  }
+
+  return (
+    <Section id={anchorId || undefined} tone="light" pad="none" className={sectionClass}>
+      <Container>
+        {hasHead ? <div className="border-b-2 border-ink pb-6 md:pb-8">{headBlock}</div> : null}
+
+        <div className="mt-8 grid grid-cols-1 items-start gap-12 md:mt-10 lg:grid-cols-2">
+          {buildBox}
+          {plansBox}
         </div>
 
         {has(statement) ? (
@@ -181,21 +276,7 @@ export function PricingPlansBlock({ anchorId, eyebrow, eyebrowTick, heading, acc
           </p>
         ) : null}
 
-        {termRows.length ? (
-          <div className={cx(has(statement) ? 'mt-7 md:mt-8' : 'mt-12')}>
-            {termRows.map((t, i) => (
-              <details key={t.id ?? i} className="group border-t border-divider last:border-b">
-                <summary className="flex min-h-target cursor-pointer list-none items-center justify-between gap-4 py-2 text-left font-bold [&::-webkit-details-marker]:hidden">
-                  {t.label}
-                  <span aria-hidden="true" className="font-display text-[20px] leading-none transition-transform duration-180 ease-out group-open:rotate-45 group-open:text-accent-primary">
-                    +
-                  </span>
-                </summary>
-                <p className="pt-1 pb-4 text-[0.9375rem] leading-[1.6] md:text-[1rem]">{t.body}</p>
-              </details>
-            ))}
-          </div>
-        ) : null}
+        {termsEl}
       </Container>
     </Section>
   )

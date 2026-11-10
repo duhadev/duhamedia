@@ -91,8 +91,8 @@ const headingFields = (): Field[] =>
     description:
       'Article and grey band: optional heading above the text. Legal document: the document title (required; it is the page title, e.g. "Privacy Policy").',
     // Article and band render the accent in --accent-primary = ink (same as the
-    // heading); legal ignores it. Hidden on every variant.
-    accent: false,
+    // heading); legal ignores it. Only the split band recolours it (wine).
+    accent: (_data, siblingData) => siblingData?.variant === 'band' && siblingData?.bandLayout === 'split',
   }).map((f): Field => {
     if (!('name' in f) || f.name !== 'heading' || f.type !== 'text') return f
     const validate: TextFieldSingleValidation = (value, options) => {
@@ -257,10 +257,26 @@ export const RichContent: Block = {
           defaultValue: false,
           admin: {
             width: '50%',
-            description: 'The black-outlined "How we do it" box. Usually with the White background.',
+            description: 'The black-outlined "How we do it" box. Usually with the White background. Not used by the Split layout.',
           },
         },
       ],
+    },
+    {
+      name: 'bandLayout',
+      type: 'select',
+      label: 'Band layout',
+      defaultValue: 'stacked',
+      options: [
+        { label: 'Stacked (reading column, button under the text)', value: 'stacked' },
+        { label: 'Split (full site width: text left, button right; heading accent in wine)', value: 'split' },
+      ],
+      admin: {
+        isClearable: false,
+        condition: forVariants('band'),
+        description:
+          'Split is the slim "next step" band: text on the left, a ghost button on the right (under the text on phones). It ignores the facts strip and the box, and shows the heading accent in wine.',
+      },
     },
     {
       name: 'callout',

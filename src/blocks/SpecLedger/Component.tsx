@@ -466,6 +466,68 @@ function ToolsGrid({ props, items }: { props: SpecLedgerData; items: Item[] }) {
   )
 }
 
+/** Runs of items under one `groupLabel`; an empty label continues the group above. */
+function groupCatalog(items: Item[]): { label: string; items: Item[] }[] {
+  const groups: { label: string; items: Item[] }[] = []
+  for (const item of items) {
+    const label = item.groupLabel?.trim() ?? ''
+    const last = groups[groups.length - 1]
+    if (last && (!label || label === last.label)) last.items.push(item)
+    else groups.push({ label, items: [item] })
+  }
+  return groups
+}
+
+/**
+ * `tools` layout `catalog` (service pages 2026-11-09 "The toolkit"): the grid's head (eyebrow, wine
+ * accent headline, note beside it), then one hairline grid of tool cards per `groupLabel`. Cards are
+ * cream with a 1px divider border; neighbours overlap by 1px so each shared edge is one hairline and
+ * a short last row leaves no grey track behind it.
+ */
+function ToolsCatalog({ props, items }: { props: SpecLedgerData; items: Item[] }) {
+  const { eyebrow, eyebrowTick, heading, accentPhrase, note, footnote, anchorId } = props
+  const groups = groupCatalog(items)
+  return (
+    <Section
+      tone={props.tone === 'grey' ? 'grey' : 'light'}
+      pad="none"
+      id={hasText(anchorId) ? anchorId : undefined}
+      className={cx('border-t border-divider py-14 md:py-24', hasText(anchorId) && 'scroll-mt-31 md:scroll-mt-34')}
+    >
+      <Container>
+        <div className="flex flex-col gap-4 lg:grid lg:grid-cols-2 lg:items-end lg:gap-12">
+          <div className="min-w-0">
+            {hasText(eyebrow) ? (
+              <Eyebrow tick={eyebrowTick === true} className="text-ink">
+                {eyebrow}
+              </Eyebrow>
+            ) : null}
+            {hasText(heading) ? (
+              <AccentHeadline text={heading} accent={accentPhrase} accentColor="ground" level={2} as="h2" className={cx(hasText(eyebrow) && 'mt-4')} />
+            ) : null}
+          </div>
+          {hasText(note) ? <p className="m-0 text-body-mobile text-gray-warm md:text-body">{note}</p> : null}
+        </div>
+        {groups.map((g, gi) => (
+          <div key={gi} className={gi === 0 ? 'mt-10 md:mt-14' : 'mt-10'}>
+            {hasText(g.label) ? <h3 className="m-0 mb-3.5 text-[0.6875rem] font-bold uppercase tracking-[0.12em] text-gray-warm">{g.label}</h3> : null}
+            <ul className="m-0 grid list-none grid-cols-1 p-0 pb-px pr-px sm:grid-cols-[repeat(auto-fill,minmax(260px,1fr))]">
+              {g.items.map((item, i) => (
+                <li key={item.id ?? i} className="-mb-px -mr-px flex flex-col items-start gap-2.5 border border-divider bg-cream p-5 md:p-6">
+                  <TileMark item={item} size="size-7" />
+                  <strong className="text-[0.9375rem] font-bold leading-tight md:text-[1rem]">{item.title}</strong>
+                  {hasText(item.line) ? <span className="text-[0.875rem] leading-[1.5] text-gray-warm">{item.line}</span> : null}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+        {hasText(footnote) ? <p className="m-0 mt-4 text-[0.8125rem] leading-[1.5] text-gray-warm">{footnote}</p> : null}
+      </Container>
+    </Section>
+  )
+}
+
 /**
  * `tools` (brochure 2026-11-07 p4 "Preferred tools"): diamond heading, one
  * line under it, then a ruled row of tools, each a logo (built-in pick or an
@@ -514,6 +576,7 @@ export function SpecLedgerBlock(props: SpecLedgerData) {
     return null
   }
   if (variant === 'list') return items.length === 0 ? null : <ListVariant props={props} items={items} />
+  if (variant === 'tools' && props.toolsLayout === 'catalog') return items.length === 0 ? null : <ToolsCatalog props={props} items={items} />
   if (variant === 'tools') return items.length === 0 ? null : props.toolsLayout === 'grid' ? <ToolsGrid props={props} items={items} /> : props.toolsLayout === 'tiles' ? <ToolsTiles props={props} items={items} /> : <ToolsVariant props={props} items={items} />
   if (items.length === 0 && !hasText(heading) && !hasText(eyebrow)) return null
 

@@ -52,11 +52,45 @@ export function deriveCategoryTabs(layout: unknown[]): CategoryTab[] {
 }
 
 /**
- * CategoryTabs (p11 §Category nav). Server component: validates and renders
- * the links; only the scroll-spy lives in the client island. Without JS the
- * links are plain in-page anchors.
+ * CategoryTabs. Server component: validates and renders the links; only the
+ * scroll-spy lives in the client island. Without JS the links are plain
+ * in-page anchors.
+ *
+ * `faq` (default, p11): tabs derived from the page's FAQ groups.
+ * `jump` (service pages): hand-written `links`. RenderBlocks passes
+ * `pageAnchors` (every section anchorId in the layout); a link whose target is
+ * missing is dropped with a warning. Without `pageAnchors` (the showcase renders
+ * one block at a time) links are not filtered.
  */
-export async function CategoryTabsBlock({ ariaLabel, tabs }: CategoryTabsData & { tabs?: CategoryTab[] }) {
+export async function CategoryTabsBlock({
+  ariaLabel,
+  tabs,
+  variant,
+  label,
+  links,
+  pageAnchors,
+}: CategoryTabsData & { tabs?: CategoryTab[]; pageAnchors?: string[] }) {
+  if (variant === 'jump') {
+    const known = pageAnchors ? new Set(pageAnchors) : null
+    const seen = new Set<string>()
+    const jump: CategoryTab[] = []
+    for (const l of links ?? []) {
+      const text = l?.label?.trim()
+      const id = l?.anchorId?.trim()
+      if (!text || !id || seen.has(id)) continue
+      if (known && !known.has(id)) {
+        console.warn(`[CategoryTabs] jump link "${text}" targets "#${id}", which no section on this page defines; link dropped.`)
+        continue
+      }
+      seen.add(id)
+      jump.push({ label: text, anchorId: id })
+    }
+    if (jump.length === 0) {
+      console.warn('[CategoryTabs] jump variant has no usable links; rendering nothing.')
+      return null
+    }
+    return <CategoryTabsNav variant="jump" label={label?.trim() || undefined} ariaLabel={ariaLabel || 'On this page'} tabs={jump} />
+  }
   const candidates = (tabs ?? []).filter((t) => t && t.label && t.anchorId)
   // A group with no published questions renders nothing, so its tab would be dead.
   const live = await Promise.all(
@@ -67,5 +101,5 @@ export async function CategoryTabsBlock({ ariaLabel, tabs }: CategoryTabsData & 
     console.warn('[CategoryTabs] no tabs: the page has no AccordionFAQ "group" blocks with an anchorId; rendering nothing.')
     return null
   }
-  return <CategoryTabsNav ariaLabel={ariaLabel || 'Categories'} tabs={valid} />
+  return <CategoryTabsNav variant="faq" ariaLabel={ariaLabel || 'Categories'} tabs={valid} />
 }

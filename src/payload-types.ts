@@ -320,6 +320,10 @@ export interface HeroBlock {
    */
   accentLine?: boolean | null;
   /**
+   * Shows the accent phrase (below the headline) in wine inside the headline, without moving it to its own line, e.g. "Your custom Shopify store." with "Shopify store." in wine. Only for the typographic layout.
+   */
+  accentWine?: boolean | null;
+  /**
    * Dark pill under the headline, e.g. "$X.XM client revenue tracked".
    */
   badge?: {
@@ -453,7 +457,7 @@ export interface HeroBlock {
    */
   formNote?: string | null;
   /**
-   * The trail above the headline, e.g. Services / Shopify theme development / Phase 01. The LAST crumb is the current page and never links. Leave a middle crumb without a destination to show it as plain text.
+   * The trail above the headline, e.g. Services / Shopify theme development. On the typographic layout it is a small grey line above the label. The LAST crumb is the current page and never links. Leave a middle crumb without a destination to show it as plain text.
    */
   breadcrumb?:
     | {
@@ -504,6 +508,39 @@ export interface HeroBlock {
         id?: string | null;
       }[]
     | null;
+  /**
+   * A card beside the headline on desktop (under the buttons on a phone), e.g. "The build at a glance": up to five label / value rows and a grey footer line. When filled it replaces the key figures. Leave the rows empty to hide the card.
+   */
+  glance?: {
+    /**
+     * Small grey uppercase line at the top, also read by screen readers as the card name.
+     */
+    title?: string | null;
+    /**
+     * Bold label on the left, large value on the right. Add, remove and drag to reorder.
+     */
+    rows?:
+      | {
+          /**
+           * e.g. "First call to launch".
+           */
+          label: string;
+          /**
+           * The large value, e.g. "~5wks".
+           */
+          value: string;
+          /**
+           * Show this value in wine.
+           */
+          accent?: boolean | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Quiet line on the grey band at the bottom of the card, e.g. "No templates. Yours from launch day." Leave empty to hide the band.
+     */
+    footer?: string | null;
+  };
   /**
    * A compact three-step strip under the buttons, e.g. 01 Build your store / 02 Grow your store / 03 You own it. The last step is always shown at full weight.
    */
@@ -2040,6 +2077,14 @@ export interface CaseStudyCardsBlock {
    */
   tone?: ('light' | 'grey') | null;
   /**
+   * Space above and below the section, live and fallback. Phones always use the default.
+   */
+  spacing?: ('default' | 'tight') | null;
+  /**
+   * Show the labelled facts under a study as equal, centred columns instead of left-aligned. Applies to the Cards layout.
+   */
+  centerFacts?: boolean | null;
+  /**
    * Small uppercase line above the headline (shown only when studies are live).
    */
   eyebrow?: string | null;
@@ -2621,9 +2666,13 @@ export interface TestimonialRowBlock {
  */
 export interface TwoTrackPanelsBlock {
   /**
-   * The panel layout. Equal = two paragraphs; Contrast = two "sold to you as" cards; Primary / secondary = a lead option plus a quieter alternative.
+   * The panel layout. Equal = two paragraphs; Contrast = two "sold to you as" cards; Primary / secondary = a lead option plus a quieter alternative; Compare = a table comparing the two tracks row by row; Bar = a proportional two-part bar (e.g. where the hours go).
    */
-  variant: 'equal' | 'contrast' | 'primary-secondary' | 'doors';
+  variant: 'equal' | 'contrast' | 'primary-secondary' | 'doors' | 'compare' | 'bar';
+  /**
+   * Lets other pages and the "Jump to" bar link straight to this section, e.g. "start" → /services/shopify-theme-development#start. Lowercase letters, numbers and single hyphens. Must be unique on the page. Optional.
+   */
+  anchorId?: string | null;
   /**
    * Optional small uppercase line above the headline.
    */
@@ -2641,7 +2690,7 @@ export interface TwoTrackPanelsBlock {
    */
   accentPhrase?: string | null;
   /**
-   * Short lede shown on the right of the headline (Equal layout only). Leave empty to hide.
+   * Short lede shown on the right of the headline (Equal, Compare and Bar layouts). Leave empty to hide.
    */
   intro?: string | null;
   /**
@@ -2650,7 +2699,7 @@ export interface TwoTrackPanelsBlock {
   panels?:
     | {
         /**
-         * Optional small uppercase tag above the track, e.g. "Phase 1". In the Contrast layout this is the small label above the struck claim (e.g. "Sold to you as").
+         * Optional small uppercase tag above the track, e.g. "Phase 1". In the Contrast layout this is the small label above the struck claim (e.g. "Sold to you as"). In the Compare layout it is the small line under the column title (e.g. "The default").
          */
         label?: string | null;
         /**
@@ -2658,7 +2707,7 @@ export interface TwoTrackPanelsBlock {
          */
         claim?: string | null;
         /**
-         * The track lead-in, shown in capitals, e.g. "First, we build it." In the Contrast layout this is the reality line under the struck claim.
+         * The track lead-in, shown in capitals, e.g. "First, we build it." In the Contrast layout this is the reality line under the struck claim. In the Compare layout it is the column heading; in the Bar layout it is the segment label (e.g. "hrs on design").
          */
         title: string;
         /**
@@ -2666,11 +2715,11 @@ export interface TwoTrackPanelsBlock {
          */
         accentPhrase?: string | null;
         /**
-         * In the Equal layout this makes the big 01/02 numeral wine (use the accent phrase below to colour part of the title).
+         * In the Equal layout this makes the big 01/02 numeral wine (use the accent phrase below to colour part of the title). In the Bar layout it makes this track the wine segment (the other stays light grey).
          */
         accentTitle?: boolean | null;
         /**
-         * What this track is. Leave a blank line between paragraphs to start a new paragraph. Wrap a phrase in **double asterisks** to make it bold.
+         * What this track is. Leave a blank line between paragraphs to start a new paragraph. Wrap a phrase in **double asterisks** to make it bold. In the Bar layout this is the caption under the segment.
          */
         body?: string | null;
         /**
@@ -2683,7 +2732,11 @@ export interface TwoTrackPanelsBlock {
             }[]
           | null;
         /**
-         * Up to three figures between hairlines, e.g. "55hrs" / "Hands-on, per build". Leave empty to hide the row.
+         * Bar layout: this segment's weight. Segments are sized in proportion, e.g. 30 and 25 for "~30" and "~25" hours. Empty counts as 1.
+         */
+        share?: number | null;
+        /**
+         * Up to three figures between hairlines, e.g. "55hrs" / "Hands-on, per build". Leave empty to hide the row. In the Bar layout only the first figure is used: the big number in the segment (e.g. "~30"); its caption is the track title.
          */
         stats?:
           | {
@@ -2692,9 +2745,9 @@ export interface TwoTrackPanelsBlock {
                */
               value: string;
               /**
-               * Small caption under the figure.
+               * Small caption under the figure. Not used in the Bar layout (the track title is the label there).
                */
-              label: string;
+              label?: string | null;
               accent?: boolean | null;
               id?: string | null;
             }[]
@@ -2752,7 +2805,31 @@ export interface TwoTrackPanelsBlock {
       }[]
     | null;
   /**
-   * Closing statement under the two tracks (Contrast and Primary / secondary layouts). Leave empty to hide.
+   * Compare layout: the small uppercase heading of the first (row-label) column, e.g. "Compare".
+   */
+  rowsLabel?: string | null;
+  /**
+   * Compare layout: one row per thing compared. Drag to reorder.
+   */
+  rows?:
+    | {
+        /**
+         * The row heading, e.g. "You start from".
+         */
+        label: string;
+        /**
+         * The cell under the FIRST track (the shaded column). Wrap a phrase in **double asterisks** for bold.
+         */
+        first: string;
+        /**
+         * The cell under the SECOND track. Wrap a phrase in **double asterisks** for bold.
+         */
+        second: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Closing statement under the two tracks or the table (Contrast, Primary / secondary, Doors and Compare layouts). Leave empty to hide.
    */
   conclusion?: string | null;
   id?: string | null;
@@ -2767,13 +2844,14 @@ export interface PhaseTimelineBlock {
   /**
    * The timeline layout. Each layout shows only the fields it uses.
    */
-  variant: 'accordion' | 'arc' | 'steps' | 'build-run' | 'engine-rollout' | 'grid';
+  variant:
+    'accordion' | 'arc' | 'steps' | 'build-run' | 'engine-rollout' | 'grid' | 'detail' | 'cells' | 'ruled' | 'flow';
   /**
    * One row: from 1280px wide the steps sit side by side, each phase bar spanning its steps. Narrower screens use the stacked layout. One row also shows the closing line and link below.
    */
   gridLayout?: ('stacked' | 'row') | null;
   /**
-   * Lets other pages link straight to this section, e.g. "process" → /services#process. Letters, numbers and dashes only. Optional.
+   * Lets other pages link straight to this section, e.g. "pricing" → /services#pricing. Lowercase letters, numbers and single hyphens. Must be unique on the page. Optional.
    */
   anchorId?: string | null;
   /**
@@ -2793,7 +2871,7 @@ export interface PhaseTimelineBlock {
    */
   accentPhrase?: string | null;
   /**
-   * Optional short paragraph under the headline.
+   * Optional short paragraph under the headline (Cells: beside it).
    */
   intro?: string | null;
   /**
@@ -2850,7 +2928,7 @@ export interface PhaseTimelineBlock {
       }[]
     | null;
   /**
-   * In order. Grid: four per row on wide screens, each under its phase bar. Accordion: each step sits under the phase you pick; the first starts open. Step cards: three or four fit side by side. Build run: three per row. Marketing rollout: one row (six fit). The LAST step always shows at full weight.
+   * In order. Detail: "0" steps form the strip, the rest are the rows. Cells: four fit across. Ruled: four fit across. Flow: phase 1 = the panels, phase 2 = the outcomes column. Grid: four per row on wide screens, each under its phase bar. Accordion: each step sits under the phase you pick; the first starts open. Step cards: three or four fit side by side. Build run: three per row. Marketing rollout: one row (six fit). The LAST step always shows at full weight.
    */
   steps?:
     | {
@@ -2863,7 +2941,7 @@ export interface PhaseTimelineBlock {
          */
         title: string;
         /**
-         * Which phase bar this step sits under. "0" (grid only) puts the step in the strip above the first phase bar.
+         * Which phase bar this step sits under. "0" (grid and detail) puts the step in the strip above. Flow: 1 = a panel, 2 = an outcome.
          */
         phase?: ('0' | '1' | '2' | '3') | null;
         /**
@@ -2871,13 +2949,25 @@ export interface PhaseTimelineBlock {
          */
         detail?: string | null;
         /**
-         * Short label, e.g. a timing ("Week one") or "Your sign-off". Grid: the small grey label over a phase-0 step ("Day 0"). Step cards: the boxed tag. Build run / Marketing rollout: the line under the title on computers.
+         * Short label, e.g. a timing ("Week one") or "Your sign-off". Detail: the micro label over a strip step, and the bold sign-off line under a row (when "Client sign-off step" is on). Cells: after the number, e.g. "With you". Ruled / Flow: the small caps label. Grid: the small grey label over a phase-0 step ("Day 0"). Step cards: the boxed tag. Build run / Marketing rollout: the line under the title on computers.
          */
         tag?: string | null;
         /**
-         * Marks a step the client approves: on phones it shows the tag with a diamond.
+         * Marks a step the client approves. Build run: on phones it shows the tag with a diamond. Detail: the tag shows as a bold line under the text.
          */
         isSignOff?: boolean | null;
+        /**
+         * What the client does in this step.
+         */
+        you?: string | null;
+        /**
+         * What the client has at the end of this step.
+         */
+        youGet?: string | null;
+        /**
+         * Detail: the numeral turns wine. Cells: the label turns wine. Use on one step only.
+         */
+        accent?: boolean | null;
         /**
          * Bullets under "You leave with" at the foot of the card. One short line each.
          */
@@ -2898,6 +2988,14 @@ export interface PhaseTimelineBlock {
    * Small uppercase label above the bullets at the foot of each card. Leave empty to use "You leave with".
    */
   outcomesLabel?: string | null;
+  /**
+   * Small caps label over what the client does. Leave empty to use "You".
+   */
+  youLabel?: string | null;
+  /**
+   * Small caps label over what the client has afterwards. Leave empty to use "You get".
+   */
+  youGetLabel?: string | null;
   /**
    * Small hint above the swipe row on phones. Leave empty to use "Swipe →".
    */
@@ -3164,9 +3262,13 @@ export interface RichContentBlock {
   };
   tone?: ('grey' | 'light') | null;
   /**
-   * The black-outlined "How we do it" box. Usually with the White background.
+   * The black-outlined "How we do it" box. Usually with the White background. Not used by the Split layout.
    */
   framed?: boolean | null;
+  /**
+   * Split is the slim "next step" band: text on the left, a ghost button on the right (under the text on phones). It ignores the facts strip and the box, and shows the heading accent in wine.
+   */
+  bandLayout?: ('stacked' | 'split') | null;
   /**
    * Optional black-outlined box at the end of the text (e.g. "How we do it" with a link). Leave everything empty for no box.
    */
@@ -3229,7 +3331,7 @@ export interface SpecLedgerBlock {
   /**
    * Tiles show the heading as a small grey caption. Grid shows it as a big headline with the side note beside it.
    */
-  toolsLayout?: ('row' | 'tiles' | 'grid') | null;
+  toolsLayout?: ('row' | 'tiles' | 'grid' | 'catalog') | null;
   /**
    * Automatic: grey for template cards and signal flow, white for the others.
    */
@@ -3251,7 +3353,11 @@ export interface SpecLedgerBlock {
    */
   accentPhrase?: string | null;
   /**
-   * Short grey line beside the caption (under the cards on mobile), e.g. "Four templates carry almost every order." Tools row: the line under the heading, e.g. "A small, proven stack." Tools grid: the lede beside the headline.
+   * Tools layouts: lets the "Jump to" bar and other pages link straight to this section, e.g. "toolkit" → /services/marketing#toolkit. Lowercase letters, numbers and single hyphens. Must be unique on the page. Optional.
+   */
+  anchorId?: string | null;
+  /**
+   * Short grey line beside the caption (under the cards on mobile), e.g. "Four templates carry almost every order." Tools row: the line under the heading, e.g. "A small, proven stack." Tools grid and catalog: the lede beside the headline.
    */
   note?: string | null;
   /**
@@ -3267,6 +3373,10 @@ export interface SpecLedgerBlock {
          * The item name, e.g. "Custom theme". Shown in capitals. In the check list it is the bullet sentence, shown as written.
          */
         title: string;
+        /**
+         * Catalog only: a new label starts a new group (a small grey title over its own grid of cards), e.g. "Paid ads". Items with the same label as the one above stay in that group; leave empty to continue the group above.
+         */
+        groupLabel?: string | null;
         /**
          * Tools tiles: what the tool is for, e.g. "Paid ads". The short line beside the title (rows), under the picture (template cards), or under the title (feature cards). Not used by signal flow tiles.
          */
@@ -3405,11 +3515,11 @@ export interface SpecLedgerBlock {
  */
 export interface ServiceSheetBlock {
   /**
-   * Page body is what the two service pages use. Section adds the head row used on /services.
+   * Page body is what the old service pages used. Section adds the head row used on /services. Fit, Deliverables and Duties are the service pages from 2026-11-09 (Who it's for, What you get, Who does what).
    */
-  presentation?: ('page' | 'section') | null;
+  presentation?: ('page' | 'section' | 'fit' | 'deliverables' | 'duties') | null;
   /**
-   * Small uppercase line above the heading, e.g. "Service 01 · Build your store".
+   * Small uppercase line above the heading, e.g. "Who it's for" or "Service 01 · Build your store".
    */
   eyebrow?: string | null;
   /**
@@ -3417,7 +3527,7 @@ export interface ServiceSheetBlock {
    */
   eyebrowTick?: boolean | null;
   /**
-   * The section headline, e.g. "First, we build it."
+   * The section headline, e.g. "Built for a proven product."
    */
   heading?: string | null;
   /**
@@ -3436,13 +3546,17 @@ export interface ServiceSheetBlock {
    * Draws the rule and the big number in wine instead of ink.
    */
   accent?: boolean | null;
+  /**
+   * Lets the "Jump to" bar and other pages link straight to this section, e.g. "fit" → /services/marketing#fit. Lowercase letters, numbers and single hyphens. Must be unique on the page. Optional.
+   */
+  anchorId?: string | null;
   why?: {
     /**
      * Section title with the diamond, e.g. "Why it matters".
      */
     heading?: string | null;
     /**
-     * The paragraphs. Leave a blank line between paragraphs. Wrap words in **double stars** to make them bold, e.g. the closing line.
+     * The paragraphs. Leave a blank line between paragraphs. Wrap words in **double stars** to make them bold, e.g. the closing line. Duties: the one paragraph under the heading.
      */
     body?: string | null;
   };
@@ -3485,9 +3599,16 @@ export interface ServiceSheetBlock {
      * Small caption at the top of the box.
      */
     label?: string | null;
+    /**
+     * Deliverables: the bold line in the grey panel.
+     */
     body?: string | null;
     /**
-     * Optional link at the end of the box, e.g. "See pricing".
+     * Fit and Deliverables: the quiet line under a hairline in the grey card/panel, e.g. "No store yet? {link}." Write {link} where the link below should appear; without it the link goes at the end.
+     */
+    note?: string | null;
+    /**
+     * Optional link at the end of the box (or where {link} sits in the note), e.g. "See pricing".
      */
     link: {
       type: 'internal' | 'custom';
@@ -3562,9 +3683,13 @@ export interface ServiceSheetBlock {
     groups?:
       | {
           /**
-           * e.g. "Strategy and design".
+           * e.g. "Strategy and design", "Right for you if", "You".
            */
           title: string;
+          /**
+           * Fit and Duties only: the square before each bullet. The other layouts keep the small wine square.
+           */
+          marker?: ('wine' | 'ink' | 'outlined') | null;
           items?:
             | {
                 /**
@@ -3608,9 +3733,13 @@ export interface ServiceSheetBlock {
  */
 export interface PricingPlansBlock {
   /**
-   * Lets other pages link straight to this section, e.g. "pricing" → /services#pricing. Letters, numbers and dashes only.
+   * Lets other pages link straight to this section, e.g. "pricing" → /services#pricing. Lowercase letters, numbers and single hyphens. Must be unique on the page.
    */
   anchorId?: string | null;
+  /**
+   * Overview is the /services pricing section. Build shows only the build box (and the headline beside it). Plans shows only the marketing plans box, then the terms and closing statement.
+   */
+  layout?: ('overview' | 'build' | 'plans') | null;
   /**
    * Small uppercase line above the headline, e.g. "Pricing".
    */
@@ -3650,6 +3779,51 @@ export interface PricingPlansBlock {
     bullets?:
       | {
           text: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Optional label / value lines under the price, e.g. "Scratch build" / "From $7K". The optional link shows after the value, e.g. "Optional," + a "separate plans" link. Add, remove and drag to reorder.
+     */
+    rows?:
+      | {
+          /**
+           * Left side, e.g. "Revision".
+           */
+          label: string;
+          /**
+           * Right side, bold, e.g. "Priced on the call".
+           */
+          value: string;
+          /**
+           * Optional. Shown right after the value text, e.g. "separate plans" to /services/marketing.
+           */
+          link: {
+            type: 'internal' | 'custom';
+            newTab?: boolean | null;
+            reference?:
+              | ({
+                  relationTo: 'pages';
+                  value: number | Page;
+                } | null)
+              | ({
+                  relationTo: 'case-studies';
+                  value: number | CaseStudy;
+                } | null)
+              | ({
+                  relationTo: 'posts';
+                  value: number | Post;
+                } | null)
+              | ({
+                  relationTo: 'lead-magnets';
+                  value: number | LeadMagnet;
+                } | null);
+            /**
+             * https://…, mailto:…, or a site path like /book-a-call.
+             */
+            url?: string | null;
+            label?: string | null;
+          };
           id?: string | null;
         }[]
       | null;
@@ -4247,7 +4421,7 @@ export interface AccordionFAQBlock {
    */
   variant: 'mini' | 'group';
   /**
-   * Group only. The jump-link target for the category tabs, lowercase, e.g. "pricing", "builds", "marketing", "process". Must match what the tabs link to.
+   * The jump-link target for this section, lowercase, e.g. "faq" or (Group) "pricing", "builds", "marketing", "process". For a Group it must match what the category tabs link to. Optional on a Mini list.
    */
   anchorId?: string | null;
   /**
@@ -4270,6 +4444,10 @@ export interface AccordionFAQBlock {
    * Section heading, e.g. "Routing questions". Shown in capitals.
    */
   heading: string;
+  /**
+   * Optional: one word or phrase copied from the headline to show in the accent colour.
+   */
+  accentPhrase?: string | null;
   /**
    * Split layout only. A short grey lede under the heading.
    */
@@ -4373,9 +4551,33 @@ export interface Faq {
  */
 export interface CategoryTabsBlock {
   /**
-   * Name read aloud by screen readers for this navigation (not shown on the page). The visible tabs are built automatically from the FAQ category groups on this page: add or reorder those groups and the tabs follow.
+   * FAQ tabs follow the FAQ category groups on the page automatically. The jump-to index is a sticky bar of numbered links to sections of the same page.
+   */
+  variant?: ('faq' | 'jump') | null;
+  /**
+   * The small grey word at the start of the bar, e.g. "Jump to".
+   */
+  label?: string | null;
+  /**
+   * Name read aloud by screen readers for this navigation (not shown on the page), e.g. "FAQ categories" or "On this page". For FAQ tabs, the visible tabs are built automatically from the FAQ category groups on this page: add or reorder those groups and the tabs follow.
    */
   ariaLabel: string;
+  /**
+   * The numbered links, in order (01, 02, ...). Each one scrolls to a section on this page: type the same "Section link name" that you set on that section. A link whose section is missing from the page is left out automatically. Add, remove and drag to reorder.
+   */
+  links?:
+    | {
+        /**
+         * The link text, e.g. "Who it's for".
+         */
+        label: string;
+        /**
+         * The section link name it jumps to, e.g. "fit". Letters, digits and hyphens.
+         */
+        anchorId: string;
+        id?: string | null;
+      }[]
+    | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'categoryTabs';
@@ -5166,6 +5368,7 @@ export interface HeroBlockSelect<T extends boolean = true> {
   heading?: T;
   accentPhrase?: T;
   accentLine?: T;
+  accentWine?: T;
   badge?:
     | T
     | {
@@ -5228,6 +5431,20 @@ export interface HeroBlockSelect<T extends boolean = true> {
         value?: T;
         label?: T;
         id?: T;
+      };
+  glance?:
+    | T
+    | {
+        title?: T;
+        rows?:
+          | T
+          | {
+              label?: T;
+              value?: T;
+              accent?: T;
+              id?: T;
+            };
+        footer?: T;
       };
   phaseStrip?:
     | T
@@ -5366,6 +5583,8 @@ export interface ProofStripBlockSelect<T extends boolean = true> {
 export interface CaseStudyCardsBlockSelect<T extends boolean = true> {
   layout?: T;
   tone?: T;
+  spacing?: T;
+  centerFacts?: T;
   eyebrow?: T;
   eyebrowTick?: T;
   heading?: T;
@@ -5588,6 +5807,7 @@ export interface TestimonialRowBlockSelect<T extends boolean = true> {
  */
 export interface TwoTrackPanelsBlockSelect<T extends boolean = true> {
   variant?: T;
+  anchorId?: T;
   eyebrow?: T;
   eyebrowTick?: T;
   heading?: T;
@@ -5608,6 +5828,7 @@ export interface TwoTrackPanelsBlockSelect<T extends boolean = true> {
               label?: T;
               id?: T;
             };
+        share?: T;
         stats?:
           | T
           | {
@@ -5633,6 +5854,15 @@ export interface TwoTrackPanelsBlockSelect<T extends boolean = true> {
               url?: T;
               label?: T;
             };
+        id?: T;
+      };
+  rowsLabel?: T;
+  rows?:
+    | T
+    | {
+        label?: T;
+        first?: T;
+        second?: T;
         id?: T;
       };
   conclusion?: T;
@@ -5679,6 +5909,9 @@ export interface PhaseTimelineBlockSelect<T extends boolean = true> {
         detail?: T;
         tag?: T;
         isSignOff?: T;
+        you?: T;
+        youGet?: T;
+        accent?: T;
         outcomes?:
           | T
           | {
@@ -5689,6 +5922,8 @@ export interface PhaseTimelineBlockSelect<T extends boolean = true> {
       };
   closingLine?: T;
   outcomesLabel?: T;
+  youLabel?: T;
+  youGetLabel?: T;
   swipeHint?: T;
   cta?:
     | T
@@ -5775,6 +6010,7 @@ export interface RichContentBlockSelect<T extends boolean = true> {
       };
   tone?: T;
   framed?: T;
+  bandLayout?: T;
   callout?:
     | T
     | {
@@ -5806,12 +6042,14 @@ export interface SpecLedgerBlockSelect<T extends boolean = true> {
   eyebrowTick?: T;
   heading?: T;
   accentPhrase?: T;
+  anchorId?: T;
   note?: T;
   items?:
     | T
     | {
         code?: T;
         title?: T;
+        groupLabel?: T;
         line?: T;
         logo?: T;
         logoImage?: T;
@@ -5865,6 +6103,7 @@ export interface ServiceSheetBlockSelect<T extends boolean = true> {
   intro?: T;
   numeral?: T;
   accent?: T;
+  anchorId?: T;
   why?:
     | T
     | {
@@ -5891,6 +6130,7 @@ export interface ServiceSheetBlockSelect<T extends boolean = true> {
     | {
         label?: T;
         body?: T;
+        note?: T;
         link?:
           | T
           | {
@@ -5923,6 +6163,7 @@ export interface ServiceSheetBlockSelect<T extends boolean = true> {
           | T
           | {
               title?: T;
+              marker?: T;
               items?:
                 | T
                 | {
@@ -5954,6 +6195,7 @@ export interface ServiceSheetBlockSelect<T extends boolean = true> {
  */
 export interface PricingPlansBlockSelect<T extends boolean = true> {
   anchorId?: T;
+  layout?: T;
   eyebrow?: T;
   eyebrowTick?: T;
   heading?: T;
@@ -5969,6 +6211,22 @@ export interface PricingPlansBlockSelect<T extends boolean = true> {
           | T
           | {
               text?: T;
+              id?: T;
+            };
+        rows?:
+          | T
+          | {
+              label?: T;
+              value?: T;
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    url?: T;
+                    label?: T;
+                  };
               id?: T;
             };
         nextLabel?: T;
@@ -6210,6 +6468,7 @@ export interface AccordionFAQBlockSelect<T extends boolean = true> {
   eyebrow?: T;
   eyebrowTick?: T;
   heading?: T;
+  accentPhrase?: T;
   intro?: T;
   source?: T;
   category?: T;
@@ -6233,7 +6492,16 @@ export interface AccordionFAQBlockSelect<T extends boolean = true> {
  * via the `definition` "CategoryTabsBlock_select".
  */
 export interface CategoryTabsBlockSelect<T extends boolean = true> {
+  variant?: T;
+  label?: T;
   ariaLabel?: T;
+  links?:
+    | T
+    | {
+        label?: T;
+        anchorId?: T;
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }

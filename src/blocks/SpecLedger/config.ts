@@ -1,6 +1,7 @@
 import type { Block, Condition } from 'payload'
 
 import { eyebrowField, headlineFields, linkField, pricingNote } from '../../fields'
+import { anchorIdField } from '../../fields/anchorId'
 import { rowLabel } from '../../components/admin/rowLabel'
 import { toolLogoOptions } from './toolLogos'
 
@@ -38,6 +39,9 @@ const isAnatomyCards: Condition = (_data, _sibling, { blockData }: { blockData?:
 
 type ToolsCtx = { blockData?: { variant?: string; toolsLayout?: string } }
 const isToolsGrid: Condition = (_d, _s, { blockData }: ToolsCtx = {}) => blockData?.variant === 'tools' && blockData?.toolsLayout === 'grid'
+const isToolsCatalog: Condition = (_d, _s, { blockData }: ToolsCtx = {}) => blockData?.variant === 'tools' && blockData?.toolsLayout === 'catalog'
+/** Grid and catalog both show the big headline with the wine accent phrase. */
+const isToolsBigHead: Condition = (d, s, c) => isToolsGrid(d, s, c) || isToolsCatalog(d, s, c)
 
 export const SpecLedger: Block = {
   slug: 'specLedger',
@@ -81,6 +85,7 @@ export const SpecLedger: Block = {
         { label: 'Row (logos over names, ruled top and bottom)', value: 'row' },
         { label: 'Tiles (bordered tiles: logo left, name and what it is for)', value: 'tiles' },
         { label: 'Grid (hairline grid of tools with a BUILD / GROW tag each and a dark link tile last, big headline)', value: 'grid' },
+        { label: 'Catalog (tool cards in labelled groups: logo, name and what we do with it; big headline)', value: 'catalog' },
       ],
       admin: {
         condition: variantIs('tools'),
@@ -108,7 +113,12 @@ export const SpecLedger: Block = {
     ...headlineFields({
       required: false,
       description: 'Optional headline above the caption. The designs use only the small caption, so leave this empty unless you need a full headline.',
-      accent: isToolsGrid, // ink everywhere except the tools grid, where the accent phrase is wine
+      accent: isToolsBigHead, // ink everywhere except the tools grid and catalog, where the accent phrase is wine
+    }),
+    anchorIdField({
+      condition: variantIs('tools'),
+      description:
+        'Tools layouts: lets the "Jump to" bar and other pages link straight to this section, e.g. "toolkit" → /services/marketing#toolkit. Lowercase letters, numbers and single hyphens. Must be unique on the page. Optional.',
     }),
     {
       name: 'note',
@@ -117,14 +127,14 @@ export const SpecLedger: Block = {
       admin: {
         condition: (data, sibling, ctx) => isAnatomyCards(data, sibling, ctx) || variantIs('tools')(data, sibling, ctx),
         description:
-          'Short grey line beside the caption (under the cards on mobile), e.g. "Four templates carry almost every order." Tools row: the line under the heading, e.g. "A small, proven stack." Tools grid: the lede beside the headline.',
+          'Short grey line beside the caption (under the cards on mobile), e.g. "Four templates carry almost every order." Tools row: the line under the heading, e.g. "A small, proven stack." Tools grid and catalog: the lede beside the headline.',
       },
     },
     {
       name: 'items',
       type: 'array',
       label: 'Items',
-      maxRows: 12,
+      maxRows: 16,
       labels: { singular: 'Item', plural: 'Items' },
       admin: {
         components: { RowLabel: rowLabel(['code', 'title'], 'Item') },
@@ -148,6 +158,16 @@ export const SpecLedger: Block = {
               admin: { width: '75%', description: 'The item name, e.g. "Custom theme". Shown in capitals. In the check list it is the bullet sentence, shown as written.' },
             },
           ],
+        },
+        {
+          name: 'groupLabel',
+          type: 'text',
+          label: 'Group label',
+          admin: {
+            condition: isToolsCatalog,
+            description:
+              'Catalog only: a new label starts a new group (a small grey title over its own grid of cards), e.g. "Paid ads". Items with the same label as the one above stay in that group; leave empty to continue the group above.',
+          },
         },
         {
           name: 'line',

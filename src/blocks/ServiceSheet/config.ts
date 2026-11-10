@@ -1,6 +1,7 @@
 import type { Block, Condition, Field } from 'payload'
 
 import { eyebrowField, headlineFields, linkField } from '../../fields'
+import { anchorIdField } from '../../fields/anchorId'
 import { rowLabel } from '../../components/admin/rowLabel'
 
 /**
@@ -24,20 +25,28 @@ type BlockDataArg = { blockData?: { presentation?: string } }
 
 const isSection: Condition = (_data, _sibling, { blockData }: BlockDataArg = {}) => blockData?.presentation === 'section'
 
-/** Adds the section-only condition to a field (a row's children included). */
-const sectionOnly = (fields: Field[]): Field[] =>
+/** `fit`, `deliverables` and `duties` (service pages 2026-11-09) carry a head too: eyebrow + headline only. */
+const NEW_PRESENTATIONS = ['fit', 'deliverables', 'duties']
+const isNewPresentation: Condition = (_data, _sibling, { blockData }: BlockDataArg = {}) =>
+  NEW_PRESENTATIONS.includes(blockData?.presentation ?? '')
+const hasHead: Condition = (d, sib, ctx) => isSection(d, sib, ctx) || isNewPresentation(d, sib, ctx)
+
+/** Adds a presentation condition to a field (a row's children included). */
+const gated = (fields: Field[], gate: Condition): Field[] =>
   fields.map((f) => {
-    if (f.type === 'row') return { ...f, fields: sectionOnly(f.fields) } as Field
+    if (f.type === 'row') return { ...f, fields: gated(f.fields, gate) } as Field
     if ('admin' in f || 'name' in f) {
       const admin = (f as { admin?: { condition?: Condition } }).admin ?? {}
       const prev = admin.condition
       return {
         ...f,
-        admin: { ...admin, condition: prev ? (d, sib, ctx) => isSection(d, sib, ctx) && prev(d, sib, ctx) : isSection },
+        admin: { ...admin, condition: prev ? (d, sib, ctx) => gate(d, sib, ctx) && prev(d, sib, ctx) : gate },
       } as Field
     }
     return f
   })
+const sectionOnly = (fields: Field[]): Field[] => gated(fields, isSection)
+const headFields = (fields: Field[]): Field[] => gated(fields, hasHead)
 
 export const ServiceSheet: Block = {
   slug: 'serviceSheet',
@@ -51,12 +60,21 @@ export const ServiceSheet: Block = {
       options: [
         { label: 'Page body (the two columns only)', value: 'page' },
         { label: 'Section (heading, lede and big number on top, a rule, then the two columns)', value: 'section' },
+        { label: 'Fit (heading and paragraphs left, grey "Right for you if / Not for you if" card right)', value: 'fit' },
+        { label: 'Deliverables (heading on top, label and line rows left, grey "You own it" panel right)', value: 'deliverables' },
+        { label: 'Duties (grey band: heading and a paragraph on top, then You / Us lists in two columns)', value: 'duties' },
       ],
-      admin: { isClearable: false, description: 'Page body is what the two service pages use. Section adds the head row used on /services.' },
+      admin: {
+        isClearable: false,
+        description:
+          'Page body is what the old service pages used. Section adds the head row used on /services. Fit, Deliverables and Duties are the service pages from 2026-11-09 (Who it\'s for, What you get, Who does what).',
+      },
     },
+    ...headFields([
+      eyebrowField({ defaultTick: true, description: 'Small uppercase line above the heading, e.g. "Who it\'s for" or "Service 01 · Build your store".' }),
+      ...headlineFields({ required: false, description: 'The section headline, e.g. "Built for a proven product."' }),
+    ]),
     ...sectionOnly([
-      eyebrowField({ defaultTick: true, description: 'Small uppercase line above the heading, e.g. "Service 01 · Build your store".' }),
-      ...headlineFields({ required: false, description: 'The section headline, e.g. "First, we build it."' }),
       { name: 'intro', type: 'textarea', label: 'Lede', admin: { rows: 2, description: 'The grey line under the heading.' } },
       {
         name: 'numeral',
@@ -72,6 +90,10 @@ export const ServiceSheet: Block = {
         admin: { description: 'Draws the rule and the big number in wine instead of ink.' },
       },
     ]),
+    anchorIdField({
+      description:
+        'Lets the "Jump to" bar and other pages link straight to this section, e.g. "fit" → /services/marketing#fit. Lowercase letters, numbers and single hyphens. Must be unique on the page. Optional.',
+    }),
     {
       name: 'why',
       type: 'group',
@@ -88,7 +110,7 @@ export const ServiceSheet: Block = {
           admin: {
             rows: 10,
             description:
-              'The paragraphs. Leave a blank line between paragraphs. Wrap words in **double stars** to make them bold, e.g. the closing line.',
+              'The paragraphs. Leave a blank line between paragraphs. Wrap words in **double stars** to make them bold, e.g. the closing line. Duties: the one paragraph under the heading.',
           },
         },
       ],
@@ -156,8 +178,18 @@ export const ServiceSheet: Block = {
       admin: { description: 'The black-outlined box, e.g. "You own it". Leave the text empty for no box.' },
       fields: [
         { name: 'label', type: 'text', admin: { description: 'Small caption at the top of the box.' } },
-        { name: 'body', type: 'textarea', admin: { rows: 3 } },
-        linkField({ name: 'link', label: 'Link', description: 'Optional link at the end of the box, e.g. "See pricing".' }),
+        { name: 'body', type: 'textarea', admin: { rows: 3, description: 'Deliverables: the bold line in the grey panel.' } },
+        {
+          name: 'note',
+          type: 'textarea',
+          label: 'Note',
+          admin: {
+            rows: 2,
+            description:
+              'Fit and Deliverables: the quiet line under a hairline in the grey card/panel, e.g. "No store yet? {link}." Write {link} where the link below should appear; without it the link goes at the end.',
+          },
+        },
+        linkField({ name: 'link', label: 'Link', description: 'Optional link at the end of the box (or where {link} sits in the note), e.g. "See pricing".' }),
       ],
     },
     {
@@ -191,7 +223,28 @@ export const ServiceSheet: Block = {
             description: 'Each group is a small title over a list. Add, remove and drag to reorder.',
           },
           fields: [
-            { name: 'title', type: 'text', required: true, admin: { description: 'e.g. "Strategy and design".' } },
+            {
+              type: 'row',
+              fields: [
+                { name: 'title', type: 'text', required: true, admin: { width: '60%', description: 'e.g. "Strategy and design", "Right for you if", "You".' } },
+                {
+                  name: 'marker',
+                  type: 'select',
+                  defaultValue: 'wine',
+                  label: 'Bullet marker',
+                  options: [
+                    { label: 'Wine square', value: 'wine' },
+                    { label: 'Ink square', value: 'ink' },
+                    { label: 'Outlined square (hollow)', value: 'outlined' },
+                  ],
+                  admin: {
+                    width: '40%',
+                    isClearable: false,
+                    description: 'Fit and Duties only: the square before each bullet. The other layouts keep the small wine square.',
+                  },
+                },
+              ],
+            },
             {
               name: 'items',
               type: 'array',

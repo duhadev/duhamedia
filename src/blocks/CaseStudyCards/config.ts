@@ -85,6 +85,31 @@ export const CaseStudyCards: Block = {
       ],
       admin: { description: 'Background colour of the whole section (live and fallback).' },
     },
+    {
+      name: 'spacing',
+      type: 'select',
+      defaultValue: 'default',
+      label: 'Vertical spacing',
+      options: [
+        { label: 'Default (the usual section spacing)', value: 'default' },
+        { label: 'Tight (64px above, 40px below from tablet up; for a close-up that follows its section)', value: 'tight' },
+      ],
+      admin: {
+        isClearable: false,
+        condition: notNextLink,
+        description: 'Space above and below the section, live and fallback. Phones always use the default.',
+      },
+    },
+    {
+      name: 'centerFacts',
+      type: 'checkbox',
+      label: 'Centre the study facts',
+      defaultValue: false,
+      admin: {
+        condition: isCards,
+        description: 'Show the labelled facts under a study as equal, centred columns instead of left-aligned. Applies to the Cards layout.',
+      },
+    },
     eyebrowField({ description: 'Small uppercase line above the headline (shown only when studies are live).' }),
     ...headlineFields({
       required: false,

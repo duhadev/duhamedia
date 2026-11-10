@@ -48,3 +48,12 @@ export function Headline({
     </h2>
   )
 }
+
+/** Small grey caps label used by the service-page variants (detail, cells, ruled, flow). */
+export const MICRO = 'text-[0.6875rem] leading-[1.3] font-bold uppercase tracking-[0.12em] text-gray-warm'
+
+/** Section h3 of the service-page variants (Archivo, 24px on desktop). */
+export const STEP_H3 = 'font-display text-[1.25rem] leading-[1.15] font-normal uppercase tracking-[-0.01em] md:text-[1.5rem]'
+
+/** Vertical rhythm + sticky-header offset shared by the service-page variants. */
+export const SECTION_PAD = 'scroll-mt-31 py-12 md:scroll-mt-34 md:py-24'

@@ -7,8 +7,10 @@ import { AccentHeadline, ButtonLink, Container, DotMatrix, Section } from '@/com
 import { cx } from '@/lib/cx'
 
 import { ArticleHero } from './ArticleHero'
+import { Breadcrumb } from './Breadcrumb'
 import { FormCardHero } from './FormCardHero'
 import { HeroEyebrow } from './HeroEyebrow'
+import { HeroGlance, glanceRows } from './HeroGlance'
 import { HeroMotion } from './HeroMotion'
 import { HeroInlineForm, resolveHeroForm, type HeroFormSlot } from './HeroForm'
 import { LOGO_MASK } from './logoMask'
@@ -96,18 +98,28 @@ function TypographicHero({
   slot,
   submitLabel,
   formNote,
-}: BlockData<'hero'> & { rating?: AggregateRating | null; slot?: HeroFormSlot | null }) {
+  accentWine,
+  breadcrumb,
+  glance,
+}: BlockData<'hero'> & {
+  rating?: AggregateRating | null
+  slot?: HeroFormSlot | null
+}) {
   const compact = size === 'compact'
   // Inline form slot (Lead Magnet.dc.html "Capture state"): compact geometry with the capture section's own padding and h1 size.
   const capture = Boolean(slot)
   const badgeText = badge?.show !== false ? badge?.text?.trim() : ''
   const paragraph = [body?.trim(), pricingNote?.trim()].filter(Boolean).join(' ')
   const buttons = (ctas ?? []).slice(0, 2)
-  const figures = stats ?? []
+  // At-a-glance card (service pages): fills the aside; it takes the place of the key figures.
+  const glanceOn = glanceRows(glance).length > 0
+  if (glanceOn && (stats ?? []).length) console.warn('[Hero] both "At-a-glance card" and "Key figures" are filled; showing the card only.')
+  const figures = glanceOn ? [] : (stats ?? [])
+  const crumbs = (breadcrumb ?? []).filter((c) => c.label?.trim())
   const phases = (phaseStrip ?? []).slice(0, 3)
   // Top-level hero rule (/work model): the right-hand column on desktop carries the hero's figures only.
   // The phase steps never take that column (owner, 2026-11-08: no 1-2-3 column); they stay under the copy.
-  const hasAside = figures.length > 0
+  const hasAside = figures.length > 0 || glanceOn
   // Shape placement: every default hero parks the logo shape in the top-right corner (/work, /about,
   // /services), except the homepage brand hero, recognised by its side microcopy (Homepage.dc.html pairs
   // the vertical label with the large centre-right shape).
@@ -135,18 +147,23 @@ function TypographicHero({
 
   const copy = (
     <>
+        {crumbs.length ? (
+          <div className="hm-enter mb-5 md:mb-7 [&_a]:-my-3.5 [&_a]:inline-flex [&_a]:min-h-target [&_a]:items-center" style={{ '--r': '0ms' } as React.CSSProperties}>
+            <Breadcrumb items={crumbs} tone="light" />
+          </div>
+        ) : null}
         {eyebrowText ? (
           // Hero eyebrows: grey caps, no diamond (owner, 2026-11-08), the TeamIntro "Work with us" label style.
           // Since the subpage logo standard (owner, 2026-11-09) the label is led by the 28px logo disc on every
           // subpage hero; the homepage (featureShape) is excluded. `eyebrowTick` is kept in the schema but no longer read.
-          <HeroEyebrow motion disc={!featureShape}>
+          <HeroEyebrow motion disc={!featureShape} className={featureShape ? undefined : "max-md:pr-20"}>
             {ratingText ? eyebrowText : eyebrow}
           </HeroEyebrow>
         ) : null}
         <AccentHeadline
           text={capture ? slashBreaks(heading) : heading}
           accent={capture && accentPhrase ? slashBreaks(accentPhrase) : accentPhrase}
-          accentColor={accentOwnLine ? 'ground' : 'primary'}
+          accentColor={accentOwnLine || accentWine === true ? 'ground' : 'primary'}
           accentBreak={accentOwnLine}
           level={1}
           as="h1"
@@ -220,6 +237,10 @@ function TypographicHero({
             </p>
           </div>
         ) : null}
+      {glanceOn ? (
+        // Below lg the card stacks after the buttons / copy; from lg it moves to the aside column.
+        <HeroGlance glance={glance} style={{ '--r': `${regimentDelay(slotIndex)}ms` } as React.CSSProperties} className="hm-enter mt-10 lg:hidden" />
+      ) : null}
       {phases.length ? (
         <ol style={phasesSlot} className="hm-enter mt-8 grid grid-cols-3 gap-3 md:mt-10 md:gap-6 lg:max-w-190">
           {phases.map((phase, i) => {
@@ -284,9 +305,11 @@ function TypographicHero({
       {/* p7 Testimonials.dc.html: hero shares the feed's full container (1200px). It is the only compact hero with the rating flag; p9-p12 stay on the 820px column. */}
       <Wrap compact={compact} capture={capture} narrow={compact && (width ? width === 'narrow' : !figures.length && !showAggregateRating)}>
         {hasAside ? (
-          <div className="lg:grid lg:grid-cols-[1fr_320px] lg:items-end lg:gap-14">
+          <div className={glanceOn ? 'lg:grid lg:grid-cols-[minmax(0,7fr)_minmax(0,4fr)] lg:items-start lg:gap-14' : 'lg:grid lg:grid-cols-[1fr_320px] lg:items-end lg:gap-14'}>
             <div>{copy}</div>
-            {figures.length ? (
+            {glanceOn ? (
+              <HeroGlance glance={glance} style={{ '--r': '480ms' } as React.CSSProperties} className="hm-enter hidden lg:mt-35 lg:block" />
+            ) : figures.length ? (
             <ul style={{ '--r': '480ms' } as React.CSSProperties} className="hm-enter hidden border-l-2 border-ink pl-6 lg:flex lg:flex-col lg:gap-5">
               {figures.map((fig, i) => (
                 <li key={fig.id ?? i}>
